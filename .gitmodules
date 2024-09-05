@@ -1,0 +1,3 @@
+[submodule "BrokerAppcore"]
+	path = BrokerAppcore
+	url = https://github.com/brokerdevtech/BrokerAppCore.git
