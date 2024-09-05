@@ -5060,7 +5060,7 @@ parse-json@^5.2.0:
 parseurl@~1.3.3:
   version "1.3.3"
 
-patch-package@8.0.0:
+patch-package@^8.0.0, patch-package@8.0.0:
   version "8.0.0"
   resolved "https://registry.npmjs.org/patch-package/-/patch-package-8.0.0.tgz"
   integrity sha512-da8BVIhzjtgScwDJ2TtKsfT5JFWz1hYoBl9rUQ1f38MC2HwnEIkK8VN3dKMKcP7P7bvvgzNDbfNHtx3MsQb5vA==
