@@ -1,17 +1,15 @@
-import { Text, View } from "react-native";
+import {Text, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 interface LoginProps {
-    setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-    loggedIn: boolean;
-  }
+  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  loggedIn: boolean;
+}
 const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
- 
-  
-    return (
-      <View style={{flex: 1}}>
+  return (
+    <SafeAreaView style={{flex: 1}}>
       <Text>Login</Text>
-      </View>
-    );
-  };
+    </SafeAreaView>
+  );
+};
 
-  
-  export default LoginScreen;
+export default LoginScreen;
