@@ -5,11 +5,12 @@
  * @format
  */
 
-import React, { useState } from 'react';
-// import "'@/global.css'";
-
+import React, { useEffect, useState } from 'react';
+import './global.css';
+//import "./global.css";
 import type {PropsWithChildren} from 'react';
 import {
+  Platform,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -29,12 +30,21 @@ import {
 import { Provider } from 'react-redux';
 import store from './BrokerAppcore/redux/store';
 import MainNavigation from './src/navigation/MainNavigation';
-import { GluestackUIProvider } from './components/ui/gluestack-ui-provider';
-
+import {GluestackUIProvider} from '@/components/ui/gluestack-ui-provider';
+import PermissionService from './src/utils/PermissionService';
+import { PERMISSIONS } from 'react-native-permissions';
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
-
+let defaultTheme: "dark" | "light" = "light";
+type ThemeContextType = {
+  colorMode?: "dark" | "light";
+  toggleColorMode?: () => void;
+};
+export const ThemeContext = React.createContext<ThemeContextType>({
+  colorMode: "light",
+  toggleColorMode: () => {},
+});
 function Section({children, title}: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   return (
@@ -64,20 +74,62 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [loggedIn, setLoggedIn] = useState(false);
+  const [colorMode, setColorMode] = React.useState<"dark" | "light">(
+    defaultTheme
+  );
+
+  const toggleColorMode = async () => {
+    setColorMode((prev) => (prev === "light" ? "dark" : "light"));
+  };
+
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+  const [locationPermission, setLocationPermission] = useState('unknown');
+
+  // Define the function to check permission status
+  const checkLocationPermissionStatus = async () => {
+    const status = await PermissionService.checkPermissionStatus(
+      Platform.select({
+        android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+        ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+      }),
+      'Location'
+    );
+
+    setLocationPermission(status);
+    if (status === 'denied') {
+      // Handle permission blocked and loop until granted
+      const newStatus = await PermissionService.showBlockedPermissionAlert('Location');
+      setLocationPermission(newStatus); // Update status after returning from settings
+    }
+    if (status === 'blocked') {
+      // Handle permission blocked and loop until granted
+      const newStatus = await PermissionService.showBlockedPermissionAlert('Location');
+      setLocationPermission(newStatus); // Update status after returning from settings
+    }
+  };
+
+  // Use useEffect to check permission when the component mounts
+  useEffect(() => {
+    checkLocationPermissionStatus(); // Call the function inside useEffect
+  }, [])
+
 
   return (
     <Provider store={store}>
-    <GluestackUIProvider mode="light">
+  
+    <GluestackUIProvider mode={colorMode}>
       
     <MainNavigation
                     loggedIn={loggedIn}
                     setLoggedIn={setLoggedIn}
                   />
       
-      </GluestackUIProvider></Provider>
+      </GluestackUIProvider>
+      
+   
+      </Provider>
   );
 }
 
@@ -101,3 +153,5 @@ const styles = StyleSheet.create({
 });
 
 export default App;
+
+
