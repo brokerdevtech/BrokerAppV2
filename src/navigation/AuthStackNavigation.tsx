@@ -1,8 +1,9 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import LoginScreen from '../NEWUI/screensUi/Auth/LoginScreen';
+//import LoginScreen from '../NEWUI/screensUi/Auth/LoginScreen';
 import RegisterScreen from '../NEWUI/screensUi/Auth/RegisterScreen';
 import ForgotPasswordComponent from '../NEWUI/screensUi/Auth/ForgotPassword';
+import LoginScreen from '../screens/Auth/LoginScreen';
 
 const Stack = createStackNavigator();
 
@@ -32,7 +33,7 @@ const AuthStackNavigation: React.FC<StackNavigationProps> = ({
           headerTitle: '',
           headerShown: false,
         }}>
-        {props => <LoginScreen />}
+        {props => <LoginScreen loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>}
       </Stack.Screen>
       <Stack.Screen
         name="Register"

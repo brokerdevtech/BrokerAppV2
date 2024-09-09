@@ -1,14 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import {firebase} from '@react-native-firebase/messaging';
 import {Alert, DevSettings} from 'react-native';
-import { logoutUser, setUser } from '../../BrokerAppCore/redux/store/user/userSlice';
+import { logoutUser, setUser } from '../../BrokerAppcore/redux/store/user/userSlice';
 
 
 import { useNavigation } from '@react-navigation/native';
 
 // Store tokens after login
 import {useDispatch} from 'react-redux';
-import store from '../../BrokerAppCore/redux/store';
+import store from '../../BrokerAppcore/redux/store';
 
 export const clearlogoutUser = async () => {
   try {
