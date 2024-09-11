@@ -21,6 +21,11 @@ export const hstackStyle = tva({
     reversed: {
       true: 'flex-row-reverse',
     },
+    cls: {
+    
+      lg: 'h-8 bg-primary-300', // Large size variant with background color
+   
+    },
     mb: {
       xs: 'mb-1',
       sm: 'mb-2',

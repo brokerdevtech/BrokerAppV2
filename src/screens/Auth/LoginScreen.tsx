@@ -14,6 +14,8 @@ import React from 'react';
 import {FaceBookIcon, GoogleIcon} from '@/src/assets/customicons/authicons';
 
 import LoginModal from './LoginModal';
+import CustomHeader from '@/src/sharedComponents/CustomHeader';
+import AppPageContainer from '@/src/hoc/AppPageContainer';
 interface LoginProps {
   setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   loggedIn: boolean;
@@ -24,6 +26,8 @@ const LoginScreen : React.FC<LoginProps> = ({setLoggedIn}) => {
   const handleClose = () => setShowActionsheet(false);
   return (
     <ZSafeAreaView style={styles.container}>
+      <CustomHeader></CustomHeader>
+
       <VStack space="lg">
         <Box style={styles.logoContainer}>
           <Image
