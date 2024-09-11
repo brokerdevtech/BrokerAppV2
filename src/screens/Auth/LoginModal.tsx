@@ -16,8 +16,10 @@ import {Button, ButtonText} from '@/components/ui/button';
 
 import {Input, InputField} from '@/components/ui/input';
 import {useApiRequest} from '@/src/hooks/useApiRequest ';
-import {loginApi} from '@/BrokerAppcore/services/authServices2';
+
 import {useNavigation} from '@react-navigation/native';
+import { login } from '@/BrokerAppcore/services/new/authService';
+import { Text } from 'react-native';
 
 export default function LoginModal({showActionsheet, handleClose}) {
   const [username, setUsername] = useState('');
@@ -25,18 +27,18 @@ export default function LoginModal({showActionsheet, handleClose}) {
 
   const navigation = useNavigation();
 
-  const {data, status, error, execute} = useApiRequest(loginApi);
+  const {data, status, error, execute} = useApiRequest(login);
 
   const handleLogin = async () => {
-    await execute({username, password});
-    // console.log('Data :-', data);
-    // console.log('Error :-', error);
-    // console.log(username, password);
-    // console.log('Status :-', status);
-    // if (status === 200 && data?.token) {
-    //   // navigation.navigate('HomeTab');
-    //   console.log('Success!');
-    // }
+    await execute(username, password);
+    console.log('Data :-', data);
+    console.log('Error :-', error);
+    console.log(username, password);
+    console.log('Status :-', status);
+    if (status === 200 && data?.token) {
+      // navigation.navigate('HomeTab');
+      console.log('Success!');
+    }
   };
   return (
     <Actionsheet isOpen={showActionsheet} onClose={handleClose}>
@@ -83,8 +85,8 @@ export default function LoginModal({showActionsheet, handleClose}) {
                 </Link>
               </HStack>
             </VStack>
-            {status === 500 && <p style={{color: 'red'}}>{error}</p>}
-            {status === 200 && <p>Login successful</p>}
+            {status === 500 && <Text style={{color: 'red'}}>{error}</Text>}
+            {status === 200 && <Text>Login successful</Text>}
             <VStack className="w-full my-7" space="lg">
               <Button
                 className="w-full rounded-md"

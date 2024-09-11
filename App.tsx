@@ -32,6 +32,7 @@ import {setUser} from './BrokerAppcore/redux/store/user/userSlice';
 import {setTokens} from './BrokerAppcore/redux/store/authentication/authenticationSlice';
 import {getTokens} from './src/utils/utilTokens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NativeModules } from 'react-native';
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -71,6 +72,8 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 }
 
 function App(): React.JSX.Element {
+  // NativeModules.DevSettings.setIsDebuggingRemotely(true);
+  
   const isDarkMode = useColorScheme() === 'dark';
   const [loggedIn, setLoggedIn] = useState(false);
   const [colorMode, setColorMode] = React.useState<'dark' | 'light'>(

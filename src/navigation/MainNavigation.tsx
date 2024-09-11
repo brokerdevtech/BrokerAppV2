@@ -28,6 +28,7 @@ interface MainNavigationProps {
     return (
       <NavigationContainer
        >
+        
         {isLoggedIn ? (
        
           
@@ -35,6 +36,7 @@ interface MainNavigationProps {
       
         ) : (
           <AuthStackNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+          
         )}
       </NavigationContainer>
     );
