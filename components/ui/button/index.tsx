@@ -1,30 +1,24 @@
 'use client';
-import React, { useMemo } from 'react';
-import { createButton } from '@gluestack-ui/button';
-import { Svg } from 'react-native-svg';
-import type { PressableProps } from 'react-native';
-import { tva } from '@gluestack-ui/nativewind-utils/tva';
+import React, {useMemo} from 'react';
+import {createButton} from '@gluestack-ui/button';
+import {Svg} from 'react-native-svg';
+import type {PressableProps} from 'react-native';
+import {tva} from '@gluestack-ui/nativewind-utils/tva';
 import {
   withStyleContext,
   useStyleContext,
 } from '@gluestack-ui/nativewind-utils/withStyleContext';
-import { withStyleContextAndStates } from '@gluestack-ui/nativewind-utils/withStyleContextAndStates';
-import { cssInterop } from 'nativewind';
-import { withStates } from '@gluestack-ui/nativewind-utils/withStates';
-import {
-  ActivityIndicator,
-  Pressable,
-  Text,
-  View,
-  Platform,
-} from 'react-native';
-import type { VariantProps } from '@gluestack-ui/nativewind-utils';
+import {withStyleContextAndStates} from '@gluestack-ui/nativewind-utils/withStyleContextAndStates';
+import {cssInterop} from 'nativewind';
+import {withStates} from '@gluestack-ui/nativewind-utils/withStates';
+import {ActivityIndicator, Pressable, Text, View, Platform} from 'react-native';
+import type {VariantProps} from '@gluestack-ui/nativewind-utils';
 
 const SCOPE = 'BUTTON';
 const ButtonWrapper = React.forwardRef<
   React.ElementRef<typeof Pressable>,
   PressableProps
->(({ ...props }, ref) => {
+>(({...props}, ref) => {
   return <Pressable {...props} ref={ref} />;
 });
 
@@ -56,25 +50,25 @@ const PrimitiveIcon = React.forwardRef<
       as: AsComp,
       ...props
     },
-    ref
+    ref,
   ) => {
     color = color ?? classNameColor;
     const sizeProps = useMemo(() => {
-      if (size) return { size };
-      if (height && width) return { height, width };
-      if (height) return { height };
-      if (width) return { width };
+      if (size) return {size};
+      if (height && width) return {height, width};
+      if (height) return {height};
+      if (width) return {width};
       return {};
     }, [size, height, width]);
 
     let colorProps = {};
     if (fill) {
-      colorProps = { ...colorProps, fill: fill };
+      colorProps = {...colorProps, fill: fill};
     }
     if (stroke !== 'currentColor') {
-      colorProps = { ...colorProps, stroke: stroke };
+      colorProps = {...colorProps, stroke: stroke};
     } else if (stroke === 'currentColor' && color !== undefined) {
-      colorProps = { ...colorProps, stroke: color };
+      colorProps = {...colorProps, stroke: color};
     }
 
     if (AsComp) {
@@ -83,7 +77,7 @@ const PrimitiveIcon = React.forwardRef<
     return (
       <Svg ref={ref} height={height} width={width} {...colorProps} {...props} />
     );
-  }
+  },
 );
 
 const Root =
@@ -99,11 +93,11 @@ const UIButton = createButton({
   Icon: withStates(PrimitiveIcon),
 });
 
-cssInterop(Root, { className: 'style' });
-cssInterop(UIButton.Text, { className: 'style' });
-cssInterop(UIButton.Group, { className: 'style' });
+cssInterop(Root, {className: 'style'});
+cssInterop(UIButton.Text, {className: 'style'});
+cssInterop(UIButton.Group, {className: 'style'});
 cssInterop(UIButton.Spinner, {
-  className: { target: 'style', nativeStyleToProp: { color: true } },
+  className: {target: 'style', nativeStyleToProp: {color: true}},
 });
 //@ts-ignore
 cssInterop(PrimitiveIcon, {
@@ -341,14 +335,21 @@ const buttonGroupStyle = tva({
   base: '',
   variants: {
     space: {
-      'xs': 'gap-1',
-      'sm': 'gap-2',
-      'md': 'gap-3',
-      'lg': 'gap-4',
-      'xl': 'gap-5',
+      xs: 'gap-1',
+      sm: 'gap-2',
+      md: 'gap-3',
+      lg: 'gap-4',
+      xl: 'gap-5',
       '2xl': 'gap-6',
       '3xl': 'gap-7',
       '4xl': 'gap-8',
+    },
+    h: {
+      xs: 'h-5.5',
+      sm: 'h-10',
+      md: 'h-[18px] ',
+      lg: 'h-[20px] ',
+      xl: 'h-25',
     },
     isAttached: {
       true: 'gap-0',
@@ -360,34 +361,34 @@ type IButtonProps = Omit<
   React.ComponentPropsWithoutRef<typeof UIButton>,
   'context'
 > &
-  VariantProps<typeof buttonStyle> & { className?: string };
+  VariantProps<typeof buttonStyle> & {className?: string};
 
 const Button = React.forwardRef<
   React.ElementRef<typeof UIButton>,
   IButtonProps
 >(
   (
-    { className, variant = 'solid', size = 'md', action = 'primary', ...props },
-    ref
+    {className, variant = 'solid', size = 'md', action = 'primary', ...props},
+    ref,
   ) => {
     return (
       <UIButton
         ref={ref}
         {...props}
-        className={buttonStyle({ variant, size, action, class: className })}
-        context={{ variant, size, action }}
+        className={buttonStyle({variant, size, action, class: className})}
+        context={{variant, size, action}}
       />
     );
-  }
+  },
 );
 
 type IButtonTextProps = React.ComponentPropsWithoutRef<typeof UIButton.Text> &
-  VariantProps<typeof buttonTextStyle> & { className?: string };
+  VariantProps<typeof buttonTextStyle> & {className?: string};
 
 const ButtonText = React.forwardRef<
   React.ElementRef<typeof UIButton.Text>,
   IButtonTextProps
->(({ className, variant, size, action, ...props }, ref) => {
+>(({className, variant, size, action, ...props}, ref) => {
   const {
     variant: parentVariant,
     size: parentSize,
@@ -424,7 +425,7 @@ type IButtonIcon = React.ComponentPropsWithoutRef<typeof UIButton.Icon> &
 const ButtonIcon = React.forwardRef<
   React.ElementRef<typeof UIButton.Icon>,
   IButtonIcon
->(({ className, size, ...props }, ref) => {
+>(({className, size, ...props}, ref) => {
   const {
     variant: parentVariant,
     size: parentSize,
@@ -436,7 +437,7 @@ const ButtonIcon = React.forwardRef<
       <UIButton.Icon
         ref={ref}
         {...props}
-        className={buttonIconStyle({ class: className })}
+        className={buttonIconStyle({class: className})}
         size={size}
       />
     );
@@ -448,7 +449,7 @@ const ButtonIcon = React.forwardRef<
       <UIButton.Icon
         ref={ref}
         {...props}
-        className={buttonIconStyle({ class: className })}
+        className={buttonIconStyle({class: className})}
       />
     );
   }
@@ -475,10 +476,10 @@ type IButtonGroupProps = React.ComponentPropsWithoutRef<typeof UIButton.Group> &
 const ButtonGroup = React.forwardRef<
   React.ElementRef<typeof UIButton.Group>,
   IButtonGroupProps
->(({ className, space = 'md', isAttached = false, ...props }, ref) => {
+>(({className, space = 'md', isAttached = false, ...props}, ref) => {
   return (
     <UIButton.Group
-      className={buttonGroupStyle({ class: className, space, isAttached })}
+      className={buttonGroupStyle({class: className, space, isAttached})}
       {...props}
       ref={ref}
     />
@@ -491,4 +492,4 @@ ButtonSpinner.displayName = 'ButtonSpinner';
 ButtonIcon.displayName = 'ButtonIcon';
 ButtonGroup.displayName = 'ButtonGroup';
 
-export { Button, ButtonText, ButtonSpinner, ButtonIcon, ButtonGroup };
+export {Button, ButtonText, ButtonSpinner, ButtonIcon, ButtonGroup};

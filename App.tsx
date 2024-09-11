@@ -6,42 +6,42 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import "./global.css";
+import './global.css';
+import Geolocation from 'react-native-geolocation-service';
+//import "./global.css";
 import type {PropsWithChildren} from 'react';
 import {
+  PermissionsAndroid,
   Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   useColorScheme,
   View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import { Provider } from 'react-redux';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {Provider} from 'react-redux';
 import store from './BrokerAppcore/redux/store';
 import MainNavigation from './src/navigation/MainNavigation';
 import {GluestackUIProvider} from '@/components/ui/gluestack-ui-provider';
 import PermissionService from './src/utils/PermissionService';
-import { PERMISSIONS } from 'react-native-permissions';
+import {PERMISSIONS, request} from 'react-native-permissions';
+import {getAddressFromCoordinates} from './BrokerAppcore/services/googleService';
+import {setCity} from './BrokerAppcore/redux/store/City/citySlice';
+import {setUser} from './BrokerAppcore/redux/store/user/userSlice';
+import {setTokens} from './BrokerAppcore/redux/store/authentication/authenticationSlice';
+import {getTokens} from './src/utils/utilTokens';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
-let defaultTheme: "dark" | "light" = "light";
+let defaultTheme: 'dark' | 'light' = 'light';
 type ThemeContextType = {
-  colorMode?: "dark" | "light";
+  colorMode?: 'dark' | 'light';
   toggleColorMode?: () => void;
 };
 export const ThemeContext = React.createContext<ThemeContextType>({
-  colorMode: "light",
+  colorMode: 'light',
   toggleColorMode: () => {},
 });
 function Section({children, title}: SectionProps): React.JSX.Element {
@@ -73,12 +73,12 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [loggedIn, setLoggedIn] = useState(false);
-  const [colorMode, setColorMode] = React.useState<"dark" | "light">(
-    defaultTheme
+  const [colorMode, setColorMode] = React.useState<'dark' | 'light'>(
+    defaultTheme,
   );
 
   const toggleColorMode = async () => {
-    setColorMode((prev) => (prev === "light" ? "dark" : "light"));
+    setColorMode(prev => (prev === 'light' ? 'dark' : 'light'));
   };
 
   const backgroundStyle = {
@@ -87,48 +87,121 @@ function App(): React.JSX.Element {
   const [locationPermission, setLocationPermission] = useState('unknown');
 
   // Define the function to check permission status
-  const checkLocationPermissionStatus = async () => {
-    const status = await PermissionService.checkPermissionStatus(
-      Platform.select({
-        android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-        ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-      }),
-      'Location'
-    );
+  // const checkLocationPermissionStatus = async () => {
+  //   const status = await PermissionService.checkPermissionStatus(
+  //     Platform.select({
+  //       android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+  //       ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+  //     }),
+  //     'Location'
+  //   );
 
-    setLocationPermission(status);
-    if (status === 'denied') {
-      // Handle permission blocked and loop until granted
-      const newStatus = await PermissionService.showBlockedPermissionAlert('Location');
-      setLocationPermission(newStatus); // Update status after returning from settings
-    }
-    if (status === 'blocked') {
-      // Handle permission blocked and loop until granted
-      const newStatus = await PermissionService.showBlockedPermissionAlert('Location');
-      setLocationPermission(newStatus); // Update status after returning from settings
+  //   setLocationPermission(status);
+  //   if (status === 'denied') {
+  //     // Handle permission blocked and loop until granted
+  //     const newStatus = await PermissionService.showBlockedPermissionAlert('Location');
+  //     setLocationPermission(newStatus); // Update status after returning from settings
+  //   }
+  //   if (status === 'blocked') {
+  //     // Handle permission blocked and loop until granted
+  //     const newStatus = await PermissionService.showBlockedPermissionAlert('Location');
+  //     setLocationPermission(newStatus); // Update status after returning from settings
+  //   }
+  // };
+  const checkUser = async () => {
+    const keys = await AsyncStorage.getAllKeys();
+    const AsyncStoragedata = await AsyncStorage.multiGet(keys);
+
+    const storedUser = await AsyncStorage.getItem('User');
+    const storeTokensresult = await getTokens();
+
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+
+      await store.dispatch(
+        setTokens({
+          accessToken: storeTokensresult?.accessToken!,
+          refreshToken: storeTokensresult?.refreshToken!,
+          getStreamAccessToken: storeTokensresult?.getStreamAccessToken!,
+        }),
+      );
+      await store.dispatch(setUser(user));
+      setLoggedIn(true);
     }
   };
+  const getCurrentPositionAsync = () => {
+    return new Promise((resolve, reject) => {
+      Geolocation.getCurrentPosition(
+        position => resolve(position),
+        error => reject(error),
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      );
+    });
+  };
+  const getUserLocation = async (granted: any) => {
+    if (Platform.OS === 'android') {
+      if (
+        granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] ===
+        PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        let relustGeolocation = await getCurrentPositionAsync();
 
-  // Use useEffect to check permission when the component mounts
+        const {latitude, longitude} = relustGeolocation.coords;
+
+        let resultAddress = await getAddressFromCoordinates(
+          latitude,
+          longitude,
+        );
+
+        store.dispatch(setCity(resultAddress));
+      }
+    }
+    if (Platform.OS === 'ios') {
+      let relustGeolocation = await getCurrentPositionAsync();
+
+      const {latitude, longitude} = relustGeolocation.coords;
+
+      let resultAddress = await getAddressFromCoordinates(latitude, longitude);
+      store.dispatch(setCity(resultAddress));
+    }
+  };
+  const checkPermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        ]);
+        return granted;
+      } catch (err) {
+        console.warn(err);
+      }
+    } else if (Platform.OS === 'ios') {
+      try {
+        const locationPermission = await request(
+          PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+        );
+        return locationPermission;
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+  };
+  const allPermission = async () => {
+    let granted = await checkPermission();
+    let UserLocation = await getUserLocation(granted);
+  };
   useEffect(() => {
-    checkLocationPermissionStatus(); // Call the function inside useEffect
-  }, [])
-
+    allPermission();
+    checkUser();
+  }, []);
 
   return (
     <Provider store={store}>
-  
-    <GluestackUIProvider mode={colorMode}>
-      
-    <MainNavigation
-                    loggedIn={loggedIn}
-                    setLoggedIn={setLoggedIn}
-                  />
-      
+      <GluestackUIProvider mode={colorMode}>
+        <MainNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       </GluestackUIProvider>
-      
-   
-      </Provider>
+    </Provider>
   );
 }
 
@@ -152,5 +225,3 @@ const styles = StyleSheet.create({
 });
 
 export default App;
-
-
