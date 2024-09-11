@@ -8,26 +8,12 @@ import ZSafeAreaView from '@/src/sharedComponents/ZSafeAreaView';
 import {useNavigation} from '@react-navigation/native';
 import {VStack} from '@/components/ui/vstack';
 import {Box} from '@/components/ui/box';
-import image from '@/src/NEWUI/screensUi/Auth/image';
-// import {GoogleIcon} from '@/src/assets/svg';
+
 import React from 'react';
 
 import {FaceBookIcon, GoogleIcon} from '@/src/assets/customicons/authicons';
-import RegisterScreen from '@/src/NEWUI/screensUi/Auth/RegisterScreen';
-import {HStack} from '@/components/ui/hstack';
-import {Link, LinkText} from '@/components/ui/link';
-import {Pressable} from '@/components/ui/pressable';
-import {ArrowLeftIcon, Icon} from '@/components/ui/icon';
-import {Heading} from '@/components/ui/heading';
-import {
-  FormControl,
-  FormControlLabel,
-  FormControlLabelText,
-} from '@/components/ui/form-control';
-import {Controller} from 'react-hook-form';
+
 import LoginModal from './LoginModal';
-// import {GoogleIcon} from '@/src/assets/svg';
-// import {FontAwesome} from '@expo/vector-icons';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -37,7 +23,10 @@ const LoginScreen = () => {
     <ZSafeAreaView style={styles.container}>
       <VStack space="lg">
         <Box style={styles.logoContainer}>
-          <Image style={styles.logo} source={image.headerImg} />
+          <Image
+            style={styles.logo}
+            source={require('../../assets/images/BA.png')}
+          />
         </Box>
 
         <Box style={styles.headingContainer}>

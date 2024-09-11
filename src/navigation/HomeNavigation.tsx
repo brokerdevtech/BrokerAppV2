@@ -1,9 +1,11 @@
+/* eslint-disable react/react-in-jsx-scope */
 import {useState} from 'react';
 import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-import LoginScreen from '../NEWUI/screensUi/Auth/LoginScreen';
+
+import DashboradScreen from '../screens/DashboradScreen';
 const Stack = createStackNavigator();
 
 const globalScreenOptions = {
@@ -18,7 +20,11 @@ const HomeNavigation: React.FC = () => {
   return (
     <Stack.Navigator
       screenOptions={globalScreenOptions}
-      initialRouteName={initialRoute}></Stack.Navigator>
+      initialRouteName={initialRoute}>
+      <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
+        <Stack.Screen name="HomeTab" component={DashboradScreen} />
+      </Stack.Group>
+    </Stack.Navigator>
   );
 };
 

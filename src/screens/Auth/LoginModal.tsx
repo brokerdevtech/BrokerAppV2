@@ -1,5 +1,4 @@
-import {View, Text} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Actionsheet,
   ActionsheetBackdrop,
@@ -8,21 +7,37 @@ import {
   ActionsheetDragIndicatorWrapper,
 } from '@/components/ui/actionsheet';
 import {VStack} from '@/components/ui/vstack';
-import {Pressable} from '@/components/ui/pressable';
-import {ArrowLeftIcon, CloseIcon, Icon} from '@/components/ui/icon';
+
 import {Heading} from '@/components/ui/heading';
-import {
-  FormControl,
-  FormControlLabel,
-  FormControlLabelText,
-} from '@/components/ui/form-control';
+import {FormControl} from '@/components/ui/form-control';
 import {HStack} from '@/components/ui/hstack';
 import {Link, LinkText} from '@/components/ui/link';
-import {Button, ButtonIcon, ButtonText} from '@/components/ui/button';
-import {GoogleIcon} from '@/src/assets/svg';
+import {Button, ButtonText} from '@/components/ui/button';
+
 import {Input, InputField} from '@/components/ui/input';
+import {useApiRequest} from '@/src/hooks/useApiRequest ';
+import {loginApi} from '@/BrokerAppcore/services/authServices2';
+import {useNavigation} from '@react-navigation/native';
 
 export default function LoginModal({showActionsheet, handleClose}) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const navigation = useNavigation();
+
+  const {data, status, error, execute} = useApiRequest(loginApi);
+
+  const handleLogin = async () => {
+    await execute({username, password});
+    // console.log('Data :-', data);
+    // console.log('Error :-', error);
+    // console.log(username, password);
+    // console.log('Status :-', status);
+    // if (status === 200 && data?.token) {
+    //   // navigation.navigate('HomeTab');
+    //   console.log('Success!');
+    // }
+  };
   return (
     <Actionsheet isOpen={showActionsheet} onClose={handleClose}>
       <ActionsheetBackdrop />
@@ -40,13 +55,24 @@ export default function LoginModal({showActionsheet, handleClose}) {
             <VStack space="xl" className="w-full">
               <FormControl className="w-full">
                 <Input className="h-12 rounded-lg">
-                  <InputField placeholder="Email" returnKeyType="done" />
+                  <InputField
+                    placeholder="Username"
+                    value={username}
+                    onChangeText={setUsername}
+                    returnKeyType="done"
+                  />
                 </Input>
               </FormControl>
 
               <FormControl className="w-full">
                 <Input className="h-12 rounded-lg">
-                  <InputField placeholder="Password" returnKeyType="done" />
+                  <InputField
+                    placeholder="Password"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                    returnKeyType="done"
+                  />
                 </Input>
               </FormControl>
               <HStack className="w-full justify-center mb-8">
@@ -57,8 +83,14 @@ export default function LoginModal({showActionsheet, handleClose}) {
                 </Link>
               </HStack>
             </VStack>
+            {status === 500 && <p style={{color: 'red'}}>{error}</p>}
+            {status === 200 && <p>Login successful</p>}
             <VStack className="w-full my-7" space="lg">
-              <Button className="w-full rounded-md" size="xl">
+              <Button
+                className="w-full rounded-md"
+                size="xl"
+                onPress={handleLogin}
+                disabled={status === 500}>
                 <ButtonText className="font-medium">Log in</ButtonText>
               </Button>
             </VStack>
