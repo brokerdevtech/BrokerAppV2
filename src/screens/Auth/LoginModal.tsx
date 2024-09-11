@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Actionsheet,
   ActionsheetBackdrop,
@@ -20,8 +20,12 @@ import {useApiRequest} from '@/src/hooks/useApiRequest ';
 import {useNavigation} from '@react-navigation/native';
 import { login } from '@/BrokerAppcore/services/new/authService';
 import { Text } from 'react-native';
+import { storeTokens, storeUser } from '@/src/utils/utilTokens';
+import store from '@/BrokerAppcore/redux/store';
+import { setUser } from '@/BrokerAppcore/redux/store/user/userSlice';
+import { setTokens } from '@/BrokerAppcore/redux/store/authentication/authenticationSlice';
 
-export default function LoginModal({showActionsheet, handleClose}) {
+export default function LoginModal({showActionsheet, handleClose,setLoggedIn}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -35,11 +39,49 @@ export default function LoginModal({showActionsheet, handleClose}) {
     console.log('Error :-', error);
     console.log(username, password);
     console.log('Status :-', status);
-    if (status === 200 && data?.token) {
-      // navigation.navigate('HomeTab');
-      console.log('Success!');
-    }
+    
+
+    
+   
+   
   };
+  const afterhandleLogin = async () => {
+
+     
+    if(data){
+      const storeUserresult = await storeUser(JSON.stringify(data.data));
+        const storeTokensresult = await storeTokens(
+          data.data.accessToken,
+          data.data.refreshToken,
+          data.data.getStreamAccessToken,
+        );
+        await store.dispatch(setUser(data.data));
+        await store.dispatch(
+          setTokens({
+            accessToken: data.data.accessToken,
+            refreshToken: data.data.refreshToken,
+            getStreamAccessToken: data.data.getStreamAccessToken,
+          }),
+        );
+      
+      
+      
+      
+      
+      
+      setLoggedIn(true); 
+  
+      navigation.navigate('HomeTab');
+      }}
+  
+  useEffect(() => {
+    if (data) {
+      console.log("Data is available:", data);
+      afterhandleLogin();
+      // Proceed with storing tokens and user data
+    }
+  }, [data]);
+
   return (
     <Actionsheet isOpen={showActionsheet} onClose={handleClose}>
       <ActionsheetBackdrop />

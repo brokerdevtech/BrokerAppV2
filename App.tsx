@@ -196,7 +196,7 @@ function App(): React.JSX.Element {
   };
   useEffect(() => {
     allPermission();
-    checkUser();
+   // checkUser();
   }, []);
 
   return (

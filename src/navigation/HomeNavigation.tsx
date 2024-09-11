@@ -19,11 +19,12 @@ const HomeNavigation: React.FC = () => {
 
   return (
     <Stack.Navigator
-      screenOptions={globalScreenOptions}
-      initialRouteName={initialRoute}>
-      <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
+      
+     >
+       <Stack.Screen name="HomeTab" component={DashboradScreen} />
+      {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         <Stack.Screen name="HomeTab" component={DashboradScreen} />
-      </Stack.Group>
+      </Stack.Group> */}
     </Stack.Navigator>
   );
 };

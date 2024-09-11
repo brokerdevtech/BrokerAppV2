@@ -21,9 +21,9 @@ interface MainNavigationProps {
     );
   
     useEffect(() => {
-     
+     console.log("isLoggedIn",isLoggedIn);
       
-    }, []);
+    }, [isLoggedIn]);
   
     return (
       <NavigationContainer

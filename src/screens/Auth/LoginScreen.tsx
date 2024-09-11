@@ -14,8 +14,11 @@ import React from 'react';
 import {FaceBookIcon, GoogleIcon} from '@/src/assets/customicons/authicons';
 
 import LoginModal from './LoginModal';
-
-const LoginScreen = () => {
+interface LoginProps {
+  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  loggedIn: boolean;
+}
+const LoginScreen : React.FC<LoginProps> = ({setLoggedIn}) => {
   const navigation = useNavigation();
   const [showActionsheet, setShowActionsheet] = React.useState(false);
   const handleClose = () => setShowActionsheet(false);
@@ -59,6 +62,7 @@ const LoginScreen = () => {
           <LoginModal
             showActionsheet={showActionsheet}
             handleClose={handleClose}
+            setLoggedIn={setLoggedIn}
           />
         </VStack>
 
