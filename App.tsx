@@ -6,8 +6,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import './global.css';
-//import "./global.css";
+import "./global.css";
 import type {PropsWithChildren} from 'react';
 import {
   Platform,
