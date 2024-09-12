@@ -37,7 +37,7 @@ import {
   CheckboxIndicator,
   CheckboxLabel,
 } from '@/components/ui/checkbox';
-import {CheckIcon, CircleIcon} from '@/components/ui/icon';
+import {CheckIcon, CircleIcon, Icon} from '@/components/ui/icon';
 import SelectComponent from '@/src/sharedComponents/SelectComponent';
 import {
   Radio,
@@ -402,7 +402,7 @@ export default function RegisterModal({
                       }}
                       className="mb-4 mr-2">
                       <CheckboxIndicator>
-                        <CheckboxIcon as={CheckIcon} size="md" color="white" />
+                        <Icon as={CheckIcon} color="white" size="sm" />
                       </CheckboxIndicator>
                       <CheckboxLabel>
                         I accept the Terms of Use & Privacy Policy
