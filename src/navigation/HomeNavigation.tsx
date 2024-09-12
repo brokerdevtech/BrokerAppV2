@@ -4,9 +4,18 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import DashboradScreen from '../screens/DashboradScreen';
+import AppDrawer from './AppDrawer';
 const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
+
+
+
+
+
+
 
 const globalScreenOptions = {
   gestureEnabled: false,
@@ -21,7 +30,8 @@ const HomeNavigation: React.FC = () => {
     <Stack.Navigator
       
      >
-       <Stack.Screen name="HomeTab" component={DashboradScreen} />
+       <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
+       <Stack.Screen name="Home" component={AppDrawer} /></Stack.Group>
       {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         <Stack.Screen name="HomeTab" component={DashboradScreen} />
       </Stack.Group> */}

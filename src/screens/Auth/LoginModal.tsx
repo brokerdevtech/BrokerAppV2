@@ -63,7 +63,7 @@ export default function LoginModal({
 
       setLoggedIn(true);
 
-      navigation.navigate('HomeTab');
+      navigation.navigate('Home');
     }
   };
 

@@ -26,7 +26,7 @@ import {
   getStateList,
   login,
 } from '@/BrokerAppcore/services/new/authService';
-import {Text} from 'react-native';
+import {Text, View} from 'react-native';
 import {storeTokens, storeUser} from '@/src/utils/utilTokens';
 import store from '@/BrokerAppcore/redux/store';
 import {setUser} from '@/BrokerAppcore/redux/store/user/userSlice';
@@ -46,8 +46,10 @@ import {
   RadioIndicator,
   RadioLabel,
 } from '@/components/ui/radio';
+
 import * as yup from 'yup';
 import UserRegistration from '@/BrokerAppcore/types/userRegistration';
+
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required('First Name is required'),
@@ -184,6 +186,7 @@ export default function RegisterModal({
     console.log('Selected City:', city);
     console.log('Selected Broker Category:', broker);
   };
+  const [values, setValues] = React.useState("Eng")
   return (
     <Actionsheet
       isOpen={showActionsheet}
@@ -392,6 +395,12 @@ export default function RegisterModal({
                         <Text>{errors.city}</Text>
                       ) : null}
                     </FormControl>
+                   
+                 
+                  
+
+
+
                     <Checkbox
                       size="md"
                       aria-label="Remember me"
@@ -427,6 +436,8 @@ export default function RegisterModal({
                 </VStack>
               )}
             </Formik>
+
+       
           </VStack>
         </ActionsheetScrollView>
       </ActionsheetContent>

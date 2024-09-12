@@ -21,6 +21,9 @@ export default StyleSheet.create({
   p30: {
     padding: moderateScale(30),
   },
+  p40:{
+    padding: moderateScale(30),
+  },
   p5: {
     padding: moderateScale(5),
   },

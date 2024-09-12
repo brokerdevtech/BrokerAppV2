@@ -34,7 +34,7 @@ function ZHeader(props) {
         CommonActions.reset({
           index: 0, // Indicates the first route in the array is the active route.
           routes: [
-            {name: 'HomeTab'}, // Replace 'Home' with the name of your home route.
+            {name: 'Home'}, // Replace 'Home' with the name of your home route.
           ],
         }),
       );

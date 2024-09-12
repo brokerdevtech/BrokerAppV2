@@ -34,6 +34,9 @@ import {getTokens} from './src/utils/utilTokens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NativeModules} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+
+
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -73,7 +76,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 }
 
 function App(): React.JSX.Element {
-  // NativeModules.DevSettings.setIsDebuggingRemotely(true);
+  //  NativeModules.DevSettings.setIsDebuggingRemotely(true);
 
   const isDarkMode = useColorScheme() === 'dark';
   const [loggedIn, setLoggedIn] = useState(false);
@@ -197,16 +200,18 @@ function App(): React.JSX.Element {
   };
   useEffect(() => {
     allPermission();
-    // checkUser();
+    checkUser();
   }, []);
 
   return (
     <Provider store={store}>
+     
       <GestureHandlerRootView style={{flex: 1}}>
         <GluestackUIProvider mode={colorMode}>
           <MainNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
         </GluestackUIProvider>
       </GestureHandlerRootView>
+   
     </Provider>
   );
 }
