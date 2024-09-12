@@ -922,6 +922,11 @@
 "@bcoe/v8-coverage@^0.2.3":
   version "0.2.3"
 
+"@d11/react-native-fast-image@^8.6.12":
+  version "8.6.12"
+  resolved "https://registry.npmjs.org/@d11/react-native-fast-image/-/react-native-fast-image-8.6.12.tgz"
+  integrity sha512-dKrSM42OWpQJ576hRrZVXnr7VONHf1wqTTLiDmGFfpZSfweg9PzzazNyOQRtcF7RXi4+yxYBTZjp8L3DJ7TBAA==
+
 "@egjs/hammerjs@^2.0.17":
   version "2.0.17"
   resolved "https://registry.npmjs.org/@egjs/hammerjs/-/hammerjs-2.0.17.tgz"

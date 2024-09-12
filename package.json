@@ -11,6 +11,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "@d11/react-native-fast-image": "^8.6.12",
     "@expo/html-elements": "^0.4.2",
     "@gluestack-ui/accordion": "^1.0.7",
     "@gluestack-ui/actionsheet": "^0.2.44",
