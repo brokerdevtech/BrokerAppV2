@@ -2,7 +2,7 @@ import {View, Text} from 'react-native';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@reduxjs/toolkit/query';
-import { FasterImageView, clearCache } from '@candlefinance/faster-image';
+
 import FastImage from '@d11/react-native-fast-image';
 export default function DashboradScreen() {
 
