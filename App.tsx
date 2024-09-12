@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './global.css';
 import Geolocation from 'react-native-geolocation-service';
 //import "./global.css";
@@ -32,7 +32,8 @@ import {setUser} from './BrokerAppcore/redux/store/user/userSlice';
 import {setTokens} from './BrokerAppcore/redux/store/authentication/authenticationSlice';
 import {getTokens} from './src/utils/utilTokens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NativeModules } from 'react-native';
+import {NativeModules} from 'react-native';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -73,7 +74,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 
 function App(): React.JSX.Element {
   // NativeModules.DevSettings.setIsDebuggingRemotely(true);
-  
+
   const isDarkMode = useColorScheme() === 'dark';
   const [loggedIn, setLoggedIn] = useState(false);
   const [colorMode, setColorMode] = React.useState<'dark' | 'light'>(
@@ -196,14 +197,16 @@ function App(): React.JSX.Element {
   };
   useEffect(() => {
     allPermission();
-   // checkUser();
+    // checkUser();
   }, []);
 
   return (
     <Provider store={store}>
-      <GluestackUIProvider mode={colorMode}>
-        <MainNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-      </GluestackUIProvider>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <GluestackUIProvider mode={colorMode}>
+          <MainNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+        </GluestackUIProvider>
+      </GestureHandlerRootView>
     </Provider>
   );
 }

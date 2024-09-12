@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/react-in-jsx-scope */
 
-import {Image, StyleSheet, Text} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {Button, ButtonIcon, ButtonText} from '@/components/ui/button';
 
 import ZSafeAreaView from '@/src/sharedComponents/ZSafeAreaView';
@@ -14,20 +14,20 @@ import React from 'react';
 import {FaceBookIcon, GoogleIcon} from '@/src/assets/customicons/authicons';
 
 import LoginModal from './LoginModal';
-import CustomHeader from '@/src/sharedComponents/CustomHeader';
-import AppPageContainer from '@/src/hoc/AppPageContainer';
+import RegisterModal from './RegisterModal';
 interface LoginProps {
   setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   loggedIn: boolean;
 }
-const LoginScreen : React.FC<LoginProps> = ({setLoggedIn}) => {
+const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   const navigation = useNavigation();
   const [showActionsheet, setShowActionsheet] = React.useState(false);
+  const [showRegisterActionsheet, setShowRegisterActionsheet] =
+    React.useState(false);
   const handleClose = () => setShowActionsheet(false);
+  const handleRegiterClose = () => setShowRegisterActionsheet(false);
   return (
     <ZSafeAreaView style={styles.container}>
-      <CustomHeader></CustomHeader>
-
       <VStack space="lg">
         <Box style={styles.logoContainer}>
           <Image
@@ -73,8 +73,18 @@ const LoginScreen : React.FC<LoginProps> = ({setLoggedIn}) => {
         <Box style={styles.footerContainer}>
           <Text style={styles.footerText}>
             Don’t have an account?
-            <Text style={styles.footerLinkText}> Create one</Text>
+            <Text
+              style={styles.footerLinkText}
+              onPress={() => setShowRegisterActionsheet(true)}>
+              {' '}
+              Create one
+            </Text>
           </Text>
+          <RegisterModal
+            showActionsheet={showRegisterActionsheet}
+            handleClose={handleRegiterClose}
+            setLoggedIn={setLoggedIn}
+          />
           <Text style={styles.termsText}>
             By logging in I agree to the{' '}
             <Text style={styles.linkText}>Terms and Conditions</Text> and{' '}
