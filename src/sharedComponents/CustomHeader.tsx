@@ -48,18 +48,19 @@ const CustomHeader = ({title, navigation}) => {
             />
             <View
               style={{
-                height: 10,
-                width: 10,
+                height: 15,
+                width: 15,
                 backgroundColor: 'white',
                 position: 'absolute',
                 bottom: 0,
                 right: 0,
                 borderRadius: 30,
-                padding: 10,
+                padding: 5,
                 alignItems: 'center',
                 justifyContent: 'center',
+               
               }}>
-              <Icon as={verified_blue} size="sm" />
+              <Icon as={verified_blue} size="sm"  stroke='white' />
             </View>
           </Avatar>
         </TouchableOpacity>
