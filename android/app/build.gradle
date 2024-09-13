@@ -84,6 +84,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        vectorDrawables.useSupportLibrary = true // use support library for the react-native-image-crop-picker
     }
     signingConfigs {
         debug {
@@ -116,4 +117,16 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+
+implementation 'com.facebook.fresco:animated-gif:3.1.3'
+
+  // For WebP support, including animated WebP
+  implementation 'com.facebook.fresco:animated-webp:3.1.3'
+  implementation 'com.facebook.fresco:webpsupport:3.1.3'
+
+  // For WebP support, without animations
+  implementation 'com.facebook.fresco:webpsupport:3.1.3'
+ //implementation project(':@react-native-camera-roll_camera-roll')
+
 }
