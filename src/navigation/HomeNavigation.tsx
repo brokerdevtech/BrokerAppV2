@@ -4,18 +4,13 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 
 import DashboradScreen from '../screens/DashboradScreen';
 import AppDrawer from './AppDrawer';
+import ChooseImage from '../screens/postImage/ChooseImage';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-
-
-
-
-
-
 
 const globalScreenOptions = {
   gestureEnabled: false,
@@ -27,14 +22,18 @@ const HomeNavigation: React.FC = () => {
   const [initialRoute, setInitialRoute] = useState('Home');
 
   return (
-    <Stack.Navigator
-      
-     >
-       <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
-       <Stack.Screen name="Home" component={AppDrawer} /></Stack.Group>
+    <Stack.Navigator>
+      <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
+        <Stack.Screen name="Home" component={AppDrawer} />
+      </Stack.Group>
       {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         <Stack.Screen name="HomeTab" component={DashboradScreen} />
       </Stack.Group> */}
+      <Stack.Screen
+        name="ChooseImage"
+        component={ChooseImage}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };

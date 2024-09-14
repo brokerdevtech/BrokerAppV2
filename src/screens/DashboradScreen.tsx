@@ -15,7 +15,7 @@ export default function DashboradScreen() {
       <Text>{AppLocation.country}</Text>
       <Text>{AppLocation.placeID}</Text>
       <Text>{AppLocation.placeName}</Text>
-      {/* <FastImage
+      <FastImage
         resizeMode={FastImage.resizeMode.contain}
         style={{height: 200, width: 200}}
         source={{
@@ -23,7 +23,7 @@ export default function DashboradScreen() {
           priority: FastImage.priority.normal,
           uri: 'https://unsplash.it/400/400?image=1',
         }}
-      /> */}
+      />
     </View>
   );
 }
