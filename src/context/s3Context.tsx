@@ -1,19 +1,19 @@
-import React, {createContext, useContext, useState, useEffect} from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import AWS from 'aws-sdk';
 
 // Create an S3 context
 const S3Context = createContext();
 
 // Create a custom S3 provider component
-export const S3Provider = ({children}) => {
+export const S3Provider = ({ children }) => {
   const [s3Instance, setS3Instance] = useState(null);
 
   useEffect(() => {
     // Initialize the AWS SDK with your credentials and region
     AWS.config.update({
-      accessKeyId: 'AKIAWRSHOUD5ZTGQ24MZ',
-      secretAccessKey: 'cQwZf4aMvgqiFsA1ZFfYewQOzTInDTLQDitMQE/U',
-      region: 'ap-south-1',
+        accessKeyId: 'AKIAWRSHOUD5ZTGQ24MZ',
+        secretAccessKey: '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',
+        region: 'ap-south-1',
     });
 
     // Create an S3 instance
@@ -23,7 +23,11 @@ export const S3Provider = ({children}) => {
     setS3Instance(s3);
   }, []);
 
-  return <S3Context.Provider value={s3Instance}>{children}</S3Context.Provider>;
+  return (
+    <S3Context.Provider value={s3Instance}>
+      {children}
+    </S3Context.Provider>
+  );
 };
 
 // Create a custom hook to access the S3 instance from components
