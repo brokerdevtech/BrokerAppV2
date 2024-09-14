@@ -8,6 +8,7 @@
 import React, {useEffect, useState} from 'react';
 import './global.css';
 import Geolocation from 'react-native-geolocation-service';
+import { StreamChat } from 'stream-chat';
 //import "./global.css";
 import type {PropsWithChildren} from 'react';
 import {
@@ -35,6 +36,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NativeModules} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import { setAppLocation } from './BrokerAppcore/redux/store/AppLocation/appLocation';
+
 
 
 
@@ -78,6 +80,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 
 function App(): React.JSX.Element {
   //  NativeModules.DevSettings.setIsDebuggingRemotely(true);
+
 
   const isDarkMode = useColorScheme() === 'dark';
   const [loggedIn, setLoggedIn] = useState(false);
