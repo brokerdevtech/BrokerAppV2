@@ -16,7 +16,7 @@ import {Link, LinkText} from '@/components/ui/link';
 import {Button, ButtonText} from '@/components/ui/button';
 
 import {Input, InputField} from '@/components/ui/input';
-import {useApiRequest} from '@/src/hooks/useApiRequest ';
+import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {Formik} from 'formik';
 import {useNavigation} from '@react-navigation/native';
 import {

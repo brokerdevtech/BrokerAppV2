@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "329884885015",
+    "project_id": "brokerapp-707c5",
+    "storage_bucket": "brokerapp-707c5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:329884885015:android:d12bdac8fd9a616db6fc52",
+        "android_client_info": {
+          "package_name": "com.brokerapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8z_oWkif6y6rOfuDKbuFiI91bnjF1zD0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

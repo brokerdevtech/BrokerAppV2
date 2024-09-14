@@ -4,6 +4,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
 
 import FastImage from '@d11/react-native-fast-image';
+import { useChatClient } from '../navigation/useChatClient';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
 

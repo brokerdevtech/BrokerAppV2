@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import HomeNavigation from "./HomeNavigation";
 import AuthStackNavigation from "./AuthStackNavigation";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 interface MainNavigationProps {
     loggedIn: boolean;
@@ -26,6 +27,7 @@ interface MainNavigationProps {
     }, [isLoggedIn]);
   
     return (
+      <SafeAreaProvider>
       <NavigationContainer
        >
         
@@ -39,6 +41,7 @@ interface MainNavigationProps {
           
         )}
       </NavigationContainer>
+      </SafeAreaProvider>
     );
   };
   

@@ -111,3 +111,33 @@ export enum PermissionKey {
   AllowViewStoryViewers = 57,
   AllowChat = 58,
 }
+
+
+
+const imagesBucketPath = 'https://broker2023.s3.ap-south-1.amazonaws.com/';
+const imagesBucketcloudfrontPath = 'https://d37tb8g7dt82h3.cloudfront.net/';
+
+const storiesVideosBucketPath = 'stories/originals/videos/';
+const storiesImagesBucketPath = 'stories/originals/images/';
+const postsVideosBucketPath = 'posts/originals/videos/';
+const postsImagesBucketPath = 'posts/originals/images/';
+const podcastsVideosBucketPath = 'podcasts/originals/videos/';
+const podcastsImagesBucketPath = 'podcasts/originals/images/';
+// const imagesBucketPath = 'https://broker2023.s3.ap-south-1.amazonaws.com/';
+// const imagesBucketPath = 'https://broker2023.s3.ap-south-1.amazonaws.com/';
+// const imagesBucketPath = 'https://broker2023.s3.ap-south-1.amazonaws.com/';
+// const imagesBucketPath = 'https://broker2023.s3.ap-south-1.amazonaws.com/';
+
+
+
+export {
+  imagesBucketPath,
+  imagesBucketcloudfrontPath,
+   storiesVideosBucketPath ,
+   storiesImagesBucketPath ,
+   postsImagesBucketPath,
+   postsVideosBucketPath,
+   podcastsVideosBucketPath ,
+   podcastsImagesBucketPath ,
+  
+};

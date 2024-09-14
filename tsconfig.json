@@ -1,10 +1,46 @@
+// {
+//   "extends": "@react-native/typescript-config/tsconfig.json",
+//   "compilerOptions": {
+//     "paths": {
+//       "@/*": [
+//         "./*"
+//       ]
+//     }
+//   }
+// }
+
+// {
+//   "extends": "@react-native/typescript-config/tsconfig.json",
+//   "compilerOptions": {
+//     "module": "es2020",  // Ensuring dynamic imports work
+//     "paths": {
+//       "@/*": [
+//         "./*"
+//       ]
+//     }
+//   }
+// }
+
 {
-  "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "jsx": "react-native",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "types": ["node", "react", "react-native"],
+    "baseUrl": "./src",  // Adjust this to your project structure
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
-  }
+            "@/*": [
+              "./*"
+            ]
+          }
+  },
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js"]
 }
