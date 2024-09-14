@@ -79,7 +79,7 @@ const AppTab: React.FC = () => {
       //
       //
       switch (routeName) {
-        case 'Home':
+        case 'AppTabHome':
           return (
             <TabText
               text={''}
@@ -144,7 +144,7 @@ const AppTab: React.FC = () => {
           backgroundColor: 'white',
         }}>
         <Tab.Navigator
-          initialRouteName="Home"
+          initialRouteName="AppTabHome"
           screenOptions={({route}) => ({
             unmountOnBlur: true,
   headerShown: false, headerTitle: '',
@@ -167,7 +167,7 @@ const AppTab: React.FC = () => {
             // ),
           })}>
           <Tab.Screen
-            name="Home"
+            name="AppTabHome"
             component={HomePageStack}
             options={{
               tabBarIcon: ({focused}) => (
