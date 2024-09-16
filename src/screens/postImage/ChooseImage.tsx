@@ -51,7 +51,8 @@ import {
 } from '@/src/constants/constants';
 import {AddStory} from '@/BrokerAppcore/services/Story';
 import ZHeader from '@/src/sharedComponents/ZHeader';
-import {Back} from '@/src/assets/svg';
+import {Back, Multiple, Multiple_Fill} from '@/src/assets/svg';
+import {useApiRequest} from '@/src/hooks/useApiRequest ';
 const windowWidth = Dimensions.get('window').width;
 const windowheight = Dimensions.get('window').height;
 const Bucket = 'broker2023';
@@ -74,11 +75,16 @@ const ChooseImage = ({}) => {
   const [isMultiSelect, setIsMultiSelect] = useState(false);
   const user = useSelector((state: RootState) => state.user.user);
   const toast = useToast();
-  //   const s3 = useS3();
+  const s3 = useS3();
   const flatListRef = useRef<FlatList<any>>(null);
   const handleEmptyImage = () => {
     Alert.alert('Please select atleast one image');
   };
+  const {
+    status: Storystatus,
+    error: Storyerror,
+    execute: Storyexecute,
+  } = useApiRequest(AddStory);
   //   const handlePermissionDeniedAlert = () => {
   //     Alert.alert(
   //       'Permission Denied',
@@ -378,7 +384,7 @@ const ChooseImage = ({}) => {
         Body: responseBlob,
       };
 
-      //   const uploadPromise = s3.upload(params).promise();
+      const uploadPromise = s3.upload(params).promise();
       uploadPromises.push(uploadPromise);
       const results = await Promise.all(uploadPromises);
 
@@ -397,16 +403,17 @@ const ChooseImage = ({}) => {
         storyMedia: uploadedImageUrls,
       };
 
-      let storyResult = await AddStory(AddStoryobj);
+      let storyResult = await Storyexecute(AddStoryobj);
       setLoadingOverlay(false);
       toast.closeAll();
+
       toast.show({
         id: 3,
         title: 'Story created successfully',
         duration: 3000,
       });
-      // toast("'Post created successfully'")
-      navigation.navigate(TabNav.Home);
+      navigation.navigate('Home');
+
       // navigation.replace('Home');
     } catch (error) {}
   };
@@ -433,7 +440,7 @@ const ChooseImage = ({}) => {
       Body: responseBlob,
     };
 
-    // const uploadPromise = s3.upload(params).promise();
+    const uploadPromise = s3.upload(params).promise();
     uploadPromises.push(uploadPromise);
     const results = await Promise.all(uploadPromises);
 
@@ -453,15 +460,18 @@ const ChooseImage = ({}) => {
       storyMedia: uploadedImageUrls,
     };
 
-    let storyResult = await AddStory(AddStoryobj);
+    // toast("'Post created successfully'")   ;
+    let storyResult = await Storyexecute(AddStoryobj);
+    setLoadingOverlay(false);
+    toast.closeAll();
+
     toast.show({
       title: 'Story created successfully',
     });
-    // toast("'Post created successfully'")   ;
 
     navigation.reset({
       index: 0,
-      routes: [{name: 'HomeTab'}],
+      routes: [{name: 'Home'}],
     });
   };
   const EditStoryfetchPhotos = async thumbnail => {
@@ -537,7 +547,7 @@ const ChooseImage = ({}) => {
       Body: responseBlob,
     };
 
-    // const uploadPromise = s3.upload(params).promise();
+    const uploadPromise = s3.upload(params).promise();
     uploadPromises.push(uploadPromise);
     const results = await Promise.all(uploadPromises);
   };
@@ -793,24 +803,24 @@ const ChooseImage = ({}) => {
                 }}
               />
             </View>
-            {/* <HStack space={10} style={{paddingLeft: 15, paddingRight: 15}}>
-              <Box style={styles.GalleryHeaderContainer}>
-                <Text style={styles.GalleryHeader}>{'Gallery Images'}</Text>
+            <View style={styles.container}>
+              <View style={styles.GalleryHeaderContainer}>
+                <Text style={styles.GalleryHeader}>Gallery Images</Text>
 
                 <TouchableOpacity
                   onPress={() => setIsMultiSelect(!isMultiSelect)}
                   style={styles.multiSelectButton}>
-                  {isMultiSelect ? (
-                    <MultipleSelected
+                  {/* {isMultiSelect ? (
+                    <Multiple_Fill
                       accessible={true}
                       accessibilityLabel="MultipleSelected"
                     />
                   ) : (
                     <Multiple accessible={true} accessibilityLabel="Multiple" />
-                  )}
+                  )} */}
                 </TouchableOpacity>
-              </Box>
-            </HStack> */}
+              </View>
+            </View>
 
             <FlatList
               data={photos}
@@ -888,6 +898,12 @@ const styles = StyleSheet.create({
   listContainer: {
     alignItems: 'center',
     width: '100%',
+  },
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 15,
+    paddingRight: 15,
   },
   card: {
     // width: '100%',
