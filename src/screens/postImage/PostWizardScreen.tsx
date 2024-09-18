@@ -12,18 +12,9 @@ import {
   Platform,
   Dimensions,
 } from 'react-native';
-import {Back, Discount, Property, Verified, Virtual} from '../assets/svgs';
-import {useFocusEffect} from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import SingleSelectTag from '../components/filters/SingleSelectTag';
-import MultiSelectTag from '../components/filters/MultiSelectTag';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library you're using (FontAwesome in this example)
-import {useNavigation} from '@react-navigation/native';
-import SelectedTagsScreen from './SelectedTagsScreen';
-import {useDispatch, useSelector} from 'react-redux';
-import AppBaseContainer from '../Hoc/AppBaseContainer';
+
 import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
-import ToastAlert from '../components/common/ToastAlert';
+
 import ZSafeAreaView from '../components/common/ZSafeAreaView';
 import ZHeader from '../components/common/ZHeader';
 import {colors, styles} from '../themes';
@@ -41,8 +32,8 @@ import FastImage from 'react-native-fast-image';
 import {Formik} from 'formik';
 import {Box, HStack, Input, Select, Stack, Switch} from 'native-base';
 import * as Yup from 'yup';
-import PropertyForm from './Form/PropertyForm';
-import GenericForm from './Form/GenericForm';
+import PropertyForm from '@/src/sharedComponents/Form/PropertyForm';
+import GenericForm from '@/src/sharedComponents/Form/GenericForm';
 
 const genericvalidationSchema = Yup.object().shape({
   title: Yup.string().required('Title is required'),

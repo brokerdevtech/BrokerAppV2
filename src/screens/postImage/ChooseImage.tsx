@@ -810,14 +810,14 @@ const ChooseImage = ({}) => {
                 <TouchableOpacity
                   onPress={() => setIsMultiSelect(!isMultiSelect)}
                   style={styles.multiSelectButton}>
-                  {/* {isMultiSelect ? (
+                  {isMultiSelect ? (
                     <Multiple_Fill
                       accessible={true}
                       accessibilityLabel="MultipleSelected"
                     />
                   ) : (
                     <Multiple accessible={true} accessibilityLabel="Multiple" />
-                  )} */}
+                  )}
                 </TouchableOpacity>
               </View>
             </View>

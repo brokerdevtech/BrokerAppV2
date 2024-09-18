@@ -15,8 +15,12 @@ import Map_pin from './mapPin.svg';
 import Notification_Icon from './notification-bing.svg';
 import Chat_icon from './chat_icon.svg';
 import verified_blue from './verified_blue.svg';
+import Multiple from './bursts.svg';
+import Multiple_Fill from './bursts_filled.svg';
 export {
   Map_pin,
+  Multiple,
+  Multiple_Fill,
   verified_blue,
   Add_Icon,
   Notification_Icon,
