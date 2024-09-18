@@ -16,7 +16,7 @@ const AppDrawer: React.FC = () => {
     return (
       <Drawer.Navigator
       screenOptions={({ route, navigation }) => ({
-        header: () => <CustomHeader title={route.name} navigation={navigation} />, // Custom header for all screens
+        header: () => <CustomHeader />, // Custom header for all screens
       })}
       >
         <Drawer.Screen name="HomeDrawer" component={AppTab} />

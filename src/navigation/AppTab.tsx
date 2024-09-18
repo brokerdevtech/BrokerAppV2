@@ -66,6 +66,224 @@ const AppTab: React.FC = () => {
   const onPressAdd = () => {
     //  onOpen();
     navigation.navigate('ChooseImage');
+ 
+    };
+  
+ 
+    const _renderIcon = (routeName, selectedTab) => {
+      let icon = '';
+      //
+      //
+      switch (routeName) {
+        case 'AppTabHome':
+          return (
+            <TabText
+              text={''}
+              focused={routeName == selectedTab}
+              icon={routeName == selectedTab ? <Home_Fill /> : <Home />}
+            />
+          );
+  
+          icon = 'ios-home-outline';
+          break;
+        case 'Discover':
+          return (
+            <TabText
+              text={''}
+              focused={routeName == selectedTab}
+              icon={
+                routeName == selectedTab ? (
+                  <SearchFill />
+                ) : (
+                  <Search></Search>
+                )
+              }
+            />
+          );
+          break;
+        case 'Network':
+          return (
+            <TabText
+              text={''}
+              focused={routeName == selectedTab}
+              icon={routeName == selectedTab ? <NetworkFill /> : <Network />}
+            />
+          );
+          break;
+  
+        case 'Profile':
+          return (
+            <TabText
+              text={''}
+              focused={routeName == selectedTab}
+              icon={
+                routeName == selectedTab ? (
+                  <Profile_Fill />
+                ) : (
+                  <Person height={moderateScale(23)} width={moderateScale(23)} />
+                )
+              }
+            />
+          );
+          break;
+      }
+      return (
+        <SearchFill />
+      );
+    };
+   
+  
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'white',
+        }}>
+        <Tab.Navigator
+          initialRouteName="AppTabHome"
+          screenOptions={({route}) => ({
+            unmountOnBlur: true,
+  headerShown: false, headerTitle: '',
+            tabBarStyle: [
+              localStyles.tabBarStyle,
+            
+  
+              {color: '#1D7BBF', backgroundColor: colors.backgroundColor},
+            ],
+            tabBarShowLabel: false,
+            headerStyle: {
+              borderBottomWidth: 0, // Add bottom border
+              borderBottomColor: '#e1e1e1', // Border color
+              height: Platform.OS === 'android' ? 65 : 120,
+            },
+            // headerTitle: props => (
+            //   <CustomHeader
+            //     showCitySelection={true} // Set to false if you don't need city selection
+            //   />
+            // ),
+          })}>
+          <Tab.Screen
+            name="AppTabHome"
+            component={HomePageStack}
+            options={{
+              tabBarIcon: ({focused}) => (
+                <TabText
+                  text={''}
+                  focused={focused}
+                  icon={focused ? <Home_Fill /> : <Home />}
+                />
+              ),
+              // headerShown: false,
+            }}
+          />
+          <Tab.Screen
+            name="Favourite"
+            options={{
+              // tabBarBadge:dashboard.connectionRequestCount,
+              // tabBarBadgeStyle: {
+              //   backgroundColor: colors.primary, // Set your desired background color here
+              //   color: 'white', // Set your desired text color here
+              // },
+              // headerShown: false,
+              tabBarIcon: ({focused}) => (
+                <TabText
+                  text={''}
+                  focused={focused}
+                  icon={focused ? <NetworkFill /> : <Network />}
+                />
+              ),
+            }}
+            component={() => null}
+            // component={MyNetworkScreen}
+          />
+  
+          <Tab.Screen
+            name={"Setting"}
+            component={() => null}
+            //component={PostScreen}
+            listeners={{tabPress: e => e.preventDefault()}}
+            options={{
+              tabBarIcon: ({focused}) => (
+                <TouchableOpacityWithPermissionCheck
+                  tagNames={[View, Add_Icon]}
+                  permissionEnum={PermissionKey.AllowAddPost}
+                  permissionsArray={userPermissions}
+                  onPress={onPressAdd}
+                  style={localStyles.tabViewContainer}>
+                  <View
+                    style={{
+                      position: 'relative',
+                      bottom:
+                        Platform.OS === 'android'
+                          ? moderateScale(20)
+                          : moderateScale(30),
+                    }}>
+                    <View
+                      style={{
+                        backgroundColor: '#ffffff',
+                        borderRadius: moderateScale(50),
+                        width: moderateScale(60),
+                        height: moderateScale(60),
+                        justifyContent: 'center',
+                        alignItems: 'center',
+  
+                        borderColor: '#ffffff',
+                      }}>
+                      <Add_Icon
+                        width={moderateScale(60)}
+                        height={moderateScale(60)}
+                        color={'#bc4a50'}
+                      />
+                    </View>
+                  </View>
+                </TouchableOpacityWithPermissionCheck>
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Podcast"
+            options={{
+              // tabBarBadge:dashboard.connectionRequestCount,
+              // tabBarBadgeStyle: {
+              //   backgroundColor: colors.primary, // Set your desired background color here
+              //   color: 'white', // Set your desired text color here
+              // },
+              // headerShown: false,
+              tabBarIcon: ({focused}) => (
+                <TabText
+                  text={''}
+                  focused={focused}
+                  icon={focused ? <NetworkFill /> : <Network />}
+                />
+              ),
+            }}
+            component={() => null}
+            // component={MyNetworkScreen}
+          />
+            <Tab.Screen
+            name="appointment"
+            options={{
+              // tabBarBadge:dashboard.connectionRequestCount,
+              // tabBarBadgeStyle: {
+              //   backgroundColor: colors.primary, // Set your desired background color here
+              //   color: 'white', // Set your desired text color here
+              // },
+              // headerShown: false,
+              tabBarIcon: ({focused}) => (
+                <TabText
+                  text={''}
+                  focused={focused}
+                  icon={focused ? <NetworkFill /> : <Network />}
+                />
+              ),
+            }}
+            component={() => null}
+            // component={MyNetworkScreen}
+          />
+        </Tab.Navigator>
+      </View>
+  
+    );
   };
 
   const _renderIcon = (routeName, selectedTab) => {

@@ -13,6 +13,11 @@ import StoryView from '../components/story/StoryView';
 import Screen1 from '../components/story/screen1';
 import Screen2 from '../components/story/screen2';
 import PostWizardScreen from '../screens/postImage/PostWizardScreen';
+
+import ChatPageStack from './ChatNavigation';
+import {OverlayProvider} from 'stream-chat-react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useStreamChatTheme} from '../hooks/useStreamChatTheme';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -24,29 +29,40 @@ const globalScreenOptions = {
 
 const HomeNavigation: React.FC = () => {
   const [initialRoute, setInitialRoute] = useState('Home');
+  const {bottom} = useSafeAreaInsets();
 
+  // const navigation = useNavigation();
+  //const {clientIsReady} = useChatClient();
+  const streamChatTheme = useStreamChatTheme();
   return (
-    <Stack.Navigator>
-      <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
-        <Stack.Screen name="Home" component={AppDrawer} />
-      </Stack.Group>
-      {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
+    <OverlayProvider bottomInset={bottom} value={{style: streamChatTheme}}>
+      <Stack.Navigator>
+        <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
+          <Stack.Screen name="Home" component={AppDrawer} />
+        </Stack.Group>
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="AppChat"
+          component={ChatPageStack}
+        />
+        {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         <Stack.Screen name="HomeTab" component={DashboradScreen} />
       </Stack.Group> */}
-      <Stack.Screen
-        name="ChooseImage"
-        component={ChooseImage}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        options={{headerShown: false}}
-        name="StoryView"
-        component={StoryView}
-      />
-      <Stack.Screen name="Screen1" component={Screen1} />
-      <Stack.Screen name="Screen2" component={Screen2} />
-      <Stack.Screen name="PostWizard" component={PostWizardScreen} />
-    </Stack.Navigator>
+        <Stack.Screen
+          name="ChooseImage"
+          component={ChooseImage}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="StoryView"
+          component={StoryView}
+        />
+        <Stack.Screen name="Screen1" component={Screen1} />
+        <Stack.Screen name="Screen2" component={Screen2} />
+        <Stack.Screen name="PostWizard" component={PostWizardScreen} />
+      </Stack.Navigator>
+    </OverlayProvider>
   );
 };
 
