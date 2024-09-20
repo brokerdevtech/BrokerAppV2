@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react/no-unstable-nested-components */
 // src/screens/SettingsScreen.tsx
 import React, {useState, useEffect, useRef} from 'react';
 import {
@@ -11,29 +13,25 @@ import {
   Image,
   Platform,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 
-import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
+import AppBaseContainer from '../../hoc/AppPageContainer';
 
-import ZSafeAreaView from '../components/common/ZSafeAreaView';
-import ZHeader from '../components/common/ZHeader';
-import {colors, styles} from '../themes';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {moderateScale} from '../common/constants';
-import ZText from '../components/common/ZText';
-import {getCascadedFilters} from '../../BrokerAppCore/services/postService';
-import {RootState} from '../../BrokerAppCore/redux/store/reducers';
-import EditHeader from '../components/postImage/EditHader';
-import LocalityTag from '../components/LocalityTag';
-import {object} from 'yup';
-import CategorySelector from '../components/CategorySelector';
 import Video from 'react-native-video';
-import FastImage from 'react-native-fast-image';
-import {Formik} from 'formik';
-import {Box, HStack, Input, Select, Stack, Switch} from 'native-base';
+
 import * as Yup from 'yup';
-import PropertyForm from '@/src/sharedComponents/Form/PropertyForm';
-import GenericForm from '@/src/sharedComponents/Form/GenericForm';
+import PropertyForm from '../../sharedComponents/Form/PropertyForm';
+import GenericForm from '../../sharedComponents/Form/GenericForm';
+import ZHeader from '../../sharedComponents/ZHeader';
+import {styles} from '../../themes';
+import FastImage from '@d11/react-native-fast-image';
+import {Back} from '../../assets/svg';
+import CategorySelector from './CategorySelector';
+import {moderateScale} from '../../config/constants';
+import ZText from '../../sharedComponents/ZText';
+import ZSafeAreaView from '../../sharedComponents/ZSafeAreaView';
+import {getFilterTags} from '../../../BrokerAppcore/services/filterTags';
 
 const genericvalidationSchema = Yup.object().shape({
   title: Yup.string().required('Title is required'),
@@ -174,6 +172,10 @@ const PostWizardScreen: React.FC = ({
         });
       }
     }
+    console.log(
+      PropertyformikRef.current.values,
+      'PropertyformikRef.current.values',
+    );
   };
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -199,8 +201,10 @@ const PostWizardScreen: React.FC = ({
       {Platform.OS == 'ios' ? (
         <Image source={{uri: item.destinationPath}} style={localStyles.image} />
       ) : (
-        <FastImage
-          source={{uri: item.destinationPathuri}}
+        <Image
+          source={{
+            uri: item.Edit ? item.destinationPathuri : item.destinationPath,
+          }}
           style={localStyles.image}
         />
       )}
@@ -215,40 +219,11 @@ const PostWizardScreen: React.FC = ({
     //   </TouchableOpacity>
     // </View>
   );
-  const RenderLabel1 = ({labelText, width = '100%'}: any) => {
-    return (
-      <View style={{width: width, marginBottom: 8, flexDirection: 'row'}}>
-        <ZText color={colors.black} type={'m16'} align="left">
-          {labelText}
-        </ZText>
-        <Text style={{fontSize: 18, fontWeight: '600', color: 'red'}}> *</Text>
-      </View>
-    );
-  };
-  const RenderLabel = ({labelText, width = '100%'}: any) => {
-    return (
-      <View style={{width: width, marginBottom: 8}}>
-        <ZText color={colors.black} type={'m16'} align="left">
-          {labelText}
-        </ZText>
-      </View>
-    );
-  };
 
   const LeftIcon = () => {
     return (
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <View
-          style={{
-            // ...styles.appTitleMain,
-            // color: '#007acc',
-            padding: 8,
-            borderWidth: 1,
-            borderColor: 'black',
-            borderRadius: 40,
-          }}>
-          <Back accessible={true} accessibilityLabel="Back" />
-        </View>
+        <Back accessible={true} accessibilityLabel="Back" />
       </TouchableOpacity>
     );
   };
@@ -651,4 +626,4 @@ const localStyles = StyleSheet.create({
     borderColor: 'black',
   },
 });
-export default AppBaseContainer(PostWizardScreen, '', false);
+export default PostWizardScreen;

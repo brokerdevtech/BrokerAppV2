@@ -1,14 +1,31 @@
 import {Formik} from 'formik';
-import {Box, HStack, Input, Select, Stack, Switch, View} from 'native-base';
+
 import {useState} from 'react';
-import {Dimensions, StyleSheet, Text, TextInput} from 'react-native';
+import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import * as Yup from 'yup';
 import {colors, styles} from '../../themes';
-import {moderateScale} from '../../common/constants';
+import {moderateScale} from '../../config/constants';
 import React from 'react';
-import {Discount, Property, Verified, Virtual} from '../../assets/svgs';
-import ZText from '../../components/common/ZText';
-import AnimatedTextInput from '../../components/common/AnimatedTextinput';
+// import {Discount, Property, Verified, Virtual} from '../../assets/svgs';
+import ZText from '../ZText';
+import AnimatedTextInput from '../AnimatedTextinput';
+import {Box} from '../../../components/ui/box';
+import {HStack} from '../../../components/ui/hstack';
+import {
+  Select,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicator,
+  SelectDragIndicatorWrapper,
+  SelectIcon,
+  SelectInput,
+  SelectItem,
+  SelectPortal,
+  SelectTrigger,
+} from '../../../components/ui/select';
+import {Switch} from '../../../components/ui/switch';
+import {ChevronDownIcon} from '../../../components/ui/icon';
+import {Discount, Property, Verified, Virtual} from '../../assets/svg';
 function noWhitespace() {
   return this.transform((value, originalValue) =>
     /\s/.test(originalValue) ? NaN : value,
@@ -62,25 +79,15 @@ const PropertyForm = ({formikRef}) => {
   };
 
   const handleSubmit = values => {
-
-
     // Handle form submission here
+    console.log(values);
     if (formikRef.current) {
       // formikRef.current.submitForm();
     }
     // setLoading(true);
     // savePost(values, filter, imagesArray);
   };
-  const RenderLabel1 = ({labelText, width = '100%'}: any) => {
-    return (
-      <View style={{width: width, marginBottom: 8, flexDirection: 'row'}}>
-        <ZText color={colors.black} type={'m16'} align="left">
-          {labelText}
-        </ZText>
-        <Text style={{fontSize: 18, fontWeight: '600', color: 'red'}}> *</Text>
-      </View>
-    );
-  };
+
   const RenderLabel = ({labelText, width = '100%'}: any) => {
     return (
       <View style={{width: width, marginBottom: 8}}>
@@ -109,58 +116,51 @@ const PropertyForm = ({formikRef}) => {
         }) => (
           <View style={localStyles.containerView}>
             <Box style={localStyles.BoxStyles}>
-              <Stack>
-                <HStack style={localStyles.inputContainer}>
-                  {/* <RenderLabel1 labelText={`Title`} /> */}
-                  <AnimatedTextInput
-                    placeholder="Title"
-                    // style={localStyles.inputBox}
-                    value={values.title}
-                    onChangeText={handleChange('title')}
-                    onBlur={handleBlur('title')}
-                  />
-                </HStack>
-                {errors.title && touched.title && (
-                  <Box pl="3" mt="2">
-                    <Text style={styles.errorText}>{errors.title}</Text>
-                  </Box>
-                )}
-              </Stack>
+              <HStack style={localStyles.inputContainer}>
+                {/* <RenderLabel1 labelText={`Title`} /> */}
+                <AnimatedTextInput
+                  placeholder="Title"
+                  // style={localStyles.inputBox}
+                  value={values.title}
+                  onChangeText={handleChange('title')}
+                  onBlur={handleBlur('title')}
+                />
+              </HStack>
+              {errors.title && touched.title && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>{errors.title}</Text>
+                </Box>
+              )}
             </Box>
 
             <Box mb="5" style={localStyles.BoxStyles}>
-              <Stack>
-                <HStack style={localStyles.inputContainer}>
-                  {/* <RenderLabel1
-                    style={{marginTop: 50}}
-                    labelText={`Description`}
-                  /> */}
-
-                  <AnimatedTextInput
-                    multiline={true}
-                    // h={20}
-                    placeholder="Description"
-                    // style={localStyles.inputBox}
-                    value={values.propDescription}
-                    onChangeText={handleChange('propDescription')}
-                    onBlur={handleBlur('propDescription')}
-                  />
-                </HStack>
-                {errors.propDescription && touched.propDescription && (
-                  <Box pl="3" mt="2">
-                    <Text style={styles.errorText}>
-                      {errors.propDescription}
-                    </Text>
-                  </Box>
-                )}
-              </Stack>
+              <HStack style={localStyles.inputContainer}>
+                <AnimatedTextInput
+                  multiline={true}
+                  // h={20}
+                  placeholder="Description"
+                  // style={localStyles.inputBox}
+                  value={values.propDescription}
+                  onChangeText={handleChange('propDescription')}
+                  onBlur={handleBlur('propDescription')}
+                />
+              </HStack>
+              {errors.propDescription && touched.propDescription && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>{errors.propDescription}</Text>
+                </Box>
+              )}
             </Box>
 
             <Box mb="5" style={localStyles.BoxStyles}>
-              <Stack>
-                <HStack style={localStyles.inputContainer}>
-                  {/* <RenderLabel1 labelText={`Property Size`} /> */}
-
+              <HStack
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                }}>
+                {/* <RenderLabel1 labelText={`Property Size`} /> */}
+                <View style={{width: '50%'}}>
                   <AnimatedTextInput
                     // width={'50%'}
                     // style={localStyles.inputBox70}
@@ -179,137 +179,147 @@ const PropertyForm = ({formikRef}) => {
                       </Text>
                     </Box>
                   )}
-                  <Stack marginTop={5}>
-                    <Select
-                      // flexGrow={1}
-                      placeholder="Select Unit"
+                </View>
+                <View style={{width: '45%'}}>
+                  <Select>
+                    <SelectTrigger
                       selectedValue={selectedPropertySize}
-                      style={localStyles.selectStyle}
+                      variant="outline"
                       onValueChange={value => {
                         setselectedPropertySize(value);
-                      }}>
-                      {PropertySizeData.map(state => (
-                        <Select.Item
-                          key={state.id}
-                          label={state.value}
-                          value={state.id}
-                        />
-                      ))}
-                    </Select>
-                  </Stack>
-                </HStack>
-              </Stack>
+                      }}
+                      className="rounded-md border-2"
+                      size="2xl">
+                      <SelectInput placeholder="Select Unit" />
+                      <SelectIcon className="mr-3" as={ChevronDownIcon} />
+                    </SelectTrigger>
+                    <SelectPortal>
+                      <SelectBackdrop />
+                      <SelectContent>
+                        <SelectDragIndicatorWrapper>
+                          <SelectDragIndicator />
+                        </SelectDragIndicatorWrapper>
+                        {PropertySizeData.map((data, index) => (
+                          <SelectItem label={data.value} value={data.id} />
+                        ))}
+                      </SelectContent>
+                    </SelectPortal>
+                  </Select>
+                </View>
+              </HStack>
             </Box>
             <Box mb="5" style={localStyles.BoxStyles}>
-              <Stack>
-                <HStack style={localStyles.inputContainer2}>
-                  {/* <RenderLabel1 labelText={`Price`} /> */}
+              <HStack style={localStyles.inputContainer2}>
+                {/* <RenderLabel1 labelText={`Price`} /> */}
 
-                  <AnimatedTextInput
-                    // type="numeric"
-                    // borderWidth="1"
-                    placeholder="Amount"
-                    value={values.price}
-                    keyboardType="numeric"
-                    onChangeText={handleChange('price')}
-                    onBlur={handleBlur('price')}
-                  />
-                </HStack>
-                {errors.price && touched.price && (
-                  <Box pl="3" mt="2">
-                    <Text style={styles.errorText}>{errors.price}</Text>
-                  </Box>
-                )}
-              </Stack>
+                <AnimatedTextInput
+                  // type="numeric"
+                  // borderWidth="1"
+                  placeholder="Amount"
+                  value={values.price}
+                  keyboardType="numeric"
+                  onChangeText={handleChange('price')}
+                  onBlur={handleBlur('price')}
+                />
+              </HStack>
+              {errors.price && touched.price && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>{errors.price}</Text>
+                </Box>
+              )}
             </Box>
 
             <Box mb="5" style={localStyles.SwitchStyles}>
               <Virtual accessible={true} accessibilityLabel="virtual" />
-              <Stack>
-                <HStack style={localStyles.FromControl}>
-                  <RenderLabel labelText={`Virtual Tour`} width="90%" />
 
-                  <Stack>
-                    <Switch
-                      onValueChange={value => {
-                        setFieldValue('isVirtualTour', value, true);
-                        handleBlur('isVirtualTour');
-                      }}
-                      value={values.isVirtualTour}
-                    />
-                  </Stack>
-                </HStack>
-                {/* {errors.price && touched.price && (
-                          <Box pl="3" mt="2">
-                            <Text style={styles.errorText}>
-                              {errors.isVirtualTour}
-                            </Text>
-                          </Box>
-                        )} */}
-              </Stack>
+              <HStack style={localStyles.FromControl}>
+                <RenderLabel labelText={`Virtual Tour`} width="90%" />
+
+                <Switch
+                  onValueChange={value => {
+                    setFieldValue('isVirtualTour', value, true);
+                    handleBlur('isVirtualTour');
+                  }}
+                  value={values.isVirtualTour}
+                />
+              </HStack>
+              {errors.price && touched.price && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>{errors.isVirtualTour}</Text>
+                </Box>
+              )}
             </Box>
 
             <Box mb="5" style={localStyles.SwitchStyles}>
               <Verified accessible={true} accessibilityLabel="verified" />
-              <Stack>
-                <HStack style={localStyles.FromControl}>
-                  <RenderLabel labelText={`BrokerApp Verified`} width="90%" />
 
-                  <Stack justifyContent="flex-end" display="flex">
-                    <Switch
-                      onValueChange={value => {
-                        setFieldValue('isBrokerAppVerified', value, true);
-                        handleBlur('isBrokerAppVerified');
-                      }}
-                      value={values.isBrokerAppVerified}
-                    />
-                  </Stack>
-                </HStack>
-                {/* {(errors.isBrokerAppVerified && touched.isBrokerAppVerified) &&
-                     <Box pl="3" mt="2">
-                     <Text style={styles.errorText}>{errors.isBrokerAppVerified}</Text></Box>} */}
-              </Stack>
+              <HStack style={localStyles.FromControl}>
+                <RenderLabel labelText={`BrokerApp Verified`} width="90%" />
+
+                <Switch
+                  onValueChange={value => {
+                    setFieldValue('isBrokerAppVerified', value, true);
+                    handleBlur('isBrokerAppVerified');
+                  }}
+                  value={values.isBrokerAppVerified}
+                />
+              </HStack>
+              {errors.isBrokerAppVerified && touched.isBrokerAppVerified && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>
+                    {errors.isBrokerAppVerified}
+                  </Text>
+                </Box>
+              )}
             </Box>
 
             <Box mb="5" style={localStyles.SwitchStyles}>
               <Discount accessible={true} accessibilityLabel="Discount" />
-              <Stack>
-                <HStack style={localStyles.FromControl}>
-                  <RenderLabel labelText={`Discounted`} width="90%" />
 
-                  <Stack justifyContent="flex-end" display="flex">
-                    <Switch
-                      onValueChange={value => {
-                        setFieldValue('isDiscounted', value, true);
-                        handleBlur('isDiscounted');
-                      }}
-                      value={values.isDiscounted}
-                    />
-                  </Stack>
-                </HStack>
-                {/* {(errors.isBrokerAppVerified && touched.isBrokerAppVerified) &&
-                     <Box pl="3" mt="2">
-                     <Text style={styles.errorText}>{errors.isBrokerAppVerified}</Text></Box>} */}
-              </Stack>
+              <HStack style={localStyles.FromControl}>
+                <RenderLabel labelText={`Discounted`} width="90%" />
+
+                <Switch
+                  onValueChange={value => {
+                    setFieldValue('isDiscounted', value, true);
+                    handleBlur('isDiscounted');
+                  }}
+                  value={values.isDiscounted}
+                />
+              </HStack>
+              {errors.isBrokerAppVerified && touched.isBrokerAppVerified && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>
+                    {errors.isBrokerAppVerified}
+                  </Text>
+                </Box>
+              )}
             </Box>
-            <Box mb="5" style={localStyles.SwitchStyles}  >
-              <Property accessible={true} accessibilityLabel="property" style={{color: 'black'}} />
-              <Stack>
-                <HStack style={localStyles.FromControl}>
-                  <RenderLabel labelText={`Mandate Property`} width="90%" />
+            <Box mb="5" style={localStyles.SwitchStyles}>
+              <Property
+                accessible={true}
+                accessibilityLabel="property"
+                style={{color: 'black'}}
+              />
 
-                  <Switch
-                    onValueChange={value => {
-                      setFieldValue('isMandateProperty', value, true);
-                      handleBlur('isMandateProperty');
-                    }}
-                    value={values.isMandateProperty}
-                  />
-                </HStack>
-                {/* {(errors.isBrokerAppVerified && touched.isBrokerAppVerified) &&
-                     <Box pl="3" mt="2">
-                     <Text style={styles.errorText}>{errors.isBrokerAppVerified}</Text></Box>} */}
-              </Stack>
+              <HStack style={localStyles.FromControl}>
+                <RenderLabel labelText={`Mandate Property`} width="90%" />
+
+                <Switch
+                  onValueChange={value => {
+                    setFieldValue('isMandateProperty', value, true);
+                    handleBlur('isMandateProperty');
+                  }}
+                  value={values.isMandateProperty}
+                />
+              </HStack>
+              {errors.isBrokerAppVerified && touched.isBrokerAppVerified && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>
+                    {errors.isBrokerAppVerified}
+                  </Text>
+                </Box>
+              )}
             </Box>
           </View>
         )}

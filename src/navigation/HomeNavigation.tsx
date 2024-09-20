@@ -18,6 +18,10 @@ import ChatPageStack from './ChatNavigation';
 import {OverlayProvider} from 'stream-chat-react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useStreamChatTheme} from '../hooks/useStreamChatTheme';
+import EditImagesScreen from '../screens/postImage/EditImageScreen';
+import FilterTagsScreen from '../sharedComponents/FilterTagsScreen';
+import PropertyPostPreview from '../screens/postImage/previewScreens/PropertyPostPreview';
+import GenericPostPreview from '../screens/postImage/previewScreens/GenericPostPreview';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -58,9 +62,32 @@ const HomeNavigation: React.FC = () => {
           name="StoryView"
           component={StoryView}
         />
-        <Stack.Screen name="Screen1" component={Screen1} />
-        <Stack.Screen name="Screen2" component={Screen2} />
-        <Stack.Screen name="PostWizard" component={PostWizardScreen} />
+
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="PostWizard"
+          component={PostWizardScreen}
+        />
+        <Stack.Screen
+          name="FilterTags"
+          options={{headerShown: false}}
+          component={FilterTagsScreen}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="EditImagesScreen"
+          component={EditImagesScreen}
+        />
+        <Stack.Screen
+          name="PropertyPostPreview"
+          component={PropertyPostPreview}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="GenericPostPreview"
+          component={GenericPostPreview}
+          options={{headerShown: false}}
+        />
       </Stack.Navigator>
     </OverlayProvider>
   );

@@ -43,16 +43,16 @@ import LoadingOverlay from './LoadingOverlay';
 import {useSharedValue} from 'react-native-reanimated';
 import {CardView} from './Cardview';
 import {useToast} from '@/components/ui/toast';
-import ZText from '@/src/sharedComponents/ZText';
-import {useS3} from '@/src/context/s3Context';
+import ZText from '../../sharedComponents/ZText';
+import {useS3} from '../../Context/S3Context';
 import {
   storiesImagesBucketPath,
   storiesVideosBucketPath,
-} from '@/src/constants/constants';
-import {AddStory} from '@/BrokerAppcore/services/Story';
-import ZHeader from '@/src/sharedComponents/ZHeader';
-import {Back, Multiple, Multiple_Fill} from '@/src/assets/svg';
-import {useApiRequest} from '@/src/hooks/useApiRequest ';
+} from '../../constants/constants';
+import {AddStory} from '../../../BrokerAppcore/services/Story';
+import ZHeader from '../../sharedComponents/ZHeader';
+import {Back, Multiple, Multiple_Fill} from '../../assets/svg';
+import {useApiRequest} from '../../hooks/useApiRequest';
 const windowWidth = Dimensions.get('window').width;
 const windowheight = Dimensions.get('window').height;
 const Bucket = 'broker2023';
@@ -62,7 +62,8 @@ const ChooseImage = ({}) => {
     (state: RootState) => state.user.user.userPermissions,
   );
   const [isLoadingOverlay, setLoadingOverlay] = useState(false);
-  const [thumbnail, setThumbnail] = useState<any>([]);
+  const [thumbnail, setThumbnail] = useState([]);
+  console.log(thumbnail, 'photo+3');
   const [loaderVisible, setLoaderVisible] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [endCursor, setEndCursor] = useState('');
@@ -80,6 +81,7 @@ const ChooseImage = ({}) => {
   const handleEmptyImage = () => {
     Alert.alert('Please select atleast one image');
   };
+
   const {
     status: Storystatus,
     error: Storyerror,
@@ -212,60 +214,40 @@ const ChooseImage = ({}) => {
     }
   }, [page]);
   const fetchPhotos = async () => {
-    try {
-      setLoading(true); // Set loading to true while fetching photos
+    // Define query options for CameraRoll.getPhotos()
+    const fetchParams = {
+      first: 20, // Number of photos to fetch
+      assetType: 'Photos',
+      include: ['filename', 'fileExtension'],
+    };
 
-      // Define query options for CameraRoll.getPhotos()
-      const fetchParams = {
-        first: 20, // Number of photos to fetch
-        assetType: 'Photos', // Fetch only photos
-        include: ['filename', 'fileExtension'], // Include additional metadata
-      };
-
-      const data = await CameraRoll.getPhotos(fetchParams);
-      console.log(data, 'Fetching photos...');
-      if (data.edges.length > 0) {
-        // Extract photos and handle empty cases
-        const fetchedPhotos = data.edges.map(item => item.node.image);
-
-        // Create photoData object for each image
-        const photoData = fetchedPhotos.map((photo, index) => ({
-          uri: photo.uri,
-          name: photo.filename,
-          type: photo.fileExtension,
-          count: index + 1, // Increment the count for each image
-        }));
-
-        // Append new photos to the existing thumbnail state
-        setThumbnail(prevThumbnails => [...prevThumbnails, ...photoData]);
-
-        // Set fetched photos to the state
-        setPhotos(data.edges);
-
-        // Set pagination data
-        if (data.page_info.has_next_page) {
-          setEndCursor(data.page_info.end_cursor);
-          setHasNextPage(true);
-        } else {
-          setHasNextPage(false);
-          setEndCursor(null);
-        }
-      } else {
-        // Handle when no photos are returned
-        setHasNextPage(false);
-        setPhotos([]);
-        setThumbnail([]);
-      }
-    } catch (error) {
-      console.error('Error fetching photos: ', error);
-      toast.show({
-        title: 'Error fetching photos',
-        status: 'error',
-      });
-    } finally {
-      setLoading(false); // Stop loading once photos are fetched
-      toast.closeAll(); // Clear any ongoing toasts
+    const data = await CameraRoll.getPhotos(fetchParams);
+    if (data.page_info.has_next_page) {
+      setEndCursor(data?.page_info?.end_cursor?.toString());
+      setHasNextPage(true);
+    } else {
+      setEndCursor(null);
+      setHasNextPage(false);
     }
+    // console.log(JSON.stringify(data), 'photos');
+    setPhotos(data.edges);
+
+    const assets = data.edges.map(item => item.node.image);
+
+    const photoData1 = {
+      uri: assets[0].uri,
+      type: assets[0].extension,
+      name: assets[0].filename,
+      count: 1,
+    };
+    let photobj = [];
+    photobj = [...thumbnail];
+    //
+    photobj.push({...photoData1});
+
+    setThumbnail(photobj);
+    setLoading(false);
+    toast.closeAll();
   };
 
   const fetchPhotosnext = async (after: any) => {
@@ -300,6 +282,7 @@ const ChooseImage = ({}) => {
   };
 
   const onChooseImage = photo => {
+    console.log(thumbnail, 'initial');
     if (isMultiSelect) {
       const isAlreadySelected = thumbnail.some(
         item => item.uri === photo.node.image.uri,
@@ -674,29 +657,12 @@ const ChooseImage = ({}) => {
       creationDate: videoAsset.creationDate,
     };
 
-    // navigation.navigate('PostWizard', {imageData: obj, Isvideo: true});
-    // navigation.navigate('PostWizard', {imageData: destinationThumbnails});
+    navigation.navigate('PostWizard', {imageData: obj, Isvideo: true});
   };
 
   const renderItem = ({item, index}: any) => {
     return <CardView item={item} index={index} contentOffset={contentOffset} />;
   };
-  // useEffect(() => {
-  //   if (thumbnail.length <= 0) {
-  //     Alert.alert(
-  //       'Permission Denied',
-  //       'Please grant permission to access your photos in order to display them in the gallery.',
-  //       [
-  //         {
-  //           text: 'OK',
-  //           onPress: () => {
-  //             navigation.goBack();
-  //           },
-  //         },
-  //       ],
-  //     );
-  //   }
-  // }, [thumbnail, navigation]);
 
   const renderImageItem = ({item, photoIndex}) => (
     <TouchableOpacity onPress={() => onChooseImage(item)}>
@@ -740,17 +706,7 @@ const ChooseImage = ({}) => {
   const LeftIcon = () => {
     return (
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <View
-          style={{
-            // ...styles.appTitleMain,
-            // color: '#007acc',
-            padding: 8,
-            borderWidth: 1,
-            borderColor: 'black',
-            borderRadius: 40,
-          }}>
-          <Back accessible={true} accessibilityLabel="Back" />
-        </View>
+        <Back accessible={true} accessibilityLabel="Back" />
       </TouchableOpacity>
     );
   };
@@ -904,6 +860,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingLeft: 15,
     paddingRight: 15,
+    backgroundColor: '#fff',
   },
   card: {
     // width: '100%',

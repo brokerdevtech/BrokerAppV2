@@ -1,15 +1,17 @@
 import {Formik} from 'formik';
-import {Box, HStack, Input, Select, Stack, Switch, View} from 'native-base';
+
 import {useState} from 'react';
-import {Dimensions, StyleSheet, Text} from 'react-native';
+import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import * as Yup from 'yup';
 import {colors, styles} from '../../themes';
-import {moderateScale} from '../../common/constants';
+import {moderateScale} from '../../config/constants';
 import React from 'react';
-import {Discount, Property, Verified, Virtual} from '../../assets/svgs';
-import ZText from '../../components/common/ZText';
-import LocalityTag from '../../components/LocalityTag';
-import AnimatedTextInput from '../../components/common/AnimatedTextinput';
+
+import ZText from '../ZText';
+import LocalityTag from '../LocalityTag';
+import AnimatedTextInput from '../AnimatedTextinput';
+import {Box} from '../../../components/ui/box';
+import {HStack} from '../../../components/ui/hstack';
 
 const genericvalidationSchema = Yup.object().shape({
   title: Yup.string().required('Title is required'),
@@ -83,49 +85,45 @@ const GenericForm = ({formikRef}) => {
       }) => (
         <View style={localStyles.containerView}>
           <Box style={localStyles.BoxStyles}>
-            <Stack>
-              <HStack style={localStyles.inputContainer}>
-                {/* <RenderLabel1 labelText={`Title`} /> */}
-                <AnimatedTextInput
-                  placeholder="Title"
-                  style={localStyles.inputBox}
-                  value={values.title}
-                  onChangeText={handleChange('title')}
-                  onBlur={handleBlur('title')}
-                />
-              </HStack>
-              {errors.title && touched.title && (
-                <Box pl="3" mt="2">
-                  <Text style={styles.errorText}>{errors.title}</Text>
-                </Box>
-              )}
-            </Stack>
+            <HStack style={localStyles.inputContainer}>
+              {/* <RenderLabel1 labelText={`Title`} /> */}
+              <AnimatedTextInput
+                placeholder="Title"
+                style={localStyles.inputBox}
+                value={values.title}
+                onChangeText={handleChange('title')}
+                onBlur={handleBlur('title')}
+              />
+            </HStack>
+            {errors.title && touched.title && (
+              <Box pl="3" mt="2">
+                <Text style={styles.errorText}>{errors.title}</Text>
+              </Box>
+            )}
           </Box>
 
           <Box mb="5" style={localStyles.BoxStyles}>
-            <Stack>
-              <HStack style={localStyles.inputContainer}>
-                {/* <RenderLabel1
+            <HStack style={localStyles.inputContainer}>
+              {/* <RenderLabel1
                   style={{marginTop: 50}}
                   labelText={`Description`}
                 /> */}
 
-                <AnimatedTextInput
-                  multiline={true}
-                  // h={20}
-                  placeholder="Description"
-                  // style={localStyles.inputBox}
-                  value={values.Description}
-                  onChangeText={handleChange('Description')}
-                  onBlur={handleBlur('Description')}
-                />
-              </HStack>
-              {errors.Description && touched.Description && (
-                <Box pl="3" mt="2">
-                  <Text style={styles.errorText}>{errors.Description}</Text>
-                </Box>
-              )}
-            </Stack>
+              <AnimatedTextInput
+                multiline={true}
+                // h={20}
+                placeholder="Description"
+                // style={localStyles.inputBox}
+                value={values.Description}
+                onChangeText={handleChange('Description')}
+                onBlur={handleBlur('Description')}
+              />
+            </HStack>
+            {errors.Description && touched.Description && (
+              <Box pl="3" mt="2">
+                <Text style={styles.errorText}>{errors.Description}</Text>
+              </Box>
+            )}
           </Box>
           <Box mb="5" style={localStyles.BoxStyles}>
             <LocalityTag
