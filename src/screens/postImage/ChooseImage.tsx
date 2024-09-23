@@ -53,30 +53,28 @@ import {AddStory} from '../../../BrokerAppcore/services/Story';
 import ZHeader from '../../sharedComponents/ZHeader';
 import {Back, Multiple, Multiple_Fill} from '../../assets/svg';
 import {useApiRequest} from '../../hooks/useApiRequest';
+import AppBaseContainer from '../../hoc/AppBaseContainer_old';
+import {Toast, ToastDescription} from '../../../components/ui/toast';
 const windowWidth = Dimensions.get('window').width;
 const windowheight = Dimensions.get('window').height;
 const Bucket = 'broker2023';
 
-const ChooseImage = ({}) => {
+const ChooseImage = ({user, s3, toast, navigation}: any) => {
+  // console.log(user, 'from hoc');
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
   const [isLoadingOverlay, setLoadingOverlay] = useState(false);
   const [thumbnail, setThumbnail] = useState([]);
-  console.log(thumbnail, 'photo+3');
-  const [loaderVisible, setLoaderVisible] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [endCursor, setEndCursor] = useState('');
   const [hasNextPage, setHasNextPage] = useState(true);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const contentOffset = useSharedValue(0);
-  const navigation = useNavigation();
+  const [toastId, setToastId] = React.useState(0);
   const [page, setPage] = useState('Post');
   const [isMultiSelect, setIsMultiSelect] = useState(false);
-  const user = useSelector((state: RootState) => state.user.user);
-  const toast = useToast();
-  const s3 = useS3();
   const flatListRef = useRef<FlatList<any>>(null);
   const handleEmptyImage = () => {
     Alert.alert('Please select atleast one image');
@@ -87,6 +85,7 @@ const ChooseImage = ({}) => {
     error: Storyerror,
     execute: Storyexecute,
   } = useApiRequest(AddStory);
+
   //   const handlePermissionDeniedAlert = () => {
   //     Alert.alert(
   //       'Permission Denied',
@@ -388,14 +387,25 @@ const ChooseImage = ({}) => {
 
       let storyResult = await Storyexecute(AddStoryobj);
       setLoadingOverlay(false);
-      toast.closeAll();
 
-      toast.show({
-        id: 3,
-        title: 'Story created successfully',
-        duration: 3000,
-      });
       navigation.navigate('Home');
+      if (!toast.isActive(toastId)) {
+        const newId = Math.random();
+        setToastId(newId);
+        toast.show({
+          id: newId,
+          placement: 'bottom',
+          duration: 3000,
+          render: ({id}) => {
+            const uniqueToastId = 'toast-' + id;
+            return (
+              <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                <ToastDescription>Story created successfully</ToastDescription>
+              </Toast>
+            );
+          },
+        });
+      }
 
       // navigation.replace('Home');
     } catch (error) {}
@@ -446,11 +456,23 @@ const ChooseImage = ({}) => {
     // toast("'Post created successfully'")   ;
     let storyResult = await Storyexecute(AddStoryobj);
     setLoadingOverlay(false);
-    toast.closeAll();
-
-    toast.show({
-      title: 'Story created successfully',
-    });
+    if (!toast.isActive(toastId)) {
+      const newId = Math.random();
+      setToastId(newId);
+      toast.show({
+        id: newId,
+        placement: 'bottom',
+        duration: 3000,
+        render: ({id}) => {
+          const uniqueToastId = 'toast-' + id;
+          return (
+            <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+              <ToastDescription>Story created successfully</ToastDescription>
+            </Toast>
+          );
+        },
+      });
+    }
 
     navigation.reset({
       index: 0,
@@ -724,7 +746,7 @@ const ChooseImage = ({}) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeView}>
+    <>
       {thumbnail.length > 0 && (
         <>
           <View>
@@ -736,13 +758,6 @@ const ChooseImage = ({}) => {
             />
 
             <View>
-              {/* <FlatList
-            data={thumbnail}
-            horizontal
-            contentContainerStyle={styles.listContainer}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-          /> */}
               <FlatList
                 ref={flatListRef}
                 data={thumbnail}
@@ -826,7 +841,7 @@ const ChooseImage = ({}) => {
           <LoadingOverlay isVisible={isLoadingOverlay} />
         </>
       )}
-    </SafeAreaView>
+    </>
   );
 };
 
@@ -974,4 +989,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChooseImage;
+export default AppBaseContainer(ChooseImage, '', false);

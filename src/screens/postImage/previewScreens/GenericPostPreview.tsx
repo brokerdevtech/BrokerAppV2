@@ -24,39 +24,52 @@ const {width} = Dimensions.get('window');
 const devicewidth = Dimensions.get('window').width;
 import uuid from 'react-native-uuid';
 import {useSelector} from 'react-redux';
-import {getFileExtensionFromMimeType, uriToBlob} from '../../../utils/helpers';
+import {
+  getFileExtensionFromMimeType,
+  uriToBlob,
+  uriToBlobRFNS,
+} from '../../../utils/helpers';
 import {
   postsImagesBucketPath,
   postsVideosBucketPath,
 } from '../../../config/constants';
-import {sendGenericPostData} from '../../../../BrokerAppcore/services/postService';
+
 import FastImage from '@d11/react-native-fast-image';
 import ZText from '../../../sharedComponents/ZText';
 import {Box} from '../../../../components/ui/box';
 import ZSafeAreaView from '../../../sharedComponents/ZSafeAreaView';
 import ZHeader from '../../../sharedComponents/ZHeader';
 import Video from 'react-native-video';
+import AppBaseContainer from '../../../hoc/AppBaseContainer_old';
+import {useApiRequest} from '../../../hooks/useApiRequest';
+import {sendGenericPostData} from '../../../../BrokerAppcore/services/new/postServices';
+import {Toast, ToastDescription} from '../../../../components/ui/toast';
 
 const GenericPostPreview: React.FC = ({
   toast,
 
   navigation,
   user,
-
+  s3,
   route,
 }: any) => {
-  const colors = useSelector(state => state.theme.theme);
   const Bucket = 'broker2023';
   const [filter, setfilter] = useState<any>(route.params?.filters);
-  const s3 = useS3();
+
   const [imagesArray, setimagesArray] = useState<any>(route.params?.postVisual);
   const [Isvideo, setIsvideo] = useState<any>(route.params?.Isvideo);
   const [formValue, setformValue] = useState<any>(route.params?.formValue);
   const [localities, setlocalities] = useState<any>(route.params?.localities);
   const [loading, setLoading] = useState(false);
   const [selectedPropertySize, setselectedPropertySize] = useState('1');
-
+  const [toastId, setToastId] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
+  const {
+    data: Genericdata,
+    status: Genericstatus,
+    error: Genericerror,
+    execute: Genericexecute,
+  } = useApiRequest(sendGenericPostData);
   const Pagination = ({index, length}) => {
     return (
       <View style={localStyles.paginationWrapper}>
@@ -144,9 +157,10 @@ const GenericPostPreview: React.FC = ({
             Platform.OS === 'ios' && !image.Edit
               ? image.uri
               : image.destinationPathuri;
-
-          const responseBlob = await uriToBlob(uri);
-
+          console.log('image', image.destinationPathuri);
+          console.log(image.destinationPathuri, 'uripath2');
+          const responseBlob = await uriToBlob(image.destinationPath);
+          console.log(responseBlob, 'response');
           const fileExtension = getFileExtensionFromMimeType(
             responseBlob?._data.type,
           );
@@ -163,7 +177,7 @@ const GenericPostPreview: React.FC = ({
         }
 
         const results = await Promise.all(uploadPromises);
-
+        console.log(results, 'result');
         uploadedImageUrls = results.map((result, index) => {
           if (result) {
             return {mediaBlobId: result.Key};
@@ -172,7 +186,7 @@ const GenericPostPreview: React.FC = ({
             return null;
           }
         });
-
+        console.log('deleteImage');
         for (const item of imagesArray) {
           if (item.Edit) {
             await deleteImage(item.destinationPath);
@@ -208,8 +222,9 @@ const GenericPostPreview: React.FC = ({
       }
 
       const successfulUploads = uploadedImageUrls.filter(url => url !== null);
-      console.log(successfulUploads);
+      console.log(successfulUploads, 'success');
       if (successfulUploads.length > 0) {
+        console.log('requestApi');
         await requestAPI(successfulUploads, FormValue, Formtags);
       } else {
         setLoading(false);
@@ -225,7 +240,9 @@ const GenericPostPreview: React.FC = ({
 
   const requestAPI = async (mediaData, FormValue, Formtags) => {
     //code by Prashant Wrapped this api request in proper try catch
+
     try {
+      console.log('previe');
       let tags = [];
       let localitie = route.params?.localities;
 
@@ -243,19 +260,31 @@ const GenericPostPreview: React.FC = ({
         viewportSouthWestLng: localitie.viewportSouthWestLng,
         postMedia: mediaData,
       };
-
-      const data = await sendGenericPostData(requestOption);
+      console.log('apiCall');
+      const data = await Genericexecute(requestOption);
       setLoading(false);
-      // toast.show({
-      //   title: 'Post created successfully',
-      // });
 
       navigation.navigate('Home');
+      if (!toast.isActive(toastId)) {
+        const newId = Math.random();
+        setToastId(newId);
+        toast.show({
+          id: newId,
+          placement: 'bottom',
+          duration: 3000,
+          render: ({id}) => {
+            const uniqueToastId = 'toast-' + id;
+            return (
+              <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                <ToastDescription>Post created successfully</ToastDescription>
+              </Toast>
+            );
+          },
+        });
+      }
     } catch (error) {
       setLoading(false);
-      toast.show({
-        title: 'Failed to create post',
-      });
+
       console.error('Error in requestAPI:', error);
     }
   };
@@ -483,4 +512,4 @@ const localStyles = StyleSheet.create({
     // Add additional styling for the image here
   },
 });
-export default GenericPostPreview;
+export default AppBaseContainer(GenericPostPreview, ' ', false);

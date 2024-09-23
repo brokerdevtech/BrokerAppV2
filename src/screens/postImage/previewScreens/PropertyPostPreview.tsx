@@ -43,19 +43,22 @@ import {
   postsVideosBucketPath,
 } from '../../../config/constants';
 import {Back} from '../../../assets/svg';
+import AppBaseContainer from '../../../hoc/AppBaseContainer_old';
+import {useApiRequest} from '../../../hooks/useApiRequest';
+import {sendPropPostData} from '../../../../BrokerAppcore/services/new/postServices';
+import {Toast, ToastDescription} from '../../../../components/ui/toast';
 
 const PropertyPostPreview: React.FC = ({
   toast,
 
   navigation,
   user,
-  color,
+  s3,
   route,
 }: any) => {
-  const colors = useSelector(state => state.theme.theme);
   const Bucket = 'broker2023';
   const [filter, setfilter] = useState<any>(route.params?.filters);
-  const s3 = useS3();
+
   const [imagesArray, setimagesArray] = useState<any>(route.params?.postVisual);
   const [Isvideo, setIsvideo] = useState<any>(route.params?.Isvideo);
   const [formValue, setformValue] = useState<any>(route.params?.formValue);
@@ -63,7 +66,14 @@ const PropertyPostPreview: React.FC = ({
   // const isLast = index === filter.length - 1;
   const [selectedPropertySize, setselectedPropertySize] = useState('1');
   const [loading, setLoading] = useState(true);
+  const [toastId, setToastId] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
+  const {
+    data: Propdata,
+    status: Propstatus,
+    error: Properror,
+    execute: Propexecute,
+  } = useApiRequest(sendPropPostData);
   const Pagination = ({index, length}) => {
     return (
       <View style={localStyles.paginationWrapper}>
@@ -149,7 +159,7 @@ const PropertyPostPreview: React.FC = ({
             const responseBlob = await uriToBlob(
               Platform.OS === 'ios' && !image.Edit
                 ? image.uri
-                : image.destinationPathuri,
+                : image.destinationPath,
             );
 
             const fileExtension = getFileExtensionFromMimeType(
@@ -292,28 +302,27 @@ const PropertyPostPreview: React.FC = ({
 
     //setLoading(false);
     console.log(requestOption);
-    const data = await sendPostData(requestOption);
+    const data = await Propexecute(requestOption);
     setLoading(false);
-    toast.show({
-      title: 'Post created successfully',
-    });
-    console.log("'Post created successfully'");
-    navigation.reset({
-      index: 0,
-      routes: [
-        {
-          name: 'HomeTab',
-          state: {
-            routes: [
-              {
-                name: 'Home',
-                params: {tabIndex: 0},
-              },
-            ],
-          },
+    if (!toast.isActive(toastId)) {
+      const newId = Math.random();
+      setToastId(newId);
+      toast.show({
+        id: newId,
+        placement: 'bottom',
+        duration: 3000,
+        render: ({id}) => {
+          const uniqueToastId = 'toast-' + id;
+          return (
+            <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+              <ToastDescription>Post created successfully</ToastDescription>
+            </Toast>
+          );
         },
-      ],
-    });
+      });
+    }
+    // console.log("'Post created successfully'");
+    navigation.navigate('Home');
     // navigation.reset({
     //   index: 0,
     //   routes: [{name: 'HomeTab', params: {tabIndex: 0}}],
@@ -652,4 +661,4 @@ const localStyles = StyleSheet.create({
     // Add additional styling for the image here
   },
 });
-export default PropertyPostPreview;
+export default AppBaseContainer(PropertyPostPreview, ' ', false);

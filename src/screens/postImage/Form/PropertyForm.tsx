@@ -3,14 +3,14 @@ import {Formik} from 'formik';
 import {useState} from 'react';
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import * as Yup from 'yup';
-import {colors, styles} from '../../themes';
-import {moderateScale} from '../../config/constants';
+import {colors, styles} from '../../../themes';
+import {moderateScale} from '../../../config/constants';
 import React from 'react';
 // import {Discount, Property, Verified, Virtual} from '../../assets/svgs';
-import ZText from '../ZText';
-import AnimatedTextInput from '../AnimatedTextinput';
-import {Box} from '../../../components/ui/box';
-import {HStack} from '../../../components/ui/hstack';
+import ZText from '../../../sharedComponents/ZText';
+import AnimatedTextInput from '../../../sharedComponents/AnimatedTextinput';
+import {Box} from '../../../../components/ui/box';
+import {HStack} from '../../../../components/ui/hstack';
 import {
   Select,
   SelectBackdrop,
@@ -22,10 +22,10 @@ import {
   SelectItem,
   SelectPortal,
   SelectTrigger,
-} from '../../../components/ui/select';
-import {Switch} from '../../../components/ui/switch';
-import {ChevronDownIcon} from '../../../components/ui/icon';
-import {Discount, Property, Verified, Virtual} from '../../assets/svg';
+} from '../../../../components/ui/select';
+import {Switch} from '../../../../components/ui/switch';
+import {ChevronDownIcon} from '../../../../components/ui/icon';
+import {Discount, Property, Verified, Virtual} from '../../../assets/svg';
 function noWhitespace() {
   return this.transform((value, originalValue) =>
     /\s/.test(originalValue) ? NaN : value,

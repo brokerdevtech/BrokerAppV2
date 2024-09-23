@@ -1,10 +1,9 @@
-/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-// src/screens/SettingsScreen.tsx
+/* eslint-disable react-native/no-inline-styles */
+
 import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
-  Text,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
@@ -13,16 +12,14 @@ import {
   Image,
   Platform,
   Dimensions,
-  SafeAreaView,
 } from 'react-native';
 
-import AppBaseContainer from '../../hoc/AppPageContainer';
+import AppBaseContainer from '../../hoc/AppBaseContainer_old';
 
 import Video from 'react-native-video';
 
 import * as Yup from 'yup';
-import PropertyForm from '../../sharedComponents/Form/PropertyForm';
-import GenericForm from '../../sharedComponents/Form/GenericForm';
+
 import ZHeader from '../../sharedComponents/ZHeader';
 import {styles} from '../../themes';
 import FastImage from '@d11/react-native-fast-image';
@@ -32,6 +29,8 @@ import {moderateScale} from '../../config/constants';
 import ZText from '../../sharedComponents/ZText';
 import ZSafeAreaView from '../../sharedComponents/ZSafeAreaView';
 import {getFilterTags} from '../../../BrokerAppcore/services/filterTags';
+import PropertyForm from './Form/PropertyForm';
+import GenericForm from './Form/GenericForm';
 
 const genericvalidationSchema = Yup.object().shape({
   title: Yup.string().required('Title is required'),
@@ -41,23 +40,13 @@ const genericvalidationSchema = Yup.object().shape({
 //const AVATAR_URL = "https://www.realmenrealstyle.com/wp-content/uploads/2023/03/The-Side-Part.jpg";
 const devicewidth = Dimensions.get('window').width;
 
-let Selectedfiltersobj = {tags: []};
 const PostWizardScreen: React.FC = ({
   AlertDialogShow,
-  isPageSkeleton,
-  toggleSkeletonoff,
-  toggleSkeletonOn,
-  setLoading,
-  navigation,
-  user,
-  color,
-  route,
-  pageTitle,
-  toast,
-}) => {
-  // let filters = {tags:[]};
-  // filters.tags =[];
 
+  navigation,
+
+  route,
+}) => {
   const visualData = route.params?.imageData;
   const Isvideo = route.params?.Isvideo ? route.params?.Isvideo : false;
   const [error, setError] = useState(null);
@@ -97,54 +86,9 @@ const PostWizardScreen: React.FC = ({
     return () => backHandler.remove(); // Cleanup the event listener when the component unmounts
   }, [navigation]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await getFilterTags(user.userId, 'POST');
-
-        let postobj: any = {};
-        data.data.filters.map((item: any) => {
-          if (item.name != 'PostedSince' && item.name != 'PropertySizeUnit') {
-            postobj[item.name] = {
-              type: item.type,
-              filterOrder: item.filterOrder,
-              isMultiSelect: item.isMultiSelect,
-              Mandatory: item.isMandatory,
-              isvalid: item.isMandatory ? false : true,
-              dependsOn: item.dependsOn,
-              records: [],
-            };
-          }
-        });
-        //
-
-        setPostfilter(postobj);
-        data.data.filters = data.data.filters.filter(
-          p => p.name != 'PostedSince' && p.name != 'PropertySizeUnit',
-        );
-        setFilterTags(data.data);
-        setApiFilterTags(data.data);
-        setLoading(false);
-        //
-        //
-        //
-      } catch (error) {
-        setError(error);
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
   const handleSubmit = values => {
-    // Handle form submission here
     if (formikRef.current) {
-      // formikRef.current.submitForm();
     }
-    // setLoading(true);
-    // savePost(values, filter, imagesArray);
   };
 
   const navigateToNextScreen = async () => {
@@ -172,10 +116,6 @@ const PostWizardScreen: React.FC = ({
         });
       }
     }
-    console.log(
-      PropertyformikRef.current.values,
-      'PropertyformikRef.current.values',
-    );
   };
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -197,7 +137,6 @@ const PostWizardScreen: React.FC = ({
 
   const renderItem = ({item, index}) => (
     <View style={localStyles.card}>
-      {/* <Text>{item.destinationPathuri}</Text> */}
       {Platform.OS == 'ios' ? (
         <Image source={{uri: item.destinationPath}} style={localStyles.image} />
       ) : (
@@ -209,15 +148,6 @@ const PostWizardScreen: React.FC = ({
         />
       )}
     </View>
-    // <View style={localStyles.card}>
-    //   <TouchableOpacity>
-    //     <Image
-    //       source={{uri: item.destinationPathuri}}
-    //       style={localStyles.imagecard}
-    //       // resizeMode="cover"
-    //     />
-    //   </TouchableOpacity>
-    // </View>
   );
 
   const LeftIcon = () => {
@@ -626,4 +556,4 @@ const localStyles = StyleSheet.create({
     borderColor: 'black',
   },
 });
-export default PostWizardScreen;
+export default AppBaseContainer(PostWizardScreen, ' ', false);

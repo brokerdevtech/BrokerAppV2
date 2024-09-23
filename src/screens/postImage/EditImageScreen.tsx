@@ -12,29 +12,20 @@ import {
 } from 'react-native';
 import {Back} from '../../assets/svg';
 
-import {useSelector} from 'react-redux';
 import ImagePicker from 'react-native-image-crop-picker';
-// import FilterScreen from './FilterImage';
+
 import ZHeader from '../../sharedComponents/ZHeader';
 import ZText from '../../sharedComponents/ZText';
 
-import {useNavigation} from '@react-navigation/native';
-
-import {SafeAreaView} from 'react-native-safe-area-context';
-
 import RNFS from 'react-native-fs';
-//import PhotoEditor from 'react-native-photo-editor';
+
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import PhotoEditor from '@baronha/react-native-photo-editor';
 
-import {Box} from '../../../components/ui/box';
-import FastImage from '@d11/react-native-fast-image';
-import images from '@/assets/images';
-import {Button, ButtonText} from '../../../components/ui/button';
-import ZSafeAreaView from '../../sharedComponents/ZSafeAreaView';
-import {VStack} from '../../../components/ui/vstack';
-const EditImagesScreen = ({route}) => {
-  const colors = useSelector((state: RootState) => state.theme.theme);
+import {Button} from '../../../components/ui/button';
+
+import AppBaseContainer from '../../hoc/AppBaseContainer_old';
+const EditImagesScreen = ({route, navigation}: any) => {
   const [selectedThumbnails, setselectedThumbnails] = useState(
     route.params.selectedThumbnails,
   );
@@ -53,8 +44,7 @@ const EditImagesScreen = ({route}) => {
       let obj: any = [];
       selectedThumbnails.forEach(async (item, index) => {
         let fetchPhoto = await EditfetchPhotos(item);
-        // console.log('fetchPhoto');
-        // console.log(fetchPhoto);
+
         obj.push({...fetchPhoto});
       });
       setdestinationThumbnails(obj);
@@ -72,22 +62,9 @@ const EditImagesScreen = ({route}) => {
       _onEditStory(fileData.node.image.filepath, index);
     } else {
       _onEditStory(image.destinationPath, index);
-      // setSelectedImage(image);
     }
   };
-  getopenImagePicker = () => {
-    ImagePicker.openCropper({
-      path: selectedImage.uri,
-    }).then(image => {
-      let editimage: any = selectedImage;
-      editimage.uri = image.path;
-      setSelectedImage(editimage);
-    });
-  };
-  Filterclose = () => {
-    setModalVisible(false);
-  };
-  const navigation = useNavigation();
+
   const handleNextStepClick = async () => {
     navigation.navigate('PostWizard', {imageData: destinationThumbnails});
   };
@@ -99,41 +76,27 @@ const EditImagesScreen = ({route}) => {
     setselectedThumbnails(Thumbnails);
     setModalVisible(false);
   };
-  const fetchPhotosbyuri = async uri => {
-    //console.log(thumbnail);
-    const fileName = uri.split('/').pop();
-    const destinationPath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
-    await RNFS.copyFile(uri, destinationPath);
+  // const fetchPhotosbyuri = async uri => {
+  //   //console.log(thumbnail);
+  //   const fileName = uri.split('/').pop();
+  //   const destinationPath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
+  //   await RNFS.copyFile(uri, destinationPath);
 
-    return destinationPath;
-    // _onEditStory(destinationPath);
-  };
+  //   return destinationPath;
+  // };
   const EditfetchPhotos = async thumbnail => {
-    //console.log(thumbnail);
-    // const fileName = thumbnail.uri.split('/').pop();
     const destinationPath = thumbnail.uri.replace('file://', '');
-    //  await RNFS.copyFile(thumbnail.uri, destinationPath);
-    //   console.log('destinationPath');
+
     let destinationPathobj = {
       ...thumbnail,
       destinationPath: destinationPath,
       Edit: false,
       destinationPathuri: `file://${destinationPath}`,
     };
-    //   console.log(destinationPathobj);
-    return destinationPathobj;
-    // _onEditStory(destinationPath);
-  };
-  const deleteImage = async imagePath => {
-    try {
-      const result = await RNFS.unlink(imagePath);
 
-      // Handle the success scenario, maybe update the state or UI
-    } catch (error) {
-      console.error('Error Deleting File:', error.message);
-      // Handle the error scenario
-    }
+    return destinationPathobj;
   };
+
   const _onEditStory = async (destinationPath: any, index) => {
     let path = await PhotoEditor.open({
       path: destinationPath,
@@ -175,18 +138,6 @@ const EditImagesScreen = ({route}) => {
     </View>
   );
 
-  const Alimagefliter = () => {};
-
-  const goBack = () => {
-    destinationThumbnails.forEach(async (item, index) => {
-      if (item.Edit) {
-        await deleteImage(item.destinationPath);
-      }
-    });
-
-    navigation.goBack();
-  };
-
   const LeftIcon = () => {
     return (
       <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -203,9 +154,9 @@ const EditImagesScreen = ({route}) => {
       </TouchableOpacity>
     );
   };
-  console.log(destinationThumbnails, 'selectedd');
+
   return (
-    <SafeAreaView style={locaStyles.ssbg}>
+    <>
       <ZHeader
         title={'Selected Image'}
         rightIcon={<RightIcon />}
@@ -221,7 +172,7 @@ const EditImagesScreen = ({route}) => {
         keyExtractor={item => item.id}
         extraData={refresh}
       />
-    </SafeAreaView>
+    </>
   );
 };
 const locaStyles = StyleSheet.create({
@@ -242,7 +193,6 @@ const locaStyles = StyleSheet.create({
 
   listContainer: {
     alignItems: 'center',
-    // flex: 1,
   },
   card: {
     width: Platform.OS == 'ios' ? 400 : 380,
@@ -263,10 +213,5 @@ const locaStyles = StyleSheet.create({
 
     zIndex: -1,
   },
-
-  ssbg: {
-    backgroundColor: '#fff',
-    height: '100%',
-  },
 });
-export default EditImagesScreen;
+export default AppBaseContainer(EditImagesScreen, '', false);
