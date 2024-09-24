@@ -31,7 +31,7 @@ const DarkColor = {
 
 // Common colors
 export const commonColor = {
-  primary: '#BC4A4F',
+  primary: '#C20707',
   secondary: '#393939',
   Base: '#F8F8F8',
   white: '#FFFFFF',

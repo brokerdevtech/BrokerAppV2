@@ -18,6 +18,28 @@ export const ProximaFontFamily = {
   // poppinsMedium:"Poppins-Medium",
 };
 
+export const GilroyFontFamily = {
+  GilroyBlack: 'Gilroy Black',
+  GilroyBlackItalic: 'Gilroy BlackItalic',
+  GilroyBold: 'Gilroy Bold',
+  GilroyBoldItalic: 'Gilroy BoldItalic',
+  GilroyExtraBold: 'Gilroy ExtraBold',
+  GilroyExtraBoldItalic: 'Gilroy ExtraBoldItalic',
+  GilroyHeavy: 'Gilroy Heavy',
+  GilroyHeavyItalic: 'Gilroy HeavyItalic',
+  GilroyLight: 'Gilroy Light',
+  GilroyLightItalic: 'Gilroy LightItalic',
+  GilroyMedium: 'Gilroy Medium',
+  GilroyMediumItalic: 'Gilroy MediumItalic',
+  GilroyRegular: 'Gilroy Regular',
+  GilroyRegularItalic: 'Gilroy RegularItalic',
+  GilroySemiBold: 'Gilroy SemiBold',
+  GilroySemiBoldItalic: 'Gilroy SemiBoldItalic',
+  GilroyThin: 'Gilroy Thin',
+  GilroyThinItalic: 'Gilroy ThinItalic',
+  GilroyUltralight: 'Gilroy Ultralight',
+  GilroyUltraItalic: 'Gilroy UltraItalic',
+};
 /* font sizes */
 export const FontSize = {
   size_base: 16,
@@ -29,7 +51,7 @@ export const Color = {
   steelblue_100: '#1d7bbf',
   black: '#000',
   lightPrimary: '#fff',
-  primary: '#BC4A4F',
+  primary: '#C20707',
   secondary: '#ffff',
   gray: '#D8D8D8',
   gray1: '#E8E8E8',
@@ -37,6 +59,7 @@ export const Color = {
   primaryBlue: '#009cff',
   blue: 'blue',
   primaryDisable: '#c6c6c6',
+  secondryTextColor: '#7C8091',
 };
 export const BRColor = {
   lightgrey: '#D9D9D9',

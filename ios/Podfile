@@ -12,11 +12,21 @@ linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
   use_frameworks! :linkage => linkage.to_sym
+ 
+  $RNFirebaseAsStaticFramework = true
 end
 
 target 'BrokerApp' do
   config = use_native_modules!
+  use_modular_headers!
+  use_frameworks! :linkage => :static
+    pod 'ReactCommon', :path => '../node_modules/react-native/ReactCommon'
+  pod 'react-native-video', :path => '../node_modules/react-native-video'
+  # pod 'SDWebImage', :modular_headers => true
+  pod 'SDWebImage', '~> 5.18.7'
+  pod 'SDWebImageWebPCoder', '~> 0.14'
 
+  # pod 'SDWebImageWebPCoder', :modular_headers => true
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.

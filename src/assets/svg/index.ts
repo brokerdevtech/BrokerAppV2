@@ -30,6 +30,7 @@ import Construction from './construction.svg';
 import Developer from './develop.svg';
 
 import Virtual from './virtual.svg';
+import AppleIcon from './appleIcon.svg';
 
 export {
   Map_pin,
@@ -46,6 +47,7 @@ export {
   Back,
   GoogleIcon,
   FBIcon,
+  AppleIcon,
   Home,
   Home_Fill,
   Profile,
