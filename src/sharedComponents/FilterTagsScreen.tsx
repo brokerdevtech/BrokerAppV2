@@ -534,6 +534,7 @@ const FilterTagsScreen: React.FC = ({
       /> */}
 
       <ScrollView
+       keyboardShouldPersistTaps={"always"}
         bounces={false}
         showsVerticalScrollIndicator={false}
         style={localStyles.root}>

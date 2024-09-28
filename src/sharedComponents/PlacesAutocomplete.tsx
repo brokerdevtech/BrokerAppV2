@@ -142,7 +142,7 @@ const GooglePlacesAutocompleteModal = ({
         />
       </SafeAreaView>
       <ScrollView
-        keyboardShouldPersistTaps={true}
+        keyboardShouldPersistTaps={"always"}
         showsVerticalScrollIndicator={false}
         bounces={false}
         contentContainerStyle={localstyles.rootContainer}>

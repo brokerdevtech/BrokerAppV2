@@ -5,8 +5,10 @@ import {colors, styles} from '../themes';
 import {
   FlatList,
   Keyboard,
+  Pressable,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
@@ -79,21 +81,29 @@ console.log(result);
   };
 
   return (
-    <ScrollView keyboardShouldPersistTaps={true}>
+   <>
       <FlatList
-        keyboardShouldPersistTaps={true}
+        keyboardShouldPersistTaps={'always'}
         data={userLists}
         renderItem={({item, index}) => (
-          <View>
-            <TouchableWithoutFeedback onPress={() => onPressPlace(item)}>
-              <HStack
-                space={[2, 3]}
-                style={localStyles.listitem}
-                justifyContent="space-between">
-                <ZText>{item.name} </ZText>
-              </HStack>
-            </TouchableWithoutFeedback>
-          </View>
+        
+          <Pressable onPress={() => onPressPlace(item)}>
+  <HStack
+    space={[2, 3]}
+    style={localStyles.listitem}
+    justifyContent="space-between">
+    <ZText>{item.name}</ZText>
+  </HStack>
+</Pressable>
+            // <TouchableOpacity  onPress={() => onPressPlace(item)}>
+            //   <HStack
+            //     space={[2, 3]}
+            //     style={localStyles.listitem}
+            //     justifyContent="space-between">
+            //     <ZText>{item.name} </ZText>
+            //   </HStack>
+            // </TouchableOpacity >
+         
         )}
         keyExtractor={(item, index) => index.toString()}
         showsVerticalScrollIndicator={false}
@@ -110,7 +120,7 @@ console.log(result);
           {`Enter minimum 3 characters to search`}
         </ZText>
       )}
-    </ScrollView>
+    </>
   );
 }
 
