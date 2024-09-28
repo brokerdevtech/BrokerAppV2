@@ -12,7 +12,7 @@ const ZText = ({type, style, align, color, children, ...props}) => {
   const fontWeights = () => {
     switch (type.charAt(0).toUpperCase()) {
       case 'L':
-        return Typography.fontWeights.Regular;
+        return Typography.fontWeights.Light;
       case 'R':
         return Typography.fontWeights.Regular;
       case 'M':

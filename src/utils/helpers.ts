@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Platform} from 'react-native';
 import {PermissionKey} from '../config/constants';
-
+import RNFS from 'react-native-fs';
 // Check App Platform
 const checkPlatform = () => {
   if (Platform.OS === 'android') {
@@ -143,6 +143,21 @@ function uriToBlob(uri: string): Promise<Blob> {
     xhr.send(null);
   });
 }
+function uriToBlobRFNS(uri) {
+  console.log(uri, 'uriHelper');
+  return new Promise((resolve, reject) => {
+    RNFS.readFile(uri, 'base64')
+      .then(data => {
+        const blob = new Blob([Buffer.from(data, 'base64')], {
+          type: 'application/octet-stream',
+        });
+        resolve(blob);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+}
 function formatNumberToIndianSystem(number) {
   if (number) {
     if (number >= 10000000) {
@@ -184,4 +199,5 @@ export {
   uriToBlob,
   formatNumberToIndianSystem,
   checkPermission,
+  uriToBlobRFNS,
 };

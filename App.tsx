@@ -8,7 +8,7 @@
 import React, {useEffect, useState} from 'react';
 import './global.css';
 import Geolocation from 'react-native-geolocation-service';
-import { StreamChat } from 'stream-chat';
+import {StreamChat} from 'stream-chat';
 //import "./global.css";
 import type {PropsWithChildren} from 'react';
 import {
@@ -27,7 +27,10 @@ import MainNavigation from './src/navigation/MainNavigation';
 import {GluestackUIProvider} from '@/components/ui/gluestack-ui-provider';
 import PermissionService from './src/utils/PermissionService';
 import {PERMISSIONS, request} from 'react-native-permissions';
-import {getAddressFromCoordinates, getAddressFromCoordinatesNew} from './BrokerAppcore/services/googleService';
+import {
+  getAddressFromCoordinates,
+  getAddressFromCoordinatesNew,
+} from './BrokerAppcore/services/googleService';
 import {setCity} from './BrokerAppcore/redux/store/City/citySlice';
 import {setUser} from './BrokerAppcore/redux/store/user/userSlice';
 import {setTokens} from './BrokerAppcore/redux/store/authentication/authenticationSlice';
@@ -35,10 +38,8 @@ import {getTokens} from './src/utils/utilTokens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NativeModules} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import { setAppLocation } from './BrokerAppcore/redux/store/AppLocation/appLocation';
-
-
-
+import {setAppLocation} from './BrokerAppcore/redux/store/AppLocation/appLocation';
+import {S3Provider} from './src/Context/S3Context';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -80,7 +81,6 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 
 function App(): React.JSX.Element {
   //  NativeModules.DevSettings.setIsDebuggingRemotely(true);
-
 
   const isDarkMode = useColorScheme() === 'dark';
   const [loggedIn, setLoggedIn] = useState(false);
@@ -155,7 +155,7 @@ function App(): React.JSX.Element {
         granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] ===
         PermissionsAndroid.RESULTS.GRANTED
       ) {
-        let relustGeolocation:any = await getCurrentPositionAsync();
+        let relustGeolocation: any = await getCurrentPositionAsync();
 
         const {latitude, longitude} = relustGeolocation.coords;
 
@@ -209,13 +209,13 @@ function App(): React.JSX.Element {
 
   return (
     <Provider store={store}>
-     
-      <GestureHandlerRootView style={{flex: 1}}>
-        <GluestackUIProvider mode={colorMode}>
-          <MainNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-        </GluestackUIProvider>
-      </GestureHandlerRootView>
-   
+      <S3Provider>
+        <GestureHandlerRootView style={{flex: 1}}>
+          <GluestackUIProvider mode={colorMode}>
+            <MainNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+          </GluestackUIProvider>
+        </GestureHandlerRootView>
+      </S3Provider>
     </Provider>
   );
 }

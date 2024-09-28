@@ -2,6 +2,7 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import LoginScreen from '../screens/Auth/LoginScreen';
+import RegisterScreen from '../screens/Auth/RegisterScreen';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,16 @@ const AuthStackNavigation: React.FC<StackNavigationProps> = ({
           headerShown: false,
         }}>
         {props => <LoginScreen loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}
+      </Stack.Screen>
+      <Stack.Screen
+        name="Register"
+        options={{
+          headerTitle: '',
+          headerShown: false,
+        }}>
+        {props => (
+          <RegisterScreen loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+        )}
       </Stack.Screen>
     </Stack.Navigator>
   );

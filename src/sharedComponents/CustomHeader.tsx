@@ -32,7 +32,7 @@ import {
   verified_blue,
 } from '../assets/svg';
 import {Badge, BadgeIcon, BadgeText} from '@/components/ui/badge';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 const CustomHeader = () => {
   const cityToShow = 'Dubai';
@@ -41,7 +41,7 @@ const CustomHeader = () => {
   return (
     <View style={styles.headerContainer}>
       <View style={styles.leftContainer}>
-        <TouchableOpacity >
+        <TouchableOpacity>
           <Avatar size="md">
             <AvatarFallbackText>Jane Doe</AvatarFallbackText>
             <AvatarImage
@@ -61,9 +61,8 @@ const CustomHeader = () => {
                 padding: 5,
                 alignItems: 'center',
                 justifyContent: 'center',
-               
               }}>
-              <Icon as={verified_blue} size="sm"  stroke='white' />
+              <Icon as={verified_blue} size="sm" stroke="white" />
             </View>
           </Avatar>
         </TouchableOpacity>
@@ -80,24 +79,20 @@ const CustomHeader = () => {
       </View>
 
       <View style={styles.rightContainer}>
-
-
-
-        
-        <TouchableOpacity style={styles.iconButton}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Notification')}
+          style={styles.iconButton}>
           <Icon as={Notification_Icon} size="2xl" />
         </TouchableOpacity>
 
-
-
-
-        <TouchableOpacity style={styles.iconButton} onPress={() => { 
-    console.log("Press");
-     navigation.navigate('AppChat');
-}}>
-   
-    <Icon as={Chat_icon} size="2xl" />
-</TouchableOpacity>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => {
+            console.log('Press');
+            navigation.navigate('AppChat');
+          }}>
+          <Icon as={Chat_icon} size="2xl" />
+        </TouchableOpacity>
       </View>
     </View>
   );
