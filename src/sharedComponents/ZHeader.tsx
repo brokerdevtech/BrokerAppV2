@@ -10,7 +10,6 @@ import {moderateScale} from '../config/constants';
 
 import {Text} from 'react-native';
 
-
 function ZHeader(props) {
   const {
     title,
@@ -53,9 +52,17 @@ function ZHeader(props) {
           <TouchableOpacity
             style={[styles.pr10]}
             onPress={onPressBack || goBack}>
-          
+            <View
+              style={{
+                // ...styles.appTitleMain,
+                // color: '#007acc',
+                padding: 8,
+                borderWidth: 1,
+                borderColor: '#E5E5E5',
+                borderRadius: 40,
+              }}>
               <Back accessible={true} accessibilityLabel="Back" />
-            
+            </View>
           </TouchableOpacity>
         )}
         {!!isLeftIcon && isLeftIcon}
@@ -63,7 +70,7 @@ function ZHeader(props) {
         <ZText
           numberOfLines={1}
           style={[styles.pr10, styles.ml20, localStyles.titleText]}
-          type={'r22'}>
+          type={'R18'}>
           {title}
         </ZText>
       </View>

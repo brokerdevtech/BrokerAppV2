@@ -79,12 +79,15 @@ android {
 
     namespace "com.brokerapp.broker"
     defaultConfig {
+   
+        minSdkVersion 24  //using this for react-native-video-trim ffmpeg-kit error resolve
         applicationId "com.brokerapp.broker"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true // use support library for the react-native-image-crop-picker
+       
     }
     signingConfigs {
         debug {

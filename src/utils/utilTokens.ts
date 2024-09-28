@@ -12,7 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import store from '@/BrokerAppcore/redux/store';
 import {setUser, logoutUser} from '@/BrokerAppcore/redux/store/user/userSlice';
-import { firebase } from '@react-native-firebase/messaging';
+import {firebase} from '@react-native-firebase/messaging';
 // import store from '../../BrokerAppCore/redux/store';
 
 export const clearlogoutUser = async () => {
@@ -142,27 +142,19 @@ export const Checkerror = async result => {
     // reset(0, [{ name: 'Login' }]);
   }
 };
-export const removeItemStorage = async (item) => {
-
+export const removeItemStorage = async item => {
   console.log(item);
   await AsyncStorage.removeItem(item);
-
- 
-
- 
 };
-export const getItemStorage = async (item,value) => {
-  let data =   await AsyncStorage.getItem(item,value);
+export const getItemStorage = async (item, value) => {
+  let data = await AsyncStorage.getItem(item, value);
 
   return data;
-
- 
 };
 export const getfcmToken = async () => {
   let fcmToken = await AsyncStorage.getItem('fcmToken');
-
+  console.log('Old FCM token', fcmToken);
   if (!fcmToken) {
-
     fcmToken = await firebase.messaging().getToken();
     if (fcmToken) {
       // user has a device token

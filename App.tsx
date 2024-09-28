@@ -8,7 +8,7 @@
 import React, {useEffect, useState} from 'react';
 import './global.css';
 import Geolocation from 'react-native-geolocation-service';
-import { StreamChat } from 'stream-chat';
+import {StreamChat} from 'stream-chat';
 //import "./global.css";
 import type {PropsWithChildren} from 'react';
 import {
@@ -27,117 +27,18 @@ import MainNavigation from './src/navigation/MainNavigation';
 import {GluestackUIProvider} from '@/components/ui/gluestack-ui-provider';
 import PermissionService from './src/utils/PermissionService';
 import {PERMISSIONS, request} from 'react-native-permissions';
-import {getAddressFromCoordinates, getAddressFromCoordinatesNew} from './BrokerAppcore/services/googleService';
+import {
+  getAddressFromCoordinates,
+  getAddressFromCoordinatesNew,
+} from './BrokerAppcore/services/googleService';
 import {setCity} from './BrokerAppcore/redux/store/City/citySlice';
 import {setUser} from './BrokerAppcore/redux/store/user/userSlice';
 import {setTokens} from './BrokerAppcore/redux/store/authentication/authenticationSlice';
 import {getTokens} from './src/utils/utilTokens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import { setAppLocation } from './BrokerAppcore/redux/store/AppLocation/appLocation';
-import {NativeBaseProvider, extendTheme} from 'native-base';
-import {moderateScale} from './src/config/constants';
-import typography from './src/themes/typography';
-
-const theme = extendTheme({
-  colors: {
-    // Add new color
-    Aprimary: '#1D7BBF',
-    Asecondary: '#393939',
-    ABase: '#F8F8F8',
-    Awhite: '#FFFFFF',
-    Ablack: '#333333',
-    AerrorColor: '#F54135',
-    primaryfontColor: '#232323',
-    secondaryfontColor: '#d9d9d9',
-    primary: {
-      50: '#def6ff',
-      100: '#b7defa',
-      200: '#8cc7f1',
-      300: '#62b0e8',
-      400: '#389ae1',
-      500: '#1e80c7',
-      600: '#13649c',
-      700: '#074771',
-      800: '#002b46',
-      900: '#000f1d',
-    },
-    // Redefining only one shade, rest of the color will remain same.
-  },
-  fontConfig: {
-    Poppins: {
-      100: {
-        normal: 'Poppins-Medium',
-        italic: 'Poppins-MediumItalic',
-      },
-      200: {
-        normal: 'Poppins-Medium',
-        italic: 'Roboto-LightItalic',
-      },
-      300: {
-        normal: 'Poppins-Medium',
-        italic: 'Roboto-LightItalic',
-      },
-      400: {
-        normal: 'Poppins-Medium',
-        italic: 'Poppins-MediumItalic',
-      },
-      500: {
-        normal: 'Poppins-Medium',
-      },
-      600: {
-        normal: 'Poppins-Medium',
-        italic: 'Poppins-MediumItalic',
-      },
-    },
-  },
-
-  // Make sure values below matches any of the keys in `fontConfig`
-  fonts: {
-    heading: 'InterRegular',
-    body: 'InterRegular',
-    mono: 'InterRegular',
-  },
-  components: {
-    Input: {
-      // Can simply pass default props to change default behaviour of components.
-      baseStyle: {
-        // rounded: 'lg',
-        variant: 'outline',
-        px: '16px',
-        pt: '14px',
-        pb: '14px',
-        minheight: '50px',
-        borderRadius: '5',
-        borderColor: '#D9D9D9',
-        color: 'black',
-        //backgroundColor:'#F3F3F3',
-        fontWeights: typography.fontWeights.Regular,
-        _input: {
-          // bg: '#EFF4F8',
-        },
-      },
-      defaultProps: {
-        colorScheme: 'secondaryfontColor',
-        size: 'md',
-      },
-      sizes: {
-        xl: {
-          fontSize: moderateScale(64),
-        },
-        lg: {
-          fontSize: moderateScale(32),
-        },
-        md: {
-          fontSize: moderateScale(16),
-        },
-        sm: {
-          fontSize: moderateScale(14),
-        },
-      },
-    },
-  },
-});
+import {setAppLocation} from './BrokerAppcore/redux/store/AppLocation/appLocation';
+import {S3Provider} from './src/Context/S3Context';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -179,7 +80,6 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 
 function App(): React.JSX.Element {
   //  NativeModules.DevSettings.setIsDebuggingRemotely(true);
-
 
   const isDarkMode = useColorScheme() === 'dark';
   const [loggedIn, setLoggedIn] = useState(false);
@@ -254,7 +154,7 @@ function App(): React.JSX.Element {
         granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] ===
         PermissionsAndroid.RESULTS.GRANTED
       ) {
-        let relustGeolocation:any = await getCurrentPositionAsync();
+        let relustGeolocation: any = await getCurrentPositionAsync();
 
         const {latitude, longitude} = relustGeolocation.coords;
 
@@ -308,13 +208,13 @@ function App(): React.JSX.Element {
 
   return (
     <Provider store={store}>
-     <NativeBaseProvider theme={theme}>
-      <GestureHandlerRootView style={{flex: 1}}>
-        <GluestackUIProvider mode={colorMode}>
-          <MainNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-        </GluestackUIProvider>
-      </GestureHandlerRootView>
-    </NativeBaseProvider>
+      <S3Provider>
+        <GestureHandlerRootView style={{flex: 1}}>
+          <GluestackUIProvider mode={colorMode}>
+            <MainNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+          </GluestackUIProvider>
+        </GestureHandlerRootView>
+      </S3Provider>
     </Provider>
   );
 }

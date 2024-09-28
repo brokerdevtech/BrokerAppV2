@@ -101,6 +101,8 @@ const CustomHeader = () => {
     
   );
 };
+
+
 const styles = StyleSheet.create({
   headerSection: {
      backgroundColor: '#fff',

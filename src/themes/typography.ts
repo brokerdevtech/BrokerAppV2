@@ -1,34 +1,34 @@
 import {moderateScale} from '../config/constants';
-import { FontFamily } from '../styles/GlobalStyles';
-import {  ProximaFontFamily } from '../styles/GlobalStyles';
+import {FontFamily, GilroyFontFamily} from '../styles/GlobalStyles';
+import {ProximaFontFamily} from '../styles/GlobalStyles';
 // App Font-Family:
 const fontWeights = {
   Light: {
-    fontFamily: ProximaFontFamily.proximaRegular,
-    fontWeight:300,
+    fontFamily: GilroyFontFamily.GilroyLight,
+    fontWeight: 300,
   },
   Regular: {
-    fontFamily: ProximaFontFamily.proximaRegular,
-    fontWeight:400,
+    fontFamily: GilroyFontFamily.GilroyRegular,
+    fontWeight: 400,
   },
   Medium: {
-    fontFamily:ProximaFontFamily.proximaRegular,
-    fontWeight:500,
+    fontFamily: GilroyFontFamily.GilroyMedium,
+    fontWeight: 500,
   },
   SemiBold: {
-    fontFamily: ProximaFontFamily.proximaSemiBold,
-    fontWeight:600,
+    fontFamily: GilroyFontFamily.GilroySemiBold,
+    fontWeight: 600,
   },
   Bold: {
-    fontFamily: ProximaFontFamily.proximaRegular,
-    fontWeight:700,
+    fontFamily: GilroyFontFamily.GilroyBold,
+    fontWeight: 700,
   },
 };
 const fontColor = {
-  primaryfontColor : {
+  primaryfontColor: {
     color: '#232323',
   },
-  secondaryfontColor : {
+  secondaryfontColor: {
     color: '#d9d9d9',
   },
 };
@@ -51,22 +51,21 @@ const fontSizes = {
   },
   f18: {
     fontSize: moderateScale(18),
-   
   },
   f20: {
     fontSize: moderateScale(20),
-    fontWeight:700,
+    fontWeight: 700,
   },
   f22: {
     fontSize: moderateScale(22),
-    fontWeight:700,
+    fontWeight: 700,
   },
   f24: {
     fontSize: moderateScale(24),
   },
   f26: {
     fontSize: moderateScale(26),
-    fontWeight:800,
+    fontWeight: 800,
   },
   f28: {
     fontSize: moderateScale(28),
@@ -95,17 +94,17 @@ const fontSizes = {
 };
 
 const fontBold = {
-  regular:{
-    fontWeight:400,
+  regular: {
+    fontWeight: 400,
   },
-  semiBold:{
-    fontWeight:700,
+  semiBold: {
+    fontWeight: 700,
   },
-  bold:{
-    fontWeight:700,
-  }
+  bold: {
+    fontWeight: 700,
+  },
 };
 
-const typography = {fontWeights, fontSizes,fontColor, fontBold};
+const typography = {fontWeights, fontSizes, fontColor, fontBold};
 
 export default typography;
