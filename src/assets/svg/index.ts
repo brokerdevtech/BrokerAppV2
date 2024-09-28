@@ -15,6 +15,22 @@ import Map_pin from './mapPin.svg';
 import Notification_Icon from './notification-bing.svg';
 import Chat_icon from './chat_icon.svg';
 import verified_blue from './verified_blue.svg';
+
+import Volume from './icons/volume.svg';
+import VolumeMute from './icons/volume-mute.svg';
+import OpenEye from './icons/eye.svg';
+import UnLike from './icons/like.svg';
+import LikeWhite from './icons/likewhite-fill.svg';
+import UnLikeWhite from './icons/likewhite.svg';
+import tab_card from './Tabicon/tab_card.svg';
+import tab_home from './Tabicon/tab_home.svg';
+import tab_insurance from './Tabicon/tab_insurance.svg';
+import tab_loan from './Tabicon/tab_loan.svg';
+import tab_travel from './Tabicon/tab_travel.svg';
+import tab_wealth from './Tabicon/tab_wealth.svg';
+
+
+
 import Multiple from './bursts.svg';
 import Multiple_Fill from './bursts_filled.svg';
 import Verified from './verified.svg';
@@ -60,6 +76,18 @@ export {
   CloseIcon,
   NetworkFill,
   Person,
+  Volume,
+  VolumeMute,
+  OpenEye,
+  UnLike,
+  LikeWhite,
+  UnLikeWhite,
+  tab_card,
+  tab_home,
+  tab_insurance,
+  tab_loan,
+  tab_travel,
+  tab_wealth,
   Balcony,
   Bathroom,
   Bed,

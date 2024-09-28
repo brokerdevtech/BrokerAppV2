@@ -36,7 +36,6 @@ import {setUser} from './BrokerAppcore/redux/store/user/userSlice';
 import {setTokens} from './BrokerAppcore/redux/store/authentication/authenticationSlice';
 import {getTokens} from './src/utils/utilTokens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {NativeModules} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {setAppLocation} from './BrokerAppcore/redux/store/AppLocation/appLocation';
 import {S3Provider} from './src/Context/S3Context';

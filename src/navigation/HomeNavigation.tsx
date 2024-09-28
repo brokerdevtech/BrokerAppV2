@@ -14,6 +14,10 @@ import StoryView from '../components/story/StoryView';
 import PostWizardScreen from '../screens/postImage/PostWizardScreen';
 
 import ChatPageStack from './ChatNavigation';
+import { OverlayProvider } from 'stream-chat-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useStreamChatTheme } from '../hooks/useStreamChatTheme';
+import VideoCarousel from '../screens/Podcast/VideoCarousel';
 import {OverlayProvider} from 'stream-chat-react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useStreamChatTheme} from '../hooks/useStreamChatTheme';
@@ -49,6 +53,8 @@ const HomeNavigation: React.FC = () => {
           name="AppChat"
           component={ChatPageStack}
         />
+        <Stack.Screen options={{headerShown: false}} name="VideoReels" component={VideoCarousel} />
+      {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         <Stack.Screen name="HomeTab" component={DashboradScreen} />
       </Stack.Group> */}
