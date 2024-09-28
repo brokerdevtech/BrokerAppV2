@@ -6,7 +6,7 @@ import {Input, InputField} from '../../../components/ui/input';
 import {useApiRequest} from '../../../src/hooks/useApiRequest';
 import {Formik} from 'formik';
 import {useNavigation} from '@react-navigation/native';
-import {getBrokerCategoryList} from '../../../BrokerAppcore/services/new/authService';
+import {getBrokerCategoryList} from '../../../BrokerAppCore/services/new/authService';
 import {
   Keyboard,
   SafeAreaView,
@@ -17,14 +17,14 @@ import {
   View,
 } from 'react-native';
 import {storeTokens, storeUser} from '../../../src/utils/utilTokens';
-import store from '../../../BrokerAppcore/redux/store';
-import {setUser} from '../../../BrokerAppcore/redux/store/user/userSlice';
-import {setTokens} from '../../../BrokerAppcore/redux/store/authentication/authenticationSlice';
+import store from '../../../BrokerAppCore/redux/store';
+import {setUser} from '../../../BrokerAppCore/redux/store/user/userSlice';
+import {setTokens} from '../../../BrokerAppCore/redux/store/authentication/authenticationSlice';
 
 import {CheckIcon, CircleIcon, Icon} from '@/components/ui/icon';
 
 import * as yup from 'yup';
-import UserRegistration from '../../../BrokerAppcore/types/userRegistration';
+import UserRegistration from '../../../BrokerAppCore/types/userRegistration';
 import {Color, GilroyFontFamily} from '../../styles/GlobalStyles';
 import {InputIcon, InputSlot} from '../../../components/ui/input';
 import {
@@ -51,7 +51,7 @@ import RadioGroup from '../../sharedComponents/RadioGroup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getfcmToken} from '../../utils/utilTokens';
 import DeviceInfo from 'react-native-device-info';
-import {signup} from '../../../BrokerAppcore/services/new/authService';
+import {signup} from '../../../BrokerAppCore/services/new/authService';
 import {Toast, ToastDescription, useToast} from '../../../components/ui/toast';
 const CustomCheckbox = ({label, checked, onChange}) => {
   return (

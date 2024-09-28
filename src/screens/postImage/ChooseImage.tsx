@@ -51,7 +51,7 @@ import {
   storiesImagesBucketPath,
   storiesVideosBucketPath,
 } from '../../constants/constants';
-import {AddStory} from '../../../BrokerAppcore/services/Story';
+import {AddStory} from '../../../BrokerAppCore/services/Story';
 import ZHeader from '../../sharedComponents/ZHeader';
 import {Back, Multiple, Multiple_Fill} from '../../assets/svg';
 import {useApiRequest} from '../../hooks/useApiRequest';

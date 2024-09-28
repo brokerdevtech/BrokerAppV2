@@ -24,12 +24,14 @@ import {useSelector} from 'react-redux';
 //   PodcastLike,
 //   PodcastUnlike,
 // } from '../../../BrokerAppCore/services/podcast';
-import { Box, Center } from 'native-base';
+//import { Box, Center } from 'native-base';
 import ZText from '../../sharedComponents/ZText';
-import { fetchPodcastDetails } from '@/BrokerAppcore/services/new/podcastService';
+import { fetchPodcastDetails } from '@/BrokerAppCore/services/new/podcastService';
 import TouchableOpacityWithPermissionCheck from '../../sharedComponents/TouchableOpacityWithPermissionCheck';
 import {PermissionKey} from '../../config/constants';
 import TextWithPermissionCheck from '../../sharedComponents/TextWithPermissionCheck';
+import { Box } from '../../../components/ui/box';
+import { Center } from '../../../components/ui/center';
 
 const SingleReel = ({item, index, currentIndex}) => {
   const user = useSelector((state: RootState) => state.user.user);

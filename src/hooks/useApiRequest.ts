@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {ApiResponse} from '../../BrokerAppcore/services/new/ApiResponse'; // Assuming ApiResponse is defined
+import {ApiResponse} from '../../BrokerAppCore/services/new/ApiResponse'; // Assuming ApiResponse is defined
 
 export const useApiRequest = <T, P extends any[]>(
   apiFunction: (...params: P) => Promise<ApiResponse<T>>,

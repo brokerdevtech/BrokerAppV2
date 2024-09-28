@@ -10,8 +10,8 @@ import {useNavigation} from '@react-navigation/native';
 
 // Store tokens after login
 import {useDispatch} from 'react-redux';
-import store from '@/BrokerAppcore/redux/store';
-import {setUser, logoutUser} from '@/BrokerAppcore/redux/store/user/userSlice';
+import store from '@/BrokerAppCore/redux/store';
+import {setUser, logoutUser} from '@/BrokerAppCore/redux/store/user/userSlice';
 import {firebase} from '@react-native-firebase/messaging';
 // import store from '../../BrokerAppCore/redux/store';
 

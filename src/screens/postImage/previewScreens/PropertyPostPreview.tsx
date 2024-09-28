@@ -30,7 +30,7 @@ import ZHeader from '../../../sharedComponents/ZHeader';
 import ZText from '../../../sharedComponents/ZText';
 import {Box} from '../../../../components/ui/box';
 import FastImage from '@d11/react-native-fast-image';
-import {sendPostData} from '../../../../BrokerAppcore/services/postService';
+import {sendPostData} from '../../../../BrokerAppCore/services/postService';
 import Video from 'react-native-video';
 import {
   formatNumberToIndianSystem,
@@ -45,7 +45,7 @@ import {
 import {Back} from '../../../assets/svg';
 import AppBaseContainer from '../../../hoc/AppBaseContainer_old';
 import {useApiRequest} from '../../../hooks/useApiRequest';
-import {sendPropPostData} from '../../../../BrokerAppcore/services/new/postServices';
+import {sendPropPostData} from '../../../../BrokerAppCore/services/new/postServices';
 import {Toast, ToastDescription} from '../../../../components/ui/toast';
 
 const PropertyPostPreview: React.FC = ({

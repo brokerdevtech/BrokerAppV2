@@ -12,8 +12,8 @@ import { firebase } from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { StreamChat, TokenOrProvider } from 'stream-chat';
-import { GetStreamToken } from '../../BrokerAppcore/services/authService';
-import { RootState } from '../../BrokerAppcore/redux/store/reducers';
+import { GetStreamToken } from '../../BrokerAppCore/services/authService';
+import { RootState } from '../../BrokerAppCore/redux/store/reducers';
 
 
 export const useChatClient = () => {

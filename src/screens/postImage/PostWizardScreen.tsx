@@ -28,7 +28,7 @@ import CategorySelector from './CategorySelector';
 import {moderateScale} from '../../config/constants';
 import ZText from '../../sharedComponents/ZText';
 import ZSafeAreaView from '../../sharedComponents/ZSafeAreaView';
-import {getFilterTags} from '../../../BrokerAppcore/services/filterTags';
+import {getFilterTags} from '../../../BrokerAppCore/services/filterTags';
 import PropertyForm from './Form/PropertyForm';
 import GenericForm from './Form/GenericForm';
 

@@ -1,10 +1,11 @@
 import React, {useRef, useState} from 'react';
-import {Toast, useToast} from 'native-base';
+// import {Toast, useToast} from 'native-base';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {checkPermission} from '../utils/helpers';
 import {PermissionKey} from '../config/constants';
 import {Color} from '../styles/GlobalStyles';
 import ZText from './ZText';
+import { useToast } from '../../components/ui/toast';
 
 interface TextWithPermissionCheckProps {
   permissionEnum: PermissionKey;

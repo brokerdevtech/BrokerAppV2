@@ -9,7 +9,7 @@ import FastImage from '@d11/react-native-fast-image';
 import { imagesBucketcloudfrontPath } from '../config/constants';
 import ZText from '../sharedComponents/ZText';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
-import { fetchPodcastList } from '@/BrokerAppcore/services/new/podcastService';
+import { fetchPodcastList } from '@/BrokerAppCore/services/new/podcastService';
 
 import TABCard from '../assets/svg/Tabicon/tab_card.svg' 
 import TABInsurance from '../assets/svg/Tabicon/tab_insurance.svg';

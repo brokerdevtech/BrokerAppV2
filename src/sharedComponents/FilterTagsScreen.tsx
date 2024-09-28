@@ -28,12 +28,12 @@ import ZSafeAreaView from './ZSafeAreaView';
 import ZHeader from './ZHeader';
 import LocalityTag from './LocalityTag';
 import Video from 'react-native-video';
-import {RootState} from '../../BrokerAppcore/redux/store/reducers';
+import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import {useApiRequest} from '../hooks/useApiRequest';
 import {
   getCascadedFilters,
   getFilterTags,
-} from '../../BrokerAppcore/services/new/filterTags';
+} from '../../BrokerAppCore/services/new/filterTags';
 
 const devicewidth = Dimensions.get('window').width;
 let Selectedfiltersobj = {tags: []};

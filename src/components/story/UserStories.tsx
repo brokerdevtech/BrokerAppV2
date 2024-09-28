@@ -21,8 +21,8 @@ import {VStack} from '@/components/ui/vstack';
 import {Skeleton} from '@/components/ui/skeleton';
 import {checkPermission} from '@/src/utils/helpers';
 import {moderateScale, PermissionKey} from '@/src/config/constants';
-import {getDashboardStory} from '@/BrokerAppcore/services/Story';
-import {RootState} from '@/BrokerAppcore/redux/store/reducers';
+import {getDashboardStory} from '@/BrokerAppCore/services/Story';
+import {RootState} from '@/BrokerAppCore/redux/store/reducers';
 
 const StoriesSkeleton = () => {
   return (

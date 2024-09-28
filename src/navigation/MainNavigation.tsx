@@ -1,4 +1,4 @@
-import { RootState } from "@/BrokerAppcore/redux/store/reducers";
+import { RootState } from "@/BrokerAppCore/redux/store/reducers";
 import { NavigationContainer } from "@react-navigation/native";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";

@@ -18,9 +18,7 @@ import { OverlayProvider } from 'stream-chat-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStreamChatTheme } from '../hooks/useStreamChatTheme';
 import VideoCarousel from '../screens/Podcast/VideoCarousel';
-import {OverlayProvider} from 'stream-chat-react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useStreamChatTheme} from '../hooks/useStreamChatTheme';
+
 import EditImagesScreen from '../screens/postImage/EditImageScreen';
 import FilterTagsScreen from '../sharedComponents/FilterTagsScreen';
 import PropertyPostPreview from '../screens/postImage/previewScreens/PropertyPostPreview';

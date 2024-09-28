@@ -18,12 +18,12 @@ import {Input, InputField} from '@/components/ui/input';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
 
 import {useNavigation} from '@react-navigation/native';
-import {login} from '@/BrokerAppcore/services/new/authService';
+import {login} from '@/BrokerAppCore/services/new/authService';
 import {Text} from 'react-native';
 import {storeTokens, storeUser} from '@/src/utils/utilTokens';
-import store from '@/BrokerAppcore/redux/store';
-import {setUser} from '@/BrokerAppcore/redux/store/user/userSlice';
-import {setTokens} from '@/BrokerAppcore/redux/store/authentication/authenticationSlice';
+import store from '@/BrokerAppCore/redux/store';
+import {setUser} from '@/BrokerAppCore/redux/store/user/userSlice';
+import {setTokens} from '@/BrokerAppCore/redux/store/authentication/authenticationSlice';
 
 export default function LoginModal({
   showActionsheet,

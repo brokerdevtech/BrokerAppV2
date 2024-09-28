@@ -42,7 +42,7 @@ import ZHeader from '../../../sharedComponents/ZHeader';
 import Video from 'react-native-video';
 import AppBaseContainer from '../../../hoc/AppBaseContainer_old';
 import {useApiRequest} from '../../../hooks/useApiRequest';
-import {sendGenericPostData} from '../../../../BrokerAppcore/services/new/postServices';
+import {sendGenericPostData} from '../../../../BrokerAppCore/services/new/postServices';
 import {Toast, ToastDescription} from '../../../../components/ui/toast';
 
 const GenericPostPreview: React.FC = ({

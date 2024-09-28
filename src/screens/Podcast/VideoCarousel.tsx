@@ -11,11 +11,11 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
 import {useInfiniteScrollWithData} from '../../hooks/useInfiniteScrollWithData';
 import SingleReel from './SingleReel';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+//import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import {moderateScale} from '../../config/constants';
 import {Color} from '../../styles/GlobalStyles';
-import { fetchPodcastList } from '@/BrokerAppcore/services/new/podcastService';
+import { fetchPodcastList } from '../../../BrokerAppCore/services/new/podcastService';
 
 
 const {width, height} = Dimensions.get('window');

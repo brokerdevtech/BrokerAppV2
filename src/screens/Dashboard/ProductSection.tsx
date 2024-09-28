@@ -5,11 +5,12 @@ import margin from '@/themes/margin';
 import padding from '@/themes/padding';
 import { HStack } from '@/components/ui/hstack';
 import { Box } from '@/components/ui/box';
-import { VStack } from 'native-base';
+
 import c1 from '../../assets/images/c1.png';
 import c2 from '../../assets/images/c2.png';
 import p1 from '../../assets/images/p1.png';
 import p2 from '../../assets/images/p2.png';
+import { VStack } from '../../../components/ui/vstack';
 
 
 

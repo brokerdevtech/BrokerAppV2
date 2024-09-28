@@ -9,7 +9,7 @@ import LoadingSpinner from '../sharedComponents/LoadingSpinner';
 import ZSafeAreaView from '../sharedComponents/ZSafeAreaView';
 import ZHeader from '../sharedComponents/ZHeader';
 import FullScreenSkeleton from '../sharedComponents/Skeleton/FullScreenSkeleton';
-import {RootState} from '../../BrokerAppcore/redux/store/reducers';
+import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import {useS3} from '../Context/S3Context';
 
 const AppBaseContainer = (WrappedComponent, pageTitle, isHeader = true) => {

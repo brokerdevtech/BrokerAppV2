@@ -1,5 +1,5 @@
-import store from '../../BrokerAppcore/redux/store/index';
-import { setAppPermissionStatus } from '../../BrokerAppcore/redux/store/AppPermissions/permissionsSlice';
+import store from '../../BrokerAppCore/redux/store/index';
+import { setAppPermissionStatus } from '../../BrokerAppCore/redux/store/AppPermissions/permissionsSlice';
 import { Platform, Alert, AppState } from 'react-native';
 import {
   request,

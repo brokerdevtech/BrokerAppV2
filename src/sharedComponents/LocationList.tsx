@@ -12,12 +12,12 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {RootState} from '../../BrokerAppcore/redux/store/reducers';
+import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import {
   getPlaceDataFromID,
   searchLocation,
   searchLocationnew,
-} from '../../BrokerAppcore/services/googleService';
+} from '../../BrokerAppCore/services/googleService';
 import {HStack} from '../../components/ui/hstack';
 import ZText from './ZText';
 import NoDataFound from './NoDataFound';

@@ -15,7 +15,7 @@ import {moderateScale} from '../../config/constants';
 import {Color} from '../../styles/GlobalStyles';
 import {useNavigation} from '@react-navigation/native';
 import SingleReel from './SingleReel';
-import { fetchPodcastList } from '@/BrokerAppcore/services/new/podcastService';
+import { fetchPodcastList } from '@/BrokerAppCore/services/new/podcastService';
 const {width, height} = Dimensions.get('window');
 
 const VideoReels: React.FC = ({route}) => {
