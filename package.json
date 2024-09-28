@@ -61,6 +61,7 @@
     "aws-sdk": "^2.1691.0",
     "axios": "^1.7.7",
     "formik": "^2.4.6",
+    "lightningcss-win32-x64-msvc": "^1.27.0",
     "loadash": "^1.0.0",
     "lodash.debounce": "^4.0.8",
     "moment": "^2.30.1",

@@ -14,6 +14,7 @@ import {RootState} from '../../BrokerAppcore/redux/store/reducers';
 import {
   getPlaceDataFromID,
   searchLocation,
+  searchLocationnew,
 } from '../../BrokerAppcore/services/googleService';
 import {HStack} from '../../components/ui/hstack';
 import ZText from './ZText';
@@ -41,7 +42,7 @@ function LocationList(props: any) {
         setissearch(false);
         if (searchText.length >= 3) {
           const result = await searchLocation(searchText, SetCityFilter);
-
+console.log(result);
           setLoading(false);
           if (result) {
             setuserLists(result);
@@ -73,6 +74,7 @@ function LocationList(props: any) {
     Keyboard.dismiss(); //
     let itemLoaction = await getPlaceDataFromID(item.placeId);
     //
+    console.log(itemLoaction);
     setLoaction(itemLoaction);
   };
 

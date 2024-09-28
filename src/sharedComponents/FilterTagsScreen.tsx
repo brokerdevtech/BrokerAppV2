@@ -92,8 +92,8 @@ const FilterTagsScreen: React.FC = ({
         // First, wait for filterexecute to complete
         await filterexecute(user.userId, 'post');
 
-        // Now fetch the filter data after filterexecute is done
-        await Tagfetching();
+        // // Now fetch the filter data after filterexecute is done
+        // await Tagfetching();
       } catch (error) {
         console.error('Error occurred:', filtererror);
         setError(filtererror);
@@ -128,6 +128,29 @@ const FilterTagsScreen: React.FC = ({
     return () => backHandler.remove(); // Cleanup the event listener when the component unmounts
   }, [navigation]);
 
+  
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+    
+
+        // Now fetch the filter data after filterexecute is done
+        await Tagfetching();
+      } catch (error) {
+        console.error('Error occurred:', filtererror);
+        setError(filtererror);
+      } finally {
+        setLoading(false); // Make sure loading is set to false after the process is done
+      }
+    };
+
+    // Make sure user.userId is available before calling fetchData
+ 
+      fetchData();
+
+  }, [filterdata]);
+  
   // Add user?.userId as a dependency
 
   const Tagfetching = async () => {
