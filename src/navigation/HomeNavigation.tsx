@@ -12,6 +12,7 @@ import ChatPageStack from './ChatNavigation';
 import { OverlayProvider } from 'stream-chat-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStreamChatTheme } from '../hooks/useStreamChatTheme';
+import VideoCarousel from '../screens/Podcast/VideoCarousel';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -47,6 +48,7 @@ const HomeNavigation: React.FC = () => {
           name="AppChat"
           component={ChatPageStack}
         />
+        <Stack.Screen options={{headerShown: false}} name="VideoReels" component={VideoCarousel} />
       {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         <Stack.Screen name="HomeTab" component={DashboradScreen} />
       </Stack.Group> */}
