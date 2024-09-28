@@ -10,5 +10,5 @@ import {useChatClient} from '../navigation/useChatClient';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
 
-  return <Screen1 />;
+  return <UserStories />;
 }
