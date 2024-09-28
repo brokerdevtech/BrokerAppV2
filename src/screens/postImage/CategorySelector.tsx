@@ -1,3 +1,5 @@
+import ZText from '../../sharedComponents/ZText';
+import {Color} from '../../styles/GlobalStyles';
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
@@ -10,7 +12,9 @@ const RadioButton = ({selected, onPress, disabled, children}) => {
       <View style={styles.radioButton}>
         {selected ? <View style={styles.radioButtonSelected} /> : null}
       </View>
-      <Text style={styles.radioButtonText}>{children}</Text>
+      <ZText type="R16" style={{marginLeft: 5}}>
+        {children}
+      </ZText>
     </TouchableOpacity>
   );
 };
@@ -27,7 +31,9 @@ const CategorySelector = ({categories, defaultCategory, onSelect}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Select Category</Text>
+      <ZText type="R16" style={styles.title}>
+        Select Category
+      </ZText>
       <View style={styles.radioGroup}>
         {categories.map(category => (
           <RadioButton
@@ -56,16 +62,18 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   title: {
-    marginBottom: 10,
-    fontWeight: 'bold',
-    fontSize: 16,
+    bottom: -10,
+    zIndex: 4,
+    marginLeft: 10,
+    backgroundColor: '#fff',
+    width: 120,
   },
   radioGroup: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 20,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#E8EFF6',
     borderRadius: 5,
     backgroundColor: '#fff',
   },
@@ -78,7 +86,7 @@ const styles = StyleSheet.create({
     width: 20,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#BC4A4F',
+    borderColor: Color.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 5,
@@ -87,10 +95,7 @@ const styles = StyleSheet.create({
     height: 10,
     width: 10,
     borderRadius: 5,
-    backgroundColor: '#BC4A4F',
-  },
-  radioButtonText: {
-    fontSize: 16,
+    backgroundColor: Color.primary,
   },
 });
 

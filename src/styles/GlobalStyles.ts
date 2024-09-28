@@ -60,6 +60,7 @@ export const Color = {
   blue: 'blue',
   primaryDisable: '#c6c6c6',
   secondryTextColor: '#7C8091',
+  borderColor: '#E8EFF6',
 };
 export const BRColor = {
   lightgrey: '#D9D9D9',

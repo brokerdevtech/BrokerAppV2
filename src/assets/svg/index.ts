@@ -31,6 +31,8 @@ import Developer from './develop.svg';
 
 import Virtual from './virtual.svg';
 import AppleIcon from './appleIcon.svg';
+import LocationFetchIcon from './fetch.svg';
+import CloseIcon from './crossIcon.svg';
 
 export {
   Map_pin,
@@ -55,6 +57,7 @@ export {
   Search,
   SearchFill,
   Network,
+  CloseIcon,
   NetworkFill,
   Person,
   Balcony,
@@ -65,4 +68,5 @@ export {
   Construction,
   Developer,
   Amenities,
+  LocationFetchIcon,
 };

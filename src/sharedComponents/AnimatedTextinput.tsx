@@ -1,3 +1,4 @@
+import {Color, GilroyFontFamily} from '../styles/GlobalStyles';
 import React, {useState, useEffect} from 'react';
 import {
   View,
@@ -56,7 +57,7 @@ const AnimatedTextInput: React.FC<AnimatedTextInputProps> = ({
     }),
     color: placeholderAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: ['#aaa', '#000'],
+      outputRange: ['#000', '#000'],
     }),
     paddingHorizontal: 5,
     backgroundColor: 'white',
@@ -66,7 +67,7 @@ const AnimatedTextInput: React.FC<AnimatedTextInputProps> = ({
   const borderStyle = {
     borderColor: borderColor.interpolate({
       inputRange: [0, 1],
-      outputRange: ['#aaa', '#007AFF'],
+      outputRange: [Color.borderColor, Color.borderColor],
     }),
   };
 
@@ -103,6 +104,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     borderWidth: 1,
+    borderColor: Color.borderColor,
     justifyContent: 'center',
     paddingHorizontal: 10,
     borderRadius: 5,
@@ -120,6 +122,8 @@ const styles = StyleSheet.create({
     left: 10,
     zIndex: 1,
     backgroundColor: 'white',
+    fontFamily: GilroyFontFamily.GilroyRegular,
+    fontSize: 16,
   },
 });
 

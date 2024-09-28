@@ -26,6 +26,7 @@ import {
 import {Switch} from '../../../../components/ui/switch';
 import {ChevronDownIcon} from '../../../../components/ui/icon';
 import {Discount, Property, Verified, Virtual} from '../../../assets/svg';
+import {Color} from '../../../styles/GlobalStyles';
 function noWhitespace() {
   return this.transform((value, originalValue) =>
     /\s/.test(originalValue) ? NaN : value,
@@ -90,8 +91,8 @@ const PropertyForm = ({formikRef}) => {
 
   const RenderLabel = ({labelText, width = '100%'}: any) => {
     return (
-      <View style={{width: width, marginBottom: 8}}>
-        <ZText color={colors.black} type={'m16'} align="left">
+      <View style={{marginBottom: 8}}>
+        <ZText color={colors.black} type={'R16'} align="left">
           {labelText}
         </ZText>
       </View>
@@ -188,7 +189,7 @@ const PropertyForm = ({formikRef}) => {
                       onValueChange={value => {
                         setselectedPropertySize(value);
                       }}
-                      className="rounded-md border-2"
+                      style={{borderColor: Color.borderColor}}
                       size="2xl">
                       <SelectInput placeholder="Select Unit" />
                       <SelectIcon className="mr-3" as={ChevronDownIcon} />
@@ -229,39 +230,50 @@ const PropertyForm = ({formikRef}) => {
               )}
             </Box>
 
-            <Box mb="5" style={localStyles.SwitchStyles}>
-              <Virtual accessible={true} accessibilityLabel="virtual" />
-
+            <View style={[localStyles.SwitchStyles, {marginTop: 30}]}>
               <HStack style={localStyles.FromControl}>
-                <RenderLabel labelText={`Virtual Tour`} width="90%" />
-
+                <ZText color={colors.dark.black} type={'R16'}>
+                  Virtual Tour
+                </ZText>
                 <Switch
+                  size="lg"
                   onValueChange={value => {
                     setFieldValue('isVirtualTour', value, true);
                     handleBlur('isVirtualTour');
                   }}
                   value={values.isVirtualTour}
+                  trackColor={{
+                    false: Color.primaryDisable,
+                    true: Color.primary,
+                  }}
+                  thumbColor={Color.white}
                 />
               </HStack>
               {errors.price && touched.price && (
-                <Box pl="3" mt="2">
+                <Box>
                   <Text style={styles.errorText}>{errors.isVirtualTour}</Text>
                 </Box>
               )}
-            </Box>
+            </View>
 
-            <Box mb="5" style={localStyles.SwitchStyles}>
-              <Verified accessible={true} accessibilityLabel="verified" />
-
+            <Box style={localStyles.SwitchStyles}>
               <HStack style={localStyles.FromControl}>
-                <RenderLabel labelText={`BrokerApp Verified`} width="90%" />
+                <ZText color={colors.dark.black} type={'R16'}>
+                  BrokerApp Verified
+                </ZText>
 
                 <Switch
                   onValueChange={value => {
                     setFieldValue('isBrokerAppVerified', value, true);
                     handleBlur('isBrokerAppVerified');
                   }}
+                  size="lg"
                   value={values.isBrokerAppVerified}
+                  trackColor={{
+                    false: Color.primaryDisable,
+                    true: Color.primary,
+                  }}
+                  thumbColor={Color.white}
                 />
               </HStack>
               {errors.isBrokerAppVerified && touched.isBrokerAppVerified && (
@@ -274,17 +286,23 @@ const PropertyForm = ({formikRef}) => {
             </Box>
 
             <Box mb="5" style={localStyles.SwitchStyles}>
-              <Discount accessible={true} accessibilityLabel="Discount" />
-
               <HStack style={localStyles.FromControl}>
-                <RenderLabel labelText={`Discounted`} width="90%" />
+                <ZText color={colors.dark.black} type={'R16'}>
+                  Discounted
+                </ZText>
 
                 <Switch
+                  size="lg"
                   onValueChange={value => {
                     setFieldValue('isDiscounted', value, true);
                     handleBlur('isDiscounted');
                   }}
+                  trackColor={{
+                    false: Color.primaryDisable,
+                    true: Color.primary,
+                  }}
                   value={values.isDiscounted}
+                  thumbColor={Color.white}
                 />
               </HStack>
               {errors.isBrokerAppVerified && touched.isBrokerAppVerified && (
@@ -296,20 +314,22 @@ const PropertyForm = ({formikRef}) => {
               )}
             </Box>
             <Box mb="5" style={localStyles.SwitchStyles}>
-              <Property
-                accessible={true}
-                accessibilityLabel="property"
-                style={{color: 'black'}}
-              />
-
               <HStack style={localStyles.FromControl}>
-                <RenderLabel labelText={`Mandate Property`} width="90%" />
+                <ZText color={colors.dark.black} type={'R16'}>
+                  Mandate Property
+                </ZText>
 
                 <Switch
+                  size="lg"
                   onValueChange={value => {
                     setFieldValue('isMandateProperty', value, true);
                     handleBlur('isMandateProperty');
                   }}
+                  trackColor={{
+                    false: Color.primaryDisable,
+                    true: Color.primary,
+                  }}
+                  thumbColor={Color.white}
                   value={values.isMandateProperty}
                 />
               </HStack>
@@ -521,15 +541,16 @@ const localStyles = StyleSheet.create({
     borderColor: 'transparent',
   },
   SwitchStyles: {
-    // borderBottomWidth: 1,
+    borderBottomWidth: 1,
     flexDirection: 'row',
     padding: 10,
     marginBottom: 10,
-    borderColor: '#eee',
-    justifyContent: 'center',
-    ...styles.ph20,
+    borderColor: Color.borderColor,
+    justifyContent: 'space-between',
+    // ...styles.ph20,
     alignItems: 'center',
-    justifyContent: 'center',
+    width: '100%',
+    // justifyContent: 'center',
   },
   BoxStyles: {
     flexDirection: 'column',
@@ -573,8 +594,8 @@ const localStyles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     // gap: 2,
-    paddingRight: 40,
-    marginLeft: 20,
+    paddingRight: 0,
+    // marginLeft: 20,
   },
   media: {
     width: '100%',

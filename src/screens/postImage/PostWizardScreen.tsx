@@ -153,7 +153,17 @@ const PostWizardScreen: React.FC = ({
   const LeftIcon = () => {
     return (
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Back accessible={true} accessibilityLabel="Back" />
+        <View
+          style={{
+            // ...styles.appTitleMain,
+            // color: '#007acc',
+            padding: 8,
+            borderWidth: 1,
+            borderColor: '#E5E5E5',
+            borderRadius: 40,
+          }}>
+          <Back accessible={true} accessibilityLabel="Back" />
+        </View>
       </TouchableOpacity>
     );
   };
@@ -164,7 +174,7 @@ const PostWizardScreen: React.FC = ({
         onPress={() => {
           navigateToNextScreen();
         }}>
-        <ZText numberOfLines={1} color={'#BC4A4F'} type={'b16'}>
+        <ZText numberOfLines={1} color={'#000'} type={'R16'}>
           {'Next'}
         </ZText>
       </TouchableOpacity>

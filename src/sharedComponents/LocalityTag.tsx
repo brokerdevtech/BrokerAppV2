@@ -7,7 +7,7 @@ import {Color} from '../styles/GlobalStyles';
 import {HStack} from '../../components/ui/hstack';
 import ZText from './ZText';
 import {styles} from '../themes';
-import {Search} from '../assets/svg';
+import {LocationFetchIcon, Search} from '../assets/svg';
 import GooglePlacesAutocompleteModal from './PlacesAutocomplete';
 
 interface LocalityTagProps {
@@ -51,7 +51,7 @@ const LocalityTag: React.FC<LocalityTagProps> = ({
       <HStack style={(styles.flexRow, styles.contentCenter, localStyles.input)}>
         {/* <MapPin onPress={handleModalOpen} /> */}
         <ZText
-          type={'M16'}
+          type={'R16'}
           style={[
             typography.fontSizes.f16,
             {
@@ -66,7 +66,10 @@ const LocalityTag: React.FC<LocalityTagProps> = ({
         {isMandatory && (
           <Text style={[typography.fontSizes.f16, {color: 'red'}]}> *</Text>
         )}
-        <Search style={{marginLeft: 'auto'}} onPress={handleModalOpen} />
+        <LocationFetchIcon
+          style={{marginLeft: 'auto'}}
+          onPress={handleModalOpen}
+        />
       </HStack>
       <View style={localStyles.tagContainer}>
         {localities.map(option => (
@@ -100,7 +103,7 @@ const localStyles = StyleSheet.create({
     width: 400,
   },
   input: {
-    borderColor: '#ccc',
+    borderColor: Color.borderColor,
     borderWidth: 1,
     padding: 10,
     borderRadius: 5,

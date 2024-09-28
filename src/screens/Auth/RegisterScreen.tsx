@@ -1,32 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {
-  Actionsheet,
-  ActionsheetBackdrop,
-  ActionsheetContent,
-  ActionsheetDragIndicator,
-  ActionsheetDragIndicatorWrapper,
-  ActionsheetScrollView,
-} from '@/components/ui/actionsheet';
-import {VStack} from '@/components/ui/vstack';
+import React, {useEffect, useMemo, useState} from 'react';
 
-import {Heading} from '@/components/ui/heading';
-import {FormControl} from '@/components/ui/form-control';
-import {HStack} from '@/components/ui/hstack';
-import {Link, LinkText} from '@/components/ui/link';
-import {Button, ButtonText} from '@/components/ui/button';
+import {VStack} from '../../../components/ui/vstack';
 
-import {Input, InputField} from '@/components/ui/input';
-import {useApiRequest} from '@/src/hooks/useApiRequest';
+import {Input, InputField} from '../../../components/ui/input';
+import {useApiRequest} from '../../../src/hooks/useApiRequest';
 import {Formik} from 'formik';
 import {useNavigation} from '@react-navigation/native';
+import {getBrokerCategoryList} from '../../../BrokerAppcore/services/new/authService';
 import {
-  getBrokerCategoryList,
-  getCityList,
-  getCountryList,
-  getStateList,
-  login,
-} from '@/BrokerAppcore/services/new/authService';
-import {
+  Keyboard,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -34,31 +16,56 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {storeTokens, storeUser} from '@/src/utils/utilTokens';
-import store from '@/BrokerAppcore/redux/store';
-import {setUser} from '@/BrokerAppcore/redux/store/user/userSlice';
-import {setTokens} from '@/BrokerAppcore/redux/store/authentication/authenticationSlice';
-import {
-  Checkbox,
-  CheckboxIcon,
-  CheckboxIndicator,
-  CheckboxLabel,
-} from '@/components/ui/checkbox';
+import {storeTokens, storeUser} from '../../../src/utils/utilTokens';
+import store from '../../../BrokerAppcore/redux/store';
+import {setUser} from '../../../BrokerAppcore/redux/store/user/userSlice';
+import {setTokens} from '../../../BrokerAppcore/redux/store/authentication/authenticationSlice';
+
 import {CheckIcon, CircleIcon, Icon} from '@/components/ui/icon';
-import SelectComponent from '@/src/sharedComponents/SelectComponent';
-import {
-  Radio,
-  RadioGroup,
-  RadioIcon,
-  RadioIndicator,
-  RadioLabel,
-} from '@/components/ui/radio';
 
 import * as yup from 'yup';
-import UserRegistration from '@/BrokerAppcore/types/userRegistration';
+import UserRegistration from '../../../BrokerAppcore/types/userRegistration';
 import {Color, GilroyFontFamily} from '../../styles/GlobalStyles';
 import {InputIcon, InputSlot} from '../../../components/ui/input';
-import {EyeIcon, EyeOffIcon} from '../../../components/ui/icon';
+import {
+  ChevronDownIcon,
+  EyeIcon,
+  EyeOffIcon,
+} from '../../../components/ui/icon';
+import {
+  Select,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicator,
+  SelectDragIndicatorWrapper,
+  SelectIcon,
+  SelectInput,
+  SelectItem,
+  SelectPortal,
+  SelectTrigger,
+} from '../../../components/ui/select';
+
+import {useSelector} from 'react-redux';
+
+import RadioGroup from '../../sharedComponents/RadioGroup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getfcmToken} from '../../utils/utilTokens';
+import DeviceInfo from 'react-native-device-info';
+import {signup} from '../../../BrokerAppcore/services/new/authService';
+import {Toast, ToastDescription, useToast} from '../../../components/ui/toast';
+const CustomCheckbox = ({label, checked, onChange}) => {
+  return (
+    <TouchableOpacity
+      onPress={() => onChange(!checked)}
+      style={styles.checkboxContainer}
+      activeOpacity={0.8}>
+      <View style={[styles.checkbox, checked && styles.checked]}>
+        {checked && <Icon as={CheckIcon} stroke="#fff" />}
+      </View>
+      <Text style={styles.Checklabel}>{label}</Text>
+    </TouchableOpacity>
+  );
+};
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required('First Name is required'),
@@ -88,32 +95,61 @@ const validationSchema = yup.object().shape({
     .string()
     .required('Confirm password is required')
     .oneOf([yup.ref('password'), null], 'Passwords must match'),
-  BrokerCategory: yup.array().min(1).required('Required'),
-  country: yup.string().required('Country is required'),
-  state: yup.string().required('State is required'),
-  city: yup.string().required('City is required'),
+  BrokerCategory: yup.number().required('Required'),
 
   acceptTerms: yup
     .boolean()
     .oneOf([true], 'You must accept the terms and privacy policy'),
 });
+
 export default function RegisterScreen({setLoggedIn}) {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedCategory, setSelectedCategory] = useState([]);
-  const [selectedState, setSelectedState] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
+
   const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setConfirmShowPassword] = React.useState(false);
+  const [selecteRadioId, setSelectedRadioId] = useState(null);
+  const [toastId, setToastId] = React.useState(0);
+  const toast = useToast();
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const navigation = useNavigation();
-  const handleState = () => {
-    setShowPassword(showState => {
+  const radioButtons = useMemo(
+    () => [
+      {
+        id: '1', // acts as primary key, should be unique and non-empty string
+        label: 'Individual',
+        value: 'individual',
+      },
+      {
+        id: '2',
+        label: 'Organization',
+        value: 'organization',
+      },
+    ],
+    [],
+  );
+  const handleStateConfirm = () => {
+    setConfirmShowPassword(showState => {
       return !showState;
     });
+  };
+  const showToast = message => {
+    if (!toast.isActive(toastId)) {
+      const newId = Math.random();
+      setToastId(newId);
+      toast.show({
+        id: newId,
+        placement: 'bottom',
+        duration: 3000,
+        render: ({id}) => {
+          const uniqueToastId = 'toast-' + id;
+          return (
+            <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+              <ToastDescription>{message}</ToastDescription>
+            </Toast>
+          );
+        },
+      });
+    }
   };
   const {
     data: categorydata,
@@ -121,84 +157,94 @@ export default function RegisterScreen({setLoggedIn}) {
     error: categoryerror,
     execute: categoryexecute,
   } = useApiRequest(getBrokerCategoryList);
+  const {
+    data: registerdata,
+    status: registerstatus,
+    error: registererror,
+    execute: registerexecute,
+  } = useApiRequest(signup);
 
-  const {
-    data: countrydata,
-    status: countrystatus,
-    error: countryerror,
-    execute: countryexecute,
-  } = useApiRequest(getCountryList);
-
-  const {
-    data: statedata,
-    status: statestatus,
-    error: staterror,
-    execute: statexecute,
-  } = useApiRequest(getStateList);
-  const {
-    data: citydata,
-    status: citystatus,
-    error: cityerror,
-    execute: cityexecute,
-  } = useApiRequest(getCityList);
-  const fetchCountryData = async () => {
-    await countryexecute();
-  };
   const fetchCategoryData = async () => {
     await categoryexecute();
   };
-  const fetchStateData = async () => {
-    await statexecute(selectedCountry);
-  };
-  const fetchCityData = async () => {
-    await cityexecute(selectedState);
-  };
+
   useEffect(() => {
-    fetchCountryData();
     fetchCategoryData();
-    if (selectedCountry) fetchStateData();
-    if (selectedState) fetchCityData();
-  }, [selectedCountry, selectedState]);
+  }, []);
 
-  const CountryDataForSelect = countrydata?.data?.map(country => ({
-    label: country.countryName,
-    value: country.countryId,
-  }));
+  // Toggle password visibility
+  const handleState = () => {
+    setShowPassword(!showPassword);
+  };
 
-  const CategoryDataForSelect = categorydata?.data?.categories?.map(
-    category => ({
-      label: category.categoryName,
-      value: category.categoryId,
-    }),
-  );
+  const handleSubmit = async (values, broker) => {
+    try {
+      Keyboard.dismiss();
+      // setIsLoading(true); // Uncomment when handling loading state
 
-  const StatesDataForSelect = statedata?.data?.map(state => ({
-    label: state.stateName,
-    value: state.stateId,
-  }));
-  const CityDataForSelect = citydata?.data?.map(city => ({
-    label: city.cityName,
-    value: city.cityId,
-  }));
-  const handleCountryChange = value => {
-    setSelectedCountry(value);
+      await AsyncStorage.removeItem('fcmToken');
+      const deviceId = await DeviceInfo.getUniqueId();
+      const fcmToken = await getfcmToken();
+
+      let user: UserRegistration = {
+        email: values.email,
+        contactNo: values.phoneNumber,
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        cityName: AppLocation.city,
+        stateName: AppLocation.state,
+        countryName: AppLocation.country,
+        placeID: AppLocation.placeID,
+        placeName: AppLocation.placeName,
+        geoLocationLatitude: AppLocation.geoLocationLatitude,
+        geoLocationLongitude: AppLocation.geoLocationLongitude,
+        viewportNorthEastLat: AppLocation.viewportNorthEastLat,
+        viewportNorthEastLng: AppLocation.viewportNorthEastLng,
+        viewportSouthWestLat: AppLocation.viewportSouthWestLat,
+        viewportSouthWestLng: AppLocation.viewportSouthWestLng,
+        deviceId: fcmToken.toString(),
+        brokerCategorId: values.BrokerCategory,
+        isOrg: values.organizationType == '1' ? false : true,
+      };
+
+      console.log(user);
+
+      await registerexecute(user);
+      await registerdata;
+      console.log(registerdata, 'Data');
+
+      if (registererror) {
+        showToast(registererror);
+      } else {
+        await storeUser(JSON.stringify(registerdata.data));
+        await storeTokens(
+          registerdata.data.accessToken,
+          registerdata.data.refreshToken,
+          registerdata.data.getStreamAccessToken,
+        );
+        await store.dispatch(setUser(registerdata.data));
+        await store.dispatch(
+          setTokens({
+            accessToken: registerdata.data.accessToken,
+            refreshToken: registerdata.data.refreshToken,
+            getStreamAccessToken: registerdata.data.getStreamAccessToken,
+          }),
+        );
+
+        setLoggedIn(true);
+        navigation.navigate('Home');
+        showToast(registerdata.statusMessage);
+      }
+    } catch (error) {
+      console.error('Error in handleSubmit:', error);
+    } finally {
+      // setIsLoading(false); // Uncomment when handling loading state
+    }
   };
-  const handleStateChange = value => {
-    setSelectedState(value);
-  };
-  const handleCityChange = value => {
-    setSelectedCity(value);
-  };
-  const handleSubmit = async (values, country, state, city, broker) => {
-    console.log('Form Values:', values);
-    console.log('Selected Country:', country);
-    console.log('Selected State:', state);
-    console.log('Selected City:', city);
-    console.log('Selected Broker Category:', broker);
-  };
-  const [values, setValues] = React.useState('Eng');
+  // console.log(AppLocation);
   return (
-    // <SafeAreaView style={{flex: 1}}>
     <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.container}>
       <Text style={styles.header}>Create An Account</Text>
       <Text style={styles.subHeader}>
@@ -206,12 +252,20 @@ export default function RegisterScreen({setLoggedIn}) {
       </Text>
 
       <Formik
-        initialValues={{email: '', password: ''}}
+        initialValues={{
+          firstName: '',
+          lastName: '',
+          email: '',
+          phoneNumber: '',
+          password: '',
+          confirmPassword: '',
+          BrokerCategory: 0,
+          organizationType: '1',
+          acceptTerms: false,
+        }}
         validationSchema={validationSchema}
         validateOnMount={true}
-        onSubmit={values => {
-          handleLogin(values); // Handle login logic here
-        }}>
+        onSubmit={handleSubmit}>
         {({
           handleChange,
           handleBlur,
@@ -220,28 +274,42 @@ export default function RegisterScreen({setLoggedIn}) {
           errors,
           touched,
           isValid,
+          setFieldValue,
         }) => (
           <View>
-            <Text style={styles.label}>Full Name</Text>
+            {/* First Name */}
+            <Text style={styles.label}>First Name</Text>
             <Input style={styles.input}>
               <InputField
-                type="text"
-                placeholder="Enter your Full Name"
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-                keyboardType="email-address"
-                autoCapitalize="none"
+                placeholder="Enter your First Name"
+                onChangeText={handleChange('firstName')}
+                onBlur={handleBlur('firstName')}
+                value={values.firstName}
               />
             </Input>
-            {errors.email && touched.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
+            {errors.firstName && touched.firstName && (
+              <Text style={styles.errorText}>{errors.firstName}</Text>
             )}
+
+            {/* Last Name */}
+            <Text style={styles.label}>Last Name</Text>
+            <Input style={styles.input}>
+              <InputField
+                placeholder="Enter your Last Name"
+                onChangeText={handleChange('lastName')}
+                onBlur={handleBlur('lastName')}
+                value={values.lastName}
+              />
+            </Input>
+            {errors.lastName && touched.lastName && (
+              <Text style={styles.errorText}>{errors.lastName}</Text>
+            )}
+
+            {/* Email */}
             <Text style={styles.label}>Email</Text>
             <Input style={styles.input}>
               <InputField
-                type="text"
-                placeholder="Enter your email"
+                placeholder="Enter your Email"
                 onChangeText={handleChange('email')}
                 onBlur={handleBlur('email')}
                 value={values.email}
@@ -252,56 +320,24 @@ export default function RegisterScreen({setLoggedIn}) {
             {errors.email && touched.email && (
               <Text style={styles.errorText}>{errors.email}</Text>
             )}
+
+            {/* Mobile */}
             <Text style={styles.label}>Mobile</Text>
             <Input style={styles.input}>
               <InputField
-                type="text"
-                placeholder="Enter your email"
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-                keyboardType="email-address"
-                autoCapitalize="none"
+                placeholder="Enter your Phone Number"
+                onChangeText={handleChange('phoneNumber')}
+                onBlur={handleBlur('phoneNumber')}
+                value={values.phoneNumber}
+                keyboardType="phone-pad"
               />
             </Input>
-            {errors.email && touched.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
-            )}
-            <Text style={styles.label}>Email</Text>
-            <Input style={styles.input}>
-              <InputField
-                type="text"
-                placeholder="Enter your email"
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </Input>
-            {errors.email && touched.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
+            {errors.phoneNumber && touched.phoneNumber && (
+              <Text style={styles.errorText}>{errors.phoneNumber}</Text>
             )}
 
-            <Text style={styles.label}>Email</Text>
-            <Input style={styles.input}>
-              <InputField
-                type="text"
-                placeholder="Enter your email"
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </Input>
-            {errors.email && touched.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
-            )}
-
-            {/* Password Input */}
+            {/* Password */}
             <Text style={styles.label}>Password</Text>
-
             <Input style={styles.input}>
               <InputField
                 type={showPassword ? 'text' : 'password'}
@@ -310,11 +346,9 @@ export default function RegisterScreen({setLoggedIn}) {
                 onBlur={handleBlur('password')}
                 value={values.password}
               />
-              <InputSlot style={{paddingRight: 10}} onPress={handleState}>
-                {/* EyeIcon, EyeOffIcon are both imported from 'lucide-react-native' */}
+              <InputSlot onPress={handleState}>
                 <InputIcon
                   as={showPassword ? EyeIcon : EyeOffIcon}
-                  className="text-darkBlue-500"
                   stroke="#000"
                 />
               </InputSlot>
@@ -323,11 +357,87 @@ export default function RegisterScreen({setLoggedIn}) {
               <Text style={styles.errorText}>{errors.password}</Text>
             )}
 
-            {/* Forgot Password */}
-            <TouchableOpacity>
-              <Text style={styles.forgotPassword}>Forgot Password?</Text>
-            </TouchableOpacity>
+            {/* Confirm Password */}
+            <Text style={styles.label}>Confirm Password</Text>
+            <Input style={styles.input}>
+              <InputField
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder="Confirm Password"
+                onChangeText={handleChange('confirmPassword')}
+                onBlur={handleBlur('confirmPassword')}
+                value={values.confirmPassword}
+              />
+              <InputSlot onPress={handleStateConfirm}>
+                <InputIcon
+                  as={showConfirmPassword ? EyeIcon : EyeOffIcon}
+                  stroke="#000"
+                />
+              </InputSlot>
+            </Input>
+            {errors.confirmPassword && touched.confirmPassword && (
+              <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+            )}
 
+            {/* Category Selection */}
+            <Text style={styles.label}>Select Category</Text>
+            <Select
+              onValueChange={(selectedValue: any) => {
+                console.log('Selected category ID:', selectedValue); // Log the category ID
+                setFieldValue('BrokerCategory', selectedValue);
+                handleBlur('BrokerCategory');
+              }}>
+              <SelectTrigger variant="outline" size="md" style={styles.input}>
+                <SelectInput placeholder="Select option" />
+              </SelectTrigger>
+              <SelectPortal>
+                <SelectBackdrop />
+                <SelectContent>
+                  <SelectDragIndicatorWrapper>
+                    <SelectDragIndicator />
+                  </SelectDragIndicatorWrapper>
+                  {categorydata?.data?.categories.map((item, index) => (
+                    <SelectItem
+                      key={index} // Ensure to add a key to avoid warnings
+                      label={item.categoryName}
+                      value={item.categoryId} // This ensures the categoryId is passed as selectedValue
+                    />
+                  ))}
+                </SelectContent>
+              </SelectPortal>
+            </Select>
+
+            {errors.BrokerCategory && touched.BrokerCategory && (
+              <Text style={styles.errorText}>{errors.BrokerCategory}</Text>
+            )}
+
+            {/* Radio Group */}
+            <RadioGroup
+              radioButtons={radioButtons}
+              // onPress={setSelectedRadioId}
+              selectedId={selecteRadioId}
+              layout="row"
+              onPress={value => {
+                setSelectedRadioId(value);
+                setFieldValue('organizationType', value);
+              }}
+            />
+
+            {/* Checkbox */}
+            <VStack>
+              <CustomCheckbox
+                label="Agree with Terms & Conditions"
+                checked={values.acceptTerms}
+                onChange={() => {
+                  setFieldValue('acceptTerms', !values.acceptTerms);
+                  handleBlur('acceptTerms');
+                }}
+              />
+              {errors.acceptTerms && touched.acceptTerms && (
+                <Text>{errors.acceptTerms}</Text>
+              )}
+            </VStack>
+
+            {/* Submit Button */}
             <TouchableOpacity
               style={[
                 styles.signInButton,
@@ -335,47 +445,20 @@ export default function RegisterScreen({setLoggedIn}) {
               ]}
               disabled={!isValid}
               onPress={handleSubmit}>
-              <Text style={styles.signInText}>Sign In</Text>
+              <Text style={styles.signInText}>Sign Up</Text>
             </TouchableOpacity>
           </View>
         )}
       </Formik>
-
-      {/* Social Media Sign In Options */}
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          marginBottom: 30,
-        }}>
-        <View style={styles.frameChild} />
-        <Text style={styles.textTypo}>Or sign in with</Text>
-        <View style={styles.frameChild} />
-      </View>
-
-      {/* <View style={styles.socialContainer}>
-        <TouchableOpacity style={styles.socialButton}>
-          <Icon as={AppleIcon} stroke="#000" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialButton}>
-          <Icon as={GoogleIcon} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialButton}>
-          <Icon as={FBIcon} />
-        </TouchableOpacity>
-      </View> */}
-
-      {/* Sign Up Option */}
       <Text style={styles.footerText}>
-        Don't have an account?{' '}
+        Already have an account?
         <Text
           style={styles.signUpText}
-          onPress={() => navigation.navigate('SignUp')}>
-          Sign Up
+          onPress={() => navigation.navigate('Login')}>
+          Sign In
         </Text>
       </Text>
     </ScrollView>
-    // </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
@@ -384,7 +467,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     // paddingVertical: 100,
-    paddingBottom: 200,
+    // paddingBottom: 200,
     // justifyContent: 'center',
   },
   frameChild: {
@@ -415,6 +498,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 10,
   },
+  Checklabel: {
+    fontSize: 16,
+    // marginBottom: 10,
+  },
   input: {
     borderWidth: 0,
     borderColor: '#ddd',
@@ -443,8 +530,8 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 30,
     alignItems: 'center',
-    marginBottom: 50,
-    marginTop: 56,
+    marginVertical: 20,
+    // marginTop: 30,
   },
   signInText: {
     color: '#fff',
@@ -473,6 +560,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     textAlign: 'center',
+    marginBottom: 100,
   },
   signUpText: {
     color: Color.primary,
@@ -489,5 +577,37 @@ const styles = StyleSheet.create({
     left: '50%',
     top: '10%',
     position: 'absolute',
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 25,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 4,
+    marginRight: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checked: {
+    backgroundColor: Color.primary,
+    borderColor: Color.primary,
+  },
+  innerBox: {
+    width: 12,
+    height: 12,
+    backgroundColor: '#fff',
+  },
+
+  signUpButton: {
+    backgroundColor: '#007AFF',
+    padding: 12,
+    alignItems: 'center',
+    borderRadius: 8,
+    marginTop: 20,
   },
 });

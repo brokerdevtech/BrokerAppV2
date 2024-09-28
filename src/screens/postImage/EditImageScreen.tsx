@@ -25,6 +25,7 @@ import PhotoEditor from '@baronha/react-native-photo-editor';
 import {Button} from '../../../components/ui/button';
 
 import AppBaseContainer from '../../hoc/AppBaseContainer_old';
+import {Color} from '../../styles/GlobalStyles';
 const EditImagesScreen = ({route, navigation}: any) => {
   const [selectedThumbnails, setselectedThumbnails] = useState(
     route.params.selectedThumbnails,
@@ -116,10 +117,12 @@ const EditImagesScreen = ({route, navigation}: any) => {
   const renderItem = ({item, index}) => (
     <View style={locaStyles.card}>
       <Button
-        variant="outline"
+        variant="solid"
         style={locaStyles.editTextContainer}
         onPress={() => openImageEditor(item, index)}>
-        <Text style={locaStyles.editText}>Edit</Text>
+        <ZText numberOfLines={1} color={'#000'} type={'R16'}>
+          Edit
+        </ZText>
       </Button>
 
       {Platform.OS == 'ios' ? (
@@ -141,14 +144,24 @@ const EditImagesScreen = ({route, navigation}: any) => {
   const LeftIcon = () => {
     return (
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Back accessible={true} accessibilityLabel="Back" />
+        <View
+          style={{
+            // ...styles.appTitleMain,
+            // color: '#007acc',
+            padding: 8,
+            borderWidth: 1,
+            borderColor: '#E5E5E5',
+            borderRadius: 40,
+          }}>
+          <Back accessible={true} accessibilityLabel="Back" />
+        </View>
       </TouchableOpacity>
     );
   };
   const RightIcon = () => {
     return (
       <TouchableOpacity style={{marginRight: 15}} onPress={handleNextStepClick}>
-        <ZText numberOfLines={1} color={'#BC4A4F'} type={'b16'}>
+        <ZText numberOfLines={1} color={'#000'} type={'R16'}>
           {'Next'}
         </ZText>
       </TouchableOpacity>
@@ -184,7 +197,7 @@ const locaStyles = StyleSheet.create({
     backgroundColor: '#fff',
     // padding: 20,
     borderRadius: 20,
-    color: '#000',
+    // color: '#000',
   },
 
   editText: {

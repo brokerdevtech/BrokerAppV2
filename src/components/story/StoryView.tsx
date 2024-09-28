@@ -46,6 +46,8 @@ import {
   AvatarGroup,
   AvatarImage,
 } from '@/components/ui/avatar';
+import {CloseIcon} from '../../assets/svg';
+import {Icon} from '../../../components/ui/icon';
 
 const {width, height} = Dimensions.get('window');
 const avatars = [
@@ -524,6 +526,7 @@ const StoryView: React.FC = ({route}) => {
           <TouchableOpacity onPress={onCloseStory}>
             <View style={localStyles.closeContainer}>
               {/* <Ionicons name="close-outline" size={28} color="white" /> */}
+              <Icon as={CloseIcon} />
             </View>
           </TouchableOpacity>
           {/* END OF CLOSE BUTTON */}

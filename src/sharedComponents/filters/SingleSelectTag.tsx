@@ -316,8 +316,8 @@ const localstyles = StyleSheet.create({
     alignItems: 'center',
   },
   tag: {
-    backgroundColor: '#F3F3F3',
-    borderColor: Color.primary,
+    backgroundColor: '#F4F6F9',
+    // borderColor: Color.primary,
     borderWidth: 1,
     // borderRadius: 20,
     // borderWidth: 1,

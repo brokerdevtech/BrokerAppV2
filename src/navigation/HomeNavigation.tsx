@@ -10,8 +10,7 @@ import DashboradScreen from '../screens/DashboradScreen';
 import AppDrawer from './AppDrawer';
 import ChooseImage from '../screens/postImage/ChooseImage';
 import StoryView from '../components/story/StoryView';
-import Screen1 from '../components/story/screen1';
-import Screen2 from '../components/story/screen2';
+
 import PostWizardScreen from '../screens/postImage/PostWizardScreen';
 
 import ChatPageStack from './ChatNavigation';
@@ -22,6 +21,7 @@ import EditImagesScreen from '../screens/postImage/EditImageScreen';
 import FilterTagsScreen from '../sharedComponents/FilterTagsScreen';
 import PropertyPostPreview from '../screens/postImage/previewScreens/PropertyPostPreview';
 import GenericPostPreview from '../screens/postImage/previewScreens/GenericPostPreview';
+import NotificationScreen from '../screens/NotificationScreen';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -86,6 +86,11 @@ const HomeNavigation: React.FC = () => {
         <Stack.Screen
           name="GenericPostPreview"
           component={GenericPostPreview}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Notification"
+          component={NotificationScreen}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

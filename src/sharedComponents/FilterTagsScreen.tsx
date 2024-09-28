@@ -1,3 +1,4 @@
+/* eslint-disable no-catch-shadow */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
 // src/screens/SettingsScreen.tsx
@@ -82,7 +83,30 @@ const FilterTagsScreen: React.FC = ({
   const arrowbackSubmit = () => {
     AlertDialogShow('Data will be lost', true);
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
+        // First, wait for filterexecute to complete
+        await filterexecute(user.userId, 'post');
+
+        // Now fetch the filter data after filterexecute is done
+        await Tagfetching();
+      } catch (error) {
+        console.error('Error occurred:', filtererror);
+        setError(filtererror);
+      } finally {
+        setLoading(false); // Make sure loading is set to false after the process is done
+      }
+    };
+
+    // Make sure user.userId is available before calling fetchData
+    if (user?.userId) {
+      fetchData();
+    }
+  }, [user?.userId]);
   useEffect(() => {
     if (resetChild) {
       setChildState({});
@@ -104,17 +128,15 @@ const FilterTagsScreen: React.FC = ({
     return () => backHandler.remove(); // Cleanup the event listener when the component unmounts
   }, [navigation]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        await filterexecute(user.userId, 'post');
+  // Add user?.userId as a dependency
 
+  const Tagfetching = async () => {
+    try {
+      if (filterdata) {
         let postobj: any = {};
-        filterdata.data.filters.map((item: any) => {
-          // Log each item being processed
-          if (item.name != 'PostedSince' && item.name != 'PropertySizeUnit') {
+
+        filterdata.data.filters.forEach((item: any) => {
+          if (item.name !== 'PostedSince' && item.name !== 'PropertySizeUnit') {
             postobj[item.name] = {
               type: item.type,
               filterOrder: item.filterOrder,
@@ -128,21 +150,19 @@ const FilterTagsScreen: React.FC = ({
         });
 
         setPostfilter(postobj);
-        filterdata.data.filters = filterdata.data.filters.filter(
-          p => p.name != 'PostedSince' && p.name != 'PropertySizeUnit',
+
+        // Filter out 'PostedSince' and 'PropertySizeUnit'
+        const filteredData = filterdata.data.filters.filter(
+          (p: any) => p.name !== 'PostedSince' && p.name !== 'PropertySizeUnit',
         );
-        // Log filtered data
-        setFilterTags(filterdata?.data);
-        setApiFilterTags(filterdata.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error occurred:', error); // Log the error
-        setError(error);
-        setLoading(false);
+
+        setFilterTags({...filterdata.data, filters: filteredData});
+        setApiFilterTags({...filterdata.data, filters: filteredData});
       }
-    };
-    fetchData();
-  }, [user.userId]); // Ensure user.userId is available and provided as a dependency
+    } catch (error) {
+      console.error('Error fetching filter data:', error);
+    }
+  };
 
   const clearDependentRecordsFromIndex = (filters, dependsOn) => {
     filters[dependsOn].records = [];
@@ -411,7 +431,17 @@ const FilterTagsScreen: React.FC = ({
   const LeftIcon = () => {
     return (
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Back accessible={true} accessibilityLabel="Back" />
+        <View
+          style={{
+            // ...styles.appTitleMain,
+            // color: '#007acc',
+            padding: 8,
+            borderWidth: 1,
+            borderColor: '#E5E5E5',
+            borderRadius: 40,
+          }}>
+          <Back accessible={true} accessibilityLabel="Back" />
+        </View>
       </TouchableOpacity>
     );
   };

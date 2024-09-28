@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react/no-unstable-nested-components */
 import React, {useState, useEffect, useRef} from 'react';
 import {
   Image,
@@ -55,6 +57,7 @@ import {Back, Multiple, Multiple_Fill} from '../../assets/svg';
 import {useApiRequest} from '../../hooks/useApiRequest';
 import AppBaseContainer from '../../hoc/AppBaseContainer_old';
 import {Toast, ToastDescription} from '../../../components/ui/toast';
+import {Color} from '../../styles/GlobalStyles';
 const windowWidth = Dimensions.get('window').width;
 const windowheight = Dimensions.get('window').height;
 const Bucket = 'broker2023';
@@ -728,7 +731,17 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
   const LeftIcon = () => {
     return (
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Back accessible={true} accessibilityLabel="Back" />
+        <View
+          style={{
+            // ...styles.appTitleMain,
+            // color: '#007acc',
+            padding: 8,
+            borderWidth: 1,
+            borderColor: '#E5E5E5',
+            borderRadius: 40,
+          }}>
+          <Back accessible={true} accessibilityLabel="Back" />
+        </View>
       </TouchableOpacity>
     );
   };
@@ -738,7 +751,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
         style={{marginRight: 15}}
         onPress={handleNextStepClick}
         testID={`next${thumbnail.id}`}>
-        <ZText numberOfLines={1} color={'#BC4A4F'} type={'b16'}>
+        <ZText numberOfLines={1} color={'#000'} type={'R16'}>
           {'Next'}
         </ZText>
       </TouchableOpacity>
@@ -776,7 +789,13 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
             </View>
             <View style={styles.container}>
               <View style={styles.GalleryHeaderContainer}>
-                <Text style={styles.GalleryHeader}>Gallery Images</Text>
+                <ZText
+                  numberOfLines={1}
+                  color={'#BC4A4F'}
+                  type={'R18'}
+                  style={styles.GalleryHeader}>
+                  Gallery Images
+                </ZText>
 
                 <TouchableOpacity
                   onPress={() => setIsMultiSelect(!isMultiSelect)}
@@ -815,7 +834,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
                     ? styles.pickedFooterTitle
                     : styles.footerTitle,
                 ]}
-                type={'b20'}>
+                type={'R16'}>
                 {`Post`}
               </ZText>
             </TouchableOpacity>
@@ -829,12 +848,21 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
                     ? styles.pickedFooterTitle
                     : styles.footerTitle,
                 ]}
-                type={'b20'}>
+                type={'R16'}>
                 {`Reel`}
               </ZText>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handlePressSelectStoryButton()}>
-              <Text>{`Story`}</Text>
+              <ZText
+                numberOfLines={1}
+                style={[
+                  page === 'Story'
+                    ? styles.pickedFooterTitle
+                    : styles.footerTitle,
+                ]}
+                type={'R16'}>
+                {`Story`}
+              </ZText>
             </TouchableOpacity>
           </View>
           {/* </Box> */}
@@ -850,7 +878,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 5,
     right: 5,
-    backgroundColor: '#BC4A4F',
+    backgroundColor: Color.primary,
     borderRadius: 15,
     width: 30,
     height: 30,
@@ -907,20 +935,20 @@ const styles = StyleSheet.create({
   },
   GalleryHeader: {
     color: '#000',
-    fontSize: 19,
+    // fontSize: 19,
     fontWeight: '600',
-    marginLeft: 10,
+    // marginLeft: 10,
     paddingVertical: 10,
     elevation: 0.5,
   },
 
   image: {
-    width: windowWidth / 4,
+    width: windowWidth / 3,
     height: windowheight / 8,
     padding: 1,
     borderRadius: 15,
-    marginRight: 2,
-    marginBottom: 2,
+    // marginRight: 2,
+    // marginBottom: 2,
   },
   galleryImagesWrapper: {
     display: 'flex',
@@ -936,7 +964,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
 
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: Color.primary,
 
     padding: 2,
     borderRadius: 50,
@@ -954,12 +982,12 @@ const styles = StyleSheet.create({
   },
 
   pickedFooterTitle: {
-    fontSize: 18,
-    color: '#BC4A4F',
+    fontWeight: '700',
+    color: '#fff',
   },
   footerTitle: {
     fontSize: 16,
-    color: 'black',
+    color: '#fff',
   },
   multiSelectButton: {
     // flexDirection: 'row',

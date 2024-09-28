@@ -4,9 +4,9 @@ import {Image, TouchableOpacity} from 'react-native';
 
 import {useSelector} from 'react-redux';
 
-import {Avatar} from '@/components/ui/avatar';
+import {Avatar} from '../../components/ui/avatar';
 import images from '../assets/images';
-import {RootState} from '@/BrokerAppcore/redux/store/reducers';
+import {RootState} from '../../BrokerAppcore/redux/store/reducers';
 import {imagesBucketcloudfrontPath} from '../constants/constants';
 //Text Component
 const getInitials = name => {
@@ -54,7 +54,8 @@ const ZAvatarInitials = ({
           size={iconSize}
           source={{
             uri: `${imagesBucketcloudfrontPath}${sourceUrl}`,
-          }}></Avatar>
+          }}
+        />
       ) : !sourceUrl ||
         sourceUrl.trim() === '' ||
         sourceUrl.indexOf('http') !== -1 ? (

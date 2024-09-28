@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {Dimensions, StyleSheet, Platform} from 'react-native';
 import {View} from 'react-native';
@@ -55,11 +56,13 @@ export const CardView = ({
         shadowOpacity: 0.1,
         padding: 5,
         backgroundColor: '#ffffff',
+
+        marginLeft: 5,
       }}>
       <View
         style={[
           {
-            width: CARD_WIDTH - 10,
+            width: CARD_WIDTH - 15,
             height: CARD_HEIGHT,
             overflow: 'hidden',
             backgroundColor: 'white',
