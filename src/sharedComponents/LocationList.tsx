@@ -5,8 +5,10 @@ import {colors, styles} from '../themes';
 import {
   FlatList,
   Keyboard,
+  Pressable,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
@@ -14,6 +16,7 @@ import {RootState} from '../../BrokerAppcore/redux/store/reducers';
 import {
   getPlaceDataFromID,
   searchLocation,
+  searchLocationnew,
 } from '../../BrokerAppcore/services/googleService';
 import {HStack} from '../../components/ui/hstack';
 import ZText from './ZText';
@@ -41,7 +44,7 @@ function LocationList(props: any) {
         setissearch(false);
         if (searchText.length >= 3) {
           const result = await searchLocation(searchText, SetCityFilter);
-
+console.log(result);
           setLoading(false);
           if (result) {
             setuserLists(result);
@@ -73,25 +76,34 @@ function LocationList(props: any) {
     Keyboard.dismiss(); //
     let itemLoaction = await getPlaceDataFromID(item.placeId);
     //
+    console.log(itemLoaction);
     setLoaction(itemLoaction);
   };
 
   return (
-    <ScrollView keyboardShouldPersistTaps={true}>
+   <>
       <FlatList
-        keyboardShouldPersistTaps={true}
+        keyboardShouldPersistTaps={'always'}
         data={userLists}
         renderItem={({item, index}) => (
-          <View>
-            <TouchableWithoutFeedback onPress={() => onPressPlace(item)}>
-              <HStack
-                space={[2, 3]}
-                style={localStyles.listitem}
-                justifyContent="space-between">
-                <ZText>{item.name} </ZText>
-              </HStack>
-            </TouchableWithoutFeedback>
-          </View>
+        
+          <Pressable onPress={() => onPressPlace(item)}>
+  <HStack
+    space={[2, 3]}
+    style={localStyles.listitem}
+    justifyContent="space-between">
+    <ZText>{item.name}</ZText>
+  </HStack>
+</Pressable>
+            // <TouchableOpacity  onPress={() => onPressPlace(item)}>
+            //   <HStack
+            //     space={[2, 3]}
+            //     style={localStyles.listitem}
+            //     justifyContent="space-between">
+            //     <ZText>{item.name} </ZText>
+            //   </HStack>
+            // </TouchableOpacity >
+         
         )}
         keyExtractor={(item, index) => index.toString()}
         showsVerticalScrollIndicator={false}
@@ -108,7 +120,7 @@ function LocationList(props: any) {
           {`Enter minimum 3 characters to search`}
         </ZText>
       )}
-    </ScrollView>
+    </>
   );
 }
 
