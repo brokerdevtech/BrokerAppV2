@@ -1601,6 +1601,42 @@ const SearchFill = {
     },
   },
 };
+const DiscountData = [
+  {key: '1', value: 'Upto 10,000'},
+  {key: '2', value: 'Upto 20,000'},
+  {key: '3', value: 'Upto 30,000'},
+  {key: '4', value: 'Upto 50,000'},
+  {key: '5', value: 'Upto 100,000'},
+];
+const DrivenData = [
+  {key: '1', value: '10,000 kms'},
+  {key: '2', value: '20,000 kms'},
+  {key: '3', value: '30,000 kms'},
+  {key: '4', value: '50,000 kms'},
+  {key: '5', value: '100,000 kms'},
+];
+const ConditonData = [
+  {key: '1', value: 'New Car'},
+  {key: '2', value: 'Used Car'},
+];
+const MakingYearData = [
+  {key: '1', value: '2009'},
+  {key: '2', value: '2010'},
+  {key: '3', value: '2011'},
+  {key: '4', value: '2012'},
+  {key: '5', value: '2013'},
+  {key: '6', value: '2014'},
+  {key: '7', value: '2015'},
+  {key: '8', value: '2016'},
+  {key: '9', value: '2017'},
+  {key: '10', value: '2018'},
+  {key: '11', value: '2019'},
+  {key: '12', value: '2020'},
+  {key: '13', value: '2021'},
+  {key: '14', value: '2022'},
+  {key: '15', value: '2023'},
+  {key: '16', value: '2024'},
+];
 // const searchVideoData = [
 // const podcastData = {
 //   totalPages: 1,
@@ -1706,12 +1742,16 @@ export {
   renderChips,
   //   ProfileSetting,
   helperCategoryData,
+  ConditonData,
   helperData,
   contactUsData,
   languageData,
   privacyPolicyData,
   editProfileData,
   headerCategoryData,
+  DiscountData,
+  MakingYearData,
+  DrivenData,
   inboxData,
   videoData,
   reportData,

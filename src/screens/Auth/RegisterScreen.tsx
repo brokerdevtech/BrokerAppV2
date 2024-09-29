@@ -6,9 +6,11 @@ import {Input, InputField} from '../../../components/ui/input';
 import {useApiRequest} from '../../../src/hooks/useApiRequest';
 import {Formik} from 'formik';
 import {useNavigation} from '@react-navigation/native';
-import {getBrokerCategoryList} from '../../../BrokerAppcore/services/new/authService';
+import {getBrokerCategoryList} from '../../../BrokerAppCore/services/new/authService';
 import {
+  ActivityIndicator,
   Keyboard,
+  Modal,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -17,14 +19,14 @@ import {
   View,
 } from 'react-native';
 import {storeTokens, storeUser} from '../../../src/utils/utilTokens';
-import store from '../../../BrokerAppcore/redux/store';
-import {setUser} from '../../../BrokerAppcore/redux/store/user/userSlice';
-import {setTokens} from '../../../BrokerAppcore/redux/store/authentication/authenticationSlice';
+import store from '../../../BrokerAppCore/redux/store';
+import {setUser} from '../../../BrokerAppCore/redux/store/user/userSlice';
+import {setTokens} from '../../../BrokerAppCore/redux/store/authentication/authenticationSlice';
 
 import {CheckIcon, CircleIcon, Icon} from '@/components/ui/icon';
 
 import * as yup from 'yup';
-import UserRegistration from '../../../BrokerAppcore/types/userRegistration';
+import UserRegistration from '../../../BrokerAppCore/types/userRegistration';
 import {Color, GilroyFontFamily} from '../../styles/GlobalStyles';
 import {InputIcon, InputSlot} from '../../../components/ui/input';
 import {
@@ -51,7 +53,7 @@ import RadioGroup from '../../sharedComponents/RadioGroup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getfcmToken} from '../../utils/utilTokens';
 import DeviceInfo from 'react-native-device-info';
-import {signup} from '../../../BrokerAppcore/services/new/authService';
+import {signup} from '../../../BrokerAppCore/services/new/authService';
 import {Toast, ToastDescription, useToast} from '../../../components/ui/toast';
 const CustomCheckbox = ({label, checked, onChange}) => {
   return (
@@ -104,7 +106,7 @@ const validationSchema = yup.object().shape({
 
 export default function RegisterScreen({setLoggedIn}) {
   const [selectedCategory, setSelectedCategory] = useState([]);
-
+  const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setConfirmShowPassword] = React.useState(false);
   const [selecteRadioId, setSelectedRadioId] = useState(null);
@@ -180,7 +182,7 @@ export default function RegisterScreen({setLoggedIn}) {
   const handleSubmit = async (values, broker) => {
     try {
       Keyboard.dismiss();
-      // setIsLoading(true); // Uncomment when handling loading state
+      setLoading(true); // Uncomment when handling loading state
 
       await AsyncStorage.removeItem('fcmToken');
       const deviceId = await DeviceInfo.getUniqueId();
@@ -212,38 +214,42 @@ export default function RegisterScreen({setLoggedIn}) {
       console.log(user);
 
       await registerexecute(user);
-      await registerdata;
-      console.log(registerdata, 'Data');
-
-      if (registererror) {
-        showToast(registererror);
-      } else {
-        await storeUser(JSON.stringify(registerdata.data));
-        await storeTokens(
-          registerdata.data.accessToken,
-          registerdata.data.refreshToken,
-          registerdata.data.getStreamAccessToken,
-        );
-        await store.dispatch(setUser(registerdata.data));
-        await store.dispatch(
-          setTokens({
-            accessToken: registerdata.data.accessToken,
-            refreshToken: registerdata.data.refreshToken,
-            getStreamAccessToken: registerdata.data.getStreamAccessToken,
-          }),
-        );
-
-        setLoggedIn(true);
-        navigation.navigate('Home');
-        showToast(registerdata.statusMessage);
-      }
     } catch (error) {
       console.error('Error in handleSubmit:', error);
     } finally {
-      // setIsLoading(false); // Uncomment when handling loading state
+      setLoading(false); // Uncomment when handling loading state
     }
   };
   // console.log(AppLocation);
+  useEffect(() => {
+    const createuser = async () => {
+      try {
+        if (registerdata) {
+          await storeUser(JSON.stringify(registerdata.data));
+          await storeTokens(
+            registerdata.data.accessToken,
+            registerdata.data.refreshToken,
+            registerdata.data.getStreamAccessToken,
+          );
+          await store.dispatch(setUser(registerdata.data));
+          await store.dispatch(
+            setTokens({
+              accessToken: registerdata.data.accessToken,
+              refreshToken: registerdata.data.refreshToken,
+              getStreamAccessToken: registerdata.data.getStreamAccessToken,
+            }),
+          );
+
+          setLoggedIn(true);
+          navigation.navigate('Home');
+          showToast(registerdata.statusMessage);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    createuser();
+  }, [registerdata]);
   return (
     <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.container}>
       <Text style={styles.header}>Create An Account</Text>
@@ -458,6 +464,13 @@ export default function RegisterScreen({setLoggedIn}) {
           Sign In
         </Text>
       </Text>
+      {loading && (
+        <Modal transparent={true} animationType="fade">
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color={Color.primary} />
+          </View>
+        </Modal>
+      )}
     </ScrollView>
   );
 }
@@ -609,5 +622,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
     marginTop: 20,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background to highlight the loader
   },
 });

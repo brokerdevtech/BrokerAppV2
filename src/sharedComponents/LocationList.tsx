@@ -12,12 +12,12 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {RootState} from '../../BrokerAppcore/redux/store/reducers';
+import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import {
   getPlaceDataFromID,
   searchLocation,
   searchLocationnew,
-} from '../../BrokerAppcore/services/googleService';
+} from '../../BrokerAppCore/services/googleService';
 import {HStack} from '../../components/ui/hstack';
 import ZText from './ZText';
 import NoDataFound from './NoDataFound';
@@ -44,7 +44,7 @@ function LocationList(props: any) {
         setissearch(false);
         if (searchText.length >= 3) {
           const result = await searchLocation(searchText, SetCityFilter);
-console.log(result);
+          console.log(result);
           setLoading(false);
           if (result) {
             setuserLists(result);
@@ -81,29 +81,27 @@ console.log(result);
   };
 
   return (
-   <>
+    <>
       <FlatList
         keyboardShouldPersistTaps={'always'}
         data={userLists}
         renderItem={({item, index}) => (
-        
           <Pressable onPress={() => onPressPlace(item)}>
-  <HStack
-    space={[2, 3]}
-    style={localStyles.listitem}
-    justifyContent="space-between">
-    <ZText>{item.name}</ZText>
-  </HStack>
-</Pressable>
-            // <TouchableOpacity  onPress={() => onPressPlace(item)}>
-            //   <HStack
-            //     space={[2, 3]}
-            //     style={localStyles.listitem}
-            //     justifyContent="space-between">
-            //     <ZText>{item.name} </ZText>
-            //   </HStack>
-            // </TouchableOpacity >
-         
+            <HStack
+              space={[2, 3]}
+              style={localStyles.listitem}
+              justifyContent="space-between">
+              <ZText>{item.name}</ZText>
+            </HStack>
+          </Pressable>
+          // <TouchableOpacity  onPress={() => onPressPlace(item)}>
+          //   <HStack
+          //     space={[2, 3]}
+          //     style={localStyles.listitem}
+          //     justifyContent="space-between">
+          //     <ZText>{item.name} </ZText>
+          //   </HStack>
+          // </TouchableOpacity >
         )}
         keyExtractor={(item, index) => index.toString()}
         showsVerticalScrollIndicator={false}

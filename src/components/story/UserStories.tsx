@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   StyleSheet,
@@ -14,15 +15,16 @@ import {styles as globalStyles} from '../../themes';
 
 import {useSelector} from 'react-redux';
 
-import ZText from '@/src/sharedComponents/ZText';
-import ZAvatarInitials from '@/src/sharedComponents/ZAvatarInitials';
-import {HStack} from '@/components/ui/hstack';
-import {VStack} from '@/components/ui/vstack';
-import {Skeleton} from '@/components/ui/skeleton';
-import {checkPermission} from '@/src/utils/helpers';
-import {moderateScale, PermissionKey} from '@/src/config/constants';
-import {getDashboardStory} from '@/BrokerAppcore/services/Story';
-import {RootState} from '@/BrokerAppcore/redux/store/reducers';
+import ZText from '../../sharedComponents/ZText';
+import ZAvatarInitials from '../../sharedComponents/ZAvatarInitials';
+
+import {checkPermission} from '../../utils/helpers';
+import {moderateScale, PermissionKey} from '../../config/constants';
+import {HStack} from '../../../components/ui/hstack';
+import {Skeleton} from '../../../components/ui/skeleton';
+import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
+import {getDashboardStory} from '../../../BrokerAppCore/services/Story';
+import {VStack} from '../../../components/ui/vstack';
 
 const StoriesSkeleton = () => {
   return (
@@ -86,7 +88,7 @@ const UserStories = React.memo(({}) => {
       const result = await getDashboardStory(user.userId, 1, 5);
       //
       if (result.data) {
-        setStoryData(result.data?.storyList);
+        setStoryData(result?.data?.storyList);
 
         //  setLoading(false);
       } else {

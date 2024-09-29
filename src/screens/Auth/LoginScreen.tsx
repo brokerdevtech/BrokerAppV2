@@ -20,11 +20,11 @@ import {
 import {EyeIcon, EyeOffIcon, Icon} from '../../../components/ui/icon';
 import {AppleIcon, FBIcon, GoogleIcon} from '../../assets/svg';
 import {storeTokens, storeUser} from '../../utils/utilTokens';
-import {setUser} from '../../../BrokerAppcore/redux/store/user/userSlice';
-import store from '../../../BrokerAppcore/redux/store';
-import {setTokens} from '../../../BrokerAppcore/redux/store/authentication/authenticationSlice';
+import {setUser} from '../../../BrokerAppCore/redux/store/user/userSlice';
+import store from '../../../BrokerAppCore/redux/store';
+import {setTokens} from '../../../BrokerAppCore/redux/store/authentication/authenticationSlice';
 import {useApiRequest} from '../../hooks/useApiRequest';
-import {login} from '../../../BrokerAppcore/services/new/authService';
+import {login} from '../../../BrokerAppCore/services/new/authService';
 import {Toast, ToastDescription, useToast} from '../../../components/ui/toast';
 import {useNavigation} from '@react-navigation/native';
 

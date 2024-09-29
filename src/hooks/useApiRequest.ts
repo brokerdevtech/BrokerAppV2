@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {ApiResponse} from '../../BrokerAppcore/services/new/ApiResponse'; // Assuming ApiResponse is defined
+import {ApiResponse} from '../../BrokerAppCore/services/new/ApiResponse'; // Assuming ApiResponse is defined
 
 export const useApiRequest = <T, P extends any[]>(
   apiFunction: (...params: P) => Promise<ApiResponse<T>>,
@@ -20,7 +20,7 @@ export const useApiRequest = <T, P extends any[]>(
 
     try {
       const response = await apiFunction(...params);
-      console.log("========response");
+      console.log('========response');
       console.log(response);
       if (setLoading) {
         setLoading(false);

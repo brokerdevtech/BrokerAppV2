@@ -22,6 +22,7 @@ import FilterTagsScreen from '../sharedComponents/FilterTagsScreen';
 import PropertyPostPreview from '../screens/postImage/previewScreens/PropertyPostPreview';
 import GenericPostPreview from '../screens/postImage/previewScreens/GenericPostPreview';
 import NotificationScreen from '../screens/NotificationScreen';
+import CarFilterScreen from '../sharedComponents/carSearchFilter';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -55,6 +56,11 @@ const HomeNavigation: React.FC = () => {
         <Stack.Screen
           name="ChooseImage"
           component={ChooseImage}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Carfilters"
+          component={CarFilterScreen}
           options={{headerShown: false}}
         />
         <Stack.Screen

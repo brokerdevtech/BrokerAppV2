@@ -6,7 +6,7 @@ import {useSelector} from 'react-redux';
 
 import {Avatar} from '../../components/ui/avatar';
 import images from '../assets/images';
-import {RootState} from '../../BrokerAppcore/redux/store/reducers';
+import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import {imagesBucketcloudfrontPath} from '../constants/constants';
 //Text Component
 const getInitials = name => {
@@ -67,7 +67,7 @@ const ZAvatarInitials = ({
             color: 'white',
             fontSize: 'md',
           }}>
-          {getInitials(name)}
+          {/* {getInitials(name)} */}
         </Avatar>
       ) : (
         <Avatar

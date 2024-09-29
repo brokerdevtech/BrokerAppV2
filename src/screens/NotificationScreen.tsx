@@ -17,13 +17,13 @@ import {useSelector} from 'react-redux';
 import {
   getNotification,
   updateNotification,
-} from '../../BrokerAppcore/services/getNotification';
+} from '../../BrokerAppCore/services/getNotification';
 import {
   GetDashboardData,
   UpdateDashboardData,
-} from '../../BrokerAppcore/services/authService';
-import {setDashboard} from '../../BrokerAppcore/redux/store/Dashboard/dashboardSlice';
-import {updateConnections} from '../../BrokerAppcore/services/connections';
+} from '../../BrokerAppCore/services/authService';
+import {setDashboard} from '../../BrokerAppCore/redux/store/Dashboard/dashboardSlice';
+import {updateConnections} from '../../BrokerAppCore/services/connections';
 import LoadingSpinner from '../sharedComponents/LoadingSpinner';
 import NoDataFound from '../sharedComponents/NoDataFound';
 import typography from '../themes/typography';

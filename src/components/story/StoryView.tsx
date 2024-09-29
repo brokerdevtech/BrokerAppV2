@@ -25,13 +25,13 @@ import LinearGradient from 'react-native-linear-gradient';
 import Video from 'react-native-video';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
-import {RootState} from '@/BrokerAppcore/redux/store/reducers';
+import {RootState} from '@/BrokerAppCore/redux/store/reducers';
 import {secondsToMilliseconds} from '@/src/utils/helpers';
 import {
   AddStoryViewer,
   StoryLike,
   StoryUnLIke,
-} from '@/BrokerAppcore/services/Story';
+} from '@/BrokerAppCore/services/Story';
 import {imagesBucketcloudfrontPath} from '@/src/constants/constants';
 import FastImage from '@d11/react-native-fast-image';
 import {styles} from '@/src/themes';

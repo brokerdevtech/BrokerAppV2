@@ -28,12 +28,12 @@ import ZSafeAreaView from './ZSafeAreaView';
 import ZHeader from './ZHeader';
 import LocalityTag from './LocalityTag';
 import Video from 'react-native-video';
-import {RootState} from '../../BrokerAppcore/redux/store/reducers';
+import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import {useApiRequest} from '../hooks/useApiRequest';
 import {
   getCascadedFilters,
   getFilterTags,
-} from '../../BrokerAppcore/services/new/filterTags';
+} from '../../BrokerAppCore/services/new/filterTags';
 
 const devicewidth = Dimensions.get('window').width;
 let Selectedfiltersobj = {tags: []};
@@ -68,6 +68,7 @@ const FilterTagsScreen: React.FC = ({
   const [childState, setChildState] = useState({});
   const [localities, setLocalities] = useState({});
   const [loading, setLoading] = useState(false);
+  const [dependCascade, setDependCascade] = useState(null);
   const {
     data: filterdata,
     status: filterstatus,
@@ -128,13 +129,9 @@ const FilterTagsScreen: React.FC = ({
     return () => backHandler.remove(); // Cleanup the event listener when the component unmounts
   }, [navigation]);
 
-  
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
-    
-
         // Now fetch the filter data after filterexecute is done
         await Tagfetching();
       } catch (error) {
@@ -146,11 +143,10 @@ const FilterTagsScreen: React.FC = ({
     };
 
     // Make sure user.userId is available before calling fetchData
- 
-      fetchData();
 
+    fetchData();
   }, [filterdata]);
-  
+
   // Add user?.userId as a dependency
 
   const Tagfetching = async () => {
@@ -235,6 +231,49 @@ const FilterTagsScreen: React.FC = ({
     return obj;
   };
 
+  useEffect(() => {
+    if (filterCascadedata && dependCascade) {
+      try {
+        let newrecords = [];
+        if (filterCascadedata.data.filters.length > 0) {
+          newrecords = filterCascadedata.data.filters[0].records;
+        }
+
+        let obj = {...Postfilter};
+        clearDependentRecordsFromIndex(obj, dependCascade.dependsOn);
+
+        const flattenedDependencies = flattenDependencies(
+          filterTags.filters,
+          dependCascade.dependsOn,
+        );
+        const updatedData = filterTags.filters.map(item => {
+          if (item.name === dependCascade.dependsOn) {
+            return {...item, records: newrecords};
+          }
+          if (flattenedDependencies.includes(item.name)) {
+            return {...item, records: []};
+          }
+          return item;
+        });
+
+        setFilterTags({...filterTags, filters: updatedData});
+
+        if (type === 'Single') {
+          obj = toggelMandatoryFiltersSingle(data, filterName, type, obj);
+          if (filterName !== 'City') obj[filterName].records = [data];
+        } else {
+          obj = toggelMandatoryFilters(data, filterName, type, obj);
+          if (filterName !== 'City') obj[filterName].records = data;
+        }
+
+        setPostfilter(obj);
+      } catch (error) {
+        console.error('Error handling filter cascade:', error);
+      }
+    }
+  }, [filterCascadedata, dependCascade]);
+
+  // onSelect function
   const onSelect = async (
     data,
     filterName,
@@ -242,78 +281,44 @@ const FilterTagsScreen: React.FC = ({
     filter,
     fliterName = 'post',
   ) => {
-    if (filter.dependsOn != '') {
-      await filterCascadeexecute(
-        user.userId,
-        fliterName,
-        filter.dependsOn,
-        data.key,
-      );
-      console.log(filterCascadedata, 'filter');
-      let newrecords: any[] = [];
-      if (filterCascadedata.data.filters.length > 0) {
-        newrecords = filterCascadedata.data.filters[0].records;
+    setDependCascade(filter);
+    try {
+      // If there's a dependent filter, trigger the cascade
+      if (filter.dependsOn !== '') {
+        await filterCascadeexecute(
+          user.userId,
+          fliterName,
+          filter.dependsOn,
+          data.key,
+        );
+
+        // The logic for handling the cascade is now inside useEffect
       }
+
       let obj: any = Postfilter;
-      clearDependentRecordsFromIndex(obj, filter.dependsOn);
-      // obj[filter.dependsOn].records=[];
 
+      // Handle Single or Multi-type filter
+      if (type === 'Single') {
+        obj = toggelMandatoryFiltersSingle(data, filterName, type, obj);
+        if (filterName !== 'City') {
+          obj[filterName].records = [data];
+        }
+      } else {
+        obj = toggelMandatoryFilters(data, filterName, type, obj);
+        if (filterName !== 'City') {
+          obj[filterName].records = data;
+        }
+      }
+
+      // Update Postfilter with new selections
       setPostfilter(previousPostfilter => {
-        // Calculate the new state based on the previous state.
-        const updatedPostfilter = obj;
-
-        // // You can also perform additional actions, like logging, here.
-        //
-
-        return updatedPostfilter; // Return the new state value.
+        return obj; // Return the new state value
       });
-
-      const flattenedDependencies = flattenDependencies(
-        filterTags.filters,
-        filter.dependsOn,
-      );
-      const updatedData = filterTags.filters.map(item => {
-        if (item.name === filter.dependsOn) {
-          // Update the object if the name matches
-
-          return {
-            ...item,
-            records: newrecords,
-          };
-        }
-        if (flattenedDependencies.includes(item.name)) {
-          // Update the object if the name matches
-
-          return {
-            ...item,
-            records: [],
-          };
-        }
-        return item;
-      });
-      setFilterTags({...filterTags, filters: updatedData});
+    } catch (error) {
+      console.error('Error executing onSelect:', error);
     }
-
-    let obj: any = Postfilter;
-
-    if (type === 'Single') {
-      obj = toggelMandatoryFiltersSingle(data, filterName, type, obj);
-
-      if (filterName != 'City') obj[filterName].records = [data];
-    } else {
-      obj = toggelMandatoryFilters(data, filterName, type, obj);
-      if (filterName != 'City') obj[filterName].records = data;
-    }
-
-    setPostfilter(previousPostfilter => {
-      // Calculate the new state based on the previous state.
-      const updatedPostfilter = obj;
-
-      // You can also perform additional actions, like logging, here.
-
-      return updatedPostfilter; // Return the new state value.
-    });
   };
+
   const onFiltersLocalityChange = Localitys => {
     setLocalities(Localitys);
 
@@ -516,7 +521,7 @@ const FilterTagsScreen: React.FC = ({
     );
   };
   const [activeIndex, setActiveIndex] = useState(0);
-
+  // console.log(filterCascadedata.data.filters, 'from tags');
   return (
     <ZSafeAreaView>
       <ZHeader
@@ -534,7 +539,7 @@ const FilterTagsScreen: React.FC = ({
       /> */}
 
       <ScrollView
-       keyboardShouldPersistTaps={"always"}
+        keyboardShouldPersistTaps={'always'}
         bounces={false}
         showsVerticalScrollIndicator={false}
         style={localStyles.root}>
