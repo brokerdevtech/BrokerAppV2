@@ -171,8 +171,12 @@ function App(): React.JSX.Element {
 
       const {latitude, longitude} = relustGeolocation.coords;
 
-      let resultAddress = await getAddressFromCoordinates(latitude, longitude);
-      store.dispatch(setCity(resultAddress));
+      let resultAddress = await getAddressFromCoordinatesNew(
+        latitude,
+        longitude,
+      );
+      console.log(relustGeolocation, 'resultAddress');
+      store.dispatch(setAppLocation(resultAddress));
     }
   };
   const checkPermission = async () => {

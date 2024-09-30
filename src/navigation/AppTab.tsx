@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable no-unreachable */
 import {Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
 import ZText from '../sharedComponents/ZText';
@@ -26,6 +28,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
 import DashboradScreen from '../screens/DashboradScreen';
 import ChooseImage from '../screens/postImage/ChooseImage';
+import {Color} from '../styles/GlobalStyles';
 
 const Tab = createBottomTabNavigator();
 
@@ -68,6 +71,7 @@ const AppTab: React.FC = () => {
     //  onOpen();
 
     navigation.navigate('ChooseImage');
+    console.log('press');
   };
 
   return (
@@ -141,39 +145,39 @@ const AppTab: React.FC = () => {
           listeners={{tabPress: e => e.preventDefault()}}
           options={{
             tabBarIcon: ({focused}) => (
-              <TouchableOpacityWithPermissionCheck
-                tagNames={[View, Add_Icon]}
-                permissionEnum={PermissionKey.AllowAddPost}
-                permissionsArray={userPermissions}
+              <TouchableOpacity
+                // tagNames={[View, Add_Icon]}
+                // permissionEnum={PermissionKey.AllowAddPost}
+                // permissionsArray={userPermissions}
                 onPress={onPressAdd}
                 style={localStyles.tabViewContainer}>
-                <View
+                {/* <View
                   style={{
                     position: 'relative',
                     bottom:
                       Platform.OS === 'android'
                         ? moderateScale(20)
                         : moderateScale(30),
-                  }}>
-                  <View
-                    style={{
-                      backgroundColor: '#ffffff',
-                      borderRadius: moderateScale(50),
-                      width: moderateScale(60),
-                      height: moderateScale(60),
-                      justifyContent: 'center',
-                      alignItems: 'center',
+                  }}> */}
+                <View
+                  style={{
+                    backgroundColor: '#ffffff',
+                    borderRadius: moderateScale(50),
+                    width: moderateScale(60),
+                    height: moderateScale(60),
+                    justifyContent: 'center',
+                    alignItems: 'center',
 
-                      borderColor: '#ffffff',
-                    }}>
-                    <Add_Icon
-                      width={moderateScale(60)}
-                      height={moderateScale(60)}
-                      color={'#bc4a50'}
-                    />
-                  </View>
+                    borderColor: '#ffffff',
+                  }}>
+                  <Add_Icon
+                    width={moderateScale(60)}
+                    height={moderateScale(60)}
+                    color={Color.primary}
+                  />
                 </View>
-              </TouchableOpacityWithPermissionCheck>
+                {/* </View> */}
+              </TouchableOpacity>
             ),
           }}
         />

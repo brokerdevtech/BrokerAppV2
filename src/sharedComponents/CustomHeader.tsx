@@ -35,11 +35,15 @@ import {Badge, BadgeIcon, BadgeText} from '@/components/ui/badge';
 import {useNavigation} from '@react-navigation/native';
 import UserProfile from './profile/UserProfile';
 import MarqueeBanner from './profile/MarqueeBanner';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 
 const CustomHeader = () => {
   const cityToShow = 'Dubai';
   const navigation = useNavigation();
-
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
+  // const AppLocation = useSelector((state: RootState) => state.city);
+  // console.log(AppLocation, 'AppLoaction');
   return (
     <View style={styles.headerSection}>
       <View style={styles.headerContainer}>
