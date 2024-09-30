@@ -1,83 +1,75 @@
-import React from 'react';
-import { Button, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
-import margin from '@/themes/margin';
-import padding from '@/themes/padding';
+import React, { useEffect } from 'react';
+import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { HStack } from '@/components/ui/hstack';
+import { VStack } from '@/components/ui/vstack';
 import { Box } from '@/components/ui/box';
+import { useApiRequest } from '@/src/hooks/useApiRequest';
+import { fetchDashboardData, ListDashboardPostRequest } from '@/BrokerAppCore/services/new/dashboardService';
 
+import ZText from '../../sharedComponents/ZText';
 import c1 from '../../assets/images/c1.png';
 import c2 from '../../assets/images/c2.png';
 import p1 from '../../assets/images/p1.png';
 import p2 from '../../assets/images/p2.png';
-import { VStack } from '../../../components/ui/vstack';
-
 
 
 interface ProductSectionProps {
    heading: string,
-   background: string
+   background: string,
+   endpoint: string,
+   request: ListDashboardPostRequest
 }
 
 const ProductSection = (props: ProductSectionProps) => {
+
+  const { data, status, error, execute } = useApiRequest(fetchDashboardData);
+
+  const callPodcastList = async () => {
+    await execute(props.endpoint, props.request);
+    console.log(props.heading, 'data :-', data);
+    
+    
+    console.log('status :-', status);
+    console.log('error :-', error);
+  };
+ 
+  useEffect(() => {
+     callPodcastList();
+  }, [])
+
+  const renderProductItems = ({item, index}) => {
+    return(
+      <VStack style={styles.itemContainer} key={index}>
+          <TouchableOpacity onPress={() => console.log()}>
+            <Box className="h-213 w-132" style={styles.itemContainer} >
+                <Image source={c1} style={styles.tagImage}/>
+                <VStack space="sm" style={styles.itemFooterContainer}>
+                  <ZText type={'M14'}>$ {item.price}</ZText>
+                  <ZText type={'M14'}>{item.city}</ZText>
+                  <ZText type={'M14'}>{item.title}</ZText>
+                </VStack>
+            </Box>
+          </TouchableOpacity> 
+      </VStack>
+    )
+  }
+
   return (
    <View style={{backgroundColor: props.background, paddingVertical: 20}}>
        <HStack space="md" reversed={false} style={styles.heading}>
-            <Text style={styles.headingTitle}>{props.heading}</Text>
-            <Text style={styles.link}>See All</Text>
+            <ZText type={'R18'}>{props.heading}</ZText>
+            <ZText type={'R14'} style={styles.link}>See All</ZText>
         </HStack>
         <HStack space="md" reversed={false} style={{paddingHorizontal: 20}}>
-           <VStack style={styles.itemContainer}>
-             <TouchableOpacity onPress={() => console.log()}>
-                <Box className="h-213 w-132" style={styles.itemContainer} >
-                    <Image source={c1} style={styles.tagImage}/>
-                    <View style={styles.itemFooterContainer}>
-                      <Text>$ 2909</Text>
-                      <Text>Dubai</Text>
-                      <Text>Mercedes-benz</Text>
-                    </View>
-                </Box>
-              </TouchableOpacity> 
-           </VStack>
-
-           <VStack style={styles.itemContainer}>
-              <Box className="h-213 w-132" >
-                <TouchableOpacity onPress={() => console.log()}>
-                  <Image source={p2} style={styles.tagImage}/>
-                   <View style={styles.itemFooterContainer}>
-                    <Text>$ 2909</Text>
-                    <Text>Dubai</Text>
-                    <Text>Mercedes-benz</Text>
-                  </View>
-                </TouchableOpacity>
-              </Box> 
-           </VStack>
-
-           <VStack style={styles.itemContainer}>
-              <Box className="h-213 w-132" >
-                <TouchableOpacity onPress={() => console.log()}>
-                  <Image source={p1} style={styles.tagImage}/>
-                  <View style={styles.itemFooterContainer}>
-                    <Text>$ 2909</Text>
-                    <Text>Dubai</Text>
-                    <Text>Mercedes-benz</Text>
-                  </View>
-                </TouchableOpacity>
-              </Box> 
-           </VStack>
-
-           <VStack style={styles.itemContainer}>
-              <Box className="h-213 w-132" >
-                <TouchableOpacity onPress={() => console.log()}>
-                  <Image source={p2} style={styles.tagImage}/>
-                    <View style={styles.itemFooterContainer}>
-                      <Text>$ 2909</Text>
-                      <Text>Dubai</Text>
-                      <Text>Mercedes-benz</Text>
-                    </View>
-                </TouchableOpacity>
-              </Box> 
-           </VStack>
+            <FlatList
+              data={data} 
+              keyExtractor={item => item.postId.toString()}
+              renderItem={renderProductItems}
+              initialNumToRender={3}
+              showsHorizontalScrollIndicator={false}
+              horizontal
+              onEndReachedThreshold={0.8}
+            />           
         </HStack>
    </View>
   );
@@ -92,7 +84,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 10,
     paddingHorizontal: 20,
-    paddingVertical: 20
   },
   headingTitle: {
     color: '#263238',
@@ -104,12 +95,6 @@ const styles = StyleSheet.create({
   },
   link: {
     color: '#C20707',
-    textAlign: 'right',
-    fontFamily: 'Gilroy',
-    fontSize: 14,
-    fontStyle: 'normal',
-    fontWeight: 400,
-    lineHeight: 20 
   },
 
   itemContainer: {
@@ -125,6 +110,7 @@ const styles = StyleSheet.create({
   itemFooterContainer: {
     backgroundColor: '#FFF',
     paddingVertical: 20,
+    paddingLeft: 10,
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
 

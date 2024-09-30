@@ -35,18 +35,22 @@ export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
   const {data, status, error, execute} = useApiRequest(fetchPodcastList);
+  // const {data: marqueeText, status: marqueeStatus, error: marqueeError, execute: marqueeExecute} = useApiRequest(fetchDashboardData);
+  const cityToShow = 'Noida';
   const navigation = useNavigation();
 
   const callPodcastList = async () => {
     await execute(user.userId, 1, 4);
-    console.log('Data :-', data);
-    console.log('Error :-', error);
-    console.log('Status :-', status);
+    // await marqueeExecute(1, 5, 'Marqueue', 'Noida')
+    // console.log('marqueeText :-', marqueeText);
+    // console.log('marqueeStatus :-', marqueeStatus);
+    // console.log('marqueeError :-', marqueeError);
   };
  
   useEffect(() => {
      callPodcastList();
   }, [])
+
   
   
   const handleThumbnailTap = async (item, index) => {
@@ -121,57 +125,61 @@ export default function DashboradScreen() {
 
         <Grid className="gap-3 p-4" _extra={{className: "grid-cols-9",}}>
           <GridItem className="bg-background-50 p-2 rounded-md text-center" _extra={{ className: "col-span-9",}}>
-            <Text className="text-md" style={styles.headingTitle}>Find what you are looking for</Text>
+             <ZText type={'R18'}>
+               Find what you are looking for
+            </ZText>
           </GridItem>
           <GridItem className="bg-background-0 p-4 rounded-md text-center" _extra={{ className: "col-span-3",}}>
-            <View style={styles.tabItemContainer}>
-              <TABTravel />
-              <Text className="text-sm mt-1" style={styles.tabItemTitle}>Property</Text>
-            </View>
+            <TouchableOpacity onPress={() => console.log()}>
+                <View style={styles.tabItemContainer}>
+                  <TABTravel />
+                  <ZText type={'R16'} style={styles.tabItemTitle}>Property</ZText>
+                </View>
+            </TouchableOpacity>
           </GridItem>
           <GridItem className="bg-background-0 p-4 rounded-md text-center" _extra={{ className: "col-span-3",}}>
-            <View style={styles.tabItemContainer}>
-             
-             <TABCard />
-             <Text className="text-md" style={styles.tabItemTitle}>Car</Text>
-            </View>
+            <TouchableOpacity onPress={() => console.log()}>
+              <View style={styles.tabItemContainer}>
+                  <TABCard />
+                  <ZText type={'R16'} style={styles.tabItemTitle}>Car</ZText>
+              </View>
+            </TouchableOpacity>   
           </GridItem>
           <GridItem className="bg-background-0 p-4 rounded-md text-center" _extra={{ className: "col-span-3",}}>
             <View style={styles.tabItemContainer}>
               <TABLoan />
-              <Text className="text-md" style={styles.tabItemTitle}>Loan</Text>
+              <ZText type={'R16'} style={styles.tabItemTitle}>Loan</ZText>
             </View>
           </GridItem>
           <GridItem className="bg-background-0 p-4 rounded-md text-center" _extra={{ className: "col-span-3",}}>
             <View style={styles.tabItemContainer}>
               <TABInsurance />
-              <Text className="text-md" style={styles.tabItemTitle}>Insurance</Text>
+              <ZText type={'R16'} style={styles.tabItemTitle}>Insurance</ZText>
             </View>
           </GridItem>
           <GridItem className="bg-background-0 p-4 rounded-md text-center" _extra={{ className: "col-span-3",}}>
             <View style={styles.tabItemContainer}>
               <TABTravel />
-              <Text className="text-md" style={styles.tabItemTitle}>Travel</Text>
+              <ZText type={'R16'} style={styles.tabItemTitle}>Travel</ZText>
             </View>
           </GridItem>
           <GridItem className="bg-background-0 p-4 rounded-md text-center" _extra={{ className: "col-span-3",}}>
             <View style={styles.tabItemContainer}>
               <TABWealth />
-              <Text className="text-md" style={styles.tabItemTitle}>Wealth</Text>
+              <ZText type={'R16'} style={styles.tabItemTitle}>Wealth</ZText>
             </View>
           </GridItem>
         </Grid>   
-        <ProductSection heading={'Newly Launch'} background={'#FFFFFF'} />
-        <ProductSection heading={'Recent Search'} background={'#F7F8FA'} />
-        <ProductSection heading={'New In Property'} background={'#FFFFFF'} />
-        <ProductSection heading={'New In Car'} background={'#F7F8FA'} />
-        <ProductSection heading={'New In Loan'} background={'#FFFFFF'} />
+        <ProductSection heading={'Newly Launch'} background={'#FFFFFF'} endpoint={`NewlyLaunch`} request={{ pageNo: 1, pageSize: 10, cityName: cityToShow }} />
+        <ProductSection heading={'New In Property'} background={'#F7F8FA'} endpoint={`Newin`} request={{ pageNo: 1, pageSize: 10, cityName: cityToShow, categoryId: 1 }} />
+        <ProductSection heading={'New In Car'} background={'#FFFFFF'} endpoint={`Newin`} request={{ pageNo: 1, pageSize: 10, cityName: cityToShow, categoryId: 2 }} />
+        <ProductSection heading={'New In Loan'} background={'#F7F8FA'} endpoint={`Newin`} request={{ pageNo: 1, pageSize: 10, cityName: cityToShow, categoryId: 4 }} />
 
       {/* Podcast */}
       <View style={styles.container}>
         <HStack space="md" reversed={false} style={styles.heading}>
-            <Text style={styles.headingTitle}>Podcast</Text>
-            <Text style={styles.headingLink}>See All</Text>
+            <ZText type={'R18'}>Podcast</ZText>
+            <ZText type={'R14'} style={styles.headingLink}>See All</ZText>
         </HStack>
         <HStack space="md" reversed={false} style={styles.list}>
             <FlatList
@@ -203,8 +211,7 @@ const styles = StyleSheet.create({
     margin: 10
   },
   tabItemTitle: {
-    color: '#000',
-    fontSize: 16,
+    marginTop: 10
   },
   tabItemContainer: {
     flexDirection: 'column',

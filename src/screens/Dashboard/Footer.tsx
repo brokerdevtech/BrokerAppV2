@@ -10,77 +10,78 @@ import { Divider } from '@/components/ui/divider';
 import HomeIcon from '../../assets/svg/icons/home.svg'
 import CarIcon from '../../assets/svg/icons/car.svg';
 import LoanIcon from '../../assets/svg/icons/loan.svg';
+import ZText from '../../sharedComponents/ZText';
 
 
 
 const Footer = () => {
   return (
    <View style={styles.footerContainer}>
-      <View>
-        <Text style={styles.footerAppDescription}>
-            Single platform having community of brokers from multiple industries to create collaboration for growth of business by fulfilling their business requirements
-        </Text>
+       <View style={styles.footerAppDescription}>
+         <ZText type={'M14'}>Single platform having community of brokers from multiple industries to create collaboration for growth of business by fulfilling their business requirements</ZText>
        </View>  
-       <View style={styles.productContainer}>
-           <HStack style={styles.productRowContainer}>
-              <VStack style={styles.productColContainer}>
-                 <View>
-                    <HomeIcon />
-                 </View>
-                 <Text style={styles.productTitle}>Property Brokers</Text>
-                 <Text style={styles.productCount}>5000</Text>
-              </VStack>
-              <VStack style={styles.productColContainer}>
-                 <View>
-                    <CarIcon />
-                 </View>
-                 <Text style={styles.productTitle}>Car Brokers</Text>
-                 <Text style={styles.productCount}>2000</Text>
-              </VStack>
-           </HStack>
-       </View>
-       <Divider className="my-0.5" style={{ marginLeft: 20, marginRight: 20 }}/>
-       <View style={styles.productContainer}>
-           <HStack style={styles.productRowContainer}>
-              <VStack style={styles.productColContainer}>
-                 <View>
-                    <LoanIcon />
-                 </View>
-                 <Text style={styles.productTitle}>Loan Brokers</Text>
-                 <Text style={styles.productCount}>800</Text>
-              </VStack>
-              <VStack style={styles.productColContainer}>
-                 <View>
-                    <HomeIcon />
-                 </View>
-                 <Text style={styles.productTitle}>Insurance Brokers</Text>
-                 <Text style={styles.productCount}>5000</Text>
-              </VStack>
-           </HStack>
-       </View>
-       <Divider className="my-0.5" style={{ marginLeft: 20, marginRight: 20 }} />
-       <View style={styles.productContainer}>
-           <HStack style={styles.productRowContainer}>
-              <VStack style={styles.productColContainer}>
-                 <View>
-                    <HomeIcon />
-                 </View>
-                 <Text>Travel Brokers</Text>
-                 <Text>2000</Text>
-              </VStack>
-              <VStack style={styles.productColContainer}>
-                 <View>
-                    <CarIcon />
-                 </View>
-                 <Text style={styles.productTitle}>Wealth Brokers</Text>
-                 <Text style={styles.productCount}>500</Text>
-              </VStack>
-           </HStack>
+       <View style={styles.productFooterContainer}>
+            <View style={styles.productContainer}>
+               <HStack style={styles.productRowContainer}>
+                  <VStack style={styles.productColContainer}>
+                     <View style={{ paddingBottom: 10 }}>
+                        <HomeIcon />
+                     </View>
+                     <ZText type={'R16'}>Property Brokers</ZText>
+                     <ZText type={'S16'}>5000</ZText>
+                  </VStack>
+                  <VStack style={styles.productColContainer}>
+                     <View style={{ paddingBottom: 10 }}>
+                        <CarIcon />
+                     </View>
+                     <ZText type={'R16'}>Property Brokers</ZText>
+                     <ZText type={'S16'}>5000</ZText>
+                  </VStack>
+               </HStack>
+            </View>
+            <Divider className="my-0.5"/>
+            <View style={styles.productContainer}>
+               <HStack style={styles.productRowContainer}>
+                  <VStack style={styles.productColContainer}>
+                     <View style={{ paddingBottom: 10 }}>
+                        <LoanIcon />
+                     </View>
+                     <ZText type={'R16'}>Property Brokers</ZText>
+                     <ZText type={'S16'}>5000</ZText>
+                  </VStack>
+                  <VStack style={styles.productColContainer}>
+                     <View style={{ paddingBottom: 10 }}>
+                        <HomeIcon />
+                     </View>
+                     <ZText type={'R16'}>Property Brokers</ZText>
+                     <ZText type={'S16'}>5000</ZText>
+                  </VStack>
+               </HStack>
+            </View>
+            <Divider className="my-0.5"/>
+            <View style={styles.productContainer}>
+               <HStack style={styles.productRowContainer}>
+                  <VStack style={styles.productColContainer}>
+                     <View style={{ paddingBottom: 10 }}>
+                        <HomeIcon />
+                     </View>
+                     <ZText type={'R16'}>Property Brokers</ZText>
+                     <ZText type={'S16'}>5000</ZText>
+                  </VStack>
+                  <VStack style={styles.productColContainer}>
+                     <View style={{ paddingBottom: 10 }}>
+                        <CarIcon />
+                     </View>
+                     <ZText type={'R16'}>Property Brokers</ZText>
+                     <ZText type={'S16'}>5000</ZText>
+                  </VStack>
+               </HStack>
+            </View>
        </View>
        <View style={styles.appFooterContainer}>
           <View style={styles.appContainer}>
-             <Text style={styles.appHeading}>BrokerApp</Text>  
-             <Text style={styles.appDetail}>Our vision is to dive the brokers into a world of opportunity to gain access to thousands of other brokers to elevate their business with our exclusive platform, offering a diverse range of projects across industry.</Text>  
+            <ZText type={'B28'} style={styles.appHeading}>BrokerApp</ZText>
+            <ZText type={'M14'} style={styles.appDetail}>Our vision is to dive the brokers into a world of opportunity to gain access to thousands of other brokers to elevate their business with our exclusive platform, offering a diverse range of projects across industry.</ZText>
           </View>  
        </View> 
    </View> 
@@ -89,18 +90,20 @@ const Footer = () => {
 const styles = StyleSheet.create({
   footerContainer: {
     backgroundColor: '#F7F8FA',
+    
   },
   footerAppDescription: {
     color: '#263238',
-    fontFamily: 'Gilroy',
-    fontSize: 14,
-    fontStyle: 'normal',
-    fontWeight: 400,
-    lineHeight: 20,
     padding: 20
+  },
+  productFooterContainer: {
+   paddingHorizontal: 20
   },
   productContainer: {
     padding: 20,
+  },
+  dividerContainer: {
+   marginHorizontal: 20
   },
   
   productRowContainer: {
@@ -139,18 +142,10 @@ const styles = StyleSheet.create({
   },
   appHeading: {
     color: "#FFF",
-    fontFamily: 'Gilroy-Bold',
-    fontSize: 28,
-    fontStyle: 'normal',
-    fontWeight: 400, //
     lineHeight: 34
   },
   appDetail: {
     color: '#FFF',
-    fontFamily: 'Gilroy',
-    fontSize: 14,
-    fontStyle: 'normal',
-    fontWeight: 400,
     lineHeight: 20,
     paddingTop: 12 
   }

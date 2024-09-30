@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Button,
   Image,
@@ -35,10 +35,25 @@ import {Badge, BadgeIcon, BadgeText} from '@/components/ui/badge';
 import { useNavigation } from '@react-navigation/native';
 import UserProfile from './profile/UserProfile';
 import MarqueeBanner from './profile/MarqueeBanner';
+import {useApiRequest} from '@/src/hooks/useApiRequest';
+import { fetchDashboardData } from '@/BrokerAppCore/services/new/dashboardService';
 
 const CustomHeader = () => {
-  const cityToShow = 'Dubai';
+  const cityToShow = 'Noida';
   const navigation = useNavigation();
+  const {data: marqueeText, status: marqueeStatus, error: marqueeError, execute: marqueeExecute} = useApiRequest(fetchDashboardData);
+
+
+  const callPodcastList = async () => {
+    const request = { pageNo: 1, pageSize: 10, cityName: cityToShow }
+    await marqueeExecute('Marqueue', request)
+  };
+ 
+  useEffect(() => {
+     callPodcastList();
+  }, [])
+
+  console.log('marqueeText', marqueeText)
   //onPress={() => navigation.toggleDrawer()}
   return (
    <View style={styles.headerSection}>
@@ -94,7 +109,7 @@ const CustomHeader = () => {
       </View>
       <View style={styles.subHeaderSection}>
          <UserProfile />
-         <MarqueeBanner />
+         {marqueeText?.length > 0 && (<MarqueeBanner marqueeTextList={marqueeText.map((item: any) => item.marqueueText)} />)}
       </View>
    </View>
 
