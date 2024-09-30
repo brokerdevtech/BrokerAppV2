@@ -31,6 +31,7 @@ import ZSafeAreaView from '../../sharedComponents/ZSafeAreaView';
 import {getFilterTags} from '../../../BrokerAppCore/services/filterTags';
 import PropertyForm from './Form/PropertyForm';
 import GenericForm from './Form/GenericForm';
+import CarForm from './Form/CarFrom';
 
 const genericvalidationSchema = Yup.object().shape({
   title: Yup.string().required('Title is required'),
@@ -55,11 +56,12 @@ const PostWizardScreen: React.FC = ({
 
   const PropertyformikRef = useRef(null);
   const genericformikRef = useRef(null);
+  const carFormikref = useRef(null);
 
   const categories = [
     {value: 'property', label: 'Property', disabled: false},
     {value: 'generic', label: 'Generic', disabled: false},
-    {value: 'car', label: 'Car', disabled: true},
+    {value: 'car', label: 'Car', disabled: false},
   ];
   const [selectedcategory, setselectedcategory] = useState('property');
   const genericinitialValues = {
@@ -113,6 +115,19 @@ const PostWizardScreen: React.FC = ({
           Isvideo: Isvideo,
           localities: genericformikRef.current.values.Location,
           formValue: genericformikRef.current.values,
+        });
+      }
+    }
+    if (carFormikref.current && selectedcategory == 'car') {
+      await carFormikref.current.submitForm();
+
+      if (carFormikref.current.isValid == true) {
+        navigation.navigate('Carfilters', {
+          filters: '',
+          postVisual: visualData,
+          Isvideo: Isvideo,
+          localities: carFormikref.current.values.Location,
+          formValue: carFormikref.current.values,
         });
       }
     }
@@ -180,6 +195,7 @@ const PostWizardScreen: React.FC = ({
       </TouchableOpacity>
     );
   };
+  console.log(carFormikref);
   return (
     <ZSafeAreaView>
       <ZHeader
@@ -246,6 +262,9 @@ const PostWizardScreen: React.FC = ({
           )}
           {selectedcategory == 'generic' && (
             <GenericForm formikRef={genericformikRef}></GenericForm>
+          )}
+          {selectedcategory == 'car' && (
+            <CarForm formikRef={carFormikref}></CarForm>
           )}
         </View>
       </ScrollView>

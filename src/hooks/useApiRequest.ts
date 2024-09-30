@@ -20,7 +20,7 @@ export const useApiRequest = <T, P extends any[]>(
 
     try {
       const response = await apiFunction(...params);
-      console.log("========response");
+      console.log('========response');
       console.log(response);
       if (setLoading) {
         setLoading(false);

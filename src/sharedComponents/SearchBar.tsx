@@ -1,22 +1,29 @@
-import React, { useState } from 'react';
-import { View, Input, Icon, Box, VStack, Stack, HStack, InputGroup, InputLeftAddon, InputRightAddon, IconButton } from 'native-base';
+import React, {useState} from 'react';
+import {
+  View,
+  Input,
+  Icon,
+  Box,
+  VStack,
+  Stack,
+  HStack,
+  InputGroup,
+  InputLeftAddon,
+  InputRightAddon,
+  IconButton,
+} from 'native-base';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { moderateScale } from '../common/constants';
+import {moderateScale} from '../common/constants';
 //import { colors } from '../themes/index';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../BrokerAppCore/redux/store/reducers';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import ZInput from './common/ZInput';
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 import {Control} from '../assets/svgs';
 import {styles} from '../themes';
 
-
-
-
-
-
-const SearchBar = ({ onSearch }) => {
+const SearchBar = ({onSearch}) => {
   const colors = useSelector((state: RootState) => state.theme.theme);
   const [search, setSearch] = useState('');
   const [searchInputStyle, setSearchInputStyle] = useState(BlurredStyle);
@@ -50,18 +57,13 @@ const SearchBar = ({ onSearch }) => {
     );
   };
 
-  const onSearchInput = (text:any) =>
-  
-  {setSearch(text);
-    
-   
-    onSearch(text);
-    
-  }
+  const onSearchInput = (text: any) => {
+    setSearch(text);
 
+    onSearch(text);
+  };
 
   const handleSearch = () => {
-    
     // Perform the search with searchText
     if (search.length >= 3) {
       onSearch(search);
@@ -69,27 +71,23 @@ const SearchBar = ({ onSearch }) => {
   };
 
   return (
-   
     <ZInput
-    placeHolder={'Search'}
-    _value={search}
-    keyBoardType={'default'}
-    autoCapitalize={'none'}
-    insideLeftIcon={() => <SearchIcon />}
-    toGetTextFieldValue={onSearchInput}
-    inputContainerStyle={[
-      {backgroundColor: colors.inputBg},
-      localStyles.inputContainerStyle,
-      searchInputStyle,
-    ]}
-    inputBoxStyle={styles.ph15}
-    _onFocus={onHighlightInput}
-    onBlur={onUnHighlightInput}
-    // rightAccessory={() => <Control />}
-  />
-
-    
-
+      placeHolder={'Search'}
+      _value={search}
+      keyBoardType={'default'}
+      autoCapitalize={'none'}
+      insideLeftIcon={() => <SearchIcon />}
+      toGetTextFieldValue={onSearchInput}
+      inputContainerStyle={[
+        {backgroundColor: colors.inputBg},
+        localStyles.inputContainerStyle,
+        searchInputStyle,
+      ]}
+      inputBoxStyle={styles.ph15}
+      _onFocus={onHighlightInput}
+      onBlur={onUnHighlightInput}
+      // rightAccessory={() => <Control />}
+    />
   );
 };
 const localStyles = StyleSheet.create({

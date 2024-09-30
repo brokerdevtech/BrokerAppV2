@@ -7,11 +7,13 @@ import {styles} from '../../../themes';
 import {useS3} from '../../../Context/S3Context';
 import {useState} from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Dimensions,
   FlatList,
   Image,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   ScrollView,
   StyleSheet,
@@ -65,7 +67,7 @@ const PropertyPostPreview: React.FC = ({
   const [localities, setlocalities] = useState<any>(route.params?.localities);
   // const isLast = index === filter.length - 1;
   const [selectedPropertySize, setselectedPropertySize] = useState('1');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [toastId, setToastId] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const {
@@ -228,6 +230,7 @@ const PropertyPostPreview: React.FC = ({
   };
 
   const requestAPI = async (mediaData: any, Formvaule: any, Formtags: any) => {
+    setLoading(true);
     let tags = [];
 
     for (const property in Formtags) {
@@ -287,7 +290,8 @@ const PropertyPostPreview: React.FC = ({
       isDiscounted: Formvaule.isVirtualTour,
       isMandateProperty: Formvaule.isVirtualTour,
       cityName: localitie.city,
-
+      stateName: localitie.State,
+      countryName: localitie.Country,
       placeID: localitie.placeId,
       placeName: localitie.name,
       geoLocationLatitude: localitie.geoLocationLatitude,
@@ -300,39 +304,39 @@ const PropertyPostPreview: React.FC = ({
       filters: {tags: tags},
     };
 
-    //setLoading(false);
-    console.log(requestOption);
-    const data = await Propexecute(requestOption);
-    setLoading(false);
-    if (!toast.isActive(toastId)) {
-      const newId = Math.random();
-      setToastId(newId);
-      toast.show({
-        id: newId,
-        placement: 'bottom',
-        duration: 3000,
-        render: ({id}) => {
-          const uniqueToastId = 'toast-' + id;
-          return (
-            <Toast nativeID={uniqueToastId} action="muted" variant="solid">
-              <ToastDescription>Post created successfully</ToastDescription>
-            </Toast>
-          );
-        },
-      });
+    try {
+      await Propexecute(requestOption); // Await the API call
+      // Handle the data response as needed
+
+      if (!toast.isActive(toastId)) {
+        const newId = Math.random();
+        setToastId(newId);
+        toast.show({
+          id: newId,
+          placement: 'bottom',
+          duration: 3000,
+          render: ({id}) => {
+            const uniqueToastId = 'toast-' + id;
+            return (
+              <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                <ToastDescription>Post created successfully</ToastDescription>
+              </Toast>
+            );
+          },
+        });
+      }
+
+      navigation.navigate('Home');
+    } catch (error) {
+      console.error('Error executing request:', error);
+      // You might want to display an error toast here if necessary
+    } finally {
+      setLoading(false); // Ensure loading is set to false regardless of success or error
     }
-    // console.log("'Post created successfully'");
-    navigation.navigate('Home');
-    // navigation.reset({
-    //   index: 0,
-    //   routes: [{name: 'HomeTab', params: {tabIndex: 0}}],
-    // });
-    // navigation.reset('HomeTab');
   };
 
   const renderItem = ({item, index}) => (
     <View style={localStyles.card}>
-      {/* <Text>{item.destinationPathuri}</Text> */}
       {Platform.OS == 'ios' ? (
         <Image source={{uri: item.destinationPath}} style={localStyles.image} />
       ) : (
@@ -396,7 +400,7 @@ const PropertyPostPreview: React.FC = ({
       </Box>
     );
   };
-
+  console.log(localities);
   return (
     <ZSafeAreaView>
       <ZHeader
@@ -456,11 +460,7 @@ const PropertyPostPreview: React.FC = ({
               )}
             </View>
             <View style={localStyles.bodyContainer}>
-              <Box
-                display="flex"
-                mt="15px"
-                paddingLeft="15px"
-                paddingRight="15px">
+              <Box>
                 <View style={localStyles.ROW}>
                   <View style={localStyles.COL}>
                     <ZText type={'b18'}>{formValue.title}</ZText>
@@ -510,11 +510,7 @@ const PropertyPostPreview: React.FC = ({
                   NAME={'NearbyFacilities'}></MultiItemROW>
               </Box>
 
-              <Box
-                display="flex"
-                mt="15px"
-                paddingLeft="15px"
-                paddingRight="15px">
+              <Box>
                 <View style={localStyles.borderContainer}>
                   <View style={[localStyles.cardfullIcon, {marginLeft: 20}]}>
                     <ZText type={'s16'} style={{marginBottom: 10}}>
@@ -526,25 +522,26 @@ const PropertyPostPreview: React.FC = ({
                   </View>
                 </View>
               </Box>
-              <Box
-                display="flex"
-                mt="15px"
-                paddingLeft="15px"
-                paddingRight="15px">
+              <Box>
                 <View style={localStyles.borderContainer}>
                   <View style={[localStyles.cardfullIcon, {marginLeft: 20}]}>
                     <ZText type={'s16'} style={{marginBottom: 10}}>
                       Location
                     </ZText>
-                    <ZText style={{width: '100%'}} type={'r16'}>
-                      {localities.name}
-                    </ZText>
+                    <ZText type={'r16'}>{localities.name}</ZText>
                   </View>
                 </View>
               </Box>
             </View>
           </View>
         </ScrollView>
+        {loading && (
+          <Modal transparent={true} animationType="fade">
+            <View style={localStyles.loaderContainer}>
+              <ActivityIndicator size="large" color={Color.primary} />
+            </View>
+          </Modal>
+        )}
       </KeyboardAvoidingView>
     </ZSafeAreaView>
   );
@@ -659,6 +656,12 @@ const localStyles = StyleSheet.create({
     resizeMode: 'cover',
     borderRadius: 10, // Adds rounded corners to the image
     // Add additional styling for the image here
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background to highlight the loader
   },
 });
 export default AppBaseContainer(PropertyPostPreview, ' ', false);

@@ -6,11 +6,13 @@ import {Back} from '../../../assets/svg';
 import {useS3} from '../../../Context/S3Context';
 import {useState} from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Dimensions,
   FlatList,
   Image,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   ScrollView,
   StyleSheet,
@@ -242,6 +244,7 @@ const GenericPostPreview: React.FC = ({
     //code by Prashant Wrapped this api request in proper try catch
 
     try {
+      setLoading(true);
       console.log('previe');
       let tags = [];
       let localitie = route.params?.localities;
@@ -250,6 +253,9 @@ const GenericPostPreview: React.FC = ({
         userId: user.userId,
         title: FormValue.title,
         description: FormValue.Description,
+        cityName: localitie.city,
+        stateName: localitie.State,
+        countryName: localitie.Country,
         placeID: localitie.placeId,
         placeName: localitie.name,
         geoLocationLatitude: localitie.geoLocationLatitude,
@@ -261,8 +267,7 @@ const GenericPostPreview: React.FC = ({
         postMedia: mediaData,
       };
       console.log('apiCall');
-      const data = await Genericexecute(requestOption);
-      setLoading(false);
+      await Genericexecute(requestOption);
 
       navigation.navigate('Home');
       if (!toast.isActive(toastId)) {
@@ -283,9 +288,9 @@ const GenericPostPreview: React.FC = ({
         });
       }
     } catch (error) {
-      setLoading(false);
-
       console.error('Error in requestAPI:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -302,7 +307,7 @@ const GenericPostPreview: React.FC = ({
       )}
     </View>
   );
-
+  console.log(localities);
   return (
     <ZSafeAreaView>
       <ZHeader
@@ -397,6 +402,13 @@ const GenericPostPreview: React.FC = ({
             </View>
           </View>
         </ScrollView>
+        {loading && (
+          <Modal transparent={true} animationType="fade">
+            <View style={localStyles.loaderContainer}>
+              <ActivityIndicator size="large" color={Color.primary} />
+            </View>
+          </Modal>
+        )}
       </KeyboardAvoidingView>
     </ZSafeAreaView>
   );
@@ -510,6 +522,12 @@ const localStyles = StyleSheet.create({
     resizeMode: 'cover',
     borderRadius: 10, // Adds rounded corners to the image
     // Add additional styling for the image here
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background to highlight the loader
   },
 });
 export default AppBaseContainer(GenericPostPreview, ' ', false);

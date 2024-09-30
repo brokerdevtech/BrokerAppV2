@@ -67,7 +67,7 @@ const ZAvatarInitials = ({
             color: 'white',
             fontSize: 'md',
           }}>
-          {getInitials(name)}
+          {/* {getInitials(name)} */}
         </Avatar>
       ) : (
         <Avatar

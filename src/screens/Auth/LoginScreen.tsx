@@ -5,6 +5,8 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ActivityIndicator,
+  Modal,
 } from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -45,6 +47,7 @@ interface LoginProps {
 const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [toastId, setToastId] = React.useState(0);
+  const [loading, setLoading] = React.useState(false);
   const toast = useToast();
   const navigation = useNavigation();
   const handleState = () => {
@@ -56,8 +59,9 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
 
   const handleLogin = async values => {
     const {email, password} = values;
+    setLoading(true);
     await execute(email, password);
-
+    setLoading(false);
     if (error) {
       if (!toast.isActive(toastId)) {
         const newId = Math.random();
@@ -240,6 +244,14 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
           Sign Up
         </Text>
       </Text>
+
+      {loading && (
+        <Modal transparent={true} animationType="fade">
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color={Color.primary} />
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -353,6 +365,12 @@ const styles = StyleSheet.create({
     left: '50%',
     top: '10%',
     position: 'absolute',
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background to highlight the loader
   },
 });
 
