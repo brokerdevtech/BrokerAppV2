@@ -29,8 +29,6 @@ import tab_loan from './Tabicon/tab_loan.svg';
 import tab_travel from './Tabicon/tab_travel.svg';
 import tab_wealth from './Tabicon/tab_wealth.svg';
 
-
-
 import Multiple from './bursts.svg';
 import Multiple_Fill from './bursts_filled.svg';
 import Verified from './verified.svg';
@@ -49,8 +47,24 @@ import Virtual from './virtual.svg';
 import AppleIcon from './appleIcon.svg';
 import LocationFetchIcon from './fetch.svg';
 import CloseIcon from './crossIcon.svg';
+import Follower_Icon from './Follower.svg';
+import Ads_Icon from './Ads.svg';
+import Network_icon from './Network.svg';
+import Globe from './globe.svg';
+import City_icon from './city.svg';
+import info_icon from './info-circle.svg';
+import logout_icon from './logout.svg';
+import settings_icon from './setting-2.svg';
 
 export {
+  Follower_Icon,
+  Ads_Icon,
+  Network_icon,
+  info_icon,
+  settings_icon,
+  logout_icon,
+  City_icon,
+  Globe,
   Map_pin,
   Property,
   Multiple,

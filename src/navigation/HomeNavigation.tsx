@@ -14,9 +14,9 @@ import StoryView from '../components/story/StoryView';
 import PostWizardScreen from '../screens/postImage/PostWizardScreen';
 
 import ChatPageStack from './ChatNavigation';
-import { OverlayProvider } from 'stream-chat-react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useStreamChatTheme } from '../hooks/useStreamChatTheme';
+import {OverlayProvider} from 'stream-chat-react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useStreamChatTheme} from '../hooks/useStreamChatTheme';
 import VideoCarousel from '../screens/Podcast/VideoCarousel';
 
 import EditImagesScreen from '../screens/postImage/EditImageScreen';
@@ -25,6 +25,7 @@ import PropertyPostPreview from '../screens/postImage/previewScreens/PropertyPos
 import GenericPostPreview from '../screens/postImage/previewScreens/GenericPostPreview';
 import NotificationScreen from '../screens/NotificationScreen';
 import CarFilterScreen from '../sharedComponents/carSearchFilter';
+import FollowerList from '../sharedComponents/FollowerList';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -52,14 +53,23 @@ const HomeNavigation: React.FC = () => {
           name="AppChat"
           component={ChatPageStack}
         />
-        <Stack.Screen options={{headerShown: false}} name="VideoReels" component={VideoCarousel} />
-      {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="VideoReels"
+          component={VideoCarousel}
+        />
+        {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         <Stack.Screen name="HomeTab" component={DashboradScreen} />
       </Stack.Group> */}
         <Stack.Screen
           name="ChooseImage"
           component={ChooseImage}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="FollowerList"
+          component={FollowerList}
           options={{headerShown: false}}
         />
         <Stack.Screen
