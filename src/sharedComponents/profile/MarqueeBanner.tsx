@@ -2,17 +2,24 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import MarqueeText from '../MarqueeText';
 
-const MarqueeBanner = () => {
+
+export type MarqueeBannerProps = {
+  marqueeTextList: [];
+};
+
+export const MarqueeBanner: React.FC<MarqueeBannerProps> = ({ marqueeTextList }) => {
+  const marqueeList = marqueeTextList !== undefined ? marqueeTextList.join(": ") : ""
   return (
    <View style={styles.marqueeBannerContainer}>
        <MarqueeText
           style={styles.marqueeBannerText}
-          speed={1}
+          speed={10}
           marqueeOnStart={true}
           loop={true}
-          delay={1500}
+          delay={3000}
         >
-          New Launch Gaur NYC Residencies. New Launch Gaur NYC Residencies
+         {marqueeList}
+          
         </MarqueeText>
    </View>
   );

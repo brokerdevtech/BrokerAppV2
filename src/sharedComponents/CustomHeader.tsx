@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Button,
   Image,
@@ -35,15 +35,26 @@ import {Badge, BadgeIcon, BadgeText} from '@/components/ui/badge';
 import {useNavigation} from '@react-navigation/native';
 import UserProfile from './profile/UserProfile';
 import MarqueeBanner from './profile/MarqueeBanner';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../BrokerAppCore/redux/store/reducers';
+import {useApiRequest} from '@/src/hooks/useApiRequest';
+import { fetchDashboardData } from '@/BrokerAppCore/services/new/dashboardService';
 
 const CustomHeader = () => {
-  const cityToShow = 'Dubai';
+  const cityToShow = 'Noida';
   const navigation = useNavigation();
-  const AppLocation = useSelector((state: RootState) => state.AppLocation);
-  // const AppLocation = useSelector((state: RootState) => state.city);
-  // console.log(AppLocation, 'AppLoaction');
+  const {data: marqueeText, status: marqueeStatus, error: marqueeError, execute: marqueeExecute} = useApiRequest(fetchDashboardData);
+
+
+  const callPodcastList = async () => {
+    const request = { pageNo: 1, pageSize: 10, cityName: cityToShow }
+    await marqueeExecute('Marqueue', request)
+  };
+ 
+  useEffect(() => {
+     callPodcastList();
+  }, [])
+
+  console.log('marqueeText', marqueeText)
+  //onPress={() => navigation.toggleDrawer()}
   return (
     <View style={styles.headerSection}>
       <View style={styles.headerContainer}>
@@ -98,8 +109,8 @@ const CustomHeader = () => {
         </View>
       </View>
       <View style={styles.subHeaderSection}>
-        <UserProfile />
-        <MarqueeBanner />
+         <UserProfile />
+         {marqueeText?.length > 0 && (<MarqueeBanner marqueeTextList={marqueeText.map((item: any) => item.marqueueText)} />)}
       </View>
     </View>
   );
