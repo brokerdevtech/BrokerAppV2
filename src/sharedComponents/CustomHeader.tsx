@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Image,
@@ -37,18 +37,39 @@ import UserProfile from './profile/UserProfile';
 import MarqueeBanner from './profile/MarqueeBanner';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
 import { fetchDashboardData } from '@/BrokerAppCore/services/new/dashboardService';
+import GooglePlacesAutocompleteModal from './PlacesAutocomplete';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../BrokerAppCore/redux/store/reducers';
+import { set } from 'react-hook-form';
+import store from '../../BrokerAppCore/redux/store';
+import { setAppLocation } from '../../BrokerAppCore/redux/store/AppLocation/appLocation';
 
 const CustomHeader = () => {
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const cityToShow = 'Noida';
   const navigation = useNavigation();
   const {data: marqueeText, status: marqueeStatus, error: marqueeError, execute: marqueeExecute} = useApiRequest(fetchDashboardData);
-
+  const [modalVisible, setModalVisible] = useState(false);
 
   const callPodcastList = async () => {
     const request = { pageNo: 1, pageSize: 10, cityName: cityToShow }
     await marqueeExecute('Marqueue', request)
   };
- 
+  const handlePlaceSelected = (place: any) => {
+  console.log(place);
+  console.log(AppLocation);
+
+  store.dispatch(setAppLocation(place));
+
+  };
+
+  const ChangeCity = async () => {
+
+    setModalVisible(true);
+
+    // const request = { pageNo: 1, pageSize: 10, cityName: cityToShow }
+    // await marqueeExecute('Marqueue', request)
+  };
   useEffect(() => {
      callPodcastList();
   }, [])
@@ -88,9 +109,9 @@ const CustomHeader = () => {
               <Text style={styles.appTitleMain}>Broker</Text>
               <Text style={styles.appTitle}>App</Text>
             </View>
-            <TouchableOpacity style={styles.cityContainer}>
+            <TouchableOpacity onPress={() => ChangeCity()}  style={styles.cityContainer}>
               <Icon as={Map_pin} size="2xl" />
-              <Text style={{marginLeft: 5}}>{cityToShow}</Text>
+              <Text style={{marginLeft: 5}}>{AppLocation.City}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -112,6 +133,12 @@ const CustomHeader = () => {
          <UserProfile />
          {marqueeText?.length > 0 && (<MarqueeBanner marqueeTextList={marqueeText.map((item: any) => item.marqueueText)} />)}
       </View>
+      <GooglePlacesAutocompleteModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        onPlaceSelected={handlePlaceSelected}
+        SetCityFilter={''}
+      />
     </View>
   );
 };
