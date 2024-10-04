@@ -104,7 +104,7 @@ const CustomDrawerContent = props => {
         <ZText type={'R18'} style={styles.nameText}>
           {user?.firstName} {user?.lastName}
         </ZText>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen')}>
           <ZText type={'R16'} style={styles.viewProfileText}>
             View Profile
           </ZText>
@@ -135,7 +135,9 @@ const CustomDrawerContent = props => {
         />
         <CustomDrawerItem
           label="My Network"
-          onPress={() => {}}
+          onPress={() => {
+            navigation.navigate('ConnectionScreen');
+          }}
           leftIcon={Network_icon}
           rightIcon={ChevronRightIcon}
         />

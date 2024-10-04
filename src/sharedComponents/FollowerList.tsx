@@ -43,6 +43,7 @@ const FollowerList: React.FC = ({
   pageTitle,
 }) => {
   const colors = useSelector(state => state.theme.theme);
+
   const [issearch, setissearch] = useState(false);
   const [ListType, setlistType] = useState(route.params?.type);
   const [paramsuserId, setparamsuserId] = useState(route.params?.userId);
@@ -91,15 +92,16 @@ const FollowerList: React.FC = ({
     setSearchInputStyle(BlurredStyle);
     setSearchIconStyle(BlurredIconStyle);
   };
+  // console.log(object);
   useFocusEffect(
     React.useCallback(() => {
       const getList = async () => {
         try {
           setPage(1); // Reset page when focus changes
           if (listType === 'Followers') {
-            await followerexecute(route.params.userId, '', page);
+            await followerexecute(route.params.userId, searchText, page);
           } else {
-            await followingexecute(route.params.userId, '', page);
+            await followingexecute(route.params.userId, searchText, page);
           }
           pageTitle(`${listType}`);
         } catch (error) {}
@@ -114,7 +116,7 @@ const FollowerList: React.FC = ({
     } else if (followingstatus === 200) {
       setuserLists(followingdata.data.followingList);
     }
-  }, [followerstatus, followingstatus]);
+  }, [followerstatus, followingstatus, searchText]);
 
   const loadMore = async () => {
     if (
@@ -125,9 +127,9 @@ const FollowerList: React.FC = ({
       const nextPage = page + 1;
       try {
         if (listType === 'Followers') {
-          await followerexecute(route.params.userId, '', nextPage);
+          await followerexecute(route.params.userId, searchText, nextPage);
         } else {
-          await followingexecute(route.params.userId, '', nextPage);
+          await followingexecute(route.params.userId, searchText, nextPage);
         }
         setPage(nextPage);
       } catch (error) {}
