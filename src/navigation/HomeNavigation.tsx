@@ -26,6 +26,8 @@ import GenericPostPreview from '../screens/postImage/previewScreens/GenericPostP
 import NotificationScreen from '../screens/NotificationScreen';
 import CarFilterScreen from '../sharedComponents/carSearchFilter';
 import FollowerList from '../sharedComponents/FollowerList';
+import MyConnectionScreen from '../sharedComponents/MyConnections';
+import ProfileScreen from '../sharedComponents/ProfileScreen';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -70,6 +72,16 @@ const HomeNavigation: React.FC = () => {
         <Stack.Screen
           name="FollowerList"
           component={FollowerList}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ConnectionScreen"
+          component={MyConnectionScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ProfileScreen"
+          component={ProfileScreen}
           options={{headerShown: false}}
         />
         <Stack.Screen
