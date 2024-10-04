@@ -37,6 +37,7 @@ const AppBaseContainer = (WrappedComponent, pageTitle, isHeader = true) => {
     const reframePageTitle = pageTitle => {
       setpageTitle(pageTitle);
     };
+    // console.log(pa)
     return (
       <ZSafeAreaView>
         {isHeader && <ZHeader title={pageTitleState} />}

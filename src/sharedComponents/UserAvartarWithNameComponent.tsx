@@ -22,8 +22,13 @@ import {deleteConnections} from '../../BrokerAppCore/services/connections';
 import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import ZText from './ZText';
 import FollowUnfollowComponent from './FollowUnfollowButton';
-import {getHeight, moderateScale} from '../config/constants';
+import {getHeight, moderateScale, PermissionKey} from '../config/constants';
 import ZAvatarInitials from './ZAvatarInitials';
+import {Menu, MenuItem} from '../../components/ui/menu';
+import TextWithPermissionCheck from './TextWithPermissionCheck';
+import ButtonWithPermissionCheck from './ButtonWithPermissionCheck';
+import {AddIcon, Icon, ThreeDotsIcon} from '../../components/ui/icon';
+import {Button, ButtonText} from '../../components/ui/button';
 
 function UserAvartarWithNameComponent({
   userName,
@@ -69,6 +74,58 @@ function UserAvartarWithNameComponent({
       activeUserId: userId,
       menuValue: true,
     });
+  };
+  const UserMenuComponent = () => {
+    return (
+      <Menu
+        // w="150"
+        // padding="0px"
+        placement="bottom right"
+        trigger={({...triggerProps}) => {
+          return (
+            <Pressable accessibilityLabel="More options menu" {...triggerProps}>
+              <Icon as={ThreeDotsIcon} />
+            </Pressable>
+          );
+        }}>
+        <MenuItem key="Add account" textValue="Add account">
+          <TextWithPermissionCheck
+            permissionsArray={userPermissions}
+            style={{padding: 10}}
+            type="r14"
+            permissionEnum={PermissionKey.AllowDeleteConnection}
+            onPress={handleRemovePress}>
+            {type === 'network' ? 'Remove' : 'Leave'}
+          </TextWithPermissionCheck>
+        </MenuItem>
+      </Menu>
+    );
+  };
+  const UserConnectionComponent = () => {
+    const isConnectionAvailable = connectionCount > 0;
+    //
+    return (
+      <View style={localStyles.connectContainer}>
+        <ButtonWithPermissionCheck
+          permissionEnum={PermissionKey.AllowViewConnection}
+          permissionsArray={userPermissions}
+          title={`${connectionCount} Connections`}
+          color={colors.white}
+          textType="B14"
+          containerStyle={[
+            localStyles.buttonContainer,
+            {
+              borderColor: colors.primary,
+              opacity: isConnectionAvailable ? 1 : 0.5,
+            },
+          ]}
+          bgColor={colors.transparent}
+          onPress={isConnectionAvailable ? onPressArrow : undefined}
+          disabled={!isConnectionAvailable}
+        />
+        {shouldMenuRender !== true && <UserMenuComponent />}
+      </View>
+    );
   };
   const handleRemovePress = () => {
     Alert.alert(
@@ -147,8 +204,8 @@ function UserAvartarWithNameComponent({
         <FollowUnfollowComponent isFollowing={isFollowed} followedId={userId} />
       )}
 
-      {/* {type === 'network' && <UserConnectionComponent />}
-      {type === 'under' && userId !== loggedInUserId && <UserMenuComponent />} */}
+      {type === 'network' && <UserConnectionComponent />}
+      {type === 'under' && userId !== loggedInUserId && <UserMenuComponent />}
 
       {/*       
       {isSuggested && (
