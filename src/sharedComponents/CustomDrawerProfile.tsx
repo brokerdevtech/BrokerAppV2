@@ -90,10 +90,11 @@ const CustomDrawerContent = props => {
     await AsyncStorage.removeItem('User');
     await clearTokens();
     await AsyncStorage.clear();
-    setIsloading(false);
+
     await dispatch(logoutUser());
     await new Promise(resolve => setTimeout(resolve, 100));
     // Reset navigation stack or redirect as necessary here
+    setIsloading(false);
   };
   return (
     <DrawerContentScrollView {...props} style={{marginLeft: 10}}>

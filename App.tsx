@@ -132,7 +132,7 @@ setColorMode(state.isConnected);
   };
   const checkUser = async () => {
    
-    console.log(state);
+   
     const keys = await AsyncStorage.getAllKeys();
     const AsyncStoragedata = await AsyncStorage.multiGet(keys);
 

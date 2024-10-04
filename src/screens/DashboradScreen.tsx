@@ -37,6 +37,7 @@ import ProductSection from './Dashboard/ProductSection';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
+  console.log(user);
   const {data, status, error, execute} = useApiRequest(fetchPodcastList);
   // const {data: marqueeText, status: marqueeStatus, error: marqueeError, execute: marqueeExecute} = useApiRequest(fetchDashboardData);
   const cityToShow = 'Noida';

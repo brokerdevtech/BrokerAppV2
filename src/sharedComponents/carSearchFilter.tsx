@@ -10,7 +10,7 @@ import {
 import {useSelector} from 'react-redux';
 import {
   getCarCascadedFilters,
-  getCarPostFilters,
+
 } from '../../BrokerAppCore/services/postService';
 import ZSafeAreaView from './ZSafeAreaView';
 import ZHeader from './ZHeader';
@@ -24,6 +24,9 @@ import CheckboxList from './checkboxlist';
 import VerticalRangeSlider from './RangeSliderView';
 import {Color} from '../styles/GlobalStyles';
 import ZText from './ZText';
+import { useApiRequest } from '../hooks/useApiRequest';
+import { getCarPostCascadedFilters, getCarPostFilters } from '../../BrokerAppCore/services/new/postServices';
+import SelectableFlatList from './filters/SelectableFlatList';
 
 const MENU_ITEMS = [
   {id: '1', name: 'Budget'},
@@ -48,16 +51,16 @@ const CarFilterScreen = () => {
   const [menuItems, setMenuItems] = useState(MENU_ITEMS);
   const [minValue, setMinValue] = useState(500000);
   const [maxValue, setMaxValue] = useState(20000000);
-  const [selectedItem, setSelectedItem] = useState('1');
+  const [selectedItem, setSelectedItem] = useState(null);
   const [filterData, setFilterData] = useState({});
-  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState({});
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [selectedDriven, setSelectedDriven] = useState(null);
   const [selectedDiscount, setSelectedDiscount] = useState(null);
   const [selectedIsnew, setSelectedIsnew] = useState(false);
   const [selectedMaking, setSelectedMaking] = useState(null);
   const [modelData, setModelData] = useState([]);
-  const [Carfilters, setCarFilter] = useState([]);
+  const [CarfiltersState, setCarfiltersState] = useState([]);
   const user = useSelector(state => state.user.user);
   const fetchModels = async brandKey => {
     try {
@@ -74,32 +77,13 @@ const CarFilterScreen = () => {
       console.error('Error fetching models:', error);
     }
   };
-  useEffect(() => {
+
+  const {data:CarFilters ,status:CarFiltersstatus, error:CarFilterserror, execute:CarFilterexecute} = useApiRequest(getCarPostFilters);
+
+ useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const {data} = await getCarPostFilters(user.userId, 'Post');
-        if (!data?.filters) throw new Error('Unexpected data structure');
-         console.log('Fetch Filters Response:', data);
-        const filters = data.filters.reduce((acc, filter) => {
-          acc[filter.name] = {
-            records: filter.records || [],
-            dependsOn: filter.dependsOn || null,
-          };
-          return acc;
-        }, {});
-        setCarFilter(data.data);
-        setFilterData(filters);
-        setMenuItems([
-          ...staticMenuData,
-          ...Object.keys(filters).map((key, index) => ({
-            id: (
-              parseInt(staticMenuData[staticMenuData.length - 1]?.id || '0') +
-              1 +
-              index
-            ).toString(),
-            name: key,
-          })),
-        ]);
+        await CarFilterexecute(user.userId, 'Post');
         // console.log(selectedFilters);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -108,6 +92,54 @@ const CarFilterScreen = () => {
 
     fetchFilters();
   }, [user.userId]);
+
+  useEffect(() => {
+    console.log(CarFilters);
+   if(CarFilters!=null) 
+   {console.log('CarFilters');
+console.log(CarFilters);
+setSelectedFilters({});
+setCarfiltersState([])
+setCarfiltersState(CarFilters.data.filters)
+setSelectedItem(CarFilters.data.filters[0])
+   }
+
+  }, [CarFilters]);
+
+  // useEffect(() => {
+  //   const fetchFilters = async () => {
+  //     try {
+  //       const {data} = await getCarPostFilters(user.userId, 'Post');
+  //       if (!data?.filters) throw new Error('Unexpected data structure');
+  //        console.log('Fetch Filters Response:', data);
+  //       const filters = data.filters.reduce((acc, filter) => {
+  //         acc[filter.name] = {
+  //           records: filter.records || [],
+  //           dependsOn: filter.dependsOn || null,
+  //         };
+  //         return acc;
+  //       }, {});
+  //       setCarFilter(data.data);
+  //       setFilterData(filters);
+  //       setMenuItems([
+  //         ...staticMenuData,
+  //         ...Object.keys(filters).map((key, index) => ({
+  //           id: (
+  //             parseInt(staticMenuData[staticMenuData.length - 1]?.id || '0') +
+  //             1 +
+  //             index
+  //           ).toString(),
+  //           name: key,
+  //         })),
+  //       ]);
+  //       // console.log(selectedFilters);
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //     }
+  //   };
+
+  //   fetchFilters();
+  // }, [user.userId]);
   const handleBrandSelection = async brandKey => {
     setSelectedBrand(brandKey);
     await fetchModels(brandKey);
@@ -310,49 +342,147 @@ const CarFilterScreen = () => {
     },
   ];
   // console.log(modelData);
-  const renderItem = ({item}) => (
-    <TouchableOpacity
-      key={item.id}
-      onPress={() => setSelectedItem(item.id)}
-      style={[
-        styles.menuItem,
-        item.id === selectedItem ? styles.selectedMenuItem : null,
-      ]}>
-      <Text style={styles.menuItemText}>{item.name}</Text>
-    </TouchableOpacity>
-  );
-
-  const renderSettingsView = () => {
-    const selectedSetting = settingsConfig.find(
-      setting => setting.id === selectedItem,
+  const renderItem = ({ item }) => {
+    // Log the item for debugging purposes
+  
+  
+    return (
+      <TouchableOpacity
+        key={item.name} // Ensure that `item.name` is unique for each item
+        onPress={() => setSelectedItem(item)}
+        style={[
+          styles.menuItem,
+          item.name === selectedItem ? styles.selectedMenuItem : null, // Correct comparison
+        ]}
+      >
+        <Text style={styles.menuItemText}>{item.displayName}</Text>
+      </TouchableOpacity>
     );
+  };
 
-    if (!selectedSetting) {
-      return null;
+  const SelectItem= async (item) => {
+
+console.log("=============");
+console.log("item");
+console.log(item);
+let selectedFiltersobj= selectedFilters; // Create a copy of the selected filters array
+let object = {};
+console.log(JSON.stringify (selectedFiltersobj));
+
+
+// Assign values to the object
+
+selectedFiltersobj[selectedItem.name]=[item];
+console.log(JSON.stringify (selectedFiltersobj));
+setSelectedFilters(selectedFiltersobj);
+
+if(selectedItem.dependsOn!="")
+{
+let result= await getCarPostCascadedFilters(user.userId, 'Post',selectedItem.dependsOn,item.key)
+console.log(JSON.stringify(result));
+}
+
+  }
+  const renderSettingsView = () => {
+   
+    let ComponentToRender=null;
+   console.log(selectedItem?.name);
+   if(selectedItem!=null){
+if(selectedItem.name=="Brand")
+   {
+    let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
+    console.log("=============items=========");
+    console.log(items);
+    console.log("=============items=========");
+    ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
+
+   }
+  
+  if(selectedItem.name=="FuelType")
+    {
+   let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
+   console.log("=============items=========");
+    console.log(items);
+    console.log("=============items=========");
+     ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
+ 
     }
 
-    const {component, props} = selectedSetting;
+    if(selectedItem.name=="BodyType")
+      {
+     let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
+     console.log("=============items=========");
+      console.log(items);
+      console.log("=============items=========");
+       ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
+   
+      }
+      if(selectedItem.name=="Transmission")
+        {
+       let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
+       console.log("=============items=========");
+        console.log(items);
+        console.log("=============items=========");
+         ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
+     
+        }
 
-    let ComponentToRender;
+        if(selectedItem.name=="Ownership")
+          {
+         let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
+         console.log("=============items=========");
+          console.log(items);
+          console.log("=============items=========");
+           ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
+       
+          }
+          if(selectedItem.name=="SeatingCapacity")
+            {
+           let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
+           console.log("=============items=========");
+            console.log(items);
+            console.log("=============items=========");
+             ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
+         
+            }
+            if(selectedItem.name=="RegistrationState")
+              {
+             let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
+             console.log("=============items=========");
+              console.log(items);
+              console.log("=============items=========");
+               ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
+           
+              }
+              if(selectedItem.name=="RegistrationState")
+                {
+               let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
+               console.log("=============items=========");
+                console.log(items);
+                console.log("=============items=========");
+                 ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
+             
+                }
 
-    switch (component) {
-      case 'VerticalRangeSlider':
-        ComponentToRender = (
-          <VerticalRangeSlider
-            {...props}
-            minValue={minValue}
-            maxValue={maxValue}
-            setMinValue={setMinValue}
-            setMaxValue={setMaxValue}
-          />
-        );
-        break;
-      case 'CheckboxList':
-        ComponentToRender = <CheckboxList {...props} />;
-        break;
-      default:
-        return null;
-    }
+                if(selectedItem.name=="Color")
+                  {
+                 let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
+                 console.log("=============items=========");
+                  console.log(items);
+                  console.log("=============items=========");
+                   ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
+               
+                  }
+                  if(selectedItem.name=="InsuranceStatus")
+                    {
+                   let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
+                   console.log("=============items=========");
+                    console.log(items);
+                    console.log("=============items=========");
+                     ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
+                 
+                    }
+   }
 
     return (
       <View style={styles.settingsView}>
@@ -378,9 +508,9 @@ const CarFilterScreen = () => {
       <View style={styles.container}>
         <View style={styles.menuColumn}>
           <FlatList
-            data={menuItems}
+            data={CarfiltersState}
             renderItem={renderItem}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.name}
             contentContainerStyle={styles.menuContainer}
             showsVerticalScrollIndicator={false}
           />
@@ -422,12 +552,12 @@ const styles = StyleSheet.create({
   },
   settingsColumn: {
     width: '70%',
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   settingsView: {
     width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
 });
 

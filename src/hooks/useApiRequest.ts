@@ -20,8 +20,8 @@ export const useApiRequest = <T, P extends any[]>(
 
     try {
       const response = await apiFunction(...params);
-      console.log('========response');
-      console.log(JSON.stringify(response));
+      // console.log('========response');
+      // console.log(JSON.stringify(response));
       if (setLoading) {
         setLoading(false);
       }
@@ -30,6 +30,7 @@ export const useApiRequest = <T, P extends any[]>(
         setError(response.message || 'An error occurred');
         setStatus(response.status || 500);
       } else {
+       // debugger;
         setData(response.data || null);
         setStatus(response.status || 200);
       }

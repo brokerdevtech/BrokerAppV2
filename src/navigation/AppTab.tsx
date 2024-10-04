@@ -48,8 +48,12 @@ const HomePageStack = () => {
 
 const AppTab: React.FC = () => {
   const navigation = useNavigation();
+  const userP = useSelector(
+    (state: RootState) => state.user.user,
+  );
+  console.log(userP);
   const userPermissions = useSelector(
-    (state: RootState) => state.user.user.userPermissions,
+    (state: RootState) => state.user.user?.userPermissions,
   );
   const colors = useSelector((state: RootState) => state.theme.theme);
   const TabText = ({text, focused, icon}) => (

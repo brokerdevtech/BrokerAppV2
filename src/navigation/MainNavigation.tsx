@@ -1,6 +1,6 @@
 import {RootState} from '@/BrokerAppCore/redux/store/reducers';
 import {NavigationContainer} from '@react-navigation/native';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import HomeNavigation from './HomeNavigation';
 import AuthStackNavigation from './AuthStackNavigation';
@@ -15,14 +15,19 @@ const MainNavigation: React.FC<MainNavigationProps> = ({
   loggedIn,
   setLoggedIn,
 }) => {
-  const appuser = useSelector((state: RootState) => state.user.user);
-  const isLoggedIn = useSelector(
-    (state: RootState) => state.user.user !== null,
-  );
+  const appuser = useSelector((state: RootState) => state.user);
+console.log(appuser);
+const [isLoggedIn, setisLoggedIn] = useState(false);
+
 
   useEffect(() => {
-    console.log('isLoggedIn', isLoggedIn);
-  }, [isLoggedIn]);
+    if(appuser.user==null)
+    {setisLoggedIn(false) }
+    else{
+      setisLoggedIn(true)
+    }
+  
+  }, [appuser]);
 
   return (
     <SafeAreaProvider>
