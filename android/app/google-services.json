@@ -12,7 +12,12 @@
           "package_name": "com.brokerapp.broker"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "291590546828-c6i0jsih7jphgfoe3ej1tgvangloc5h5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAjw7GZTvkKXQwU9ZFL7aJJxTGsfTYBMnk"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "291590546828-c6i0jsih7jphgfoe3ej1tgvangloc5h5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

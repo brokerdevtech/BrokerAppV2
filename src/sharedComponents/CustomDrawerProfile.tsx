@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  Modal
 } from 'react-native';
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 import {
@@ -46,7 +47,7 @@ import {Logout} from '../../BrokerAppCore/services/new/authService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {clearTokens} from '../utils/utilTokens';
 import {useApiRequest} from '../hooks/useApiRequest';
-import {Modal} from '../../components/ui/modal';
+
 
 const CustomDrawerItem = ({label, onPress, leftIcon, rightIcon}) => {
   return (

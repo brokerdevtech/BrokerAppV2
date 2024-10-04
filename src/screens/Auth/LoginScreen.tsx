@@ -19,14 +19,23 @@ import {
 } from '../../../components/ui/input';
 import {EyeIcon, EyeOffIcon, Icon} from '../../../components/ui/icon';
 import {AppleIcon, FBIcon, GoogleIcon} from '../../assets/svg';
-import {storeTokens, storeUser} from '../../utils/utilTokens';
+import {getfcmToken, storeTokens, storeUser} from '../../utils/utilTokens';
 import {setUser} from '../../../BrokerAppCore/redux/store/user/userSlice';
 import store from '../../../BrokerAppCore/redux/store';
 import {setTokens} from '../../../BrokerAppCore/redux/store/authentication/authenticationSlice';
 import {useApiRequest} from '../../hooks/useApiRequest';
-import {login} from '../../../BrokerAppCore/services/new/authService';
+import {login, SocialLogin} from '../../../BrokerAppCore/services/new/authService';
 import {Toast, ToastDescription, useToast} from '../../../components/ui/toast';
 import {useNavigation} from '@react-navigation/native';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../BrokerAppCore/redux/store/reducers';
+
+// Configure Google Sign-In
+GoogleSignin.configure({
+  webClientId: '291590546828-c6i0jsih7jphgfoe3ej1tgvangloc5h5.apps.googleusercontent.com', // From the Google Developer Console
+  offlineAccess: true,
+});
 
 // Validation schema using Yup
 const LoginSchema = Yup.object().shape({
@@ -45,6 +54,7 @@ interface LoginProps {
   loggedIn: boolean;
 }
 const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const [showPassword, setShowPassword] = React.useState(false);
   const [toastId, setToastId] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
@@ -55,8 +65,53 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       return !showState;
     });
   };
-  const {data, status, error, execute} = useApiRequest(login);
+  const signInWithGoogle = async () => {
+    try {
+      setLoading(true);
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log("userInfo");
+      console.log(userInfo); // This contains the token and user details
+      
+      const fcmToken = await getfcmToken();
 
+       await SocialLoginexecute(
+        userInfo.data?.user.email,
+    "Google",
+       userInfo.data?.idToken,
+       fcmToken?.toString(),
+        AppLocation.City,
+        AppLocation.State,
+        AppLocation.Country,
+       AppLocation.placeID,
+       AppLocation.placeName,
+       AppLocation.geoLocationLatitude,
+       AppLocation.geoLocationLongitude,
+        AppLocation.viewportNorthEastLat,
+        AppLocation.viewportNorthEastLng,
+       AppLocation.viewportSouthWestLat,
+      AppLocation.viewportSouthWestLng
+
+       )
+    } catch (error) {
+      setLoading(false);
+      console.log(error); 
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+      } else {
+        // some other error happened
+      }
+    }
+    finally{
+      //setLoading(false);
+    }
+  };
+  const {data, status, error, execute} = useApiRequest(login,setLoading);
+  const {data:SocialLogindata, status:SocialLoginstatus, error:SocialLoginerror, execute:SocialLoginexecute} = useApiRequest(SocialLogin);
   const handleLogin = async values => {
     const {email, password} = values;
     setLoading(true);
@@ -83,6 +138,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     }
   };
   const afterhandleLogin = async () => {
+    setLoading(true);
     if (data) {
       const storeUserresult = await storeUser(JSON.stringify(data.data));
       const storeTokensresult = await storeTokens(
@@ -96,6 +152,46 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
           accessToken: data.data.accessToken,
           refreshToken: data.data.refreshToken,
           getStreamAccessToken: data.data.getStreamAccessToken,
+        }),
+      );
+
+      setLoggedIn(true);
+      setLoading(false);
+      navigation.navigate('Home');
+      if (!toast.isActive(toastId)) {
+        const newId = Math.random();
+        setToastId(newId);
+        toast.show({
+          id: newId,
+          placement: 'bottom',
+          duration: 3000,
+          render: ({id}) => {
+            const uniqueToastId = 'toast-' + id;
+            return (
+              <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                <ToastDescription>Login Success</ToastDescription>
+              </Toast>
+            );
+          },
+        });
+      }
+    }
+  };
+  const afterhandleSocialLogin = async () => {
+    console.log('afterhandleSocialLogin');
+    if (SocialLogindata) {
+      const storeUserresult = await storeUser(JSON.stringify(SocialLogindata.data));
+      const storeTokensresult = await storeTokens(
+        SocialLogindata.data.accessToken,
+        SocialLogindata.data.refreshToken,
+        SocialLogindata.data.getStreamAccessToken,
+      );
+      await store.dispatch(setUser(SocialLogindata.data));
+      await store.dispatch(
+        setTokens({
+          accessToken: SocialLogindata.data.accessToken,
+          refreshToken: SocialLogindata.data.refreshToken,
+          getStreamAccessToken: SocialLogindata.data.getStreamAccessToken,
         }),
       );
 
@@ -121,7 +217,14 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       }
     }
   };
-
+  useEffect(() => {
+    if (SocialLogindata) {
+      console.log('Data is available:', data);
+      afterhandleSocialLogin();
+      // Proceed with storing tokens and user data
+    }
+    setLoading(false);
+  }, [SocialLogindata]);
   useEffect(() => {
     if (data) {
       console.log('Data is available:', data);
@@ -224,15 +327,15 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       </View>
 
       <View style={styles.socialContainer}>
-        <TouchableOpacity style={styles.socialButton}>
+        {/* <TouchableOpacity style={styles.socialButton}>
           <Icon as={AppleIcon} stroke="#000" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialButton}>
+        </TouchableOpacity> */}
+        <TouchableOpacity style={styles.socialButton} onPress={signInWithGoogle}>
           <Icon as={GoogleIcon} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.socialButton}>
+        {/* <TouchableOpacity style={styles.socialButton}>
           <Icon as={FBIcon} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       {/* Sign Up Option */}

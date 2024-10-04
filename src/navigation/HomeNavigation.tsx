@@ -41,7 +41,12 @@ const HomeNavigation: React.FC = () => {
 
   // const navigation = useNavigation();
   //const {clientIsReady} = useChatClient();
-  const streamChatTheme = useStreamChatTheme();
+  let streamChatTheme = useStreamChatTheme();
+  streamChatTheme.channel.selectChannel.backgroundColor="#000000";
+  streamChatTheme.messageInput.backgroundColor="#000000";
+
+  console.log("strea============================");
+  console.log(streamChatTheme);
   return (
     <OverlayProvider bottomInset={bottom} value={{style: streamChatTheme}}>
       <Stack.Navigator>

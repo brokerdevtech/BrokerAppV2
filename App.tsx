@@ -12,6 +12,7 @@ import {StreamChat} from 'stream-chat';
 //import "./global.css";
 import type {PropsWithChildren} from 'react';
 import {
+  Button,
   PermissionsAndroid,
   Platform,
   StyleSheet,
@@ -39,7 +40,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {setAppLocation} from './BrokerAppCore/redux/store/AppLocation/appLocation';
 import {S3Provider} from './src/Context/S3Context';
-
+import NetInfo from "@react-native-community/netinfo";
+import RNRestart from 'react-native-restart';
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -80,7 +82,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 
 function App(): React.JSX.Element {
   //  NativeModules.DevSettings.setIsDebuggingRemotely(true);
-
+  const [isConnected, setIsConnected] = useState(true);
   const isDarkMode = useColorScheme() === 'dark';
   const [loggedIn, setLoggedIn] = useState(false);
   const [colorMode, setColorMode] = React.useState<'dark' | 'light'>(
@@ -118,7 +120,19 @@ function App(): React.JSX.Element {
   //     setLocationPermission(newStatus); // Update status after returning from settings
   //   }
   // };
+  const retryAction = async () => {
+    // Implement your retry logic here
+    // For example, you can attempt to fetch data from an API
+    // or perform any action that requires an internet connection
+    // If successful, update the UI accordingly
+    // If not, you can display an error message or handle it as needed
+    const state = await NetInfo.fetch();
+console.log(state.isConnected);
+setColorMode(state.isConnected);
+  };
   const checkUser = async () => {
+   
+    console.log(state);
     const keys = await AsyncStorage.getAllKeys();
     const AsyncStoragedata = await AsyncStorage.multiGet(keys);
 
@@ -208,9 +222,17 @@ function App(): React.JSX.Element {
   useEffect(() => {
     allPermission();
     checkUser();
+
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsConnected(state.isConnected);
+    });
+
+
   }, []);
 
   return (
+    <>
+    {isConnected ? (
     <Provider store={store}>
       <S3Provider>
         <GestureHandlerRootView style={{flex: 1}}>
@@ -219,11 +241,28 @@ function App(): React.JSX.Element {
           </GluestackUIProvider>
         </GestureHandlerRootView>
       </S3Provider>
-    </Provider>
+    </Provider>): (
+      <View style={styles.container}>
+        <Text style={styles.text}>
+          You are not connected to the internet.
+        </Text>
+        <Button title="Retry" onPress={retryAction} />
+      </View>
+    )}</>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 20,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,
