@@ -39,9 +39,9 @@ const LocalityTag: React.FC<LocalityTagProps> = ({
     //
     //
   };
-  const removeLocality = (placeId: string) => {
+  const removeLocality = (placeID: string) => {
     const updatedLocalities = localities.filter(
-      loc => loc.place.placeId !== placeId,
+      loc => loc.place.placeID !== placeID,
     );
     setLocalities(updatedLocalities);
     onLocalityChange(localities);
@@ -74,9 +74,9 @@ const LocalityTag: React.FC<LocalityTagProps> = ({
       <View style={localStyles.tagContainer}>
         {localities.map(option => (
           <TouchableOpacity
-            key={option.place.placeId}
+            key={option.place.placeID}
             style={[localStyles.tagsWrap, localStyles.selectedTag]}
-            // onPress={() =>  removeLocality(option.place.placeId)}
+            // onPress={() =>  removeLocality(option.place.placeID)}
           >
             <ZText type={'r16'} style={[localStyles.selectedTagText]}>
               {option.place.name}

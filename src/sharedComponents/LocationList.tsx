@@ -74,7 +74,7 @@ function LocationList(props: any) {
   }, [searchText]);
   const onPressPlace = async item => {
     Keyboard.dismiss(); //
-    let itemLoaction = await getPlaceDataFromID(item.placeId);
+    let itemLoaction = await getPlaceDataFromID(item.placeID);
     //
     console.log(itemLoaction);
     setLoaction(itemLoaction);
@@ -91,7 +91,7 @@ function LocationList(props: any) {
               space={[2, 3]}
               style={localStyles.listitem}
               justifyContent="space-between">
-              <ZText>{item.name}</ZText>
+              <ZText>{item.placeName}</ZText>
             </HStack>
           </Pressable>
           // <TouchableOpacity  onPress={() => onPressPlace(item)}>

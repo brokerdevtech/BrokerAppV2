@@ -79,7 +79,7 @@ const CarFilterScreen = () => {
       try {
         const {data} = await getCarPostFilters(user.userId, 'Post');
         if (!data?.filters) throw new Error('Unexpected data structure');
-        // console.log('Fetch Filters Response:', data);
+         console.log('Fetch Filters Response:', data);
         const filters = data.filters.reduce((acc, filter) => {
           acc[filter.name] = {
             records: filter.records || [],

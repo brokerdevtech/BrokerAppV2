@@ -323,7 +323,7 @@ const FilterTagsScreen: React.FC = ({
     setLocalities(Localitys);
 
     let DeveloperData = {
-      key: Localitys.city,
+      key: Localitys.City,
       parentFilterId: 'Delhi',
       value: 'Delhi',
     };
