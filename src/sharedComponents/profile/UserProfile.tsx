@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import margin from '@/themes/margin';
+import ZText from '../ZText';
 
 const UserProfile = () => {
   return (
@@ -16,7 +17,7 @@ const UserProfile = () => {
                         <AvatarBadge  />
                     </Avatar>
                </View> 
-                <Text style={styles.userText}>Your Story</Text>
+                <ZText type={'R14'} >Your Story</ZText>
             </TouchableOpacity>
        </View>
        <View>
@@ -27,7 +28,7 @@ const UserProfile = () => {
                         <AvatarImage source={{ uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",}}/>
                     </Avatar>
                 </View>    
-                <Text style={styles.userText}>Selena</Text>
+                <ZText type={'R14'} >Selena</ZText>
             </TouchableOpacity>
        </View>
        <View>
@@ -38,7 +39,7 @@ const UserProfile = () => {
                         <AvatarImage source={{ uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",}}/>
                     </Avatar>
                </View> 
-                <Text style={styles.userText}>Imran</Text>
+               <ZText type={'R14'} >Imran</ZText>
             </TouchableOpacity>
        </View>
        <View>
@@ -49,7 +50,7 @@ const UserProfile = () => {
                         <AvatarImage source={{ uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",}}/>
                     </Avatar>
                </View> 
-                <Text style={styles.userText}>Anand</Text>
+               <ZText type={'R14'} >Anand</ZText>
             </TouchableOpacity>
        </View>
        <View>
@@ -60,7 +61,7 @@ const UserProfile = () => {
                         <AvatarImage source={{ uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",}}/>
                     </Avatar>
                </View> 
-                <Text style={styles.userText}>Kanishk</Text>
+                <ZText type={'R14'} >Kanishk</ZText>
             </TouchableOpacity>
        </View>
        <View>

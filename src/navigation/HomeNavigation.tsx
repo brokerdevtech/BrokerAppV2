@@ -28,6 +28,7 @@ import CarFilterScreen from '../sharedComponents/carSearchFilter';
 import FollowerList from '../sharedComponents/FollowerList';
 import MyConnectionScreen from '../sharedComponents/MyConnections';
 import ProfileScreen from '../sharedComponents/ProfileScreen';
+import ItemListScreen from '../screens/ItemListScreen';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -128,6 +129,11 @@ const HomeNavigation: React.FC = () => {
         <Stack.Screen
           name="Notification"
           component={NotificationScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ItemListScreen"
+          component={ItemListScreen}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

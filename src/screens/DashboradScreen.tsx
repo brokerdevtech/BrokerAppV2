@@ -126,6 +126,7 @@ export default function DashboradScreen() {
       <Text>{AppLocation.placeName}</Text> */}
 
 
+
         <Grid className="gap-3 p-4" _extra={{className: "grid-cols-9",}}>
           <GridItem className="bg-background-50 p-2 rounded-md text-center" _extra={{ className: "col-span-9",}}>
              <ZText type={'R18'}>
@@ -133,7 +134,7 @@ export default function DashboradScreen() {
             </ZText>
           </GridItem>
           <GridItem className="bg-background-0 p-4 rounded-md text-center" _extra={{ className: "col-span-3",}}>
-            <TouchableOpacity onPress={() => console.log()}>
+            <TouchableOpacity onPress={() => navigation.navigate('ItemListScreen', { listType : "PROPERTY"})}>
                 <View style={styles.tabItemContainer}>
                   <TABTravel />
                   <ZText type={'R16'} style={styles.tabItemTitle}>Property</ZText>
