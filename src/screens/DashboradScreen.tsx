@@ -33,6 +33,9 @@ import {Button} from '@/components/ui/button';
 import Footer from './Dashboard/Footer';
 import BrandAssociated from './Dashboard/BrandAssociated';
 import ProductSection from './Dashboard/ProductSection';
+import UserProfile from '../sharedComponents/profile/UserProfile';
+import MarqueeBanner from '../sharedComponents/profile/MarqueeBanner';
+import {fetchDashboardData} from '../../BrokerAppCore/services/new/dashboardService';
 
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -50,13 +53,21 @@ export default function DashboradScreen() {
     // console.log('marqueeStatus :-', marqueeStatus);
     // console.log('marqueeError :-', marqueeError);
   };
-
+  const callmarList = async () => {
+    const request = {pageNo: 1, pageSize: 10, cityName: cityToShow};
+    await marqueeExecute('Marqueue', request);
+  };
+  const {
+    data: marqueeText,
+    status: marqueeStatus,
+    error: marqueeError,
+    execute: marqueeExecute,
+  } = useApiRequest(fetchDashboardData);
   useEffect(() => {
-     callPodcastList();
-  }, [])
+    callPodcastList();
+    callmarList();
+  }, []);
 
-  
-  
   const handleThumbnailTap = async (item, index) => {
     navigation.navigate('VideoReels', {
       podcastitem: item,
@@ -118,43 +129,57 @@ export default function DashboradScreen() {
   return (
     <ScrollView style={styles.scrollView}>
       <View>
-        {/* <Text>DashboradScreen</Text>
-      <Text>{AppLocation.city}</Text>
-      <Text>{AppLocation.state}</Text>
-      <Text>{AppLocation.country}</Text>
-      <Text>{AppLocation.placeID}</Text>
-      <Text>{AppLocation.placeName}</Text> */}
-
-
-
-        <Grid className="gap-3 p-4" _extra={{className: "grid-cols-9",}}>
-          <GridItem className="bg-background-50 p-2 rounded-md text-center" _extra={{ className: "col-span-9",}}>
-             <ZText type={'R18'}>
-               Find what you are looking for
-            </ZText>
+        <View style={styles.subHeaderSection}>
+          <UserProfile />
+          {marqueeText?.length > 0 && (
+            <MarqueeBanner
+              marqueeTextList={marqueeText.map(
+                (item: any) => item.marqueueText,
+              )}
+            />
+          )}
+        </View>
+        <Grid className="gap-3 p-4" _extra={{className: 'grid-cols-9'}}>
+          <GridItem
+            className="bg-background-50 p-2 rounded-md text-center"
+            _extra={{className: 'col-span-9'}}>
+            <ZText type={'R18'}>Find what you are looking for</ZText>
           </GridItem>
-          <GridItem className="bg-background-0 p-4 rounded-md text-center" _extra={{ className: "col-span-3",}}>
-            <TouchableOpacity onPress={() => navigation.navigate('ItemListScreen', { listType : "PROPERTY"})}>
-                <View style={styles.tabItemContainer}>
-                  <TABTravel />
-                  <ZText type={'R16'} style={styles.tabItemTitle}>Property</ZText>
-                </View>
+          <GridItem
+            className="bg-background-0 p-4 rounded-md text-center"
+            _extra={{className: 'col-span-3'}}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('ItemListScreen', {listType: 'PROPERTY'})
+              }>
+              <View style={styles.tabItemContainer}>
+                <TABTravel />
+                <ZText type={'R16'} style={styles.tabItemTitle}>
+                  Property
+                </ZText>
+              </View>
             </TouchableOpacity>
           </GridItem>
-          <GridItem className="bg-background-0 p-4 rounded-md text-center" _extra={{ className: "col-span-3",}}>
+          <GridItem
+            className="bg-background-0 p-4 rounded-md text-center"
+            _extra={{className: 'col-span-3'}}>
             <TouchableOpacity onPress={() => console.log()}>
               <View style={styles.tabItemContainer}>
-                  <TABCard />
-                  <ZText type={'R16'} style={styles.tabItemTitle}>Car</ZText>
+                <TABCard />
+                <ZText type={'R16'} style={styles.tabItemTitle}>
+                  Car
+                </ZText>
               </View>
-            </TouchableOpacity>   
+            </TouchableOpacity>
           </GridItem>
           <GridItem
             className="bg-background-0 p-4 rounded-md text-center"
             _extra={{className: 'col-span-3'}}>
             <View style={styles.tabItemContainer}>
               <TABLoan />
-              <ZText type={'R16'} style={styles.tabItemTitle}>Loan</ZText>
+              <ZText type={'R16'} style={styles.tabItemTitle}>
+                Loan
+              </ZText>
             </View>
           </GridItem>
           <GridItem
@@ -162,7 +187,9 @@ export default function DashboradScreen() {
             _extra={{className: 'col-span-3'}}>
             <View style={styles.tabItemContainer}>
               <TABInsurance />
-              <ZText type={'R16'} style={styles.tabItemTitle}>Insurance</ZText>
+              <ZText type={'R16'} style={styles.tabItemTitle}>
+                Insurance
+              </ZText>
             </View>
           </GridItem>
           <GridItem
@@ -170,7 +197,9 @@ export default function DashboradScreen() {
             _extra={{className: 'col-span-3'}}>
             <View style={styles.tabItemContainer}>
               <TABTravel />
-              <ZText type={'R16'} style={styles.tabItemTitle}>Travel</ZText>
+              <ZText type={'R16'} style={styles.tabItemTitle}>
+                Travel
+              </ZText>
             </View>
           </GridItem>
           <GridItem
@@ -178,22 +207,61 @@ export default function DashboradScreen() {
             _extra={{className: 'col-span-3'}}>
             <View style={styles.tabItemContainer}>
               <TABWealth />
-              <ZText type={'R16'} style={styles.tabItemTitle}>Wealth</ZText>
+              <ZText type={'R16'} style={styles.tabItemTitle}>
+                Wealth
+              </ZText>
             </View>
           </GridItem>
-        </Grid>   
-        <ProductSection heading={'Newly Launch'} background={'#FFFFFF'} endpoint={`NewlyLaunch`} request={{ pageNo: 1, pageSize: 10, cityName: cityToShow }} />
-        <ProductSection heading={'New In Property'} background={'#F7F8FA'} endpoint={`Newin`} request={{ pageNo: 1, pageSize: 10, cityName: cityToShow, categoryId: 1 }} />
-        <ProductSection heading={'New In Car'} background={'#FFFFFF'} endpoint={`Newin`} request={{ pageNo: 1, pageSize: 10, cityName: cityToShow, categoryId: 2 }} />
-        <ProductSection heading={'New In Loan'} background={'#F7F8FA'} endpoint={`Newin`} request={{ pageNo: 1, pageSize: 10, cityName: cityToShow, categoryId: 4 }} />
+        </Grid>
+        <ProductSection
+          heading={'Newly Launch'}
+          background={'#FFFFFF'}
+          endpoint={`NewlyLaunch`}
+          request={{pageNo: 1, pageSize: 10, cityName: cityToShow}}
+        />
+        <ProductSection
+          heading={'New In Property'}
+          background={'#F7F8FA'}
+          endpoint={`Newin`}
+          request={{
+            pageNo: 1,
+            pageSize: 10,
+            cityName: cityToShow,
+            categoryId: 1,
+          }}
+        />
+        <ProductSection
+          heading={'New In Car'}
+          background={'#FFFFFF'}
+          endpoint={`Newin`}
+          request={{
+            pageNo: 1,
+            pageSize: 10,
+            cityName: cityToShow,
+            categoryId: 2,
+          }}
+        />
+        <ProductSection
+          heading={'New In Loan'}
+          background={'#F7F8FA'}
+          endpoint={`Newin`}
+          request={{
+            pageNo: 1,
+            pageSize: 10,
+            cityName: cityToShow,
+            categoryId: 4,
+          }}
+        />
 
-      {/* Podcast */}
-      <View style={styles.container}>
-        <HStack space="md" reversed={false} style={styles.heading}>
+        {/* Podcast */}
+        <View style={styles.container}>
+          <HStack space="md" reversed={false} style={styles.heading}>
             <ZText type={'R18'}>Podcast</ZText>
-            <ZText type={'R14'} style={styles.headingLink}>See All</ZText>
-        </HStack>
-        <HStack space="md" reversed={false} style={styles.list}>
+            <ZText type={'R14'} style={styles.headingLink}>
+              See All
+            </ZText>
+          </HStack>
+          <HStack space="md" reversed={false} style={styles.list}>
             <FlatList
               data={data}
               keyExtractor={item => item.podcastId.toString()}
@@ -222,7 +290,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   tabItemTitle: {
-    marginTop: 10
+    marginTop: 10,
   },
   tabItemContainer: {
     flexDirection: 'column',

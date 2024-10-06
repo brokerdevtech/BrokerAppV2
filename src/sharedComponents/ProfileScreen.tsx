@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
 // src/screens/SettingsScreen.tsx
 import React, {useState, useEffect, useCallback, useRef} from 'react';
@@ -14,10 +15,7 @@ import {
   Platform,
 } from 'react-native';
 
-// Local import
-
 import {useSelector} from 'react-redux';
-//mport {styles} from '../themes';
 
 import strings from '../i18n/strings';
 
@@ -48,6 +46,7 @@ import typography from '../themes/typography';
 import ZText from './ZText';
 import {Box} from '../../components/ui/box';
 import {
+  ChevronRightIcon,
   ChevronsLeftIcon,
   EditIcon,
   Icon,
@@ -63,6 +62,19 @@ import ZAvatarInitials from './ZAvatarInitials';
 import ZSafeAreaView from './ZSafeAreaView';
 import AppBaseContainer from '../hoc/AppBaseContainer_old';
 import ExpandableText from './ExpandableText';
+import ZHeader from './ZHeader';
+import {Back} from '../assets/svg';
+import RenderUserDetail from './RenderUserDetails';
+import {
+  BottomSheet,
+  BottomSheetBackdrop,
+  BottomSheetContent,
+  BottomSheetDragIndicator,
+  BottomSheetItem,
+  BottomSheetItemText,
+  BottomSheetPortal,
+  BottomSheetTrigger,
+} from '../../components/ui/bottomsheet';
 
 const ProfileScreen: React.FC = ({
   toast,
@@ -93,11 +105,18 @@ const ProfileScreen: React.FC = ({
   const [biodata, setBiodata] = useState('');
   const [TabSelect, setTabSelect] = useState(0);
   //   const [TabSelect, setTabSelect] = useState(0);
-
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const [showActionsheet, setShowActionsheet] = React.useState(false);
+  const handleClose = () => setShowActionsheet(false);
   const onTabSelectChange = useCallback(index => {
     setTabSelect(index);
   }, []);
-
+  // const handlePresentModalPress = useCallback(() => {
+  //   bottomSheetModalRef.current?.present();
+  // }, []);
+  const toggleBottomSheet = () => {
+    setShowActionsheet(!showActionsheet);
+  };
   const handleCategoryPress = screen => {
     navigation.navigate(screen, {
       userId: user.userId,
@@ -127,9 +146,11 @@ const ProfileScreen: React.FC = ({
         <View style={localStyles.catheaderContainer}>
           <View style={[localStyles.categoriesContainer]}>
             <View style={localStyles.aboutheader}>
-              <Text style={localStyles.pageTitle}>About</Text>
+              <ZText type={'S20'} style={localStyles.pageTitle}>
+                About
+              </ZText>
               <Box mt={1} alignContent="center">
-                <TouchableOpacity onPress={() => refRBSheet.current.open()}>
+                <TouchableOpacity onPress={toggleBottomSheet}>
                   {/* <Edit accessible={true} accessibilityLabel="edit" /> */}
                   <Icon as={EditIcon} />
                 </TouchableOpacity>
@@ -161,7 +182,9 @@ const ProfileScreen: React.FC = ({
         </View>
         <View style={localStyles.catheaderContainer}>
           <View style={[localStyles.categoriesContainer]}>
-            <Text style={localStyles.pageTitle}>Posts</Text>
+            <ZText type={'S20'} style={localStyles.pageTitle}>
+              Posts
+            </ZText>
             {categories.map((category, index) => (
               <TouchableOpacity
                 key={index}
@@ -177,12 +200,12 @@ const ProfileScreen: React.FC = ({
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',
-                    justifyContent: 'space-around',
+                    justifyContent: 'space-between',
                   }}>
-                  <Text style={localStyles.categoryText}>
+                  <ZText type={'R16'} style={localStyles.categoryText}>
                     {category.postCount}
-                  </Text>
-                  <Icon as={ChevronsLeftIcon} size={25} color={Color.primary} />
+                  </ZText>
+                  <Icon as={ChevronRightIcon} size={25} color={Color.primary} />
                 </View>
               </TouchableOpacity>
             ))}
@@ -190,13 +213,15 @@ const ProfileScreen: React.FC = ({
         </View>
         <View style={localStyles.catheaderContainer}>
           <View style={[localStyles.categoriesContainer]}>
-            <Text style={localStyles.pageTitle}>Settings</Text>
+            <ZText type={'S20'} style={localStyles.pageTitle}>
+              Settings
+            </ZText>
             <TouchableOpacity
               key={index}
               style={[localStyles.categoryButton]}
               onPress={onPressSetting}>
               <ZText type={'l18'}>Profile Settings</ZText>
-              <Icon as={ChevronsLeftIcon} size={25} color={Color.primary} />
+              <Icon as={ChevronRightIcon} size={25} color={Color.primary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -216,7 +241,7 @@ const ProfileScreen: React.FC = ({
     {key: 'Property', title: 'Property'},
     {key: 'Generic', title: `Generic`},
   ]);
-  useEffect(() => {}, []);
+
   useFocusEffect(
     React.useCallback(() => {
       // setLoading(true)
@@ -304,11 +329,6 @@ const ProfileScreen: React.FC = ({
       };
 
       getUserProfile();
-      //  getProfilePostData();
-
-      // return () => {
-      //   // Code to execute when the screen loses focus (optional)
-      // };
     }, [ProfileDataRest]),
   );
   //
@@ -363,69 +383,10 @@ const ProfileScreen: React.FC = ({
     }
   };
   console.log(user);
-  //   useFocusEffect(()=>{
-  //     toggleSkeletonOn();
-  //     const getUserProfile = async () => {
-  //       try {
-  //         const result = await getProfile(user.userId);
-  //         //
-  //         //
-  //         setProfileData(result.data);
-  // const Userfollower:any=[];
-  // Userfollower.push({title:strings.followers,value:result.data.followers})
-  // Userfollower.push({title:strings.following,value:result.data.followings})
-  // setUserfollowersData(Userfollower);
-  //         // setCountryData(result.data);
-  //         toggleSkeletonoff();
-  //       } catch (error) {
-  //         console.error('Error fetching data:', error);
-  //       }
-  //     };
 
-  //     getUserProfile();
-  //   },[])
   const colors = useSelector(state => state.theme.theme);
   const [isSelect, setIsSelect] = useState(0);
-  // const switchAccountRef = createRef(null);
-  // const categoryData = [
-  //   {
-  //     id: 0,
-  //     icon: 'grid',
-  //     onPress: () => setIsSelect(0),
-  //     name: 'My Posts',
-  //   },
-  //   // {
-  //   //   id: 1,
-  //   //   icon: 'lock-closed',
-  //   //   onPress: () => setIsSelect(1),
-  //   //   name: 'Shorts',
-  //   // },
-  //   // {
-  //   //   id: 2,
-  //   //   icon: 'bookmark',
-  //   //   onPress: () => setIsSelect(2),
-  //   //   name: 'Tags',
-  //   // },
-  // ];
-  // const renderScene = SceneMap({
-  //   Property: () => (
-  //     <View style={{flex: 1}}>
-  //       {/* // <MyListingScroll User={user} /> */}
-  //       <Text>0</Text>
-  //     </View>
-  //   ),
 
-  //   Generic: () => (
-  //     <View style={{flex: 1}}>
-  //       {/* // <MyGenericListingScroll User={user} /> */}
-  //       <Text>1</Text>
-  //     </View>
-  //   ),
-  // });
-
-  // const onPressEditProfile = () => navigation.navigate(StackNav.EditProfile);
-
-  // // const onPressSwitchAccount = () => switchAccountRef?.current?.show();
   const generateLink = async () => {
     try {
       const response = await fetch(
@@ -435,19 +396,6 @@ const ProfileScreen: React.FC = ({
       );
       const text = await response.text();
       return text;
-
-      // const link = await dynamicLinks().buildShortLink(
-      //   {
-      //     link: `https://brokerapp.page.link/profiledetails/${user.userId}`,
-      //     domainUriPrefix: 'https://brokerapp.page.link',
-      //     android: {
-      //       packageName: 'com.brokerapp.broker',
-      //     },
-      //   },
-      //   dynamicLinks.ShortLinkType.DEFAULT,
-      // );
-
-      // return link;
     } catch (error) {}
   };
 
@@ -520,19 +468,6 @@ const ProfileScreen: React.FC = ({
 
     const responseBlob = await uriToBlob(uri); // Replace with the URL to your image or use the React Native ImagePicker to select an image.
 
-    // const imageBlob = await convertLocalImageToBlob(response.assets[0].uri);
-    //
-
-    //  // const imageBlob = await fetch(response.assets[0].uri);
-    //   const fileContent = await RNFS.readFile(response.assets[0].uri);
-    //
-    //   //
-    //   // const file = {
-    //   //   uri: selectedFile.uri,
-    //   //   name: 'my-image.jpg', // Set the desired file name in S3
-    //   //   type: 'image/jpeg', // Set the MIME type for the image
-    //   // };
-
     const fileExtension = getFileExtensionFromMimeType(type);
 
     const docId = uuid.v4();
@@ -597,31 +532,11 @@ const ProfileScreen: React.FC = ({
         setLoading(false);
         setProfileDataRest(!ProfileDataRest);
       }
-
-      //
-      //
-      // setLoading(false);
-      // setProfileDataRest(!ProfileDataRest);
-      //navigation.navigate('Profile');
-
-      // Handle the submission of office details here
     } catch (error) {
       setLoading(false);
     }
   };
 
-  // const RenderUserDetail = ({item}) => {
-  //   return (
-  //     <View style={styles.itemsCenter}>
-  //       <ZText type="b24" align={'center'}>
-  //         {item.value}
-  //       </ZText>
-  //       <ZText type="m16" align={'center'} style={styles.mt10}>
-  //         {item.title}
-  //       </ZText>
-  //     </View>
-  //   );
-  // };
   const HeaderCategory = ({item}) => {
     const truncatedName =
       item.name.length > 10 ? item.name.slice(0, 10) + '...' : item.name;
@@ -636,11 +551,6 @@ const ProfileScreen: React.FC = ({
               isSelect === item.id ? colors.primary : colors.bColor,
           },
         ]}>
-        {/* <MaterialIcon
-          name={item.icon}
-          size={moderateScale(30)}
-          color={isSelect === item.id ? colors.primary : colors.iconColor}
-        /> */}
         <ZText type={'B16'}>{truncatedName}</ZText>
       </TouchableOpacity>
     );
@@ -650,38 +560,9 @@ const ProfileScreen: React.FC = ({
     const fullName = `${ProfileData?.firstName} ${ProfileData?.lastName}`;
     const truncatedFullName =
       fullName.length > 10 ? fullName.slice(0, 15) + '...' : fullName;
-
+    console.log(ProfileData?.profileImage, 'imag');
     return (
       <>
-        <View style={localStyles.headerContainer}>
-          <TouchableOpacity style={styles.rowCenter}>
-            {/* <ZText type="S22" style={localStyles.capitalize}>
-              {truncatedFullName}
-            </ZText> */}
-            {/* <Ionicons
-              name="chevron-down-outline"
-              size={moderateScale(24)}
-              style={styles.ml5}
-              color={colors.dark ? colors.white : colors.darkColor}
-            /> */}
-          </TouchableOpacity>
-          <HStack>
-            <TouchableOpacity onPress={shareProfile} style={{marginRight: 10}}>
-              {/* <ShareIcon
-                accessible={true}
-                accessibilityLabel="Share"
-                height={30}
-                width={30}
-                // color={Color.primary}
-              /> */}
-              <Icon as={ShareIcon} />
-            </TouchableOpacity>
-            {/* <TouchableOpacity>
-              <Setting accessible={true} accessibilityLabel="setting" />
-            </TouchableOpacity> */}
-          </HStack>
-        </View>
-
         <View
           style={[
             styles.flexColumn,
@@ -700,7 +581,7 @@ const ProfileScreen: React.FC = ({
             </TouchableOpacity>
             <HStack justifyContent="center" marginTop="2px">
               <ZText
-                type="M14"
+                type="R14"
                 align={'center'}
                 color={colors.primary}
                 style={styles.mt2}
@@ -709,18 +590,12 @@ const ProfileScreen: React.FC = ({
               </ZText>
             </HStack>
           </VStack>
-          {/* <View>
-          <Text>{postCounter}</Text>
-        </View> */}
+
           <View style={[styles.mv5, localStyles.headContainer]}>
             <ZText
-              type="M18"
+              type="S18"
               align={'center'}
-              style={[
-                styles.mt20,
-                localStyles.capitalize,
-                typography.fontBold.semiBold,
-              ]}>
+              style={[styles.mt20, localStyles.capitalize]}>
               {ProfileData?.firstName} {ProfileData?.lastName}
             </ZText>
             <ZText
@@ -731,33 +606,10 @@ const ProfileScreen: React.FC = ({
               {ProfileData?.email}
             </ZText>
             {ProfileData?.kycStatus != 'Na' && (
-              <ZText type="M18" align={'center'} style={styles.mt2}>
+              <ZText type="R18" align={'center'} style={styles.mt2}>
                 {'Kyc Status:'} {ProfileData?.kycStatus}
               </ZText>
             )}
-
-            {/* <HStack space={2} alignItems="left" width="100%" paddingRight={12}>
-              <View
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  flexDirection: 'row',
-                }}>
-                <ExpandableText
-                  text={
-                    ProfileData?.biodata == ''
-                      ? 'Press To Enter Your Bio'
-                      : ProfileData?.biodata
-                  }
-                />
-
-                <Box mt={1} alignContent="center">
-                  <TouchableOpacity onPress={() => refRBSheet.current.open()}>
-                    <Edit accessible={true} accessibilityLabel="edit" />
-                  </TouchableOpacity>
-                </Box>
-              </View>
-            </HStack> */}
           </View>
           <View
             style={[
@@ -768,29 +620,53 @@ const ProfileScreen: React.FC = ({
               // styles.itemsCenter,
               styles.mt25,
             ]}>
-            {/* {UserfollowersData.map((item, index) => (
+            {UserfollowersData.map((item, index) => (
               <RenderUserDetail
                 item={item}
                 key={index}
                 ParentUserData={ParentUser}
               />
-            ))} */}
+            ))}
           </View>
         </View>
       </>
     );
   };
-
+  const LeftIcon = () => {
+    return (
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <View
+          style={{
+            padding: 8,
+            borderWidth: 1,
+            borderColor: '#E5E5E5',
+            borderRadius: 40,
+          }}>
+          <Back accessible={true} accessibilityLabel="Back" />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+  const RightIcon = () => {
+    return (
+      <TouchableOpacity onPress={shareProfile} style={{marginRight: 10}}>
+        <Icon as={ShareIcon} />
+      </TouchableOpacity>
+    );
+  };
   const handleClear = () => {
     setUserBio('');
   };
   const dummyData = [{key: 'dummy'}];
   return (
     <ZSafeAreaView>
+      <ZHeader
+        title={``}
+        rightIcon={<RightIcon />}
+        isHideBack={true}
+        isLeftIcon={<LeftIcon />}
+      />
       {ProfileData && (
-        // <MyListingScroll
-        //   User={user}
-        //   ListHeaderComponent={PostHeader}></MyListingScroll>
         <FlatList
           data={dummyData}
           ListHeaderComponent={() => <PostHeader />}
@@ -804,12 +680,27 @@ const ProfileScreen: React.FC = ({
             paddingBottom: 20,
           }}
         />
-        // <ProfileTabs Header={() => <PostHeader />} User={user} />
-        // <FlatList>
-        // <PostHeader />
-        // </FlatList>
       )}
       <>
+        <BottomSheet isVisible={showActionsheet}>
+          {/* <BottomSheetModalProvider></BottomSheetModalProvider> */}
+          <BottomSheetPortal
+            snapPoints={['25%', '50%']}
+            backdropComponent={BottomSheetBackdrop}
+            handleComponent={BottomSheetDragIndicator}>
+            <BottomSheetContent>
+              <BottomSheetItem>
+                <BottomSheetItemText>Item 1</BottomSheetItemText>
+              </BottomSheetItem>
+              <BottomSheetItem>
+                <BottomSheetItemText>Item 2</BottomSheetItemText>
+              </BottomSheetItem>
+              <BottomSheetItem>
+                <BottomSheetItemText>Item 3</BottomSheetItemText>
+              </BottomSheetItem>
+            </BottomSheetContent>
+          </BottomSheetPortal>
+        </BottomSheet>
         {/* <RBSheet
           ref={refRBSheet}
           customStyles={{
@@ -919,19 +810,10 @@ const localStyles = StyleSheet.create({
   },
   imageEditIcon: {
     display: 'flex',
-    // width: '40px',
-    // height: '40px',
-    // padding: '5px',
+
     backgroundColor: '#ffffff',
   },
-  // buttonContainer: {
-  //   ...styles.mt20,
-  //   height: getHeight(45),
-  //   width: '48%',
 
-  //   // borderRadius: moderateScale(22),
-  //   // borderWidth: moderateScale(1),
-  // },
   mainContainer: {
     ...styles.rowSpaceBetween,
     width: '100%',
@@ -972,16 +854,6 @@ const localStyles = StyleSheet.create({
     marginTop: '10%',
     // flex: 1,
   },
-  // textInput: {
-  //   borderWidth: 1,
-  //   backgroundColor: 'rgba(188, 74, 80, 0.1)',
-  //   padding: 10,
-  //   textAlignVertical: 'top',
-  //   height: 100,
-  //   marginBottom: 20,
-  //   borderColor: Color.primary,
-  //   width: '80%',
-  // },
 
   button: {
     borderRadius: 5,
@@ -1047,39 +919,24 @@ const localStyles = StyleSheet.create({
   categoriesContainer: {
     marginTop: 16,
     padding: 10,
-    // backgroundColor: '#f0f0f0',
-    borderWidth: 2,
-    borderColor: '#ccc',
+
+    borderWidth: 1,
+    borderColor: Color.borderColor,
     borderRadius: 20,
     flexDirection: 'column',
-    // justifyContent: 'space-around',
-    // flexWrap: 'wrap',
   },
   categoryButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     // marginBottom: 15,
     padding: 8,
     borderRadius: 4,
-    // width: '30%',
-    // backgroundColor: '#fff',
-    // marginLeft: 20,
-    // borderColor: '#ccc',
-    // borderWidth: 1,
   },
   aboutheader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // marginBottom: 15,
-    // padding: 8,
-    // borderRadius: 4,
-    // width: '30%',
-    // backgroundColor: '#fff',
-    // marginLeft: 20,
-    // borderColor: '#ccc',
-    // borderWidth: 1,
   },
   categoryText: {
     // marginTop: 8,
@@ -1113,7 +970,6 @@ const localStyles = StyleSheet.create({
   catheaderContainer: {
     paddingHorizontal: 10,
     backgroundColor: '#fff',
-    // paddingVertical: 0,
   },
   pageTitle: {
     fontSize: 20,
