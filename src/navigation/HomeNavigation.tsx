@@ -29,6 +29,7 @@ import FollowerList from '../sharedComponents/FollowerList';
 import MyConnectionScreen from '../sharedComponents/MyConnections';
 import ProfileScreen from '../sharedComponents/ProfileScreen';
 import ItemListScreen from '../screens/ItemListScreen';
+import ProfileSetting from '../sharedComponents/ProfileSetting';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -48,7 +49,7 @@ const HomeNavigation: React.FC = () => {
   // streamChatTheme.channel.selectChannel.backgroundColor="#000000";
   // streamChatTheme.messageInput.backgroundColor="#000000";
 
-  console.log("strea============================");
+  console.log('strea============================');
   console.log(streamChatTheme);
   return (
     <OverlayProvider bottomInset={bottom} value={{style: streamChatTheme}}>
@@ -78,6 +79,11 @@ const HomeNavigation: React.FC = () => {
         <Stack.Screen
           name="FollowerList"
           component={FollowerList}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ProfileSettings"
+          component={ProfileSetting}
           options={{headerShown: false}}
         />
         <Stack.Screen
