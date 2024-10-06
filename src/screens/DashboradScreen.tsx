@@ -217,7 +217,7 @@ export default function DashboradScreen() {
           heading={'Newly Launch'}
           background={'#FFFFFF'}
           endpoint={`NewlyLaunch`}
-          request={{pageNo: 1, pageSize: 10, cityName: cityToShow}}
+          request={{pageNo: 1, pageSize: 10, cityName: AppLocation.City}}
         />
         <ProductSection
           heading={'New In Property'}
@@ -226,7 +226,7 @@ export default function DashboradScreen() {
           request={{
             pageNo: 1,
             pageSize: 10,
-            cityName: cityToShow,
+            cityName: AppLocation.City,
             categoryId: 1,
           }}
         />
@@ -237,21 +237,21 @@ export default function DashboradScreen() {
           request={{
             pageNo: 1,
             pageSize: 10,
-            cityName: cityToShow,
+            cityName: AppLocation.City,
             categoryId: 2,
           }}
         />
-        <ProductSection
+        {/* <ProductSection
           heading={'New In Loan'}
           background={'#F7F8FA'}
           endpoint={`Newin`}
           request={{
             pageNo: 1,
             pageSize: 10,
-            cityName: cityToShow,
+            cityName: AppLocation.City,
             categoryId: 4,
           }}
-        />
+        /> */}
 
         {/* Podcast */}
         <View style={styles.container}>

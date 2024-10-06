@@ -44,7 +44,7 @@ const ProductSection = (props: ProductSectionProps) => {
 
   useEffect(() => {
     callPodcastList();
-  }, []);
+  }, [props]);
 
   const renderProductItems = ({item, index}) => {
     console.log(item.postMedias[0].mediaBlobId, 'media');
@@ -93,14 +93,14 @@ const ProductSection = (props: ProductSectionProps) => {
   };
 
   return (
-    <View style={{backgroundColor: props.background, paddingVertical: 20}}>
+    <View style={{backgroundColor: props.background, paddingVertical: 10}}>
       <HStack space="md" reversed={false} style={styles.heading}>
         <ZText type={'R18'}>{props.heading}</ZText>
         <ZText type={'R14'} style={styles.link}>
           See All
         </ZText>
       </HStack>
-      <HStack space="md" reversed={false} style={{paddingHorizontal: 20}}>
+      <HStack space="md" reversed={false} style={{paddingHorizontal: 10}}>
         <FlatList
           data={data}
           keyExtractor={item => item.postId.toString()}
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   cardContainer: {
-    width: 160,
+    width: 132,
     borderRadius: 12,
     backgroundColor: '#FFF',
     margin: 10,
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   carImage: {
-    width: '100%',
+    width: 132,
     height: 100,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
