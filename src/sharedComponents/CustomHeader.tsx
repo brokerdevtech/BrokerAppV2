@@ -77,7 +77,7 @@ const CustomHeader = () => {
     callPodcastList();
   }, []);
 
-  console.log('marqueeText', marqueeText);
+  // console.log('marqueeText', marqueeText);
   //onPress={() => navigation.toggleDrawer()}
   return (
     <View style={styles.headerSection}>
