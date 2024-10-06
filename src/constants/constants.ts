@@ -248,26 +248,26 @@ const inboxData = [
   },
 ];
 
-// const ProfileSetting = [
-//   {
-//     id: 1,
-//     title: 'Personal details',
-//     icon: 'person-outline',
-//     route: StackNav.ManagePersonalDetails,
-//   },
-//   {
-//     id: 2,
-//     title: 'KYC',
-//     icon: 'lock-closed-outline',
-//     route: StackNav.ProfileKyc,
-//   },
-//   {
-//     id: 3,
-//     title: 'Office details',
-//     icon: 'shield-checkmark-outline',
-//     route: StackNav.OfficeDetails,
-//   },
-// ];
+const ProfileSetting = [
+  {
+    id: 1,
+    title: 'Personal details',
+    icon: 'person-outline',
+    route: 'ManagePersonalDetails',
+  },
+  {
+    id: 2,
+    title: 'KYC',
+    icon: 'lock-closed-outline',
+    route: 'ProfileKyc',
+  },
+  {
+    id: 3,
+    title: 'Office details',
+    icon: 'shield-checkmark-outline',
+    route: 'OfficeDetails',
+  },
+];
 
 const helperCategoryData = [
   'General',
@@ -1740,7 +1740,7 @@ export {
   podcastsImagesBucketPath,
   SearchFill,
   renderChips,
-  //   ProfileSetting,
+  ProfileSetting,
   helperCategoryData,
   ConditonData,
   helperData,

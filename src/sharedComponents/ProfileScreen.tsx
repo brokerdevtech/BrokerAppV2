@@ -19,10 +19,6 @@ import {useSelector} from 'react-redux';
 
 import strings from '../i18n/strings';
 
-import {
-  UpdateProfile,
-  getProfile,
-} from '../../BrokerAppCore/services/profileService';
 import {styles} from '../themes';
 
 import {useFocusEffect} from '@react-navigation/native';
@@ -65,16 +61,13 @@ import ExpandableText from './ExpandableText';
 import ZHeader from './ZHeader';
 import {Back} from '../assets/svg';
 import RenderUserDetail from './RenderUserDetails';
+import ImageView from 'react-native-image-viewing';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import {useApiRequest} from '../hooks/useApiRequest';
 import {
-  BottomSheet,
-  BottomSheetBackdrop,
-  BottomSheetContent,
-  BottomSheetDragIndicator,
-  BottomSheetItem,
-  BottomSheetItemText,
-  BottomSheetPortal,
-  BottomSheetTrigger,
-} from '../../components/ui/bottomsheet';
+  getProfile,
+  UpdateProfile,
+} from '../../BrokerAppCore/services/new/profileServices';
 
 const ProfileScreen: React.FC = ({
   toast,
@@ -104,19 +97,20 @@ const ProfileScreen: React.FC = ({
   const [isEditing, setIsEditing] = useState(false);
   const [biodata, setBiodata] = useState('');
   const [TabSelect, setTabSelect] = useState(0);
-  //   const [TabSelect, setTabSelect] = useState(0);
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const [showActionsheet, setShowActionsheet] = React.useState(false);
-  const handleClose = () => setShowActionsheet(false);
-  const onTabSelectChange = useCallback(index => {
-    setTabSelect(index);
-  }, []);
-  // const handlePresentModalPress = useCallback(() => {
-  //   bottomSheetModalRef.current?.present();
-  // }, []);
-  const toggleBottomSheet = () => {
-    setShowActionsheet(!showActionsheet);
-  };
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
+  // const refRBSheet = useRef();
+  const {
+    data: profiledata,
+    status: profilestatus,
+    error: profileerror,
+    execute: profileexecute,
+  } = useApiRequest(getProfile, setLoading);
+  const {
+    data: profileUpdatedata,
+    status: profileUpdatestatus,
+    error: profileUpdateerror,
+    execute: profileUpdateexecute,
+  } = useApiRequest(UpdateProfile);
   const handleCategoryPress = screen => {
     navigation.navigate(screen, {
       userId: user.userId,
@@ -150,7 +144,7 @@ const ProfileScreen: React.FC = ({
                 About
               </ZText>
               <Box mt={1} alignContent="center">
-                <TouchableOpacity onPress={toggleBottomSheet}>
+                <TouchableOpacity onPress={() => refRBSheet.current.open()}>
                   {/* <Edit accessible={true} accessibilityLabel="edit" /> */}
                   <Icon as={EditIcon} />
                 </TouchableOpacity>
@@ -247,83 +241,8 @@ const ProfileScreen: React.FC = ({
       // setLoading(true)
       const getUserProfile = async () => {
         try {
-          const result = await getProfile(user.userId);
-          await Checkerror(result);
-
-          if (result.status == 'error' || result.status == undefined) {
-            setLoading(false);
-            // console.log(result);
-            toast.show({
-              description: result.error,
-            });
-            return;
-          } else {
-            //
-            //
-
-            setProfileData(result?.data);
-            const Userfollower: any = [];
-            if (result.data) {
-              // Userfollower.push({
-              //   title: 'Posts',
-              //   value: result.data?.postCount ? result.data?.postCount : 0,
-              // });
-              Userfollower.push({
-                title: strings.followers,
-                value: result.data.followers,
-              });
-              Userfollower.push({
-                title: strings.following,
-                value: result.data.followings,
-              });
-            }
-            //let objdata={'userId':result.data.userId,'userName':result.data.uidName,'userImg':result.data.profileImage}
-            setParentUser({
-              userId: result.data.userId,
-              userName: result.data.firstName + ' ' + result.data.lastName,
-              userImg: result.data.profileImage,
-            });
-            //
-            // setPostCounter(result.data?.postCount)
-            //
-            setUserBio(result.data?.biodata);
-
-            setUserfollowersData(Userfollower);
-            setLoading(false);
-            // await new Promise(resolve => setTimeout(resolve, 200));
-            // setCountryData(result.data);
-            //  toggleSkeletonoff();d
-          }
+          await profileexecute(user.userId);
         } catch (error) {
-          setLoading(false);
-          toast.show({
-            description: error,
-          });
-          console.error('Error fetching data:', error);
-        }
-      };
-      const getProfilePostData = async () => {
-        try {
-          const result = await getMyPost(user.userId);
-          //
-
-          if (result.status == 'error') {
-            setDataLoad(true);
-            toast.show({
-              description: result.error,
-            });
-            return;
-          } else {
-            //
-            //
-            setProfilePostData(result.data);
-
-            // setDataLoad(true);
-          }
-        } catch (error) {
-          toast.show({
-            description: error,
-          });
           console.error('Error fetching data:', error);
         }
       };
@@ -331,9 +250,35 @@ const ProfileScreen: React.FC = ({
       getUserProfile();
     }, [ProfileDataRest]),
   );
-  //
+  useEffect(() => {
+    if (profilestatus == 200) {
+      setProfileData(profiledata?.data);
+      const Userfollower: any = [];
+      if (profiledata.data) {
+        Userfollower.push({
+          title: strings.followers,
+          value: profiledata.data.followers,
+        });
+        Userfollower.push({
+          title: strings.following,
+          value: profiledata.data.followings,
+        });
+      }
+
+      setParentUser({
+        userId: profiledata.data.userId,
+        userName: profiledata.data.firstName + ' ' + profiledata.data.lastName,
+        userImg: profiledata.data.profileImage,
+      });
+
+      setUserBio(profiledata.data?.biodata);
+
+      setUserfollowersData(Userfollower);
+      setLoading(false);
+    }
+  }, [profilestatus]);
+
   const selectprofilepic = () => {
-    // console.log('selectprofilepic');
     if (ProfileData?.profileImage != '') {
       setCurrentImage([
         {
@@ -364,25 +309,22 @@ const ProfileScreen: React.FC = ({
     Result = {
       ...Result,
       industry: getList(ProfileData.industries),
+      countryName: AppLocation.Country,
+      stateName: AppLocation.State,
+      cityName: AppLocation.City,
+
       specialization: getList(ProfileData.specializations),
       userLocation: [],
     };
+    console.log(Result, 'pro');
 
-    setLoading(true);
-    let k = await UpdateProfile(Result);
-    if (k.status == 'error') {
-      setLoading(false);
-      toast.show({
-        description: k.error,
-      });
-      // return;
-    } else {
-      setLoading(false);
-      // setUserBio(userBio);
-      setProfileDataRest(!ProfileDataRest);
-    }
+    profileUpdateexecute(Result);
+    console.log(profileUpdatestatus);
+    console.log(profileUpdatedata);
+
+    setProfileDataRest(!ProfileDataRest);
   };
-  console.log(user);
+  // console.log(profiledata, 'data');
 
   const colors = useSelector(state => state.theme.theme);
   const [isSelect, setIsSelect] = useState(0);
@@ -409,7 +351,7 @@ const ProfileScreen: React.FC = ({
   };
 
   const onPressSetting = () =>
-    navigation.navigate(StackNav.ProfileSetting, {data: ProfileData});
+    navigation.navigate('ProfileSettings', {data: ProfileData});
 
   // const onPressFindFriend = () => navigation.navigate(StackNav.FindFriends);
   const selectImage = async () => {
@@ -514,7 +456,7 @@ const ProfileScreen: React.FC = ({
       };
 
       setLoading(true);
-      let k = await UpdateProfile(Result);
+      let k = await profileUpdateexecute(Result);
 
       if (k.status == 'error') {
         setLoading(false);
@@ -560,7 +502,7 @@ const ProfileScreen: React.FC = ({
     const fullName = `${ProfileData?.firstName} ${ProfileData?.lastName}`;
     const truncatedFullName =
       fullName.length > 10 ? fullName.slice(0, 15) + '...' : fullName;
-    console.log(ProfileData?.profileImage, 'imag');
+    // console.log(ProfileData?.profileImage, 'imag');
     return (
       <>
         <View
@@ -682,26 +624,7 @@ const ProfileScreen: React.FC = ({
         />
       )}
       <>
-        <BottomSheet isVisible={showActionsheet}>
-          {/* <BottomSheetModalProvider></BottomSheetModalProvider> */}
-          <BottomSheetPortal
-            snapPoints={['25%', '50%']}
-            backdropComponent={BottomSheetBackdrop}
-            handleComponent={BottomSheetDragIndicator}>
-            <BottomSheetContent>
-              <BottomSheetItem>
-                <BottomSheetItemText>Item 1</BottomSheetItemText>
-              </BottomSheetItem>
-              <BottomSheetItem>
-                <BottomSheetItemText>Item 2</BottomSheetItemText>
-              </BottomSheetItem>
-              <BottomSheetItem>
-                <BottomSheetItemText>Item 3</BottomSheetItemText>
-              </BottomSheetItem>
-            </BottomSheetContent>
-          </BottomSheetPortal>
-        </BottomSheet>
-        {/* <RBSheet
+        <RBSheet
           ref={refRBSheet}
           customStyles={{
             wrapper: {
@@ -712,7 +635,7 @@ const ProfileScreen: React.FC = ({
             },
             container: {
               backgroundColor: '#fff',
-            
+
               paddingHorizontal: 20,
               paddingTop: 20,
             },
@@ -725,11 +648,11 @@ const ProfileScreen: React.FC = ({
             behavior={Platform.OS === 'ios' ? 'padding' : ''}>
             <View style={localStyles.header}>
               <TouchableOpacity onPress={() => refRBSheet.current.close()}>
-                <Ionicons
+                {/* <Ionicons
                   name="close-outline"
                   size={24}
                   color={Color.primary}
-                />
+                /> */}
               </TouchableOpacity>
               <Text style={localStyles.headerText}>Edit Bio</Text>
               <TouchableOpacity onPress={handleClear}>
@@ -749,21 +672,20 @@ const ProfileScreen: React.FC = ({
               // returnKeyType="done"
             />
 
-         
             <TouchableOpacity
               onPress={handleSave}
               style={localStyles.applyButton}>
               <Text style={localStyles.applyButtonText}>Save</Text>
             </TouchableOpacity>
           </KeyboardAvoidingView>
-        </RBSheet> */}
+        </RBSheet>
       </>
-      {/* <ImageView
+      <ImageView
         images={currentImage}
         imageIndex={0}
         visible={isViewerVisible}
         onRequestClose={() => setViewerVisible(false)}
-      /> */}
+      />
     </ZSafeAreaView>
   );
 };
