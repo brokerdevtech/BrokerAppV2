@@ -62,6 +62,12 @@ import Heart_tab_icon from './heart_tab_icon.svg';
 import Reel_tab_icon from './reel_tab.svg';
 import Calender_tab_icon from './calender_tab.svg';
 import Plus_Icon from './plus_tab.svg';
+import Location_Icon from './icons/location.svg';
+
+import Calender_Icon from './icons/calender.svg';
+import Chat_Icon from './icons/chat.svg';
+import Telephone_Icon from './icons/telephone.svg';
+import Whatsapp_Icon from './icons/whatsapp.svg';
 
 export {
   Follower_Icon,
@@ -125,4 +131,9 @@ export {
   Developer,
   Amenities,
   LocationFetchIcon,
+  Location_Icon,
+  Calender_Icon,
+  Chat_Icon,
+  Telephone_Icon,
+  Whatsapp_Icon
 };

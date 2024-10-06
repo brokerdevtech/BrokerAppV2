@@ -13,7 +13,7 @@ export const MarqueeBanner: React.FC<MarqueeBannerProps> = ({ marqueeTextList })
    <View style={styles.marqueeBannerContainer}>
        <MarqueeText
           style={styles.marqueeBannerText}
-          speed={10}
+          speed={1}
           marqueeOnStart={true}
           loop={true}
           delay={3000}
