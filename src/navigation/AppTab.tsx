@@ -21,6 +21,11 @@ import {
   SearchFill,
   NetworkFill,
   Person,
+  Home_tab_icon,
+  Heart_tab_icon,
+  Reel_tab_icon,
+  Calender_tab_icon,
+  Plus_Icon,
 } from '../assets/svg';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import TouchableOpacityWithPermissionCheck from '../sharedComponents/TouchableOpacityWithPermissionCheck';
@@ -48,9 +53,7 @@ const HomePageStack = () => {
 
 const AppTab: React.FC = () => {
   const navigation = useNavigation();
-  const userP = useSelector(
-    (state: RootState) => state.user.user,
-  );
+  const userP = useSelector((state: RootState) => state.user.user);
   console.log(userP);
   const userPermissions = useSelector(
     (state: RootState) => state.user.user?.userPermissions,
@@ -115,7 +118,7 @@ const AppTab: React.FC = () => {
               <TabText
                 text={''}
                 focused={focused}
-                icon={focused ? <Home_Fill /> : <Home />}
+                icon={focused ? <Home_tab_icon /> : <Home_tab_icon />}
               />
             ),
             // headerShown: false,
@@ -134,7 +137,7 @@ const AppTab: React.FC = () => {
               <TabText
                 text={''}
                 focused={focused}
-                icon={focused ? <NetworkFill /> : <Network />}
+                icon={focused ? <Heart_tab_icon /> : <Heart_tab_icon />}
               />
             ),
           }}
@@ -174,7 +177,7 @@ const AppTab: React.FC = () => {
 
                     borderColor: '#ffffff',
                   }}>
-                  <Add_Icon
+                  <Plus_Icon
                     width={moderateScale(60)}
                     height={moderateScale(60)}
                     color={Color.primary}
@@ -198,7 +201,7 @@ const AppTab: React.FC = () => {
               <TabText
                 text={''}
                 focused={focused}
-                icon={focused ? <NetworkFill /> : <Network />}
+                icon={focused ? <Reel_tab_icon /> : <Reel_tab_icon />}
               />
             ),
           }}
@@ -218,7 +221,7 @@ const AppTab: React.FC = () => {
               <TabText
                 text={''}
                 focused={focused}
-                icon={focused ? <NetworkFill /> : <Network />}
+                icon={focused ? <Calender_tab_icon /> : <Calender_tab_icon />}
               />
             ),
           }}

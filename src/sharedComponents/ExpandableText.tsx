@@ -8,6 +8,7 @@ import {
   StyleSheet,
   LayoutAnimation,
 } from 'react-native';
+import ZText from './ZText';
 
 const ExpandableText = ({text, initialNumberOfLines = 3}) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -33,13 +34,14 @@ const ExpandableText = ({text, initialNumberOfLines = 3}) => {
 
   return (
     <View style={styles.container}>
-      <Text
+      <ZText
+        type={'l16'}
         ref={textRef}
         style={styles.text}
         numberOfLines={isExpanded ? undefined : initialNumberOfLines}
         onLayout={isExpanded ? null : onTextLayout}>
         {text}
-      </Text>
+      </ZText>
       {showButton && (
         <TouchableOpacity onPress={toggleExpansion}>
           <Text style={styles.buttonText}>

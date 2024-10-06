@@ -55,12 +55,26 @@ import City_icon from './city.svg';
 import info_icon from './info-circle.svg';
 import logout_icon from './logout.svg';
 import settings_icon from './setting-2.svg';
+import Heart_icon from './cardheart.svg';
+import Card_check_icon from './card_check.svg';
+import Home_tab_icon from './home_tab.svg';
+import Heart_tab_icon from './heart_tab_icon.svg';
+import Reel_tab_icon from './reel_tab.svg';
+import Calender_tab_icon from './calender_tab.svg';
+import Plus_Icon from './plus_tab.svg';
 
 export {
   Follower_Icon,
+  Heart_tab_icon,
+  Home_tab_icon,
+  Reel_tab_icon,
+  Calender_tab_icon,
+  Card_check_icon,
+  Heart_icon,
   Ads_Icon,
   Network_icon,
   info_icon,
+  Plus_Icon,
   settings_icon,
   logout_icon,
   City_icon,
