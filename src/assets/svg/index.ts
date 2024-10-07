@@ -75,6 +75,7 @@ import File_tray_icon from './file_tray.svg';
 import Document_text from './documenttext.svg';
 import Upload_Icon from './upload.svg';
 
+import unchecked from './unchecked.svg';
 export {
   Follower_Icon,
   Document_text,
@@ -148,4 +149,5 @@ export {
   Chat_Icon,
   Telephone_Icon,
   Whatsapp_Icon,
+  unchecked,
 };

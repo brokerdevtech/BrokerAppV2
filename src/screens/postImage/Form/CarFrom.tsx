@@ -28,6 +28,9 @@ import {ChevronDownIcon} from '../../../../components/ui/icon';
 import {Discount, Property, Verified, Virtual} from '../../../assets/svg';
 import {Color} from '../../../styles/GlobalStyles';
 import LocalityTag from '../../../sharedComponents/LocalityTag';
+import RegistrationYear from '../../../sharedComponents/RegistrationYear';
+import TagSelector from '../../../sharedComponents/TagSelector';
+import SingleSelectComponent from '../../../sharedComponents/Genric/SingleSelectComponent';
 function noWhitespace() {
   return this.transform((value, originalValue) =>
     /\s/.test(originalValue) ? NaN : value,
@@ -45,6 +48,22 @@ const PropertyvalidationSchema = Yup.object().shape({
     .min(0, 'Number must be greater than or equal to 0')
     .max(500000000, 'Number must be less than or equal to 500,000,000'),
   Location: Yup.object().required('Location is required'),
+  registrationYear: Yup.number()
+  .typeError('Registration Year must be a number')
+  .min(1900, 'Invalid Registration Year')
+  .max(new Date().getFullYear(), 'Invalid Registration Year')
+  .required('Registration Year is required'),
+  yearOfManufacture: Yup.number()
+  .typeError('Manufacture Year must be a number')
+  .min(1900, 'Invalid Manufacture Year')
+  .max(new Date().getFullYear(), 'Invalid Manufacture Year')
+  .required('Manufacture Year is required'),
+  isNewCar: Yup.boolean(),
+
+  mileage: Yup.number().min(0, 'Mileage cannot be negative'),
+  kmsDriven: Yup.number().min(0, 'Kms Driven cannot be negative'),
+  engineDisplacement: Yup.number().min(0, 'Engine Displacement cannot be negative'),
+  carEnginePower: Yup.number().min(0, 'Car Engine Power cannot be negative'),
 });
 
 //const AVATAR_URL = "https://www.realmenrealstyle.com/wp-content/uploads/2023/03/The-Side-Part.jpg";
@@ -65,7 +84,14 @@ const CarForm = ({formikRef}) => {
       // formikRef.current.submitForm();
     }
   };
-
+  const years = [];
+  for (let year = 2024; year >= 2000; year--) {
+    years.push({label:year.toString(), value:year});
+  }
+console.log(years)
+  const handleYearChange = (year) => {
+    console.log("Selected Year:", year);
+  };
   const onFiltersLocalityChange = Localitys => {
     //
     //
@@ -162,6 +188,167 @@ const CarForm = ({formikRef}) => {
                 </Box>
               )}
             </Box>
+            <Box mb="5" style={localStyles.BoxStyles}>
+  <HStack style={localStyles.inputContainer}>
+
+  <SingleSelectComponent
+                        data={years}
+                        onSelectionChange={value => {
+                          console.log(value);
+                          setFieldValue('registrationYear', Number(value));
+                          // handleCountryChange(value);
+                          handleBlur('registrationYear');
+                        }}
+                        
+                        displayText={'Select Registration Year'}
+                        title={'Select Registration Year'}
+                      />
+ 
+
+  </HStack>
+  {errors.registrationYear && touched.registrationYear && (
+    <Box pl="3" mt="2">
+      <Text style={styles.errorText}>{errors.registrationYear}</Text>
+    </Box>
+  )}
+</Box>
+
+
+
+
+<Box mb="5" style={localStyles.BoxStyles}>
+  <HStack style={localStyles.inputContainer}>
+
+  <SingleSelectComponent
+                        data={years}
+                        onSelectionChange={value => {
+                          console.log(value);
+                          setFieldValue('yearOfManufacture', Number(value));
+                          // handleCountryChange(value);
+                          handleBlur('yearOfManufacture');
+                        }}
+                       
+                        displayText={'Select Manufacture Year'}
+                        title={'Select Manufacture Year'}
+                      />
+ 
+
+  </HStack>
+  {errors.yearOfManufacture && touched.yearOfManufacture && (
+    <Box pl="3" mt="2">
+      <Text style={styles.errorText}>{errors.yearOfManufacture}</Text>
+    </Box>
+  )}
+</Box>
+
+
+<View style={[localStyles.SwitchStyles, {marginTop: 30}]}>
+              <HStack style={localStyles.FromControl}>
+                <ZText color={colors.dark.black} type={'R16'}>
+                Is New Car
+                </ZText>
+                <Switch
+                  size="lg"
+                  onValueChange={value => {
+                    setFieldValue('isNewCar', value, true);
+                    handleBlur('isNewCar');
+                  }}
+                  value={values.isNewCar}
+                  trackColor={{
+                    false: Color.primaryDisable,
+                    true: Color.primary,
+                  }}
+                  thumbColor={Color.white}
+                />
+              </HStack>
+              {errors.price && touched.price && (
+                <Box>
+                  <Text style={styles.errorText}>{errors.isNewCar}</Text>
+                </Box>
+              )}
+            </View>
+
+            <Box mb="5" style={localStyles.BoxStyles}>
+              <HStack style={localStyles.inputContainer2}>
+                {/* <RenderLabel1 labelText={`Price`} /> */}
+
+                <AnimatedTextInput
+                  // type="numeric"
+                  // borderWidth="1"
+                  placeholder="mileage"
+                  value={values.mileage}
+                  keyboardType="numeric"
+                  onChangeText={handleChange('mileage')}
+                  onBlur={handleBlur('mileage')}
+                />
+              </HStack>
+              {errors.mileage && touched.mileage && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>{errors.mileage}</Text>
+                </Box>
+              )}
+            </Box>
+            <Box mb="5" style={localStyles.BoxStyles}>
+              <HStack style={localStyles.inputContainer2}>
+                {/* <RenderLabel1 labelText={`Price`} /> */}
+
+                <AnimatedTextInput
+                  // type="numeric"
+                  // borderWidth="1"
+                  placeholder="kmsDriven"
+                  value={values.kmsDriven}
+                  keyboardType="numeric"
+                  onChangeText={handleChange('kmsDriven')}
+                  onBlur={handleBlur('kmsDriven')}
+                />
+              </HStack>
+              {errors.kmsDriven && touched.kmsDriven && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>{errors.kmsDriven}</Text>
+                </Box>
+              )}
+            </Box>
+            <Box mb="5" style={localStyles.BoxStyles}>
+              <HStack style={localStyles.inputContainer2}>
+                {/* <RenderLabel1 labelText={`Price`} /> */}
+
+                <AnimatedTextInput
+                  // type="numeric"
+                  // borderWidth="1"
+                  placeholder="engineDisplacement"
+                  value={values.engineDisplacement}
+                  keyboardType="numeric"
+                  onChangeText={handleChange('engineDisplacement')}
+                  onBlur={handleBlur('engineDisplacement')}
+                />
+              </HStack>
+              {errors.engineDisplacement && touched.engineDisplacement && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>{errors.engineDisplacement}</Text>
+                </Box>
+              )}
+            </Box>
+            <Box mb="5" style={localStyles.BoxStyles}>
+              <HStack style={localStyles.inputContainer2}>
+                {/* <RenderLabel1 labelText={`Price`} /> */}
+
+                <AnimatedTextInput
+                  // type="numeric"
+                  // borderWidth="1"
+                  placeholder="carEnginePower"
+                  value={values.carEnginePower}
+                  keyboardType="numeric"
+                  onChangeText={handleChange('carEnginePower')}
+                  onBlur={handleBlur('carEnginePower')}
+                />
+              </HStack>
+              {errors.carEnginePower && touched.carEnginePower && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>{errors.carEnginePower}</Text>
+                </Box>
+              )}
+            </Box>
+  
           </View>
         )}
       </Formik>
