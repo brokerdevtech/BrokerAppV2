@@ -55,17 +55,17 @@ function UserAvartarWithNameComponent({
   const [isModalVisible, setModalVisible] = useState(false);
   const shouldRenderConnection = userId === loggedInUserId;
   const onPressUser = () => {
-    if (appuser.userId === userId) {
-      navigation.navigate(TabNav.Profile);
-    } else {
-      navigation.push(StackNav.ProfileDetail, {
-        userName: userName,
-        userImage: userImage,
-        userId: userId,
-        loggedInUserId: loggedInUserId,
-        connectionId: connectionId,
-      });
-    }
+    // if (appuser.userId === userId) {
+    //   navigation.navigate(TabNav.Profile);
+    // } else {
+    //   navigation.push(StackNav.ProfileDetail, {
+    //     userName: userName,
+    //     userImage: userImage,
+    //     userId: userId,
+    //     loggedInUserId: loggedInUserId,
+    //     connectionId: connectionId,
+    //   });
+    // }
   };
   const onPressArrow = () => {
     navigation.push(StackNav.Network, {

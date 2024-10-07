@@ -803,7 +803,7 @@ const localStyles = StyleSheet.create({
   textInput: {
     borderWidth: 1,
     borderColor: Color.primary,
-    borderWidth: 1,
+
     backgroundColor: 'rgba(188, 74, 80, 0.1)',
     padding: 10,
     borderRadius: 5,
