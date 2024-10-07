@@ -68,7 +68,7 @@ import Calender_Icon from './icons/calender.svg';
 import Chat_Icon from './icons/chat.svg';
 import Telephone_Icon from './icons/telephone.svg';
 import Whatsapp_Icon from './icons/whatsapp.svg';
-
+import unchecked from'./unchecked.svg'
 export {
   Follower_Icon,
   Heart_tab_icon,
@@ -135,5 +135,6 @@ export {
   Calender_Icon,
   Chat_Icon,
   Telephone_Icon,
-  Whatsapp_Icon
+  Whatsapp_Icon,
+  unchecked
 };

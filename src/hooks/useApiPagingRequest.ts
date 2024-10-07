@@ -70,6 +70,7 @@ console.log(response);
        {   setData((prevData) => [...prevData, ...(response.data || [])]);
           setStatus(response.status || 200);
           setCurrentPage((prevPage) => prevPage + 1); // Increment the page count
+          console.log( currentPage + 1);
        }
        else{
         setHasMore(false); 
