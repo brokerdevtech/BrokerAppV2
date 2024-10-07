@@ -9,8 +9,14 @@ import {
   StyleSheet,
   Keyboard,
 } from 'react-native';
-import {CheckIcon, CloseCircleIcon} from '../../components/ui/icon';
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  CloseCircleIcon,
+  Icon,
+} from '../../components/ui/icon';
 import {Color} from '../styles/GlobalStyles';
+import ZText from './ZText';
 
 const SingleSelectModal = ({
   data,
@@ -56,9 +62,13 @@ const SingleSelectModal = ({
             <TouchableOpacity onPress={() => setVisible(false)}>
               <Icon as={CloseCircleIcon} />
             </TouchableOpacity>
-            <Text style={styles.modalTitle}>{title}</Text>
+            <ZText type={'S16'} style={styles.modalTitle}>
+              {title}
+            </ZText>
             <TouchableOpacity onPress={clearSelection}>
-              <Text style={styles.clearAllText}>Clear</Text>
+              <ZText type={'R16'} style={styles.clearAllText}>
+                Clear
+              </ZText>
             </TouchableOpacity>
           </View>
           <View style={styles.modalContent}>
@@ -80,7 +90,6 @@ const SingleSelectModal = ({
                     <Text style={styles.itemText}>{item[valueProperty]}</Text>
                     <Icon
                       as={selectedItem === item[keyProperty] ? CheckIcon : null}
-                      size={20}
                       stroke={Color.primary}
                     />
                   </TouchableOpacity>
@@ -152,18 +161,15 @@ const SingleSelectComponent = ({
         style={[styles.selectBox, isDisabled && styles.selectBoxDisabled]}
         onPress={handlePress}
         disabled={isDisabled}>
-        <Text
+        <ZText
+          type={'R14'}
           style={[
             styles.selectBoxText,
             isDisabled && styles.selectBoxTextDisabled,
           ]}>
           {getDisplayText()}
-        </Text>
-        <Icon
-          name="chevron-down-outline"
-          size={20}
-          color={isDisabled ? '#ccc' : '#000'}
-        />
+        </ZText>
+        <Icon as={ChevronDownIcon} color={isDisabled ? '#ccc' : '#000'} />
       </TouchableOpacity>
       <SingleSelectModal
         data={data}
@@ -189,10 +195,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#f9f9f9',
     padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    height: 43,
+    // borderWidth: 1,
+    borderColor: '#ddd',
     borderRadius: 5,
     width: '100%',
   },
@@ -229,10 +236,9 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
   },
   clearAllText: {
-    color: '#BC4A4F',
+    color: Color.primary,
   },
   modalContent: {
     backgroundColor: 'white',
@@ -249,9 +255,13 @@ const styles = StyleSheet.create({
   searchBar: {
     marginBottom: 10,
     padding: 10,
-    borderColor: '#ccc',
-    borderWidth: 1,
+
     borderRadius: 5,
+    borderWidth: 0,
+    borderColor: '#ddd',
+
+    backgroundColor: '#f9f9f9',
+    height: 43,
   },
   listContainer: {
     maxHeight: 200, // Adjust this value to show 4 items (based on item height)
@@ -268,7 +278,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   applyButton: {
-    backgroundColor: '#BC4A4F',
+    backgroundColor: Color.primary,
     padding: 10,
     borderRadius: 5,
     marginTop: 10,

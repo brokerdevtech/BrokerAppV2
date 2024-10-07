@@ -1,4 +1,10 @@
-import {Icon} from '@/components/ui/icon';
+import {Color} from '../styles/GlobalStyles';
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  CloseCircleIcon,
+  Icon,
+} from '../../components/ui/icon';
 import React, {useState, useEffect, useRef, useImperativeHandle} from 'react';
 import {
   View,
@@ -43,7 +49,7 @@ const MultiSelectModal = ({
     setTempSelectedItems([]);
     setSearch('');
   };
-
+  console.log(filteredData);
   return (
     <Modal
       animationType="slide"
@@ -54,7 +60,7 @@ const MultiSelectModal = ({
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
             <TouchableOpacity onPress={() => setVisible(false)}>
-              <Icon name="close-outline" size={24} color="#000" />
+              <Icon as={CloseCircleIcon} color="#000" />
             </TouchableOpacity>
             <Text style={styles.modalTitle}>{title}</Text>
             <TouchableOpacity onPress={clearAll}>
@@ -78,14 +84,14 @@ const MultiSelectModal = ({
                     style={styles.itemContainer}
                     onPress={() => toggleItem(item[keyProperty])}>
                     <Text style={styles.itemText}>{item[valueProperty]}</Text>
+
                     <Icon
                       as={
                         tempSelectedItems.includes(item[keyProperty])
-                          ? 'checkbox-outline'
-                          : 'square-outline'
+                          ? CheckIcon
+                          : null
                       }
-                      size={20}
-                      color="#BC4A4F"
+                      stroke={Color.primary}
                     />
                   </TouchableOpacity>
                 )}
@@ -121,7 +127,7 @@ const MultiSelectComponent = ({
   const [tempSelectedItems, setTempSelectedItems] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const inputRef = useRef();
-
+  console.log(data, 'modal');
   useImperativeHandle(ref, () => ({
     focus: () => {
       // Assuming there's an input element you want to focus on
@@ -164,7 +170,7 @@ const MultiSelectComponent = ({
     <View style={styles.container}>
       <TouchableOpacity style={styles.selectBox} onPress={handlePress}>
         <Text style={styles.selectBoxText}>{getDisplayText()}</Text>
-        <Icon name="chevron-down-outline" size={20} />
+        <Icon as={ChevronDownIcon} />
       </TouchableOpacity>
       <View style={styles.tagsContainer}>
         {selectedItems.map(item => (
@@ -173,7 +179,7 @@ const MultiSelectComponent = ({
               {data.find(d => d[keyProperty] === item)[valueProperty]}
             </Text>
             <TouchableOpacity onPress={() => closeapplySelection(item)}>
-              <Icon name="close-outline" size={16} color="white" />
+              <Icon as={CloseCircleIcon} color={isDisabled ? '#ccc' : '#fff'} />
             </TouchableOpacity>
           </View>
         ))}
@@ -204,10 +210,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#f9f9f9',
     padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    height: 43,
+    // borderWidth: 1,
+    borderColor: '#ddd',
     borderRadius: 5,
     width: '100%',
   },
@@ -225,7 +232,7 @@ const styles = StyleSheet.create({
   tag: {
     flexDirection: 'row',
     //alignItems: 'center',
-    backgroundColor: '#BC4A4F',
+    backgroundColor: Color.primary,
     padding: 10,
     borderRadius: 15,
     margin: 5,
@@ -260,7 +267,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   clearAllText: {
-    color: '#BC4A4F',
+    color: Color.primary,
   },
   modalContent: {
     backgroundColor: 'white',
@@ -279,9 +286,13 @@ const styles = StyleSheet.create({
   searchBar: {
     marginBottom: 10,
     padding: 10,
-    borderColor: '#ccc',
-    borderWidth: 1,
+
     borderRadius: 5,
+    borderWidth: 0,
+    borderColor: '#ddd',
+
+    backgroundColor: '#f9f9f9',
+    height: 43,
   },
   listContainer: {
     maxHeight: 200, // Adjust this value to show 4 items (based on item height)
@@ -298,7 +309,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   applyButton: {
-    backgroundColor: '#BC4A4F',
+    backgroundColor: Color.primary,
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
