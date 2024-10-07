@@ -265,13 +265,13 @@ const ProfileSetting = [
     icon2: ChevronRightIcon,
     route: 'ProfileKyc',
   },
-  {
-    id: 3,
-    title: 'Office details',
-    icon: City_icon,
-    icon2: ChevronRightIcon,
-    route: 'OfficeDetails',
-  },
+  // {
+  //   id: 3,
+  //   title: 'Office details',
+  //   icon: City_icon,
+  //   icon2: ChevronRightIcon,
+  //   route: 'OfficeDetails',
+  // },
 ];
 
 const helperCategoryData = [

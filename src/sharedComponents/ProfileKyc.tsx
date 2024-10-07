@@ -1,34 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
+
+import {ScrollView, StyleSheet} from 'react-native';
+
+import ZText from './ZText';
+import {useFocusEffect} from '@react-navigation/native';
 import {
-  Container,
-  Content,
-  Form,
-  Item,
-  Input,
-  Label,
-  Button,
-  CheckBox,
-  Text,
-  Stack,
-  Box,
-} from 'native-base';
-import ZSafeAreaView from '../../components/common/ZSafeAreaView';
-import ZHeader from '../../components/common/ZHeader';
-import {Alert, PermissionsAndroid, ScrollView, StyleSheet} from 'react-native';
-import {styles} from '../../themes';
-import FileUpload from '../../components/common/FileUpload';
-import {useFocusEffect, useRoute} from '@react-navigation/native';
-import {getList, updateNestedObject} from '../../utils/helpers';
-import {useSelector} from 'react-redux';
-import DatePicker from 'react-native-datepicker';
-import AppBaseContainer from '../../Hoc/AppBaseContainer';
-import {
-  UpdateProfile,
   getProfile,
-} from '../../../BrokerAppCore/services/profileService';
-import ZText from '../../components/common/ZText';
-import {performStorageOperation} from '../../utils/appPermission';
-import {openSettings} from 'react-native-permissions';
+  UpdateProfile,
+} from '../../BrokerAppCore/services/new/profileServices';
+import {getList, updateNestedObject} from '../utils/helpers';
+import {Box} from '../../components/ui/box';
+import FileUpload from './FileUpload';
+import AppBaseContainer from '../hoc/AppBaseContainer_old';
+import {styles} from '../themes';
 
 const ProfileKyc: React.FC = ({
   isPageSkeleton,
@@ -149,17 +133,17 @@ const ProfileKyc: React.FC = ({
     setLoading(false);
     await toast.closeAll();
     if (!toast.isActive(2)) {
-   toast.show({
-      id: 2,
-      render: () => {
-        return (
-          <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-            Document uploaded successfully
-          </Box>
-        );
-      },
-    });
-  }
+      toast.show({
+        id: 2,
+        render: () => {
+          return (
+            <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
+              Document uploaded successfully
+            </Box>
+          );
+        },
+      });
+    }
     // Handle form submission here
     // You can access panName, panNumber, and attachments from state
     // You can also access certifiedBroker to check if the user wants to be a certified broker
@@ -189,17 +173,17 @@ const ProfileKyc: React.FC = ({
     // toast.closeAll();
     await toast.closeAll();
     if (!toast.isActive(2)) {
-   toast.show({
-      id: 2,
-      render: () => {
-        return (
-          <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-            Document uploaded successfully
-          </Box>
-        );
-      },
-    });
-  }
+      toast.show({
+        id: 2,
+        render: () => {
+          return (
+            <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
+              Document uploaded successfully
+            </Box>
+          );
+        },
+      });
+    }
     // Handle form submission here
     // You can access panName, panNumber, and attachments from state
     // You can also access certifiedBroker to check if the user wants to be a certified broker
@@ -229,17 +213,17 @@ const ProfileKyc: React.FC = ({
     // toast.closeAll();
     await toast.closeAll();
     if (!toast.isActive(2)) {
-   toast.show({
-      id: 2,
-      render: () => {
-        return (
-          <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-            Document uploaded successfully
-          </Box>
-        );
-      },
-    });
-  }    // Handle form submission here
+      toast.show({
+        id: 2,
+        render: () => {
+          return (
+            <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
+              Document uploaded successfully
+            </Box>
+          );
+        },
+      });
+    } // Handle form submission here
     // You can access panName, panNumber, and attachments from state
     // You can also access certifiedBroker to check if the user wants to be a certified broker
   };
@@ -268,17 +252,17 @@ const ProfileKyc: React.FC = ({
     // toast.closeAll();
     await toast.closeAll();
     if (!toast.isActive(2)) {
-   toast.show({
-      id: 2,
-      render: () => {
-        return (
-          <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-            Document uploaded successfully
-          </Box>
-        );
-      },
-    });
-  }
+      toast.show({
+        id: 2,
+        render: () => {
+          return (
+            <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
+              Document uploaded successfully
+            </Box>
+          );
+        },
+      });
+    }
     // Handle form submission here
     // You can access panName, panNumber, and attachments from state
     // You can also access certifiedBroker to check if the user wants to be a certified broker
@@ -308,17 +292,17 @@ const ProfileKyc: React.FC = ({
     // toast.closeAll();
     await toast.closeAll();
     if (!toast.isActive(2)) {
-   toast.show({
-      id: 2,
-      render: () => {
-        return (
-          <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-            Document uploaded successfully
-          </Box>
-        );
-      },
-    });
-  }
+      toast.show({
+        id: 2,
+        render: () => {
+          return (
+            <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
+              Document uploaded successfully
+            </Box>
+          );
+        },
+      });
+    }
 
     // Handle form submission here
     // You can access panName, panNumber, and attachments from state
@@ -329,59 +313,53 @@ const ProfileKyc: React.FC = ({
       bounces={false}
       showsVerticalScrollIndicator={false}
       style={localStyles.root}>
-      <Stack my="5">
-        <FileUpload
-          id="1"
-          Bucket="kycbrokerapp"
-          DisplayText="Upload PAN Number"
-          setLoading={setLoading}
-          OnUpload={handleSubmitPANNumber}
-          FileValue={Profiledata.uidNumberBlob}
-          islocked={true}
-          FileValueText="PAN Number is Uploaded "></FileUpload>
-      </Stack>
-      <Stack my="5">
-        <FileUpload
-          id="2"
-          Bucket="kycbrokerapp"
-          DisplayText="Upload Address Proof"
-          setLoading={setLoading}
-          OnUpload={handleSubmitAddressProof}
-          FileValue={Profiledata.addressProofBlob}
-          islocked={true}
-          FileValueText="Address Proof is Uploaded "></FileUpload>
-      </Stack>
-      <Stack my="5">
-        <FileUpload
-          id="3"
-          Bucket="kycbrokerapp"
-          DisplayText="Upload Rera Registration"
-          setLoading={setLoading}
-          OnUpload={handleSubmitReraRegistration}
-          FileValue={Profiledata.reraRegistrationBlob}
-          islocked={true}
-          FileValueText="Rera Registration is Uploaded "></FileUpload>
-      </Stack>
-      <Stack my="5">
-        <FileUpload
-          id="4"
-          DisplayText="Upload visiting Card"
-          FileValue={Profiledata.reraRegistrationBlob}
-          FileValueText={Profiledata.reraRegistrationBlob}
-          setLoading={setLoading}
-          islocked={false}
-          OnUpload={handleSubmitvisitingCard}></FileUpload>
-      </Stack>
-      <Stack my="5">
-        <FileUpload
-          id="5"
-          DisplayText="Upload Company Logo"
-          FileValue={Profiledata.visitingCardBlob}
-          FileValueText={Profiledata.visitingCardBlob}
-          islocked={false}
-          setLoading={setLoading}
-          OnUpload={handleSubmitcompanyLogo}></FileUpload>
-      </Stack>
+      <FileUpload
+        id="1"
+        Bucket="kycbrokerapp"
+        DisplayText="Upload PAN Number"
+        setLoading={setLoading}
+        OnUpload={handleSubmitPANNumber}
+        FileValue={Profiledata.uidNumberBlob}
+        islocked={true}
+        FileValueText="PAN Number is Uploaded "></FileUpload>
+
+      <FileUpload
+        id="2"
+        Bucket="kycbrokerapp"
+        DisplayText="Upload Address Proof"
+        setLoading={setLoading}
+        OnUpload={handleSubmitAddressProof}
+        FileValue={Profiledata.addressProofBlob}
+        islocked={true}
+        FileValueText="Address Proof is Uploaded "></FileUpload>
+
+      <FileUpload
+        id="3"
+        Bucket="kycbrokerapp"
+        DisplayText="Upload Rera Registration"
+        setLoading={setLoading}
+        OnUpload={handleSubmitReraRegistration}
+        FileValue={Profiledata.reraRegistrationBlob}
+        islocked={true}
+        FileValueText="Rera Registration is Uploaded "></FileUpload>
+
+      <FileUpload
+        id="4"
+        DisplayText="Upload visiting Card"
+        FileValue={Profiledata.reraRegistrationBlob}
+        FileValueText={Profiledata.reraRegistrationBlob}
+        setLoading={setLoading}
+        islocked={false}
+        OnUpload={handleSubmitvisitingCard}></FileUpload>
+
+      <FileUpload
+        id="5"
+        DisplayText="Upload Company Logo"
+        FileValue={Profiledata.visitingCardBlob}
+        FileValueText={Profiledata.visitingCardBlob}
+        islocked={false}
+        setLoading={setLoading}
+        OnUpload={handleSubmitcompanyLogo}></FileUpload>
 
       {(Profiledata.uidNumberBlob != '' ||
         Profiledata.addressProofBlob != '' ||

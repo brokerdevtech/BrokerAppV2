@@ -52,7 +52,7 @@ import {HStack} from '../../components/ui/hstack';
 import {Color} from '../styles/GlobalStyles';
 import {Checkerror} from '../utils/utilTokens';
 import {StackNav} from '../navigation/NavigationKeys';
-import {moderateScale} from '../config/constants';
+import {imagesBucketcloudfrontPath, moderateScale} from '../config/constants';
 import {VStack} from '../../components/ui/vstack';
 import ZAvatarInitials from './ZAvatarInitials';
 import ZSafeAreaView from './ZSafeAreaView';
@@ -199,7 +199,7 @@ const ProfileScreen: React.FC = ({
                   <ZText type={'R16'} style={localStyles.categoryText}>
                     {category.postCount}
                   </ZText>
-                  <Icon as={ChevronRightIcon} size={25} color={Color.primary} />
+                  <Icon as={ChevronRightIcon} color={Color.primary} />
                 </View>
               </TouchableOpacity>
             ))}
@@ -215,7 +215,7 @@ const ProfileScreen: React.FC = ({
               style={[localStyles.categoryButton]}
               onPress={onPressSetting}>
               <ZText type={'l18'}>Profile Settings</ZText>
-              <Icon as={ChevronRightIcon} size={25} color={Color.primary} />
+              <Icon as={ChevronRightIcon} color={Color.primary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -832,7 +832,7 @@ const localStyles = StyleSheet.create({
   categoryButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: 'space-between',
+    justifyContent: 'space-between',
     // marginBottom: 15,
     padding: 8,
     borderRadius: 4,
