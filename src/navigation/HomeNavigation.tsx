@@ -30,6 +30,9 @@ import MyConnectionScreen from '../sharedComponents/MyConnections';
 import ProfileScreen from '../sharedComponents/ProfileScreen';
 import ItemListScreen from '../screens/ItemListScreen';
 import ProfileSetting from '../sharedComponents/ProfileSetting';
+import ManagePersonalDetails from '../sharedComponents/ManagePersonalDetails';
+import ProfileKyc from '../sharedComponents/ProfileKyc';
+import OtherProfileScreen from '../sharedComponents/OtherProfileScreen';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -49,8 +52,8 @@ const HomeNavigation: React.FC = () => {
   // streamChatTheme.channel.selectChannel.backgroundColor="#000000";
   // streamChatTheme.messageInput.backgroundColor="#000000";
 
-  console.log('strea============================');
-  console.log(streamChatTheme);
+  // console.log('strea============================');
+  // console.log(streamChatTheme);
   return (
     <OverlayProvider bottomInset={bottom} value={{style: streamChatTheme}}>
       <Stack.Navigator>
@@ -77,6 +80,11 @@ const HomeNavigation: React.FC = () => {
           options={{headerShown: false}}
         />
         <Stack.Screen
+          options={{headerShown: false}}
+          name="ProfileDetail"
+          component={OtherProfileScreen}
+        />
+        <Stack.Screen
           name="FollowerList"
           component={FollowerList}
           options={{headerShown: false}}
@@ -94,6 +102,16 @@ const HomeNavigation: React.FC = () => {
         <Stack.Screen
           name="ProfileScreen"
           component={ProfileScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ManagePersonalDetails"
+          component={ManagePersonalDetails}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ProfileKyc"
+          component={ProfileKyc}
           options={{headerShown: false}}
         />
         <Stack.Screen

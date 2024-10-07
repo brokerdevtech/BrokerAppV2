@@ -1,69 +1,77 @@
+/* eslint-disable react-native/no-inline-styles */
 // Library import
 import {
   StyleSheet,
-  Switch,
   TouchableOpacity,
   View,
   ScrollView,
-  DevSettings,
-  KeyboardAvoidingView,
   Platform,
   Text,
   Modal,
   Pressable,
-  Alert,
+  TextInput,
 } from 'react-native';
 
-import React, {createRef, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import React, {useState} from 'react';
+import {useDispatch} from 'react-redux';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-// Local import
-
-import strings from '../i18n/strings';
 
 import ZText from './ZText';
 import {ProfileSetting as pr} from '../constants/constants';
 
-import {
-  getList,
-  setAsyncStorageData,
-  updateNestedObject,
-} from '../utils/helpers';
+import {getList, updateNestedObject} from '../utils/helpers';
 
-// import DBMultiSelectPicker from '../../components/DBMultiSelectPicker';
-// import flex from '../../themes/flex';
-import {
-  CommonActions,
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
-// import {StackActions} from '@react-navigation/native';
-// import FileUpload from '../../components/common/FileUpload';
-// import LoadingSpinner from '../../components/LoadingSpinner';
+import {useFocusEffect} from '@react-navigation/native';
+
 import AppBaseContainer from '../hoc/AppBaseContainer_old';
 import {
   UpdateProfile,
   getProfile,
-  UpdateNewPassword,
 } from '../../BrokerAppCore/services/profileService';
-import {DeactivateUser, Logout} from '../../BrokerAppCore/services/authService';
+
 import {clearTokens} from '../utils/utilTokens';
 import {
   logoutUser,
   setUser,
 } from '../../BrokerAppCore/redux/store/user/userSlice';
 
-import {Toast, useToast} from '../../components/ui/toast';
+import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 import {Box} from '../../components/ui/box';
 import {styles} from '../themes';
-import {Icon} from '../../components/ui/icon';
-import {moderateScale} from '../config/constants';
-import {Button} from '../../components/ui/button';
-import {Input} from '../../components/ui/input';
+import {
+  ChevronRightIcon,
+  CloseCircleIcon,
+  EyeIcon,
+  EyeOffIcon,
+  Icon,
+} from '../../components/ui/icon';
+
+import {Button, ButtonText} from '../../components/ui/button';
+import {
+  Input,
+  InputField,
+  InputIcon,
+  InputSlot,
+} from '../../components/ui/input';
+import {Delete_Account_Icon, logout_icon, Reset_Pass_Icon} from '../assets/svg';
+import {Color} from '../styles/GlobalStyles';
+import {useApiRequest} from '../hooks/useApiRequest';
+import {
+  AlertDialog,
+  AlertDialogBackdrop,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from '../../components/ui/alert-dialog';
+import {UpdateNewPassword} from '../../BrokerAppCore/services/new/profileServices';
+import {
+  DeactivateUser,
+  Logout,
+} from '../../BrokerAppCore/services/new/authService';
 
 const validationSchema = yup.object().shape({
   oldpassword: yup
@@ -94,11 +102,6 @@ const ProfileSetting: React.FC = ({
   color,
   route,
 }) => {
-  // const [isLoading, setIsLoading] = useState(false);
-  // const navigation = useNavigation();
-  //const color = useSelector(state => state.theme.theme);
-  // const route = useRoute();
-  //const Profiledata = route.params?.data || {}; // Access the passed data
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [resetModal, setResetModal] = useState(false);
@@ -129,6 +132,44 @@ const ProfileSetting: React.FC = ({
   const [show, setShow] = useState(false);
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showAlertDialog, setShowAlertDialog] = React.useState(false);
+  const [showAlertDelete, setShowAlertDelete] = React.useState(false);
+  const [toastId, setToastId] = React.useState(0);
+  const {
+    data: logoutData,
+    status: logoutStatus,
+    error: logouterror,
+    execute: logoutExecute,
+  } = useApiRequest(Logout);
+  const {
+    data: deleteUserData,
+    status: deleteUserStatus,
+    error: deleteUsererror,
+    execute: deleteUserExecute,
+  } = useApiRequest(DeactivateUser);
+  const {
+    data: UpdateUserPassData,
+    status: UpdateUserPassStatus,
+    error: UpdateUserPasserror,
+    execute: UpdateUserPassExecute,
+  } = useApiRequest(UpdateNewPassword);
+  const handleClose = () => setShowAlertDialog(false);
+  const handleCloseDelete = () => setShowAlertDelete(false);
+  const LogoutProceed = async () => {
+    await logoutExecute();
+    await AsyncStorage.removeItem('User');
+    await clearTokens();
+    await AsyncStorage.clear();
+
+    await dispatch(logoutUser());
+    await new Promise(resolve => setTimeout(resolve, 100));
+    // Reset navigation stack or redirect as necessary here
+  };
+  const DeleteUserProceed = async () => {
+    await deleteUserExecute(user.userId);
+
+    LogoutProceed();
+  };
   const handleInputChange = (field, value, setFieldValue) => {
     setFieldValue(field, value);
   };
@@ -136,38 +177,35 @@ const ProfileSetting: React.FC = ({
   const handleSubmit = async (values, {setSubmitting}) => {
     try {
       setSubmitting(false);
-      setLoading(true);
-      const result = await UpdateNewPassword(
+
+      await UpdateUserPassExecute(
         values.oldpassword,
         values.newpassword,
         values.confirmPassword,
       );
-      //     console.log("-----------result");
-      // console.log(result);
-
-      if (result.status == 200) {
-        setLoading(false);
-        toast.show({
-          description: 'Password has been changed.',
-        });
+      console.log('ssfdj', UpdateUserPassStatus, UpdateUserPassData);
+      if (UpdateUserPassStatus == 200) {
         setResetModal(false);
-      }
-      if (result.status == 'error') {
-        setLoading(false);
-        Toast.show({
-          description: result.error,
-        });
-        setResetModal(false);
+        if (!toast.isActive(toastId)) {
+          const newId = Math.random();
+          setToastId(newId);
+          toast.show({
+            id: newId,
+            placement: 'bottom',
+            duration: 3000,
+            render: ({id}) => {
+              const uniqueToastId = 'toast-' + id;
+              return (
+                <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                  <ToastDescription>Reset Password Success</ToastDescription>
+                </Toast>
+              );
+            },
+          });
+        }
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-
-      Toast.show({
-        description: 'Your password is incorrect. Please try again.',
-      });
-
-      setSubmitting(false);
-      setResetModal(false);
     }
   };
   useFocusEffect(
@@ -241,152 +279,144 @@ const ProfileSetting: React.FC = ({
       // Handle the submission of office details here
     } catch (error) {}
   };
-  const onPressLogOutBtn = async () => {
-    Alert.alert(
-      'Confirm Logout', // Title of the alert
-      'Are you sure you want to log out?', // Message of the alert
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Logout cancelled'),
-          style: 'cancel',
-        },
-        {
-          text: 'Log Out',
-          onPress: async () => {
-            setLoading(true);
-            await Logout();
-            await AsyncStorage.removeItem('User');
-            await clearTokens();
-            await AsyncStorage.clear();
-            setLoading(false);
-            await dispatch(logoutUser());
-            await new Promise(resolve => setTimeout(resolve, 100));
-            // Reset navigation stack or redirect as necessary here
-          },
-        },
-      ],
-      {cancelable: false},
-    );
-  };
-  const [deleteAccountModalVisible, setDeleteAccountModalVisible] =
-    useState(false);
 
-  // Handle account deletion confirmation
-  const handleDeleteAccountConfirm = async () => {
-    // Close the modal
-    setLoading(true);
-    await DeactivateUser(user.userId);
-
-    setDeleteAccountModalVisible(false);
-    onPressLogOutBtn();
-  };
   return (
     <ScrollView
       keyboardShouldPersistTaps="handled"
       bounces={false}
       showsVerticalScrollIndicator={false}
-      style={localStyles.root}>
-      {pr.map((item, index) => {
-        return (
-          <TouchableOpacity
-            disabled={item.title === strings.darkMode}
-            onPress={() => onPressItem(item)}
-            key={index}
-            activeOpacity={item.rightIcon ? 1 : 0.5}
-            style={localStyles.settingsContainer}>
-            {/* <Icon
-              name={item.icon}
-              size={moderateScale(24)}
-              color={color.dark ? color.white : color.darkColor}
-            /> */}
-            <ZText type="M16" style={styles.ml15}>
+      style={{flex: 1, padding: 20}}>
+      {pr.map((item, index) => (
+        <TouchableOpacity
+          key={index}
+          disabled={item.title === 'Dark Mode'}
+          onPress={() => onPressItem(item)}
+          activeOpacity={item.rightIcon ? 1 : 0.5}
+          style={localStyles.setting_option}>
+          <View style={styles.flexRow}>
+            <Icon as={item.icon} />
+            <ZText type={'R16'} style={localStyles.setting_label}>
               {item.title}
             </ZText>
-            <Box>
-              <Icon
-                name={'chevron-forward-outline'}
-                size={moderateScale(24)}
-                color={color.dark ? color.white : color.darkColor}
-              />
-            </Box>
-          </TouchableOpacity>
-        );
-      })}
+          </View>
+
+          <Icon as={item.icon2} />
+        </TouchableOpacity>
+      ))}
+
       <TouchableOpacity
         onPress={handleResetPassword}
-        style={localStyles.settingsContainer}>
-        {/* <Icon
-          name={'lock-closed-outline'}
-          size={moderateScale(24)}
-          color={color.dark ? color.white : color.darkColor}
-        /> */}
-        <ZText type="M16" style={styles.ml15}>
-          Reset Password
-        </ZText>
-        <Box>
-          {/* <Icon
-            name={'chevron-forward-outline'}
-            size={moderateScale(24)}
-            color={color.dark ? color.white : color.darkColor}
-          /> */}
-        </Box>
+        style={localStyles.setting_option}>
+        <View style={styles.flexRow}>
+          <Icon as={Reset_Pass_Icon} size={'xl'} />
+          <ZText type={'R16'} style={localStyles.setting_label}>
+            Reset Password
+          </ZText>
+        </View>
+        <Icon as={ChevronRightIcon} />
       </TouchableOpacity>
-
-      <View style={localStyles.list}>
-        {/* <Icon
-          style={localStyles.listicons}
-          name={'reader-outline'}
-          size={moderateScale(24)}
-          color={color.dark ? color.white : color.darkColor}
-        /> */}
-
-        {/* <DBMultiSelectPicker
-          data={Profiledata?.specializations}
-          id={'skillId'}
-          TextValue={'skillName'}
-          pickerName="Specialization"
-          onSelectionChange={onPressSelectionChange}></DBMultiSelectPicker> */}
-      </View>
-      {/* <Box ></Box> */}
 
       <TouchableOpacity
-        onPress={() => setDeleteAccountModalVisible(true)}
-        style={localStyles.settingsContainer}>
-        {/* <Icon
-          name={'trash-bin-outline'}
-          size={moderateScale(24)}
-          color={color.dark ? color.white : color.darkColor}
-        /> */}
-        <Text style={styles.ml15}>Delete Account</Text>
-        <Box>
-          {/* <Icon
-            name={'chevron-forward-outline'}
-            size={moderateScale(24)}
-            color={color.dark ? color.white : color.darkColor}
-          /> */}
-        </Box>
+        onPress={() => setShowAlertDelete(true)}
+        style={localStyles.setting_option}>
+        <View style={styles.flexRow}>
+          <Icon as={Delete_Account_Icon} />
+          <ZText type={'R16'} style={localStyles.setting_label}>
+            Delete Account
+          </ZText>
+        </View>
+        <Icon as={ChevronRightIcon} />
       </TouchableOpacity>
+      <AlertDialog
+        isOpen={showAlertDelete}
+        onClose={handleCloseDelete}
+        size="md">
+        <AlertDialogBackdrop />
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <ZText
+              type={'S18'}
+              style={{marginBottom: 20}}
+              // className="text-typography-950 font-semibold"
+            >
+              Are you sure you want to delete account?
+            </ZText>
+          </AlertDialogHeader>
+          <AlertDialogBody className="mt-3 mb-4">
+            <ZText type={'R16'} style={{marginBottom: 20}} size="sm">
+              Please confirm if you want to proceed.
+            </ZText>
+          </AlertDialogBody>
+          <AlertDialogFooter style={{justifyContent: 'center'}}>
+            <Button
+              variant="outline"
+              action="secondary"
+              style={{borderColor: Color.primary}}
+              onPress={handleCloseDelete}
+              size="md">
+              <ZText type={'R16'} color={Color.primary}>
+                Cancel
+              </ZText>
+            </Button>
+            <Button
+              size="md"
+              style={{backgroundColor: Color.primary}}
+              onPress={DeleteUserProceed}>
+              <ButtonText>Delete</ButtonText>
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      {/* Logout Button */}
       <TouchableOpacity
-        onPress={onPressLogOutBtn}
-        style={localStyles.settingsContainer}>
-        {/* <Icon
-          name={'log-out-outline'}
-          size={moderateScale(30)}
-          color={color.dark ? color.white : color.darkColor}
-        /> */}
-        <ZText type="M16" style={styles.ml15}>
-          {strings.logout}
-        </ZText>
-        <Box>
-          <Icon
-            name={'chevron-forward-outline'}
-            size={moderateScale(24)}
-            color={color.dark ? color.white : color.darkColor}
-          />
-        </Box>
+        onPress={() => setShowAlertDialog(true)}
+        style={localStyles.setting_option}>
+        <View style={styles.flexRow}>
+          <Icon as={logout_icon} size={'xl'} />
+          <ZText type={'R16'} style={localStyles.setting_label}>
+            Logout
+          </ZText>
+        </View>
+        <Icon as={ChevronRightIcon} />
       </TouchableOpacity>
-
+      <AlertDialog isOpen={showAlertDialog} onClose={handleClose} size="md">
+        <AlertDialogBackdrop />
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <ZText
+              type={'S18'}
+              style={{marginBottom: 20}}
+              // className="text-typography-950 font-semibold"
+            >
+              Are you sure you want to Logout?
+            </ZText>
+          </AlertDialogHeader>
+          <AlertDialogBody className="mt-3 mb-4">
+            <ZText type={'R16'} style={{marginBottom: 20}} size="sm">
+              Please confirm if you want to proceed.
+            </ZText>
+          </AlertDialogBody>
+          <AlertDialogFooter style={{justifyContent: 'center'}}>
+            <Button
+              variant="outline"
+              action="secondary"
+              style={{borderColor: Color.primary}}
+              onPress={handleClose}
+              size="md">
+              <ZText type={'R16'} color={Color.primary}>
+                Cancel
+              </ZText>
+            </Button>
+            <Button
+              size="md"
+              style={{backgroundColor: Color.primary}}
+              onPress={LogoutProceed}>
+              <ButtonText>Logout</ButtonText>
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      {/* Reset Password Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -396,12 +426,9 @@ const ProfileSetting: React.FC = ({
           <TouchableOpacity
             onPress={handleModalClose}
             style={localStyles.closeButton}>
-            <Icon
-              name={'close-outline'}
-              size={moderateScale(30)}
-              color={color.dark ? color.white : color.darkColor}
-            />
+            <Icon as={CloseCircleIcon} size="xl" />
           </TouchableOpacity>
+
           <Formik
             initialValues={{
               oldpassword: '',
@@ -422,116 +449,94 @@ const ProfileSetting: React.FC = ({
               isSubmitting,
             }) => (
               <View style={localStyles.containerView}>
-                <Box mb="5">
-                  <Stack>
-                    <Input
-                      InputRightElement={
-                        <Pressable
-                          onPress={() => setShowOldPassword(!showOldPassword)}>
-                          <Icon
-                            as={<Icon name="eye-outline" />}
-                            size={5}
-                            mr="2"
-                            color="muted.400"
-                          />
-                        </Pressable>
-                      }
-                      type={showOldPassword ? 'text' : 'password'}
-                      placeholder="Current Password"
-                      value={values.oldpassword}
-                      onChangeText={value =>
-                        handleInputChange('oldpassword', value, setFieldValue)
-                      }
-                      onBlur={handleBlur('oldpassword')}
-                      disabled={isSubmitting}
+                <ZText type={'R16'} style={localStyles.label}>
+                  Current Password
+                </ZText>
+                <Input style={localStyles.input}>
+                  <InputField
+                    type={showOldPassword ? 'text' : 'password'}
+                    placeholder="Current Password"
+                    value={values.oldpassword}
+                    onChangeText={value =>
+                      handleInputChange('oldpassword', value, setFieldValue)
+                    }
+                    onBlur={handleBlur('oldpassword')}
+                  />
+                  <InputSlot
+                    style={{marginRight: 10}}
+                    onPress={() => setShowOldPassword(!showOldPassword)}>
+                    <InputIcon
+                      as={showOldPassword ? EyeIcon : EyeOffIcon}
+                      stroke="#000"
                     />
-                    {errors.oldpassword && touched.oldpassword && (
-                      <Box pl="3" mt="2">
-                        <ZText type={'R12'} style={styles.errorText}>
-                          {errors.oldpassword}
-                        </ZText>
-                      </Box>
-                    )}
-                  </Stack>
-                </Box>
+                  </InputSlot>
+                </Input>
 
-                <Box mb="5">
-                  <Stack>
-                    <Input
-                      type={show ? 'text' : 'password'}
-                      InputRightElement={
-                        <Pressable onPress={() => setShow(!show)}>
-                          <Icon
-                            as={<Icon name="eye-outline" />}
-                            size={5}
-                            mr="2"
-                            color="muted.400"
-                          />
-                        </Pressable>
-                      }
-                      placeholder="New Password"
-                      value={values.newpassword}
-                      onChangeText={value =>
-                        handleInputChange('newpassword', value, setFieldValue)
-                      }
-                      onBlur={handleBlur('newpassword')}
-                      disabled={isSubmitting}
-                    />
-                    {errors.newpassword && touched.newpassword && (
-                      <Box pl="3" mt="2">
-                        <ZText type={'R12'} style={styles.errorText}>
-                          {errors.newpassword}
-                        </ZText>
-                      </Box>
-                    )}
-                  </Stack>
-                </Box>
+                {errors.oldpassword && touched.oldpassword && (
+                  <ZText type={'R12'} style={styles.errorText}>
+                    {errors.oldpassword}
+                  </ZText>
+                )}
 
-                <Box mb="5">
-                  <Stack>
-                    <Input
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      InputRightElement={
-                        <Pressable
-                          onPress={() =>
-                            setShowConfirmPassword(!showConfirmPassword)
-                          }>
-                          <Icon
-                            as={<Icon name="eye-outline" />}
-                            size={5}
-                            mr="2"
-                            color="muted.400"
-                          />
-                        </Pressable>
-                      }
-                      // type={showOldPassword ? 'text' : 'password'}
-                      placeholder="Confirm Password"
-                      value={values.confirmPassword}
-                      onChangeText={value =>
-                        handleInputChange(
-                          'confirmPassword',
-                          value,
-                          setFieldValue,
-                        )
-                      }
-                      onBlur={handleBlur('confirmPassword')}
-                      disabled={isSubmitting}
+                <ZText type={'R16'} style={localStyles.label}>
+                  New Password
+                </ZText>
+                <Input style={localStyles.input}>
+                  <InputField
+                    type={show ? 'text' : 'password'}
+                    placeholder="New Password"
+                    value={values.newpassword}
+                    onChangeText={value =>
+                      handleInputChange('newpassword', value, setFieldValue)
+                    }
+                    onBlur={handleBlur('newpassword')}
+                    disabled={isSubmitting}
+                  />
+                  <InputSlot
+                    style={{marginRight: 10}}
+                    onPress={() => setShow(!show)}>
+                    <InputIcon as={show ? EyeIcon : EyeOffIcon} stroke="#000" />
+                  </InputSlot>
+                </Input>
+                {errors.newpassword && touched.newpassword && (
+                  <ZText type={'R12'} style={styles.errorText}>
+                    {errors.newpassword}
+                  </ZText>
+                )}
+
+                <ZText type={'R16'} style={localStyles.label}>
+                  Confirm Password
+                </ZText>
+                <Input style={localStyles.input}>
+                  <InputField
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    // type={showOldPassword ? 'text' : 'password'}
+                    placeholder="Confirm Password"
+                    value={values.confirmPassword}
+                    onChangeText={value =>
+                      handleInputChange('confirmPassword', value, setFieldValue)
+                    }
+                    onBlur={handleBlur('confirmPassword')}
+                    disabled={isSubmitting}
+                  />
+                  <InputSlot
+                    style={{marginRight: 10}}
+                    onPress={() =>
+                      setShowConfirmPassword(!showConfirmPassword)
+                    }>
+                    <InputIcon
+                      as={showConfirmPassword ? EyeIcon : EyeOffIcon}
+                      stroke="#000"
                     />
-                    {errors.confirmPassword && touched.confirmPassword && (
-                      <Box pl="3" mt="2">
-                        <ZText type={'R12'} style={styles.errorText}>
-                          {errors.confirmPassword}
-                        </ZText>
-                      </Box>
-                    )}
-                  </Stack>
-                </Box>
+                  </InputSlot>
+                </Input>
+                {errors.confirmPassword && touched.confirmPassword && (
+                  <ZText type={'R12'} style={styles.errorText}>
+                    {errors.confirmPassword}
+                  </ZText>
+                )}
 
                 <Button
-                  mt="5"
-                  mb="5"
-                  bg="primary.600"
-                  block
                   style={[styles.button, isValid && styles.validButton]}
                   onPress={handleSubmit}
                   disabled={!isValid || isSubmitting}>
@@ -544,30 +549,6 @@ const ProfileSetting: React.FC = ({
           </Formik>
         </View>
       </Modal>
-
-      {/* <NModal
-        isOpen={deleteAccountModalVisible}
-        onClose={() => setDeleteAccountModalVisible(false)}
-        avoidKeyboard
-        justifyContent="center"
-        bottom="10"
-        size="lg">
-        <NModal.Content>
-          <NModal.CloseButton />
-          <NModal.Header>Delete Account</NModal.Header>
-          <NModal.Body>
-            <Text>
-              Are you sure you want to delete your account? This action cannot
-              be undone.
-            </Text>
-          </NModal.Body>
-          <NModal.Footer>
-            <Button flex="1" onPress={handleDeleteAccountConfirm}>
-              Delete Account
-            </Button>
-          </NModal.Footer>
-        </NModal.Content>
-      </NModal> */}
     </ScrollView>
   );
 };
@@ -582,7 +563,28 @@ const localStyles = StyleSheet.create({
     width: 200, // Sets a fixed width for the buttons
     alignItems: 'center', // Centers button text
   },
-
+  input: {
+    borderWidth: 0,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    // padding: 10,
+    marginBottom: 20,
+    backgroundColor: '#f9f9f9',
+    height: 43,
+  },
+  setting_option: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: Color.borderColor,
+  },
+  setting_label: {
+    marginLeft: 15,
+  },
+  label: {
+    marginBottom: 10,
+  },
   root: {
     ...styles.flex,
     ...styles.ph20,

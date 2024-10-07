@@ -62,15 +62,28 @@ import Heart_tab_icon from './heart_tab_icon.svg';
 import Reel_tab_icon from './reel_tab.svg';
 import Calender_tab_icon from './calender_tab.svg';
 import Plus_Icon from './plus_tab.svg';
+import Delete_Account_Icon from './deleteAccount.svg';
+import Reset_Pass_Icon from './resetPass.svg';
+import KyC_Icon from './kyc.svg';
 import Location_Icon from './icons/location.svg';
 
 import Calender_Icon from './icons/calender.svg';
 import Chat_Icon from './icons/chat.svg';
 import Telephone_Icon from './icons/telephone.svg';
 import Whatsapp_Icon from './icons/whatsapp.svg';
-import unchecked from'./unchecked.svg'
+import File_tray_icon from './file_tray.svg';
+import Document_text from './documenttext.svg';
+import Upload_Icon from './upload.svg';
+
+import unchecked from './unchecked.svg';
 export {
   Follower_Icon,
+  Document_text,
+  Upload_Icon,
+  File_tray_icon,
+  Delete_Account_Icon,
+  Reset_Pass_Icon,
+  KyC_Icon,
   Heart_tab_icon,
   Home_tab_icon,
   Reel_tab_icon,
@@ -136,5 +149,5 @@ export {
   Chat_Icon,
   Telephone_Icon,
   Whatsapp_Icon,
-  unchecked
+  unchecked,
 };

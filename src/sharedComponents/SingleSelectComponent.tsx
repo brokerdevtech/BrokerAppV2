@@ -1,10 +1,3 @@
-import {Color} from '../styles/GlobalStyles';
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  CloseCircleIcon,
-  Icon,
-} from '../../components/ui/icon';
 import React, {useState, useEffect, useRef, useImperativeHandle} from 'react';
 import {
   View,
@@ -16,12 +9,19 @@ import {
   StyleSheet,
   Keyboard,
 } from 'react-native';
-// import Icon from 'react-native-vector-icons/Ionicons';
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  CloseCircleIcon,
+  Icon,
+} from '../../components/ui/icon';
+import {Color} from '../styles/GlobalStyles';
+import ZText from './ZText';
 
-const MultiSelectModal = ({
+const SingleSelectModal = ({
   data,
-  tempSelectedItems,
-  setTempSelectedItems,
+  selectedItem,
+  setSelectedItem,
   visible,
   setVisible,
   keyProperty,
@@ -31,25 +31,25 @@ const MultiSelectModal = ({
 }) => {
   const [search, setSearch] = useState('');
 
-  const filteredData = data.filter(
+  const filteredData = data?.filter(
     item =>
       item[valueProperty] &&
       item[valueProperty].toLowerCase().includes(search.toLowerCase()),
   );
 
   const toggleItem = key => {
-    if (tempSelectedItems.includes(key)) {
-      setTempSelectedItems(tempSelectedItems.filter(item => item !== key));
+    if (selectedItem === key) {
+      setSelectedItem(null);
     } else {
-      setTempSelectedItems([...tempSelectedItems, key]);
+      setSelectedItem(key);
     }
   };
 
-  const clearAll = () => {
-    setTempSelectedItems([]);
+  const clearSelection = () => {
+    setSelectedItem(null);
     setSearch('');
   };
-  console.log(filteredData);
+
   return (
     <Modal
       animationType="slide"
@@ -60,11 +60,15 @@ const MultiSelectModal = ({
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
             <TouchableOpacity onPress={() => setVisible(false)}>
-              <Icon as={CloseCircleIcon} color="#000" />
+              <Icon as={CloseCircleIcon} />
             </TouchableOpacity>
-            <Text style={styles.modalTitle}>{title}</Text>
-            <TouchableOpacity onPress={clearAll}>
-              <Text style={styles.clearAllText}>Clear All</Text>
+            <ZText type={'S16'} style={styles.modalTitle}>
+              {title}
+            </ZText>
+            <TouchableOpacity onPress={clearSelection}>
+              <ZText type={'R16'} style={styles.clearAllText}>
+                Clear
+              </ZText>
             </TouchableOpacity>
           </View>
           <View style={styles.modalContent}>
@@ -84,20 +88,14 @@ const MultiSelectModal = ({
                     style={styles.itemContainer}
                     onPress={() => toggleItem(item[keyProperty])}>
                     <Text style={styles.itemText}>{item[valueProperty]}</Text>
-
                     <Icon
-                      as={
-                        tempSelectedItems.includes(item[keyProperty])
-                          ? CheckIcon
-                          : null
-                      }
+                      as={selectedItem === item[keyProperty] ? CheckIcon : null}
                       stroke={Color.primary}
                     />
                   </TouchableOpacity>
                 )}
               />
             </View>
-
             <TouchableOpacity
               style={styles.applyButton}
               onPress={() => {
@@ -113,21 +111,21 @@ const MultiSelectModal = ({
   );
 };
 
-const MultiSelectComponent = ({
+const SingleSelectComponent = ({
   data,
   onSelectionChange,
-  keyProperty,
-  valueProperty,
+  keyProperty = 'value',
+  valueProperty = 'label',
   displayText,
   title,
-  ref,
   isDisabled = false,
+  selectedValue,
+  ref,
 }) => {
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [tempSelectedItems, setTempSelectedItems] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(selectedValue);
+  const [tempSelectedItem, setTempSelectedItem] = useState(selectedValue);
   const [modalVisible, setModalVisible] = useState(false);
   const inputRef = useRef();
-  console.log(data, 'modal');
   useImperativeHandle(ref, () => ({
     focus: () => {
       // Assuming there's an input element you want to focus on
@@ -135,30 +133,20 @@ const MultiSelectComponent = ({
     },
   }));
   useEffect(() => {
-    setTempSelectedItems(selectedItems);
-  }, [selectedItems, modalVisible]);
+    setTempSelectedItem(selectedItem);
+  }, [selectedItem, modalVisible]);
 
   const applySelection = () => {
-    setSelectedItems(tempSelectedItems);
-    onSelectionChange(tempSelectedItems);
-  };
-  const closeapplySelection = item => {
-    let tmpselectedItems = selectedItems.filter(i => i !== item);
-    setSelectedItems(tmpselectedItems);
-    onSelectionChange(tmpselectedItems);
+    setSelectedItem(tempSelectedItem);
+    onSelectionChange(tempSelectedItem);
   };
 
   const getDisplayText = () => {
-    if (selectedItems.length === 0) {
+    if (!selectedItem) {
       return displayText;
     }
-    const selectedNames = selectedItems.map(
-      item => data.find(d => d[keyProperty] === item)[valueProperty],
-    );
-    const displayTextConcat = selectedNames.join(', ');
-    return displayTextConcat.length > 20
-      ? displayTextConcat.substring(0, 17) + '...'
-      : displayTextConcat;
+    const selectedItemObj = data.find(d => d[keyProperty] === selectedItem);
+    return selectedItemObj ? selectedItemObj[valueProperty] : displayText;
   };
   const handlePress = () => {
     if (!isDisabled) {
@@ -168,27 +156,25 @@ const MultiSelectComponent = ({
   };
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.selectBox} onPress={handlePress}>
-        <Text style={styles.selectBoxText}>{getDisplayText()}</Text>
-        <Icon as={ChevronDownIcon} />
-      </TouchableOpacity>
-      <View style={styles.tagsContainer}>
-        {selectedItems.map(item => (
-          <View key={item} style={styles.tag}>
-            <Text style={styles.tagText}>
-              {data.find(d => d[keyProperty] === item)[valueProperty]}
-            </Text>
-            <TouchableOpacity onPress={() => closeapplySelection(item)}>
-              <Icon as={CloseCircleIcon} color={isDisabled ? '#ccc' : '#fff'} />
-            </TouchableOpacity>
-          </View>
-        ))}
-      </View>
-      <MultiSelectModal
+      <TouchableOpacity
         ref={inputRef}
+        style={[styles.selectBox, isDisabled && styles.selectBoxDisabled]}
+        onPress={handlePress}
+        disabled={isDisabled}>
+        <ZText
+          type={'R14'}
+          style={[
+            styles.selectBoxText,
+            isDisabled && styles.selectBoxTextDisabled,
+          ]}>
+          {getDisplayText()}
+        </ZText>
+        <Icon as={ChevronDownIcon} color={isDisabled ? '#ccc' : '#000'} />
+      </TouchableOpacity>
+      <SingleSelectModal
         data={data}
-        tempSelectedItems={tempSelectedItems}
-        setTempSelectedItems={setTempSelectedItems}
+        selectedItem={tempSelectedItem}
+        setSelectedItem={setTempSelectedItem}
         visible={modalVisible}
         setVisible={setModalVisible}
         keyProperty={keyProperty}
@@ -204,7 +190,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    // margin: 20,
   },
   selectBox: {
     flexDirection: 'row',
@@ -218,28 +203,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: '100%',
   },
+  selectBoxDisabled: {
+    backgroundColor: '#f0f0f0',
+    borderColor: '#ccc',
+  },
   selectBoxText: {
     color: '#000',
   },
-  tagsContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
-    flexWrap: 'wrap',
-    marginTop: 10,
-    alignItems: 'flex-start',
-  },
-  tag: {
-    flexDirection: 'row',
-    //alignItems: 'center',
-    backgroundColor: Color.primary,
-    padding: 10,
-    borderRadius: 15,
-    margin: 5,
-  },
-  tagText: {
-    color: 'white',
-    marginRight: 5,
+  selectBoxTextDisabled: {
+    color: '#ccc',
   },
   overlay: {
     flex: 1,
@@ -264,7 +236,6 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
   },
   clearAllText: {
     color: Color.primary,
@@ -272,8 +243,6 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: 'white',
     padding: 20,
-    // borderTopLeftRadius: 10,
-    // borderTopRightRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -324,4 +293,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MultiSelectComponent;
+export default SingleSelectComponent;
