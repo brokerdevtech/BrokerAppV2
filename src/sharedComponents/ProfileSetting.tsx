@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 // Library import
 import {
   StyleSheet,
@@ -12,6 +13,7 @@ import {
   Modal,
   Pressable,
   Alert,
+  TextInput,
 } from 'react-native';
 
 import React, {createRef, useState} from 'react';
@@ -60,10 +62,17 @@ import {
 import {Toast, useToast} from '../../components/ui/toast';
 import {Box} from '../../components/ui/box';
 import {styles} from '../themes';
-import {Icon} from '../../components/ui/icon';
+import {ChevronRightIcon, EyeIcon, Icon} from '../../components/ui/icon';
 import {moderateScale} from '../config/constants';
 import {Button} from '../../components/ui/button';
 import {Input} from '../../components/ui/input';
+import {
+  Delete_Account_Icon,
+  logout_icon,
+  Reset_Pass_Icon,
+  settings_icon,
+} from '../assets/svg';
+import {Color} from '../styles/GlobalStyles';
 
 const validationSchema = yup.object().shape({
   oldpassword: yup
@@ -286,150 +295,115 @@ const ProfileSetting: React.FC = ({
       keyboardShouldPersistTaps="handled"
       bounces={false}
       showsVerticalScrollIndicator={false}
-      style={localStyles.root}>
-      {pr.map((item, index) => {
-        return (
-          <TouchableOpacity
-            disabled={item.title === strings.darkMode}
-            onPress={() => onPressItem(item)}
-            key={index}
-            activeOpacity={item.rightIcon ? 1 : 0.5}
-            style={localStyles.settingsContainer}>
-            {/* <Icon
-              name={item.icon}
-              size={moderateScale(24)}
-              color={color.dark ? color.white : color.darkColor}
-            /> */}
-            <ZText type="M16" style={styles.ml15}>
+      style={{flex: 1, padding: 20}}>
+      {pr.map((item, index) => (
+        <TouchableOpacity
+          key={index}
+          disabled={item.title === 'Dark Mode'}
+          onPress={() => onPressItem(item)}
+          activeOpacity={item.rightIcon ? 1 : 0.5}
+          style={localStyles.setting_option}>
+          <View style={styles.flexRow}>
+            <Icon as={item.icon} />
+            <ZText type={'R16'} style={localStyles.setting_label}>
               {item.title}
             </ZText>
-            <Box>
-              <Icon
-                name={'chevron-forward-outline'}
-                size={moderateScale(24)}
-                color={color.dark ? color.white : color.darkColor}
-              />
-            </Box>
-          </TouchableOpacity>
-        );
-      })}
+          </View>
+
+          <Icon as={item.icon2} />
+        </TouchableOpacity>
+      ))}
+
       <TouchableOpacity
         onPress={handleResetPassword}
-        style={localStyles.settingsContainer}>
-        {/* <Icon
-          name={'lock-closed-outline'}
-          size={moderateScale(24)}
-          color={color.dark ? color.white : color.darkColor}
-        /> */}
-        <ZText type="M16" style={styles.ml15}>
-          Reset Password
-        </ZText>
-        <Box>
-          {/* <Icon
-            name={'chevron-forward-outline'}
-            size={moderateScale(24)}
-            color={color.dark ? color.white : color.darkColor}
-          /> */}
-        </Box>
+        style={localStyles.setting_option}>
+        <View style={styles.flexRow}>
+          <Icon as={Reset_Pass_Icon} size={'xl'} />
+          <ZText type={'R16'} style={localStyles.setting_label}>
+            Reset Password
+          </ZText>
+        </View>
+        <Icon as={ChevronRightIcon} />
       </TouchableOpacity>
-
-      <View style={localStyles.list}>
-        {/* <Icon
-          style={localStyles.listicons}
-          name={'reader-outline'}
-          size={moderateScale(24)}
-          color={color.dark ? color.white : color.darkColor}
-        /> */}
-
-        {/* <DBMultiSelectPicker
-          data={Profiledata?.specializations}
-          id={'skillId'}
-          TextValue={'skillName'}
-          pickerName="Specialization"
-          onSelectionChange={onPressSelectionChange}></DBMultiSelectPicker> */}
-      </View>
-      {/* <Box ></Box> */}
 
       <TouchableOpacity
-        onPress={() => setDeleteAccountModalVisible(true)}
-        style={localStyles.settingsContainer}>
-        {/* <Icon
-          name={'trash-bin-outline'}
-          size={moderateScale(24)}
-          color={color.dark ? color.white : color.darkColor}
-        /> */}
-        <Text style={styles.ml15}>Delete Account</Text>
-        <Box>
-          {/* <Icon
-            name={'chevron-forward-outline'}
-            size={moderateScale(24)}
-            color={color.dark ? color.white : color.darkColor}
-          /> */}
-        </Box>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={onPressLogOutBtn}
-        style={localStyles.settingsContainer}>
-        {/* <Icon
-          name={'log-out-outline'}
-          size={moderateScale(30)}
-          color={color.dark ? color.white : color.darkColor}
-        /> */}
-        <ZText type="M16" style={styles.ml15}>
-          {strings.logout}
-        </ZText>
-        <Box>
-          <Icon
-            name={'chevron-forward-outline'}
-            size={moderateScale(24)}
-            color={color.dark ? color.white : color.darkColor}
-          />
-        </Box>
+        onPress={() => console.log('Delete Account')}
+        style={localStyles.setting_option}>
+        <View style={styles.flexRow}>
+          <Icon as={Delete_Account_Icon} />
+          <ZText type={'R16'} style={localStyles.setting_label}>
+            Delete Account
+          </ZText>
+        </View>
+        <Icon as={ChevronRightIcon} />
       </TouchableOpacity>
 
+      {/* Logout Button */}
+      <TouchableOpacity
+        onPress={() => console.log('Logout')}
+        style={localStyles.setting_option}>
+        <View style={styles.flexRow}>
+          <Icon as={logout_icon} size={'xl'} />
+          <ZText type={'R16'} style={localStyles.setting_label}>
+            Logout
+          </ZText>
+        </View>
+        <Icon as={ChevronRightIcon} />
+      </TouchableOpacity>
+
+      {/* Reset Password Modal */}
       <Modal
         animationType="slide"
         transparent={true}
         visible={resetModal}
         onRequestClose={handleModalClose}>
-        <View style={localStyles.modalContainer}>
-          <TouchableOpacity
-            onPress={handleModalClose}
-            style={localStyles.closeButton}>
-            <Icon
-              name={'close-outline'}
-              size={moderateScale(30)}
-              color={color.dark ? color.white : color.darkColor}
-            />
-          </TouchableOpacity>
-          <Formik
-            initialValues={{
-              oldpassword: '',
-              newpassword: '',
-              confirmPassword: '',
-            }}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}>
-            {({
-              handleChange,
-              handleSubmit,
-              handleBlur,
-              values,
-              errors,
-              setFieldValue,
-              touched,
-              isValid,
-              isSubmitting,
-            }) => (
-              <View style={localStyles.containerView}>
-                <Box mb="5">
-                  <Stack>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          }}>
+          <View
+            style={{
+              width: '80%',
+              backgroundColor: '#fff',
+              padding: 20,
+              borderRadius: 10,
+            }}>
+            <TouchableOpacity
+              onPress={handleModalClose}
+              style={{alignSelf: 'flex-end'}}>
+              <Text style={{fontSize: 24}}>X</Text>
+            </TouchableOpacity>
+
+            <Formik
+              initialValues={{
+                oldpassword: '',
+                newpassword: '',
+                confirmPassword: '',
+              }}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}>
+              {({
+                handleChange,
+                handleSubmit,
+                handleBlur,
+                values,
+                errors,
+                setFieldValue,
+                touched,
+                isValid,
+                isSubmitting,
+              }) => (
+                <View style={localStyles.containerView}>
+                  <Box mb="5">
                     <Input
                       InputRightElement={
                         <Pressable
                           onPress={() => setShowOldPassword(!showOldPassword)}>
                           <Icon
-                            as={<Icon name="eye-outline" />}
+                            as={EyeIcon}
                             size={5}
                             mr="2"
                             color="muted.400"
@@ -452,17 +426,15 @@ const ProfileSetting: React.FC = ({
                         </ZText>
                       </Box>
                     )}
-                  </Stack>
-                </Box>
+                  </Box>
 
-                <Box mb="5">
-                  <Stack>
+                  <Box mb="5">
                     <Input
                       type={show ? 'text' : 'password'}
                       InputRightElement={
                         <Pressable onPress={() => setShow(!show)}>
                           <Icon
-                            as={<Icon name="eye-outline" />}
+                            as={EyeIcon}
                             size={5}
                             mr="2"
                             color="muted.400"
@@ -484,11 +456,9 @@ const ProfileSetting: React.FC = ({
                         </ZText>
                       </Box>
                     )}
-                  </Stack>
-                </Box>
+                  </Box>
 
-                <Box mb="5">
-                  <Stack>
+                  <Box mb="5">
                     <Input
                       type={showConfirmPassword ? 'text' : 'password'}
                       InputRightElement={
@@ -497,7 +467,7 @@ const ProfileSetting: React.FC = ({
                             setShowConfirmPassword(!showConfirmPassword)
                           }>
                           <Icon
-                            as={<Icon name="eye-outline" />}
+                            as={EyeIcon}
                             size={5}
                             mr="2"
                             color="muted.400"
@@ -524,50 +494,26 @@ const ProfileSetting: React.FC = ({
                         </ZText>
                       </Box>
                     )}
-                  </Stack>
-                </Box>
+                  </Box>
 
-                <Button
-                  mt="5"
-                  mb="5"
-                  bg="primary.600"
-                  block
-                  style={[styles.button, isValid && styles.validButton]}
-                  onPress={handleSubmit}
-                  disabled={!isValid || isSubmitting}>
-                  <Text style={{color: '#ffffff'}} fontWeight="bold">
-                    {isSubmitting ? 'Submitting...' : 'Submit'}
-                  </Text>
-                </Button>
-              </View>
-            )}
-          </Formik>
+                  <Button
+                    mt="5"
+                    mb="5"
+                    bg="primary.600"
+                    block
+                    style={[styles.button, isValid && styles.validButton]}
+                    onPress={handleSubmit}
+                    disabled={!isValid || isSubmitting}>
+                    <Text style={{color: '#ffffff'}} fontWeight="bold">
+                      {isSubmitting ? 'Submitting...' : 'Submit'}
+                    </Text>
+                  </Button>
+                </View>
+              )}
+            </Formik>
+          </View>
         </View>
       </Modal>
-
-      {/* <NModal
-        isOpen={deleteAccountModalVisible}
-        onClose={() => setDeleteAccountModalVisible(false)}
-        avoidKeyboard
-        justifyContent="center"
-        bottom="10"
-        size="lg">
-        <NModal.Content>
-          <NModal.CloseButton />
-          <NModal.Header>Delete Account</NModal.Header>
-          <NModal.Body>
-            <Text>
-              Are you sure you want to delete your account? This action cannot
-              be undone.
-            </Text>
-          </NModal.Body>
-          <NModal.Footer>
-            <Button flex="1" onPress={handleDeleteAccountConfirm}>
-              Delete Account
-            </Button>
-          </NModal.Footer>
-        </NModal.Content>
-      </NModal> */}
     </ScrollView>
   );
 };
@@ -582,7 +528,16 @@ const localStyles = StyleSheet.create({
     width: 200, // Sets a fixed width for the buttons
     alignItems: 'center', // Centers button text
   },
-
+  setting_option: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: Color.borderColor,
+  },
+  setting_label: {
+    marginLeft: 15,
+  },
   root: {
     ...styles.flex,
     ...styles.ph20,

@@ -30,6 +30,7 @@ import MyConnectionScreen from '../sharedComponents/MyConnections';
 import ProfileScreen from '../sharedComponents/ProfileScreen';
 import ItemListScreen from '../screens/ItemListScreen';
 import ProfileSetting from '../sharedComponents/ProfileSetting';
+import ManagePersonalDetails from '../sharedComponents/ManagePersonalDetails';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -94,6 +95,11 @@ const HomeNavigation: React.FC = () => {
         <Stack.Screen
           name="ProfileScreen"
           component={ProfileScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ManagePersonalDetails"
+          component={ManagePersonalDetails}
           options={{headerShown: false}}
         />
         <Stack.Screen

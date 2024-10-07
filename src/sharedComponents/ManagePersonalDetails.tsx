@@ -1,55 +1,17 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  Keyboard,
-  Platform,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {
-  Select,
-  Stack,
-  Button,
-  Text,
-  ScrollView,
-  Box,
-  Input,
-  HStack,
-  KeyboardAvoidingView,
-} from 'native-base';
-import ZSafeAreaView from '../../components/common/ZSafeAreaView';
-import ZHeader from '../../components/common/ZHeader';
-import {useRoute} from '@react-navigation/native';
-import {colors, styles} from '../../themes';
+import {Keyboard, Platform, StyleSheet} from 'react-native';
+
+import {styles} from '../themes';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import DBMultiSelectPicker from '../../components/DBMultiSelectPicker';
-import {
-  getCityList,
-  getCountryList,
-  getStateList,
-} from '../../../BrokerAppCore/services/authService';
+
 import DatePicker from 'react-native-date-picker';
-// import RNDateTimePicker from '@react-native-community/datetimepicker';
+
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {moderateScale} from '../../common/constants';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {getList, updateNestedObject} from '../../utils/helpers';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
-import {UpdateProfile} from '../../../BrokerAppCore/services/profileService';
-import AppBaseContainer from '../../Hoc/AppBaseContainer';
-import store from '../../../BrokerAppCore/redux/store';
-import {setUser} from '../../../BrokerAppCore/redux/store/user/userSlice';
-import typography from '../../themes/typography';
-import ZInput from '../../components/common/ZInput';
-import ZText from '../../components/common/ZText';
-import DropDownPicker from 'react-native-dropdown-picker';
-import DropDownHandler from '../../components/DropDownHandler';
-import {color} from 'native-base/lib/typescript/theme/styled-system';
-import {Color} from '../../styles/GlobalStyles';
-import SingleSelectComponent from '../../components/Genric/SingleSelectComponent';
+import AppBaseContainer from '../hoc/AppBaseContainer_old';
+import {Color} from '../styles/GlobalStyles';
+import typography from '../themes/typography';
+
 const validationSchema = yup.object().shape({
   firstName: yup.string().required('First Name is required'),
   lastName: yup.string().required('Last Name is required'),
@@ -126,150 +88,8 @@ const PersonalDetailsForm = ({
     setLoading(true);
   }, []);
 
-  useEffect(() => {
-    const getCountryListFromApi = async () => {
-      try {
-        const result = await getCountryList();
-
-        setCountryData(result.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    setLoading(true);
-    getCountryListFromApi();
-    // setTimeout(() => { setLoading(false);},1000);
-
-    // const response:any =  getCountryList();
-    // ""
-    //
-    // response.then((res:any)=> {
-    //   ""
-    //
-    //   })
-    //   .catch((error:any) => {
-    //
-    //
-    //   });
-    // // fetch('https://broker1.azurewebsites.net/api/v1/Registration/CountryList')
-    // // .then(response => {
-    // //   if (!response.ok) {
-    // //     throw new Error(`Network response was not ok: ${response.status}`);
-    // //   }
-    // //   return response.json(); // Parse the response body as JSON
-    // // })
-    // // .then(data => {
-    // //   // Update the state with the fetched data
-    // //
-    // //
-    // // })
-    // // .catch(error => {
-    // //
-    // //   // Handle any errors that occurred during the fetch
-    // //
-    // // });
-
-    // // const headers = {
-    // //  // Example Authorization header
-    // //  'Accept': 'application/json',
-    // //   'content-type': 'application/json', // Example Content-Type header
-    // //   // Add more custom headers as needed
-    // // };
-
-    // // axios.get('https://broker1.azurewebsites.net/api/v1/Registration/CountryList')
-    // // .then(response => {
-    // //
-    // // })
-    // // .catch(error => {
-    // //
-    // //
-    // // });
-
-    // // https://broker1.azurewebsites.net/api/v1/
-    // // axios.get('http://10.0.2.2:7265/api/v1/Registration/CountryList')
-    // // .then(response => {
-    // //
-    // // })
-    // // .catch(error => {
-    // //
-    // //
-    // // });
-    // // Make an API call to fetch the country list
-    // // const response = getCountryList();
-    // //
-    // // response.then(response => {
-    // //
-    // //
-    // // })
-    // // .catch(error => {
-    // //   ""
-    // //   console.error('Error fetching country list:', error);
-    // // });
-
-    // //
-  }, []);
-  //useEffect for statesData
-  useEffect(() => {
-    if (selectedCountry) {
-      const getStateListFromApi = async () => {
-        try {
-          const result = await getStateList(selectedCountry);
-
-          setstatesData(result.data);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-
-      getStateListFromApi();
-    }
-  }, [selectedCountry]);
-  //useEffect for selectedcity
-  useEffect(() => {
-    if (selectedState) {
-      const getCityListFromApi = async () => {
-        try {
-          const result = await getCityList(selectedState);
-          setLoading(false);
-
-          setcityData(result.data);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-
-      getCityListFromApi();
-    }
-  }, [selectedState]);
-  const handleCountryChange = value => {
-    if (value != selectedCountry) {
-      setSelectedState('');
-      setstatesData([]);
-    }
-    setSelectedCountry(value);
-
-
-  };
-  const handleStateChange = value => {
-    if (value != selectedState) {
-      setselectedcity('');
-      setcityData([]);
-    }
-    setSelectedState(value);
-
-  };
-  const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      formikRef.current.setFieldValue('reraExpiryDate', selectedDate);
-      setselectDate(selectedDate);
-    }
-  };
   const handleSubmit = async values => {
-
     try {
-    
- 
       // Handle form submission here
       Keyboard.dismiss();
       const year = selectDate.getFullYear().toString();
@@ -325,7 +145,6 @@ const PersonalDetailsForm = ({
         });
         setLoading(false);
       }
-    
 
       let obj = {
         ...user,
@@ -355,7 +174,6 @@ const PersonalDetailsForm = ({
   }));
   const handleCityChange = value => {
     setselectedcity(value);
-   
   };
 
   return (
@@ -484,14 +302,14 @@ const PersonalDetailsForm = ({
                   Industry
                 </ZText>
                 <Stack>
-                  <DBMultiSelectPicker
+                  {/* <DBMultiSelectPicker
                     data={Profiledata.industries}
                     id={'industryId'}
                     TextValue={'industryName'}
                     pickerName="Select Industry"
                     onSelectionChange={value => {
                       setFieldValue('industry', value);
-                    }}></DBMultiSelectPicker>
+                    }}></DBMultiSelectPicker> */}
                 </Stack>
                 {errors.industry && (
                   <Box pl="3" mt="2">

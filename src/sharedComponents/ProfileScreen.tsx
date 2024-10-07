@@ -318,10 +318,10 @@ const ProfileScreen: React.FC = ({
     };
     console.log(Result, 'pro');
 
-    profileUpdateexecute(Result);
+    await profileUpdateexecute(Result);
     console.log(profileUpdatestatus);
     console.log(profileUpdatedata);
-
+    setUserBio(userBio);
     setProfileDataRest(!ProfileDataRest);
   };
   // console.log(profiledata, 'data');
@@ -451,58 +451,40 @@ const ProfileScreen: React.FC = ({
       Result = {
         ...Result,
         industry: getList(ProfileData.industries),
+        countryName: AppLocation.Country,
+        stateName: AppLocation.State,
+        cityName: AppLocation.City,
         specialization: getList(ProfileData.specializations),
         userLocation: [],
       };
 
       setLoading(true);
-      let k = await profileUpdateexecute(Result);
-
-      if (k.status == 'error') {
-        setLoading(false);
-        toast.show({
-          description: k.error,
-        });
-        // return;
-      } else {
-        await AsyncStorage.setItem('User', JSON.stringify(k.data));
-        const storedUser = await AsyncStorage.getItem('User');
-
-        await dispatch(setUser(k.data));
-        //dispatch(updateUserProperties({ profileName:  k.data.profileImage, profileImage: k.data.profileName  }));
-
-        setLoading(false);
-        setProfileDataRest(!ProfileDataRest);
-      }
+      await profileUpdateexecute(Result);
     } catch (error) {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const updatedata = async () => {
+      if (profileUpdatestatus == 200) {
+        await AsyncStorage.setItem(
+          'User',
+          JSON.stringify(profileUpdatedata.data),
+        );
+        await AsyncStorage.getItem('User');
 
-  const HeaderCategory = ({item}) => {
-    const truncatedName =
-      item.name.length > 10 ? item.name.slice(0, 10) + '...' : item.name;
-    return (
-      <TouchableOpacity
-        onPress={item.onPress}
-        style={[
-          localStyles.tabItemStyle,
-          {
-            borderBottomWidth: isSelect === item.id ? moderateScale(2) : 0,
-            borderBottomColor:
-              isSelect === item.id ? colors.primary : colors.bColor,
-          },
-        ]}>
-        <ZText type={'B16'}>{truncatedName}</ZText>
-      </TouchableOpacity>
-    );
-  };
+        await dispatch(setUser(profileUpdatedata.data));
 
+        setProfileDataRest(!ProfileDataRest);
+      }
+    };
+    updatedata();
+  }, [profileUpdatestatus]);
   const PostHeader = () => {
     const fullName = `${ProfileData?.firstName} ${ProfileData?.lastName}`;
     const truncatedFullName =
       fullName.length > 10 ? fullName.slice(0, 15) + '...' : fullName;
-    // console.log(ProfileData?.profileImage, 'imag');
+
     return (
       <>
         <View

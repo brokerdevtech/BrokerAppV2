@@ -1,8 +1,10 @@
+import {City_icon, Follower_Icon, KyC_Icon} from '../assets/svg';
 import images from '../assets/images';
 
 // import {StackNav} from '../navigation/NavigationKeys';
 import {Profile} from '../assets/svgs';
 import strings from '../i18n/strings';
+import {ChevronRightIcon} from '../../components/ui/icon';
 
 const imagesBucketPath = 'https://broker2023.s3.ap-south-1.amazonaws.com/';
 const imagesBucketcloudfrontPath = 'https://d37tb8g7dt82h3.cloudfront.net/';
@@ -252,19 +254,22 @@ const ProfileSetting = [
   {
     id: 1,
     title: 'Personal details',
-    icon: 'person-outline',
+    icon: Follower_Icon,
+    icon2: ChevronRightIcon,
     route: 'ManagePersonalDetails',
   },
   {
     id: 2,
     title: 'KYC',
-    icon: 'lock-closed-outline',
+    icon: KyC_Icon,
+    icon2: ChevronRightIcon,
     route: 'ProfileKyc',
   },
   {
     id: 3,
     title: 'Office details',
-    icon: 'shield-checkmark-outline',
+    icon: City_icon,
+    icon2: ChevronRightIcon,
     route: 'OfficeDetails',
   },
 ];
