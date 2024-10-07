@@ -11,10 +11,16 @@ import ArrowLeftIcon from '../assets/svg/icons/arrow-left.svg'
 import SearchIcon from '../assets/svg/icons/search.svg' 
 import {HStack} from '@/components/ui/hstack';
 import UserProfile from '../sharedComponents/profile/UserProfile';
-import {Card_check_icon, Heart_icon, Map_pin} from '../assets/svg';
+import {Card_check_icon, Heart_icon, Location_Icon,Calender_Icon,
+  Chat_Icon,
+  Telephone_Icon,
+  Whatsapp_Icon} from '../assets/svg';
 import { imagesBucketcloudfrontPath } from '../config/constants';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
-import { fetchDashboardData } from '@/BrokerAppCore/services/new/dashboardService';
+import { fetchDashboardData, fetchItemList } from '@/BrokerAppCore/services/new/dashboardService';
+import {Icon} from '../../components/ui/icon';
+import { Divider } from '@/components/ui/divider';
+import {VStack} from '@/components/ui/vstack';
 
 
 const renderProductItems = ({item, index}) => {
@@ -41,23 +47,53 @@ const renderProductItems = ({item, index}) => {
       </View>
 
       {/* Car Details */}
-      <View style={styles.detailsContainer}>
-        <ZText type={'R16'} style={styles.price}>
-          $ {item.price}
+      <VStack space="md" style={styles.detailsContainer}>
+        <ZText type={'R16'}>
+          ${item.price}
         </ZText>
         <View style={styles.locationContainer}>
-          {item.city && (
+          {item.location.cityName && (
             <>
-              <Icon as={Map_pin} />
-              <ZText type={'R16'} style={styles.locationText}>
-                {item.city}
+              <Icon as={Location_Icon} />
+              <ZText type={'R16'}>
+                {item.location.placeName}
               </ZText>
             </>
           )}
         </View>
-        <ZText type={'R16'} style={styles.carBrand}>
+        
+        <ZText type={'R16'} >
           {item.title}
         </ZText>
+      </VStack>
+      <Divider className="my-0.5"/>
+      <View style={styles.detailsContainer}>
+          <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
+               <VStack>
+                   <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Telephone_Icon} size={'xxl'} /></View>
+                   <View style={{paddingVertical: 10}}>
+                      <ZText type={'R14'}>Call</ZText>
+                   </View>
+               </VStack>
+               <VStack>
+                   <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Chat_Icon} size={'xxl'} /></View>
+                   <View style={{paddingVertical: 10}}>
+                      <ZText type={'R14'}>Chat</ZText>
+                   </View>
+               </VStack>
+               <VStack>
+                   <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Whatsapp_Icon} size={'xxl'} /></View>
+                   <View style={{paddingVertical: 10}}>
+                      <ZText type={'R14'}>Whatsapp</ZText>
+                   </View>
+               </VStack>
+               <VStack>
+                   <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Calender_Icon}  size={'xxl'} /></View>
+                   <View style={{paddingVertical: 10}}>
+                      <ZText type={'R14'}>Appointment</ZText>
+                   </View>
+               </VStack>
+          </HStack>  
       </View>
     </View>
   );
@@ -68,14 +104,14 @@ const ItemListScreen: React.FC<any> = ({ listType }) => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
   
-  const {data, status, error, execute} = useApiRequest(fetchDashboardData);
-
+  const {data, status, error, execute} = useApiRequest(fetchItemList);
+  
   const callPodcastList = async () => {
-    await execute('Newin', {
+    await execute('RealEstate', {
       pageNo: 1,
-      pageSize: 10,
-      cityName: AppLocation.City,
-      categoryId: 1,
+      pageSize: 100,
+      keyWord: AppLocation.City,
+      userId: user.userId,
     });
     console.log('data :-', data);
     console.log('status :-', status);
@@ -250,8 +286,8 @@ const styles = StyleSheet.create({
     padding: 3,
   },
   detailsContainer: {
-    paddingHorizontal: 10,
-    paddingTop: 10,
+    paddingLeft: 20,
+    paddingVertical: 20,
   },
   price: {
     fontSize: 16,
