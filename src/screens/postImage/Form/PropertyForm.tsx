@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {Formik} from 'formik';
 
 import {useState} from 'react';
@@ -62,7 +63,7 @@ const genericvalidationSchema = Yup.object().shape({
 const devicewidth = Dimensions.get('window').width;
 const PropertyForm = ({formikRef}) => {
   const [localities, setLocalities] = useState({});
-  const [selectedPropertySize, setselectedPropertySize] = useState('1');
+  const [selectedPropertySize, setselectedPropertySize] = useState('Sq. Ft.');
   const [PropertySizeData, setPropertySize] = useState([
     {id: '1', value: 'Sq. Ft.'},
     {id: '2', value: 'Sq. Mtr.'},
@@ -182,17 +183,20 @@ const PropertyForm = ({formikRef}) => {
                   )}
                 </View>
                 <View style={{width: '45%'}}>
-                  <Select>
+                  <Select
+                    selectedValue={selectedPropertySize}
+                    onValueChange={value => {
+                      setselectedPropertySize(value);
+                    }}>
                     <SelectTrigger
-                      selectedValue={selectedPropertySize}
                       variant="outline"
-                      onValueChange={value => {
-                        setselectedPropertySize(value);
-                      }}
-                      style={{borderColor: Color.borderColor}}
-                      size="2xl">
+                      style={{
+                        borderColor: Color.borderColor,
+                        height: 50,
+                        padding: 0,
+                      }}>
                       <SelectInput placeholder="Select Unit" />
-                      <SelectIcon className="mr-3" as={ChevronDownIcon} />
+                      <SelectIcon as={ChevronDownIcon} stroke={Color.primary} />
                     </SelectTrigger>
                     <SelectPortal>
                       <SelectBackdrop />

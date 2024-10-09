@@ -5,6 +5,7 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
 
 import {styles} from '../themes';
@@ -27,6 +28,15 @@ import {Icon} from '../../components/ui/icon';
 import {Calender_Icon} from '../assets/svg';
 import LocalityTag from './LocalityTag';
 import MultiSelectComponent from './MultiSelectModal';
+import {useApiRequest} from '../hooks/useApiRequest';
+import {getBrokerCategoryList} from '../../BrokerAppCore/services/new/authService';
+import {UpdateProfile} from '../../BrokerAppCore/services/new/profileServices';
+import {setUser} from '../../BrokerAppCore/redux/store/user/userSlice';
+import store from '../../BrokerAppCore/redux/store';
+import {getList, updateNestedObject} from '../utils/helpers';
+import {Toast, ToastDescription} from '../../components/ui/toast';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required('First Name is required'),
@@ -39,9 +49,8 @@ const validationSchema = yup.object().shape({
     .string()
     .required('Phone Number is required')
     .matches(/^\d{10}$/, 'Phone number must be exactly 10 digits'),
-  country: yup.string().required('Country is required'),
-  state: yup.string().required('State is required'),
-  city: yup.string().required('City is required'),
+  Location: yup.object().required('Location is required'),
+  officeLocation: yup.object().required('Location is required'),
   industry: yup
     .array()
     .of(yup.mixed()) // Ensure that it's an array of objects
@@ -73,59 +82,72 @@ const PersonalDetailsForm = ({
   const [selectedRole, setselectedRole] = useState(
     Profiledata?.roles[0].roleId,
   );
-  const [CountryData, setCountryData] = useState([]);
-  const [statesData, setstatesData] = useState([]);
-  const [cityData, setcityData] = useState([]);
+  const [toastId, setToastId] = React.useState(0);
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const [selectedCountry, setSelectedCountry] = useState(
     Profiledata?.countryId,
   );
+  const [localities, setLocalities] = useState({});
+  const [officeLocalities, setOfficeLocalities] = useState({});
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
-  // const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedState, setSelectedState] = useState(Profiledata?.stateId);
-  const [selectedcity, setselectedcity] = useState(Profiledata?.cityId);
 
-  const [openCountry, setOpenCountry] = useState(false);
-
-  const [openState, setOpenState] = useState(false);
-
-  const [openCity, setOpenCity] = useState(false);
-
+  const {
+    data: categorydata,
+    status: categorystatus,
+    error: categoryerror,
+    execute: categoryexecute,
+  } = useApiRequest(getBrokerCategoryList, setLoading);
+  const {
+    data: profileUpdatedata,
+    status: profileUpdatestatus,
+    error: profileUpdateerror,
+    execute: profileUpdateexecute,
+  } = useApiRequest(UpdateProfile, setLoading);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectDate, setselectDate] = useState(
     Profiledata?.reraExpiryDate
       ? new Date(`${Profiledata.reraExpiryDate}T00:00:00`)
       : '',
   );
+
   const minDate = new Date();
   const formikRef = useRef();
-  //useEffect for CountryData
-  // useEffect(() => {
-  //   setLoading(true);
-  // }, []);
+  // console.log(user, 'user');
   const onFiltersLocalityChange = Localitys => {
-    //
-    //
-
     formikRef.current.handleBlur('Location');
     formikRef.current.setFieldValue('Location', Localitys);
     setLocalities(Localitys);
   };
+  const onFiltersOfficeLocalityChange = Localitys => {
+    formikRef.current.handleBlur('officeLocation');
+    formikRef.current.setFieldValue('officeLocation', Localitys);
+    setOfficeLocalities(Localitys);
+  };
+  const fetchCategoryData = async () => {
+    await categoryexecute();
+  };
+
+  useEffect(() => {
+    fetchCategoryData();
+  }, []);
+
   const handleSubmit = async values => {
     try {
-      // Handle form submission here
+      console.log(values, 'val');
       Keyboard.dismiss();
       const year = selectDate.getFullYear().toString();
       const month = (selectDate.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-based, so add 1
       const day = selectDate.getDate().toString().padStart(2, '0');
-
+      const isLocationchanged = Profiledata.location === values.location;
+      console.log(isLocationchanged, 'll');
       // Create the formatted date string as "yyyy-mm-dd"
       const formattedDate = `${year}-${month}-${day}`;
 
       const updateObj = {
-        cityId: values.city,
-        stateId: values.state,
-        countryId: values.country,
+        // cityId: values.city,
+        // stateId: values.state,
+        // countryId: values.country,
         contactNo: values.contactNo,
         experience: values.experienceInYears,
         reraExpiryDate: formattedDate,
@@ -150,59 +172,87 @@ const PersonalDetailsForm = ({
       Result = {
         ...Result,
         industry: getList(updatedArr2),
+        cityName: values.Location.City || values.Location.cityName,
+        stateName: values.Location.State || values.Location.stateName,
+        countryName: values.Location.Country || values.Location.countryName,
+        officeCountryName:
+          values.officeLocation.Country || values.Location.countryName,
+        officeStateName:
+          values.officeLocation.State || values.Location.stateName,
+        officeCityName: values.officeLocation.City || values.Location.cityName,
+        officeAddress: values.officeLocation.placeName,
         specialization: getList(Profiledata.specializations),
         userLocation: [],
       };
 
-      setLoading(true);
-      let k = await UpdateProfile(Result);
-      if (k.error) {
-        toast.show({
-          description: k.error,
-        });
-        setLoading(false);
-        return;
-      } else {
-        toast.show({
-          description: 'Profile updated successfully',
-        });
-        setLoading(false);
+      // setLoading(true);
+      await profileUpdateexecute(Result);
+      // console.log(profileUpdatestatus, 'res');
+      if (profileUpdatestatus == 200) {
+        if (!toast.isActive(toastId)) {
+          const newId = Math.random();
+          setToastId(newId);
+          toast.show({
+            id: newId,
+            placement: 'bottom',
+            duration: 3000,
+            render: ({id}) => {
+              const uniqueToastId = 'toast-' + id;
+              return (
+                <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                  <ToastDescription>
+                    Update Personal Details Success
+                  </ToastDescription>
+                </Toast>
+              );
+            },
+          });
+        }
       }
-
       let obj = {
         ...user,
-        firstName: k.data.firstName,
-        lastName: k.data.lastName,
+        firstName: profileUpdatedata.data.firstName,
+        lastName: profileUpdatedata.data.lastName,
       };
 
       await store.dispatch(setUser(obj));
 
-      setLoading(false);
-      navigation.navigate('Profile');
+      // setLoading(false);
+      navigation.navigate('ProfileScreen');
     } catch (error) {}
   };
 
-  const CountryDataForSelect = CountryData.map(country => ({
-    label: country.countryName,
-    value: country.countryId,
-  }));
-
-  const StatesDataForSelect = statesData.map(state => ({
-    label: state.stateName,
-    value: state.stateId,
-  }));
-  const CityDataForSelect = cityData.map(city => ({
-    label: city.cityName,
-    value: city.cityId,
-  }));
-  const IndustryDataForSelect = Profiledata.industries.map(industry => ({
+  const IndustryDataForSelect = categorydata?.data?.categories.map(
+    industry => ({
+      label: industry.categoryName,
+      value: industry.categoryId,
+    }),
+  );
+  const AlreadySelectIndustry = Profiledata.industries.map(industry => ({
     label: industry.industryName,
     value: industry.industryId,
   }));
-  const handleCityChange = value => {
-    setselectedcity(value);
-  };
-  console.log(Profiledata.industries);
+
+  // console.log(categorystatus, 'pd');
+  const locationData = [
+    {
+      place: Profiledata.location,
+    },
+  ];
+  const OfficeLocationData = [
+    {
+      place: Profiledata.officeLocation,
+    },
+  ];
+  useEffect(() => {
+    const catedate = async () => {
+      if (categorystatus) {
+        await categorydata;
+      }
+    };
+    catedate();
+  }, [categorystatus]);
+  // console.log(IndustryDataForSelect, 'pde');
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
@@ -219,9 +269,8 @@ const PersonalDetailsForm = ({
             lastName: Profiledata.lastName,
             email: Profiledata.email,
             contactNo: Profiledata.contactNo,
-            country: Profiledata.countryId,
-            state: Profiledata.stateId,
-            city: Profiledata.cityId,
+            Location: Profiledata.location,
+            officeLocation: Profiledata.officeLocation,
             industry: Profiledata.industries,
             experienceInYears: Number(Profiledata.experience),
             reraExpiryDate: Profiledata.reraExpiryDate,
@@ -242,7 +291,7 @@ const PersonalDetailsForm = ({
             handleBlur,
           }) => (
             <>
-              <ZText type={'R16'} style={localStyles.label}>
+              <ZText type={'R15'} style={localStyles.label}>
                 First Name
               </ZText>
 
@@ -259,7 +308,7 @@ const PersonalDetailsForm = ({
                 </ZText>
               )}
 
-              <ZText type={'R16'} style={localStyles.label}>
+              <ZText type={'R15'} style={localStyles.label}>
                 Last Name
               </ZText>
 
@@ -276,7 +325,7 @@ const PersonalDetailsForm = ({
                 </ZText>
               )}
 
-              <ZText type={'R16'} style={localStyles.label}>
+              <ZText type={'R15'} style={localStyles.label}>
                 Email
               </ZText>
 
@@ -293,7 +342,7 @@ const PersonalDetailsForm = ({
                 </ZText>
               )}
 
-              <ZText type={'R16'} style={localStyles.label}>
+              <ZText type={'R15'} style={localStyles.label}>
                 Phone Number
               </ZText>
 
@@ -311,18 +360,9 @@ const PersonalDetailsForm = ({
                 </ZText>
               )}
 
-              <ZText type={'R16'} style={localStyles.label}>
+              <ZText type={'R15'} style={localStyles.label}>
                 Industry
               </ZText>
-
-              {/* <DBMultiSelectPicker
-                    data={Profiledata.industries}
-                    id={'industryId'}
-                    TextValue={'industryName'}
-                    pickerName="Select Industry"
-                    onSelectionChange={value => {
-                      setFieldValue('industry', value);
-                    }}></DBMultiSelectPicker> */}
               <MultiSelectComponent
                 data={IndustryDataForSelect}
                 onSelectionChange={value => {
@@ -333,6 +373,7 @@ const PersonalDetailsForm = ({
                     ? Profiledata.countryName
                     : 'Select Industries'
                 }
+                // alreadySelected={AlreadySelectIndustry}
                 title={'Select Industry'}
                 keyProperty="value"
                 valueProperty="label"
@@ -343,17 +384,8 @@ const PersonalDetailsForm = ({
                   {errors.industry}
                 </ZText>
               )}
-              <Box mb="5" style={localStyles.BoxStyles}>
-                <LocalityTag
-                  onLocalityChange={onFiltersLocalityChange}
-                  isMandatory={true}></LocalityTag>
-                {/* {errors.Location && touched.Location && (
-                  <Box pl="3" mt="2">
-                    <Text style={styles.errorText}>{errors.Location}</Text>
-                  </Box>
-                )} */}
-              </Box>
-              <ZText type={'R16'} style={localStyles.label}>
+
+              <ZText type={'R15'} style={localStyles.label}>
                 experience
               </ZText>
 
@@ -372,54 +404,7 @@ const PersonalDetailsForm = ({
                 </ZText>
               )}
 
-              <HStack>
-                <ZText type={'R16'} style={localStyles.label}>
-                  Rera Expiry Date:
-                  {selectDate != '' ? selectDate.toDateString() : ''}
-                </ZText>
-
-                <Icon as={Calender_Icon} />
-              </HStack>
-
-              {Platform.OS === 'android' && showDatePicker && (
-                <DateTimePicker
-                  value={date}
-                  mode="date"
-                  is24Hour={true}
-                  display="spinner"
-                  minimumDate={minDate}
-                  onChange={handleDateChange}
-                />
-              )}
-              {/* {Platform.OS === 'ios' && (
-                  <DatePicker
-                    modal
-                    mode="date"
-                    open={showDatePicker}
-                    date={date}
-                    onConfirm={selectedDate => {
-                      setShowDatePicker(false);
-                      if (selectedDate) {
-                        formikRef.current.setFieldValue(
-                          'reraExpiryDate',
-                          selectedDate,
-                        );
-                        setselectDate(selectedDate);
-                      }
-                    }}
-                    onCancel={() => {
-                      setShowDatePicker(false);
-                    }}
-                    minimumDate={minDate}
-                  />
-                )} */}
-              {errors.reraExpiryDate && (
-                <ZText type={'R12'} style={styles.errorText}>
-                  {errors.reraExpiryDate}
-                </ZText>
-              )}
-
-              <ZText type={'R16'} style={localStyles.label}>
+              <ZText type={'R15'} style={localStyles.label}>
                 uid
               </ZText>
 
@@ -435,12 +420,65 @@ const PersonalDetailsForm = ({
                   {errors.uid}
                 </ZText>
               )}
+              <Box mb="5" style={localStyles.BoxStyles}>
+                <LocalityTag
+                  screenType="personal"
+                  selectedLocation={locationData}
+                  onLocalityChange={onFiltersLocalityChange}
+                  isMandatory={true}
+                />
+              </Box>
+              <Box mb="5" style={localStyles.BoxStyles}>
+                <LocalityTag
+                  screenType="personal"
+                  selectedLocation={OfficeLocationData}
+                  placeholder="Office Location"
+                  onLocalityChange={onFiltersOfficeLocalityChange}
+                  isMandatory={true}
+                />
+              </Box>
+
+              <TouchableOpacity
+                onPress={() => {
+                  setShowDatePicker(true);
+                }}
+                style={styles.flexRow}>
+                <ZText type={'R16'} style={localStyles.label}>
+                  Rera Expiry Date:
+                  {selectDate != '' ? selectDate.toDateString() : ''}
+                </ZText>
+
+                <Icon as={Calender_Icon} />
+              </TouchableOpacity>
+
+              <DatePicker
+                modal
+                mode="date"
+                open={showDatePicker}
+                date={date}
+                onConfirm={selectedDate => {
+                  setShowDatePicker(false);
+                  if (selectedDate) {
+                    formikRef.current.setFieldValue(
+                      'reraExpiryDate',
+                      selectedDate,
+                    );
+                    setselectDate(selectedDate);
+                  }
+                }}
+                onCancel={() => {
+                  setShowDatePicker(false);
+                }}
+                minimumDate={minDate}
+              />
+
+              {errors.reraExpiryDate && (
+                <ZText type={'R12'} style={styles.errorText}>
+                  {errors.reraExpiryDate}
+                </ZText>
+              )}
 
               <Button
-                mt="5"
-                mb="5"
-                bg="primary.600"
-                block
                 style={[
                   styles.button,
                   dirty && isValid && styles.validButton, // Apply validButton style when form is valid

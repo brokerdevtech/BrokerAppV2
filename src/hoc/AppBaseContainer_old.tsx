@@ -24,6 +24,7 @@ const AppBaseContainer = (WrappedComponent, pageTitle, isHeader = true) => {
     const color = useSelector(state => state.theme.theme);
     const route = useRoute();
     const toast = useToast();
+    const [toastId, setToastId] = React.useState(0);
     const s3 = useS3();
     const toggleSkeletonoff = () => {
       setisPageSkeleton(false);
@@ -36,6 +37,25 @@ const AppBaseContainer = (WrappedComponent, pageTitle, isHeader = true) => {
     };
     const reframePageTitle = pageTitle => {
       setpageTitle(pageTitle);
+    };
+    const showToast = message => {
+      if (!toast.isActive(toastId)) {
+        const newId = Math.random();
+        setToastId(newId);
+        toast.show({
+          id: newId,
+          placement: 'bottom',
+          duration: 3000,
+          render: ({id}) => {
+            const uniqueToastId = 'toast-' + id;
+            return (
+              <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                <ToastDescription>{message}</ToastDescription>
+              </Toast>
+            );
+          },
+        });
+      }
     };
     // console.log(pa)
     return (
@@ -52,6 +72,7 @@ const AppBaseContainer = (WrappedComponent, pageTitle, isHeader = true) => {
           navigation={navigation}
           user={user}
           s3={s3}
+          toastMessage={showToast}
           color={color}
           route={route}
           toast={toast}

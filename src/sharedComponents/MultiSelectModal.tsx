@@ -31,7 +31,7 @@ const MultiSelectModal = ({
 }) => {
   const [search, setSearch] = useState('');
 
-  const filteredData = data.filter(
+  const filteredData = data?.filter(
     item =>
       item[valueProperty] &&
       item[valueProperty].toLowerCase().includes(search.toLowerCase()),
@@ -49,7 +49,7 @@ const MultiSelectModal = ({
     setTempSelectedItems([]);
     setSearch('');
   };
-  console.log(filteredData);
+  // console.log(filteredData);
   return (
     <Modal
       animationType="slide"
@@ -119,15 +119,17 @@ const MultiSelectComponent = ({
   keyProperty,
   valueProperty,
   displayText,
+  alreadySelected = [],
   title,
   ref,
   isDisabled = false,
 }) => {
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState(alreadySelected);
   const [tempSelectedItems, setTempSelectedItems] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const inputRef = useRef();
-  console.log(data, 'modal');
+
+  // console.log(alreadySelected, 'modal');
   useImperativeHandle(ref, () => ({
     focus: () => {
       // Assuming there's an input element you want to focus on
@@ -153,7 +155,7 @@ const MultiSelectComponent = ({
       return displayText;
     }
     const selectedNames = selectedItems.map(
-      item => data.find(d => d[keyProperty] === item)[valueProperty],
+      item => data?.find(d => d[keyProperty] === item)[valueProperty],
     );
     const displayTextConcat = selectedNames.join(', ');
     return displayTextConcat.length > 20
@@ -176,7 +178,7 @@ const MultiSelectComponent = ({
         {selectedItems.map(item => (
           <View key={item} style={styles.tag}>
             <Text style={styles.tagText}>
-              {data.find(d => d[keyProperty] === item)[valueProperty]}
+              {data?.find(d => d[keyProperty] === item)[valueProperty]}
             </Text>
             <TouchableOpacity onPress={() => closeapplySelection(item)}>
               <Icon as={CloseCircleIcon} color={isDisabled ? '#ccc' : '#fff'} />

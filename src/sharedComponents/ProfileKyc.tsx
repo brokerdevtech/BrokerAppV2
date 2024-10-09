@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {ScrollView, StyleSheet} from 'react-native';
 
@@ -13,6 +13,7 @@ import {Box} from '../../components/ui/box';
 import FileUpload from './FileUpload';
 import AppBaseContainer from '../hoc/AppBaseContainer_old';
 import {styles} from '../themes';
+import {useApiRequest} from '../hooks/useApiRequest';
 
 const ProfileKyc: React.FC = ({
   isPageSkeleton,
@@ -23,6 +24,7 @@ const ProfileKyc: React.FC = ({
   navigation,
   user,
   color,
+  toastMessage,
   route,
 }) => {
   const [panName, setPanName] = useState('');
@@ -35,21 +37,24 @@ const ProfileKyc: React.FC = ({
   const [certifiedBroker, setCertifiedBroker] = useState(false);
   const [Profiledata, setProfiledata] = useState(route.params?.data || {});
   const [ProfileDataRest, setProfileDataRest] = useState(false);
-
+  const {
+    data: profiledata,
+    status: profilestatus,
+    error: profileerror,
+    execute: profileexecute,
+  } = useApiRequest(getProfile, setLoading);
+  const {
+    data: profileUpdatedata,
+    status: profileUpdatestatus,
+    error: profileUpdateerror,
+    execute: profileUpdateexecute,
+  } = useApiRequest(UpdateProfile);
   useFocusEffect(
     React.useCallback(() => {
       toggleSkeletonOn();
       const getUserProfile = async () => {
         try {
-          const result = await getProfile(user.userId);
-
-          setProfiledata(result.data);
-          // const performStorage = await  performStorageOperation();
-          // console.log(performStorage);
-          // if(performStorage==false){
-          //   navigation.goBack();
-          // }
-          toggleSkeletonoff();
+          await profileexecute(user.userId);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
@@ -62,53 +67,12 @@ const ProfileKyc: React.FC = ({
       };
     }, [ProfileDataRest]),
   );
+  useEffect(() => {
+    if (profilestatus == 200) {
+      setProfiledata(profiledata.data);
+    }
+  }, [profilestatus]);
 
-  // const route = useRoute();
-  // const user = useSelector((state: RootState) => state.user.user);
-  // const Profiledata = route.params?.data || {};
-
-  // useEffect(() => {
-  //   toggleSkeletonOn();
-  //   const delay = async () => {
-  //     // Delay for 3 seconds
-  //     await new Promise(resolve => setTimeout(resolve, 3000));
-
-  //     // After the delay, update the message
-  //     toggleSkeletonoff();
-  //     setLoading(true);
-  //     await new Promise(resolve => setTimeout(resolve, 3000));
-  //     setLoading(false);
-  //   };
-  //   delay();
-
-  // }, []);
-
-  const handleSubmit = async docId => {
-    const updateObj = {uidNumberBlob: docId};
-
-    const deletions = [
-      'roles',
-      'industries',
-      'specializations',
-      'userLocations',
-    ];
-    let Result: any = updateNestedObject(Profiledata, updateObj, deletions);
-
-    Result = {
-      ...Result,
-      industry: getList(Profiledata.industries),
-      specialization: getList(Profiledata.specializations),
-      userLocation: [],
-    };
-
-    setLoading(true);
-    let k = await UpdateProfile(Result);
-    setProfiledata({...Profiledata, uidNumberBlob: docId});
-    setLoading(false);
-    // Handle form submission here
-    // You can access panName, panNumber, and attachments from state
-    // You can also access certifiedBroker to check if the user wants to be a certified broker
-  };
   const handleSubmitPANNumber = async docId => {
     const updateObj = {uidNumberBlob: docId};
 
@@ -128,25 +92,10 @@ const ProfileKyc: React.FC = ({
     };
 
     setLoading(true);
-    let k = await UpdateProfile(Result);
+    await profileUpdateexecute(Result);
     setProfiledata({...Profiledata, uidNumberBlob: docId});
     setLoading(false);
-    await toast.closeAll();
-    if (!toast.isActive(2)) {
-      toast.show({
-        id: 2,
-        render: () => {
-          return (
-            <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-              Document uploaded successfully
-            </Box>
-          );
-        },
-      });
-    }
-    // Handle form submission here
-    // You can access panName, panNumber, and attachments from state
-    // You can also access certifiedBroker to check if the user wants to be a certified broker
+    toastMessage('Pan Uploaded Successfully');
   };
   const handleSubmitAddressProof = async docId => {
     const updateObj = {addressProofBlob: docId};
@@ -167,26 +116,10 @@ const ProfileKyc: React.FC = ({
     };
 
     setLoading(true);
-    let k = await UpdateProfile(Result);
+    await profileUpdateexecute(Result);
     setProfiledata({...Profiledata, addressProofBlob: docId});
+    toastMessage('Address Uploaded Successfully');
     setLoading(false);
-    // toast.closeAll();
-    await toast.closeAll();
-    if (!toast.isActive(2)) {
-      toast.show({
-        id: 2,
-        render: () => {
-          return (
-            <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-              Document uploaded successfully
-            </Box>
-          );
-        },
-      });
-    }
-    // Handle form submission here
-    // You can access panName, panNumber, and attachments from state
-    // You can also access certifiedBroker to check if the user wants to be a certified broker
   };
   const handleSubmitReraRegistration = async docId => {
     const updateObj = {reraRegistrationBlob: docId};
@@ -207,25 +140,11 @@ const ProfileKyc: React.FC = ({
     };
 
     setLoading(true);
-    let k = await UpdateProfile(Result);
+    await profileUpdateexecute(Result);
     setProfiledata({...Profiledata, reraRegistrationBlob: docId});
+    toastMessage('Rera Uploaded Successfully');
+    console.log('res', 'hg', profileUpdatestatus);
     setLoading(false);
-    // toast.closeAll();
-    await toast.closeAll();
-    if (!toast.isActive(2)) {
-      toast.show({
-        id: 2,
-        render: () => {
-          return (
-            <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-              Document uploaded successfully
-            </Box>
-          );
-        },
-      });
-    } // Handle form submission here
-    // You can access panName, panNumber, and attachments from state
-    // You can also access certifiedBroker to check if the user wants to be a certified broker
   };
   const handleSubmitcompanyLogo = async docId => {
     const updateObj = {companyLogoBlob: docId};
@@ -245,29 +164,12 @@ const ProfileKyc: React.FC = ({
       userLocation: [],
     };
 
-    setLoading(true);
-    let k = await UpdateProfile(Result);
+    await profileUpdateexecute(Result);
     setProfiledata({...Profiledata, companyLogoBlob: docId});
-    setLoading(false);
-    // toast.closeAll();
-    await toast.closeAll();
-    if (!toast.isActive(2)) {
-      toast.show({
-        id: 2,
-        render: () => {
-          return (
-            <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-              Document uploaded successfully
-            </Box>
-          );
-        },
-      });
-    }
-    // Handle form submission here
-    // You can access panName, panNumber, and attachments from state
-    // You can also access certifiedBroker to check if the user wants to be a certified broker
+    toastMessage('Company Logo Uploaded Successfully');
   };
   const handleSubmitvisitingCard = async docId => {
+    console.log(docId, 'gk');
     const updateObj = {visitingCardBlob: docId};
 
     const deletions = [
@@ -286,27 +188,11 @@ const ProfileKyc: React.FC = ({
     };
 
     setLoading(true);
-    let k = await UpdateProfile(Result);
+    await profileUpdateexecute(Result);
     setProfiledata({...Profiledata, visitingCardBlob: docId});
+    toastMessage('Company Logo Uploaded Successfully');
+    console.log('res', 'hg', profileUpdatestatus);
     setLoading(false);
-    // toast.closeAll();
-    await toast.closeAll();
-    if (!toast.isActive(2)) {
-      toast.show({
-        id: 2,
-        render: () => {
-          return (
-            <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-              Document uploaded successfully
-            </Box>
-          );
-        },
-      });
-    }
-
-    // Handle form submission here
-    // You can access panName, panNumber, and attachments from state
-    // You can also access certifiedBroker to check if the user wants to be a certified broker
   };
   return (
     <ScrollView
@@ -321,7 +207,8 @@ const ProfileKyc: React.FC = ({
         OnUpload={handleSubmitPANNumber}
         FileValue={Profiledata.uidNumberBlob}
         islocked={true}
-        FileValueText="PAN Number is Uploaded "></FileUpload>
+        FileValueText="PAN Number is Uploaded "
+      />
 
       <FileUpload
         id="2"
@@ -331,7 +218,8 @@ const ProfileKyc: React.FC = ({
         OnUpload={handleSubmitAddressProof}
         FileValue={Profiledata.addressProofBlob}
         islocked={true}
-        FileValueText="Address Proof is Uploaded "></FileUpload>
+        FileValueText="Address Proof is Uploaded "
+      />
 
       <FileUpload
         id="3"
@@ -341,7 +229,8 @@ const ProfileKyc: React.FC = ({
         OnUpload={handleSubmitReraRegistration}
         FileValue={Profiledata.reraRegistrationBlob}
         islocked={true}
-        FileValueText="Rera Registration is Uploaded "></FileUpload>
+        FileValueText="Rera Registration is Uploaded "
+      />
 
       <FileUpload
         id="4"
@@ -350,7 +239,8 @@ const ProfileKyc: React.FC = ({
         FileValueText={Profiledata.reraRegistrationBlob}
         setLoading={setLoading}
         islocked={false}
-        OnUpload={handleSubmitvisitingCard}></FileUpload>
+        OnUpload={handleSubmitvisitingCard}
+      />
 
       <FileUpload
         id="5"
@@ -359,7 +249,8 @@ const ProfileKyc: React.FC = ({
         FileValueText={Profiledata.visitingCardBlob}
         islocked={false}
         setLoading={setLoading}
-        OnUpload={handleSubmitcompanyLogo}></FileUpload>
+        OnUpload={handleSubmitcompanyLogo}
+      />
 
       {(Profiledata.uidNumberBlob != '' ||
         Profiledata.addressProofBlob != '' ||
