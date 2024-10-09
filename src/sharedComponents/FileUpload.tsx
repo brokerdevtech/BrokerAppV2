@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 
 import ZText from './ZText';
@@ -18,7 +19,8 @@ import {
   Upload_Icon,
 } from '../assets/svg';
 import {Icon} from '../../components/ui/icon';
-
+import {Color} from '../styles/GlobalStyles';
+import uuid from 'react-native-uuid';
 const FileUpload = ({
   DisplayText,
   OnUpload,
@@ -47,34 +49,6 @@ const FileUpload = ({
     }
     return fileName;
   };
-  // useEffect(() => {
-  //     const fetchImage = async () => {
-  //       try {
-
-  //         const imageKey = 'IMG_20230925_063604.jpg'; // Replace with the key of your S3 object
-  //         const params = {
-  //           Bucket: 'broker2023',
-  //           Key: imageKey,
-  //         };
-
-  //         s3.getObject(params, (error, data) => {
-  //           if (error) {
-  //             console.error('Error fetching image:', error);
-  //             return;
-  //           }
-  //
-  //           // Convert the S3 object data to a data URL for displaying the image
-  //           const imageBuffer = data.Body;
-  //           const base64Image = `data:image/jpeg;base64,${imageBuffer}`;
-  //           setImageUrl(base64Image);
-  //         });
-  //       } catch (error) {
-  //         console.error('Error fetching image:', error);
-  //       }
-  //     };
-
-  //     fetchImage();
-  //   }, []);
 
   const pickFile = async () => {
     try {
@@ -93,14 +67,6 @@ const FileUpload = ({
       setuploadFlag(true);
       if (documentPickerResult) {
         setSelectedFile(documentPickerResult);
-      } else {
-        ImagePicker.launchImageLibrary(imagePickerOptions, response => {
-          if (response.didCancel) {
-          } else if (response.error) {
-          } else {
-            setSelectedFile(response);
-          }
-        });
       }
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -113,44 +79,33 @@ const FileUpload = ({
   };
 
   const uploadFile = async () => {
+    // console.log('upload');
     if (!selectedFile) {
       toast.show({
         title: 'Please select a file first',
       });
       return;
     }
-    //
-    //
-    const responseBlob = await uriToBlob(selectedFile[0].uri);
-    //
-    //
-    // const file = {
-    //   uri: selectedFile.uri,
-    //   name: 'my-image.jpg', // Set the desired file name in S3
-    //   type: 'image/jpeg', // Set the MIME type for the image
-    // };
 
-    // const params = {
-    //   Bucket: 'broker2023',
-    //   Key: 'images/' + file.name, // The S3 path for the uploaded image
-    //   Body: file,
-    //   ACL: 'public-read', // Set the access level for the uploaded image
-    // };
+    const responseBlob = await uriToBlob(selectedFile[0].uri);
+
     const fileExtension = getFileExtensionFromMimeType(selectedFile[0].type);
+    console.log(fileExtension, 'res');
     const docId = uuid.v4();
     const imageName = docId + '.' + fileExtension;
     const params = {
       Bucket: Bucket,
-      Key: imageName, // The name/key of the file in S3
-      Body: responseBlob, // The file content
+      Key: imageName,
+      Body: responseBlob,
     };
+
     try {
-      setLoading(true);
       let result = await s3.upload(params).promise();
 
       OnUpload(result.key);
       setclearFlag(false);
       setuploadFlag(false);
+
       // Alert('Upload Success', 'Image uploaded to S3 successfully.');
     } catch (error) {
       setLoading(false);
@@ -162,7 +117,13 @@ const FileUpload = ({
     setSelectedFile(null);
   };
   return (
-    <View>
+    <View
+      style={{
+        marginBottom: 20,
+        borderColor: Color.borderColor,
+        borderBottomWidth: 1,
+        paddingVertical: 10,
+      }}>
       {!selectedFile && (
         <HStack space={2}>
           <Box>
@@ -178,13 +139,13 @@ const FileUpload = ({
                 <ZText
                   numberOfLines={1}
                   ellipsizeMode="tail"
-                  type="s16"
+                  type="R16"
                   style={{...styles.ml15}}>
                   {truncateFileName(FileValueText)}
                 </ZText>
               </>
             ) : (
-              <ZText type="s16" style={styles.ml15}>
+              <ZText type="R16" style={styles.ml15}>
                 {DisplayText}
               </ZText>
             )}
@@ -210,22 +171,18 @@ const FileUpload = ({
         <>
           <HStack space={3}>
             <Box>
-              <Icon
-                as={File_tray_icon}
-                // size={moderateScale(30)}
-                color={color.black}
-              />
+              <Icon as={File_tray_icon} color={color.black} />
             </Box>
             <Box>
               <ZText
-                type="s16"
+                type="R16"
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 style={{...styles.ml15}}>
                 {truncateFileName(selectedFile[0].name)}
               </ZText>
               {uploadFlag == false && (
-                <ZText type="s16" style={styles.ml15} color={color.greenColor}>
+                <ZText type="R16" style={styles.ml15} color={color.greenColor}>
                   {`Document uploaded`}
                 </ZText>
               )}
