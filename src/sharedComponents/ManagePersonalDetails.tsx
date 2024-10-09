@@ -184,7 +184,12 @@ const PersonalDetailsForm = ({
         specialization: getList(Profiledata.specializations),
         userLocation: [],
       };
-
+      delete Result["location"];
+      delete Result["officeLocation"];
+      delete Result["userPermissions"];
+      console.log("================================================================");
+      console.log(Result);
+      console.log(values);
       // setLoading(true);
       await profileUpdateexecute(Result);
       // console.log(profileUpdatestatus, 'res');
@@ -228,21 +233,19 @@ const PersonalDetailsForm = ({
       value: industry.categoryId,
     }),
   );
-  const AlreadySelectIndustry = Profiledata.industries.map(industry => ({
-    label: industry.industryName,
-    value: industry.industryId,
-  }));
-
+  const AlreadySelectIndustry = Profiledata.industries.map((industry) => {
+    return industry.industryId;
+  });
   // console.log(categorystatus, 'pd');
   const locationData = [
-    {
-      place: Profiledata.location,
-    },
+    {place:  {...Profiledata.location,placeName:Profiledata.location.cityName }}
+ 
+    
   ];
   const OfficeLocationData = [
-    {
-      place: Profiledata.officeLocation,
-    },
+  
+    {place:  {...Profiledata.officeLocation,placeName:Profiledata.officeLocation.cityName }}
+ 
   ];
   useEffect(() => {
     const catedate = async () => {
@@ -269,8 +272,8 @@ const PersonalDetailsForm = ({
             lastName: Profiledata.lastName,
             email: Profiledata.email,
             contactNo: Profiledata.contactNo,
-            Location: Profiledata.location,
-            officeLocation: Profiledata.officeLocation,
+            Location: Profiledata.location.cityName,
+            officeLocation: Profiledata.officeLocation.cityName,
             industry: Profiledata.industries,
             experienceInYears: Number(Profiledata.experience),
             reraExpiryDate: Profiledata.reraExpiryDate,
@@ -373,7 +376,7 @@ const PersonalDetailsForm = ({
                     ? Profiledata.countryName
                     : 'Select Industries'
                 }
-                // alreadySelected={AlreadySelectIndustry}
+                 alreadySelected={AlreadySelectIndustry}
                 title={'Select Industry'}
                 keyProperty="value"
                 valueProperty="label"

@@ -51,7 +51,7 @@ const ProfileKyc: React.FC = ({
   } = useApiRequest(UpdateProfile);
   useFocusEffect(
     React.useCallback(() => {
-      toggleSkeletonOn();
+   //   toggleSkeletonOn();
       const getUserProfile = async () => {
         try {
           await profileexecute(user.userId);

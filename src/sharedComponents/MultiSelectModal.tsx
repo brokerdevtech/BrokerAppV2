@@ -137,6 +137,8 @@ const MultiSelectComponent = ({
     },
   }));
   useEffect(() => {
+
+    console.log(alreadySelected, selectedItems);
     setTempSelectedItems(selectedItems);
   }, [selectedItems, modalVisible]);
 
@@ -154,6 +156,7 @@ const MultiSelectComponent = ({
     if (selectedItems.length === 0) {
       return displayText;
     }
+
     const selectedNames = selectedItems.map(
       item => data?.find(d => d[keyProperty] === item)[valueProperty],
     );

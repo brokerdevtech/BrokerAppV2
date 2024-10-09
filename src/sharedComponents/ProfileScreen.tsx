@@ -110,7 +110,7 @@ const ProfileScreen: React.FC = ({
     status: profileUpdatestatus,
     error: profileUpdateerror,
     execute: profileUpdateexecute,
-  } = useApiRequest(UpdateProfile);
+  } = useApiRequest(UpdateProfile,setLoading);
   const handleCategoryPress = screen => {
     navigation.navigate(screen, {
       userId: user.userId,
@@ -278,6 +278,36 @@ const ProfileScreen: React.FC = ({
     }
   }, [profilestatus]);
 
+
+  useEffect(() => {
+    if (profileUpdatestatus == 200) {
+      setProfileData(profileUpdatedata?.data);
+      const Userfollower: any = [];
+      if (profileUpdatedata.data) {
+        Userfollower.push({
+          title: strings.followers,
+          value: profileUpdatedata.data.followers,
+        });
+        Userfollower.push({
+          title: strings.following,
+          value: profileUpdatedata.data.followings,
+        });
+      }
+
+      setParentUser({
+        userId: profileUpdatedata.data.userId,
+        userName: profileUpdatedata.data.firstName + ' ' + profileUpdatedata.data.lastName,
+        userImg: profileUpdatedata.data.profileImage,
+      });
+
+      setUserBio(profileUpdatedata.data?.biodata);
+
+      setUserfollowersData(Userfollower);
+      setLoading(false);
+    }
+  }, [profileUpdatedata]);
+
+
   const selectprofilepic = () => {
     if (ProfileData?.profileImage != '') {
       setCurrentImage([
@@ -319,10 +349,8 @@ const ProfileScreen: React.FC = ({
     console.log(Result, 'pro');
 
     await profileUpdateexecute(Result);
-    console.log(profileUpdatestatus);
-    console.log(profileUpdatedata);
-    setUserBio(userBio);
-    setProfileDataRest(!ProfileDataRest);
+  
+
   };
   // console.log(profiledata, 'data');
 
