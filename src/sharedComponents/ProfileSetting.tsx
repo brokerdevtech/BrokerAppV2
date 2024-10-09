@@ -183,7 +183,7 @@ const ProfileSetting: React.FC = ({
         values.newpassword,
         values.confirmPassword,
       );
-      console.log('ssfdj', UpdateUserPassStatus, UpdateUserPassData);
+
       if (UpdateUserPassStatus == 200) {
         setResetModal(false);
         if (!toast.isActive(toastId)) {
@@ -368,55 +368,7 @@ const ProfileSetting: React.FC = ({
         </AlertDialogContent>
       </AlertDialog>
       {/* Logout Button */}
-      <TouchableOpacity
-        onPress={() => setShowAlertDialog(true)}
-        style={localStyles.setting_option}>
-        <View style={styles.flexRow}>
-          <Icon as={logout_icon} size={'xl'} />
-          <ZText type={'R16'} style={localStyles.setting_label}>
-            Logout
-          </ZText>
-        </View>
-        <Icon as={ChevronRightIcon} />
-      </TouchableOpacity>
-      <AlertDialog isOpen={showAlertDialog} onClose={handleClose} size="md">
-        <AlertDialogBackdrop />
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <ZText
-              type={'S18'}
-              style={{marginBottom: 20}}
-              // className="text-typography-950 font-semibold"
-            >
-              Are you sure you want to Logout?
-            </ZText>
-          </AlertDialogHeader>
-          <AlertDialogBody className="mt-3 mb-4">
-            <ZText type={'R16'} style={{marginBottom: 20}} size="sm">
-              Please confirm if you want to proceed.
-            </ZText>
-          </AlertDialogBody>
-          <AlertDialogFooter style={{justifyContent: 'center'}}>
-            <Button
-              variant="outline"
-              action="secondary"
-              style={{borderColor: Color.primary}}
-              onPress={handleClose}
-              size="md">
-              <ZText type={'R16'} color={Color.primary}>
-                Cancel
-              </ZText>
-            </Button>
-            <Button
-              size="md"
-              style={{backgroundColor: Color.primary}}
-              onPress={LogoutProceed}>
-              <ButtonText>Logout</ButtonText>
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      {/* Reset Password Modal */}
+
       <Modal
         animationType="slide"
         transparent={true}

@@ -71,6 +71,7 @@ const PersonalDetailsForm = ({
   setLoading,
   navigation,
   user,
+  toastMessage,
   color,
   route,
   toast,
@@ -131,7 +132,28 @@ const PersonalDetailsForm = ({
   useEffect(() => {
     fetchCategoryData();
   }, []);
+  useEffect(() => {
+    if (profileUpdatestatus == 200) {
+      const fetdata = async () => {
+        let obj = {
+          ...user,
+          firstName: profileUpdatedata.data.firstName,
+          lastName: profileUpdatedata.data.lastName,
+        };
 
+        store.dispatch(setUser(obj));
+
+        navigation.navigate('ProfileScreen');
+      };
+      fetdata();
+    }
+  }, [profileUpdatestatus]);
+  const IndustryDataForSelect = categorydata?.data?.categories.map(
+    industry => ({
+      label: industry.categoryName,
+      value: industry.categoryId,
+    }),
+  );
   const handleSubmit = async values => {
     try {
       console.log(values, 'val');
@@ -140,14 +162,20 @@ const PersonalDetailsForm = ({
       const month = (selectDate.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-based, so add 1
       const day = selectDate.getDate().toString().padStart(2, '0');
       const isLocationchanged = Profiledata.location === values.location;
-      console.log(isLocationchanged, 'll');
+
       // Create the formatted date string as "yyyy-mm-dd"
       const formattedDate = `${year}-${month}-${day}`;
-
+      console.log(formattedDate, 'll');
+      // const mappedIndustries = values.industry.map(id => {
+      //   const matchedIndustry = IndustryDataForSelect.find(
+      //     industry => industry.value === id,
+      //   );
+      //   return {
+      //     industryName: matchedIndustry.label,
+      //     industryId: matchedIndustry.value,
+      //   };
+      // });
       const updateObj = {
-        // cityId: values.city,
-        // stateId: values.state,
-        // countryId: values.country,
         contactNo: values.contactNo,
         experience: values.experienceInYears,
         reraExpiryDate: formattedDate,
@@ -172,6 +200,7 @@ const PersonalDetailsForm = ({
       Result = {
         ...Result,
         industry: getList(updatedArr2),
+        // industry: mappedIndustries,
         cityName: values.Location.City || values.Location.cityName,
         stateName: values.Location.State || values.Location.stateName,
         countryName: values.Location.Country || values.Location.countryName,
@@ -184,68 +213,43 @@ const PersonalDetailsForm = ({
         specialization: getList(Profiledata.specializations),
         userLocation: [],
       };
-      delete Result["location"];
-      delete Result["officeLocation"];
-      delete Result["userPermissions"];
-      console.log("================================================================");
-      console.log(Result);
-      console.log(values);
+      delete Result['location'];
+      delete Result['officeLocation'];
+      delete Result['userPermissions'];
+      console.log(
+        '================================================================',
+      );
+      console.log(Result, 'res');
+      // console.log(profileUpdatestatus);
       // setLoading(true);
       await profileUpdateexecute(Result);
-      // console.log(profileUpdatestatus, 'res');
+      console.log(profileUpdatestatus);
       if (profileUpdatestatus == 200) {
-        if (!toast.isActive(toastId)) {
-          const newId = Math.random();
-          setToastId(newId);
-          toast.show({
-            id: newId,
-            placement: 'bottom',
-            duration: 3000,
-            render: ({id}) => {
-              const uniqueToastId = 'toast-' + id;
-              return (
-                <Toast nativeID={uniqueToastId} action="muted" variant="solid">
-                  <ToastDescription>
-                    Update Personal Details Success
-                  </ToastDescription>
-                </Toast>
-              );
-            },
-          });
-        }
+        toastMessage('Profile Updated');
       }
-      let obj = {
-        ...user,
-        firstName: profileUpdatedata.data.firstName,
-        lastName: profileUpdatedata.data.lastName,
-      };
-
-      await store.dispatch(setUser(obj));
-
-      // setLoading(false);
-      navigation.navigate('ProfileScreen');
     } catch (error) {}
   };
 
-  const IndustryDataForSelect = categorydata?.data?.categories.map(
-    industry => ({
-      label: industry.categoryName,
-      value: industry.categoryId,
-    }),
-  );
-  const AlreadySelectIndustry = Profiledata.industries.map((industry) => {
+  console.log(IndustryDataForSelect, 'data');
+  const AlreadySelectIndustry = Profiledata.industries.map(industry => {
     return industry.industryId;
   });
   // console.log(categorystatus, 'pd');
   const locationData = [
-    {place:  {...Profiledata.location,placeName:Profiledata.location.cityName }}
- 
-    
+    {
+      place: {
+        ...Profiledata.location,
+        placeName: Profiledata.location.cityName,
+      },
+    },
   ];
   const OfficeLocationData = [
-  
-    {place:  {...Profiledata.officeLocation,placeName:Profiledata.officeLocation.cityName }}
- 
+    {
+      place: {
+        ...Profiledata.officeLocation,
+        placeName: Profiledata.officeLocation.cityName,
+      },
+    },
   ];
   useEffect(() => {
     const catedate = async () => {
@@ -255,7 +259,7 @@ const PersonalDetailsForm = ({
     };
     catedate();
   }, [categorystatus]);
-  // console.log(IndustryDataForSelect, 'pde');
+
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
@@ -272,8 +276,8 @@ const PersonalDetailsForm = ({
             lastName: Profiledata.lastName,
             email: Profiledata.email,
             contactNo: Profiledata.contactNo,
-            Location: Profiledata.location.cityName,
-            officeLocation: Profiledata.officeLocation.cityName,
+            Location: Profiledata.location,
+            officeLocation: Profiledata.officeLocation,
             industry: Profiledata.industries,
             experienceInYears: Number(Profiledata.experience),
             reraExpiryDate: Profiledata.reraExpiryDate,
@@ -376,7 +380,7 @@ const PersonalDetailsForm = ({
                     ? Profiledata.countryName
                     : 'Select Industries'
                 }
-                 alreadySelected={AlreadySelectIndustry}
+                alreadySelected={AlreadySelectIndustry}
                 title={'Select Industry'}
                 keyProperty="value"
                 valueProperty="label"

@@ -79,11 +79,11 @@ const CustomHeader = () => {
     callPodcastList();
   }, []);
   const onPressUser = () => {
-    navigation.navigate('ProfileScreen');
+    navigation.toggleDrawer();
   };
   // console.log('marqueeText', marqueeText);
   //onPress={() => navigation.toggleDrawer()}
-  console.log(user);
+  // console.log(user);
   return (
     <View style={styles.headerSection}>
       <View style={styles.headerContainer}>

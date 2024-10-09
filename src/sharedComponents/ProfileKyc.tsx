@@ -48,10 +48,10 @@ const ProfileKyc: React.FC = ({
     status: profileUpdatestatus,
     error: profileUpdateerror,
     execute: profileUpdateexecute,
-  } = useApiRequest(UpdateProfile);
+  } = useApiRequest(UpdateProfile, setLoading);
   useFocusEffect(
     React.useCallback(() => {
-   //   toggleSkeletonOn();
+      //   toggleSkeletonOn();
       const getUserProfile = async () => {
         try {
           await profileexecute(user.userId);
@@ -72,128 +72,42 @@ const ProfileKyc: React.FC = ({
       setProfiledata(profiledata.data);
     }
   }, [profilestatus]);
-
-  const handleSubmitPANNumber = async docId => {
-    const updateObj = {uidNumberBlob: docId};
-
+  useEffect(() => {
+    if (profileUpdatestatus === 200) {
+      toastMessage('Document upoaded');
+      setProfiledata(profileUpdatedata.data);
+      console.log('++++++=================================================');
+      console.log(profileUpdatedata);
+    }
+  }, [profileUpdatestatus]);
+  const handleSubmit = async (docId, fieldName, successMessage) => {
+    const updateObj = {[fieldName]: docId};
     const deletions = [
       'roles',
       'industries',
       'specializations',
       'userLocations',
     ];
-    let Result: any = updateNestedObject(Profiledata, updateObj, deletions);
+    let Result = updateNestedObject(Profiledata, updateObj, deletions);
 
     Result = {
       ...Result,
       industry: getList(Profiledata.industries),
       specialization: getList(Profiledata.specializations),
+      cityName: Profiledata.location.cityName,
+      stateName: Profiledata.location.stateName,
+      countryName: Profiledata.location.countryName,
       userLocation: [],
     };
-
-    setLoading(true);
+    delete Result['location'];
+    delete Result['officeLocation'];
+    delete Result['userPermissions'];
+    console.log('++++++++++++++++++++++++++++++++');
+    console.log(Result);
     await profileUpdateexecute(Result);
-    setProfiledata({...Profiledata, uidNumberBlob: docId});
-    setLoading(false);
-    toastMessage('Pan Uploaded Successfully');
+    setProfiledata({...Profiledata, [fieldName]: docId});
   };
-  const handleSubmitAddressProof = async docId => {
-    const updateObj = {addressProofBlob: docId};
 
-    const deletions = [
-      'roles',
-      'industries',
-      'specializations',
-      'userLocations',
-    ];
-    let Result: any = updateNestedObject(Profiledata, updateObj, deletions);
-
-    Result = {
-      ...Result,
-      industry: getList(Profiledata.industries),
-      specialization: getList(Profiledata.specializations),
-      userLocation: [],
-    };
-
-    setLoading(true);
-    await profileUpdateexecute(Result);
-    setProfiledata({...Profiledata, addressProofBlob: docId});
-    toastMessage('Address Uploaded Successfully');
-    setLoading(false);
-  };
-  const handleSubmitReraRegistration = async docId => {
-    const updateObj = {reraRegistrationBlob: docId};
-
-    const deletions = [
-      'roles',
-      'industries',
-      'specializations',
-      'userLocations',
-    ];
-    let Result: any = updateNestedObject(Profiledata, updateObj, deletions);
-
-    Result = {
-      ...Result,
-      industry: getList(Profiledata.industries),
-      specialization: getList(Profiledata.specializations),
-      userLocation: [],
-    };
-
-    setLoading(true);
-    await profileUpdateexecute(Result);
-    setProfiledata({...Profiledata, reraRegistrationBlob: docId});
-    toastMessage('Rera Uploaded Successfully');
-    console.log('res', 'hg', profileUpdatestatus);
-    setLoading(false);
-  };
-  const handleSubmitcompanyLogo = async docId => {
-    const updateObj = {companyLogoBlob: docId};
-
-    const deletions = [
-      'roles',
-      'industries',
-      'specializations',
-      'userLocations',
-    ];
-    let Result: any = updateNestedObject(Profiledata, updateObj, deletions);
-
-    Result = {
-      ...Result,
-      industry: getList(Profiledata.industries),
-      specialization: getList(Profiledata.specializations),
-      userLocation: [],
-    };
-
-    await profileUpdateexecute(Result);
-    setProfiledata({...Profiledata, companyLogoBlob: docId});
-    toastMessage('Company Logo Uploaded Successfully');
-  };
-  const handleSubmitvisitingCard = async docId => {
-    console.log(docId, 'gk');
-    const updateObj = {visitingCardBlob: docId};
-
-    const deletions = [
-      'roles',
-      'industries',
-      'specializations',
-      'userLocations',
-    ];
-    let Result: any = updateNestedObject(Profiledata, updateObj, deletions);
-
-    Result = {
-      ...Result,
-      industry: getList(Profiledata.industries),
-      specialization: getList(Profiledata.specializations),
-      userLocation: [],
-    };
-
-    setLoading(true);
-    await profileUpdateexecute(Result);
-    setProfiledata({...Profiledata, visitingCardBlob: docId});
-    toastMessage('Company Logo Uploaded Successfully');
-    console.log('res', 'hg', profileUpdatestatus);
-    setLoading(false);
-  };
   return (
     <ScrollView
       bounces={false}
@@ -204,7 +118,9 @@ const ProfileKyc: React.FC = ({
         Bucket="kycbrokerapp"
         DisplayText="Upload PAN Number"
         setLoading={setLoading}
-        OnUpload={handleSubmitPANNumber}
+        OnUpload={docId =>
+          handleSubmit(docId, 'uidNumberBlob', 'PAN Uploaded Successfully')
+        }
         FileValue={Profiledata.uidNumberBlob}
         islocked={true}
         FileValueText="PAN Number is Uploaded "
@@ -215,7 +131,13 @@ const ProfileKyc: React.FC = ({
         Bucket="kycbrokerapp"
         DisplayText="Upload Address Proof"
         setLoading={setLoading}
-        OnUpload={handleSubmitAddressProof}
+        OnUpload={docId =>
+          handleSubmit(
+            docId,
+            'addressProofBlob',
+            'Address Proof Uploaded Successfully',
+          )
+        }
         FileValue={Profiledata.addressProofBlob}
         islocked={true}
         FileValueText="Address Proof is Uploaded "
@@ -226,7 +148,13 @@ const ProfileKyc: React.FC = ({
         Bucket="kycbrokerapp"
         DisplayText="Upload Rera Registration"
         setLoading={setLoading}
-        OnUpload={handleSubmitReraRegistration}
+        OnUpload={docId =>
+          handleSubmit(
+            docId,
+            'reraRegistrationBlob',
+            'Rera Registration Uploaded Successfully',
+          )
+        }
         FileValue={Profiledata.reraRegistrationBlob}
         islocked={true}
         FileValueText="Rera Registration is Uploaded "
@@ -239,7 +167,13 @@ const ProfileKyc: React.FC = ({
         FileValueText={Profiledata.reraRegistrationBlob}
         setLoading={setLoading}
         islocked={false}
-        OnUpload={handleSubmitvisitingCard}
+        OnUpload={docId =>
+          handleSubmit(
+            docId,
+            'visitingCardBlob',
+            'Visiting Card Uploaded Successfully',
+          )
+        }
       />
 
       <FileUpload
@@ -249,7 +183,13 @@ const ProfileKyc: React.FC = ({
         FileValueText={Profiledata.visitingCardBlob}
         islocked={false}
         setLoading={setLoading}
-        OnUpload={handleSubmitcompanyLogo}
+        OnUpload={docId =>
+          handleSubmit(
+            docId,
+            'companyLogoBlob',
+            'Company Logo Uploaded Successfully',
+          )
+        }
       />
 
       {(Profiledata.uidNumberBlob != '' ||

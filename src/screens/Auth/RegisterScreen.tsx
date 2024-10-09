@@ -109,7 +109,7 @@ export default function RegisterScreen({setLoggedIn}) {
   const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setConfirmShowPassword] = React.useState(false);
-  const [selecteRadioId, setSelectedRadioId] = useState("1");
+  const [selecteRadioId, setSelectedRadioId] = useState('1');
   const [toastId, setToastId] = React.useState(0);
   const toast = useToast();
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -158,13 +158,13 @@ export default function RegisterScreen({setLoggedIn}) {
     status: categorystatus,
     error: categoryerror,
     execute: categoryexecute,
-  } = useApiRequest(getBrokerCategoryList,setLoading);
+  } = useApiRequest(getBrokerCategoryList, setLoading);
   const {
     data: registerdata,
     status: registerstatus,
     error: registererror,
     execute: registerexecute,
-  } = useApiRequest(signup,setLoading);
+  } = useApiRequest(signup, setLoading);
 
   const fetchCategoryData = async () => {
     await categoryexecute();
@@ -211,7 +211,7 @@ export default function RegisterScreen({setLoggedIn}) {
         isOrg: values.organizationType == '1' ? false : true,
       };
 
-      console.log(user);
+      // console.log(user);
 
       await registerexecute(user);
     } catch (error) {
@@ -387,7 +387,7 @@ export default function RegisterScreen({setLoggedIn}) {
             {/* Category Selection */}
             <Text style={styles.label}>Select Category</Text>
             <Select
-             selectedValue={"Real Estate Sector"}
+              selectedValue={'Real Estate Sector'}
               onValueChange={(selectedValue: any) => {
                 console.log('Selected category ID:', selectedValue); // Log the category ID
                 setFieldValue('BrokerCategory', selectedValue);
@@ -458,11 +458,11 @@ export default function RegisterScreen({setLoggedIn}) {
         )}
       </Formik>
       <Text style={styles.footerText}>
-        Already have an account?{" "} 
+        Already have an account?{' '}
         <Text
           style={styles.signUpText}
           onPress={() => navigation.navigate('Login')}>
-           Sign In
+          Sign In
         </Text>
       </Text>
       {loading && (
