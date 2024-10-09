@@ -594,7 +594,7 @@ const OtherProfileScreen: React.FC = ({
       </>
     );
   };
-  console.log(ProfileData);
+  // console.log(ProfileData);
   return (
     <ZSafeAreaView>
       {/* <ZHeader

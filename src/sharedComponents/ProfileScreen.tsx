@@ -68,6 +68,7 @@ import {
   getProfile,
   UpdateProfile,
 } from '../../BrokerAppCore/services/new/profileServices';
+import {showRationaleAndRequest} from '../utils/appPermission';
 
 const ProfileScreen: React.FC = ({
   toast,
@@ -110,7 +111,7 @@ const ProfileScreen: React.FC = ({
     status: profileUpdatestatus,
     error: profileUpdateerror,
     execute: profileUpdateexecute,
-  } = useApiRequest(UpdateProfile,setLoading);
+  } = useApiRequest(UpdateProfile, setLoading);
   const handleCategoryPress = screen => {
     navigation.navigate(screen, {
       userId: user.userId,
@@ -222,14 +223,9 @@ const ProfileScreen: React.FC = ({
       </>
     );
   };
-  const handleEditToggle = () => {
-    setModalVisible(!isModalVisible);
-    refRBSheet.current.open();
-  };
+
   const refRBSheet = useRef();
-  const handleBiodataChange = useCallback(text => {
-    setBiodata(text);
-  }, []);
+
   const s3 = useS3();
   const [routes] = useState([
     {key: 'Property', title: 'Property'},
@@ -278,10 +274,11 @@ const ProfileScreen: React.FC = ({
     }
   }, [profilestatus]);
 
-
   useEffect(() => {
     if (profileUpdatestatus == 200) {
+      // console.log('profilestatys', profileUpdatestatus);
       setProfileData(profileUpdatedata?.data);
+
       const Userfollower: any = [];
       if (profileUpdatedata.data) {
         Userfollower.push({
@@ -296,17 +293,23 @@ const ProfileScreen: React.FC = ({
 
       setParentUser({
         userId: profileUpdatedata.data.userId,
-        userName: profileUpdatedata.data.firstName + ' ' + profileUpdatedata.data.lastName,
+        userName:
+          profileUpdatedata.data.firstName +
+          ' ' +
+          profileUpdatedata.data.lastName,
         userImg: profileUpdatedata.data.profileImage,
       });
 
       setUserBio(profileUpdatedata.data?.biodata);
-
+      setProfileData(prevData => ({
+        ...prevData,
+        biodata: profileUpdatedata.data?.biodata,
+        profileImage: profileUpdatedata.data.profileImage,
+      }));
       setUserfollowersData(Userfollower);
       setLoading(false);
     }
-  }, [profileUpdatedata]);
-
+  }, [profileUpdatestatus]);
 
   const selectprofilepic = () => {
     if (ProfileData?.profileImage != '') {
@@ -339,18 +342,19 @@ const ProfileScreen: React.FC = ({
     Result = {
       ...Result,
       industry: getList(ProfileData.industries),
-      countryName: AppLocation.Country,
-      stateName: AppLocation.State,
-      cityName: AppLocation.City,
-
+      countryName: ProfileData.location.countryName,
+      stateName: ProfileData.location.stateName,
+      cityName: ProfileData.location.cityName,
       specialization: getList(ProfileData.specializations),
       userLocation: [],
     };
-    console.log(Result, 'pro');
+    delete Result['location'];
+    delete Result['officeLocation'];
+    delete Result['userPermissions'];
+    // console.log(Result, 'pro');
 
     await profileUpdateexecute(Result);
-  
-
+    console.log(profileUpdatestatus);
   };
   // console.log(profiledata, 'data');
 
@@ -479,17 +483,21 @@ const ProfileScreen: React.FC = ({
       Result = {
         ...Result,
         industry: getList(ProfileData.industries),
-        countryName: AppLocation.Country,
-        stateName: AppLocation.State,
-        cityName: AppLocation.City,
+        countryName: ProfileData.location.countryName,
+        stateName: ProfileData.location.stateName,
+        cityName: ProfileData.location.cityName,
         specialization: getList(ProfileData.specializations),
         userLocation: [],
       };
-
-      setLoading(true);
+      delete Result['location'];
+      delete Result['officeLocation'];
+      delete Result['userPermissions'];
+      // console.log(Result, 'pro');
+      // setLoading(true);
       await profileUpdateexecute(Result);
+      console.log(profileUpdatestatus);
     } catch (error) {
-      setLoading(false);
+      // setLoading(false);
     }
   };
   useEffect(() => {
@@ -508,6 +516,7 @@ const ProfileScreen: React.FC = ({
     };
     updatedata();
   }, [profileUpdatestatus]);
+  // console.log(ProfileData, 'data');
   const PostHeader = () => {
     const fullName = `${ProfileData?.firstName} ${ProfileData?.lastName}`;
     const truncatedFullName =
@@ -531,7 +540,7 @@ const ProfileScreen: React.FC = ({
                 name={ProfileData?.profileName}
               />
             </TouchableOpacity>
-            <HStack justifyContent="center" marginTop="2px">
+            <HStack>
               <ZText
                 type="R14"
                 align={'center'}
@@ -826,7 +835,7 @@ const localStyles = StyleSheet.create({
     width: '100%',
   },
   applyButton: {
-    backgroundColor: '#BC4A4F',
+    backgroundColor: Color.primary,
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
