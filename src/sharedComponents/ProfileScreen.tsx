@@ -78,6 +78,7 @@ const ProfileScreen: React.FC = ({
   setLoading,
   navigation,
   user,
+  toastMessage,
   color,
   route,
 }) => {
@@ -96,6 +97,7 @@ const ProfileScreen: React.FC = ({
   const [ProfilePostData, setProfilePostData] = useState([]);
   const [page, setPage] = useState(1);
   const [isEditing, setIsEditing] = useState(false);
+
   const [biodata, setBiodata] = useState('');
   const [TabSelect, setTabSelect] = useState(0);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -273,43 +275,6 @@ const ProfileScreen: React.FC = ({
       setLoading(false);
     }
   }, [profilestatus]);
-
-  useEffect(() => {
-    if (profileUpdatestatus == 200) {
-      // console.log('profilestatys', profileUpdatestatus);
-      setProfileData(profileUpdatedata?.data);
-
-      const Userfollower: any = [];
-      if (profileUpdatedata.data) {
-        Userfollower.push({
-          title: strings.followers,
-          value: profileUpdatedata.data.followers,
-        });
-        Userfollower.push({
-          title: strings.following,
-          value: profileUpdatedata.data.followings,
-        });
-      }
-
-      setParentUser({
-        userId: profileUpdatedata.data.userId,
-        userName:
-          profileUpdatedata.data.firstName +
-          ' ' +
-          profileUpdatedata.data.lastName,
-        userImg: profileUpdatedata.data.profileImage,
-      });
-
-      setUserBio(profileUpdatedata.data?.biodata);
-      setProfileData(prevData => ({
-        ...prevData,
-        biodata: profileUpdatedata.data?.biodata,
-        profileImage: profileUpdatedata.data.profileImage,
-      }));
-      setUserfollowersData(Userfollower);
-      setLoading(false);
-    }
-  }, [profileUpdatestatus]);
 
   const selectprofilepic = () => {
     if (ProfileData?.profileImage != '') {
@@ -492,13 +457,9 @@ const ProfileScreen: React.FC = ({
       delete Result['location'];
       delete Result['officeLocation'];
       delete Result['userPermissions'];
-      // console.log(Result, 'pro');
-      // setLoading(true);
       await profileUpdateexecute(Result);
       console.log(profileUpdatestatus);
-    } catch (error) {
-      // setLoading(false);
-    }
+    } catch (error) {}
   };
   useEffect(() => {
     const updatedata = async () => {
@@ -516,6 +477,37 @@ const ProfileScreen: React.FC = ({
     };
     updatedata();
   }, [profileUpdatestatus]);
+
+  useEffect(() => {
+    if (profileUpdatestatus == 200) {
+      setProfileData(profileUpdatedata?.data);
+      console.log('======================');
+      console.log(profileUpdatedata?.data);
+      const Userfollower: any = [];
+      if (profileUpdatedata.data) {
+        Userfollower.push({
+          title: strings.followers,
+          value: profileUpdatedata.data.followers,
+        });
+        Userfollower.push({
+          title: strings.following,
+          value: profileUpdatedata.data.followings,
+        });
+      }
+      setParentUser({
+        userId: profileUpdatedata.data.userId,
+        userName:
+          profileUpdatedata.data.firstName +
+          ' ' +
+          profileUpdatedata.data.lastName,
+        userImg: profileUpdatedata.data.profileImage,
+      });
+      setUserBio(profileUpdatedata.data?.biodata);
+      setUserfollowersData(Userfollower);
+      setLoading(false);
+      toastMessage('Profile Updated');
+    }
+  }, [profileUpdatedata, profileUpdatestatus]);
   // console.log(ProfileData, 'data');
   const PostHeader = () => {
     const fullName = `${ProfileData?.firstName} ${ProfileData?.lastName}`;
