@@ -21,90 +21,20 @@ import { fetchDashboardData, fetchItemList } from '@/BrokerAppCore/services/new/
 import {Icon} from '../../components/ui/icon';
 import { Divider } from '@/components/ui/divider';
 import {VStack} from '@/components/ui/vstack';
+import {useNavigation} from '@react-navigation/native';
 
 
-const renderProductItems = ({item, index}) => {
-  console.log(item.postMedias[0].mediaBlobId, 'media');
-  return (
-    <View style={styles.cardContainer}>
-      <Image
-        source={{
-          uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
-        }}
-        style={styles.carImage}
-      />
 
-      {/* Check and Heart Icons */}
-      <View style={styles.iconContainer}>
-        <View style={styles.checkIcon}>
-          {/* <Icon as={card_check_icon} /> */}
-          <Card_check_icon />
-        </View>
-        <TouchableOpacity style={{}}>
-          {/* <heart_icon /> */}
-          <Heart_icon accessible={true} fontSize={25} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Car Details */}
-      <VStack space="md" style={styles.detailsContainer}>
-        <ZText type={'R16'}>
-          ${item.price}
-        </ZText>
-        <View style={styles.locationContainer}>
-          {item.location.cityName && (
-            <>
-              <Icon as={Location_Icon} />
-              <ZText type={'R16'}>
-                {item.location.placeName}
-              </ZText>
-            </>
-          )}
-        </View>
-        
-        <ZText type={'R16'} >
-          {item.title}
-        </ZText>
-      </VStack>
-      <Divider className="my-0.5"/>
-      <View style={styles.detailsContainer}>
-          <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
-               <VStack>
-                   <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Telephone_Icon} size={'xxl'} /></View>
-                   <View style={{paddingVertical: 10}}>
-                      <ZText type={'R14'}>Call</ZText>
-                   </View>
-               </VStack>
-               <VStack>
-                   <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Chat_Icon} size={'xxl'} /></View>
-                   <View style={{paddingVertical: 10}}>
-                      <ZText type={'R14'}>Chat</ZText>
-                   </View>
-               </VStack>
-               <VStack>
-                   <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Whatsapp_Icon} size={'xxl'} /></View>
-                   <View style={{paddingVertical: 10}}>
-                      <ZText type={'R14'}>Whatsapp</ZText>
-                   </View>
-               </VStack>
-               <VStack>
-                   <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Calender_Icon}  size={'xxl'} /></View>
-                   <View style={{paddingVertical: 10}}>
-                      <ZText type={'R14'}>Appointment</ZText>
-                   </View>
-               </VStack>
-          </HStack>  
-      </View>
-    </View>
-  );
-};
 
 const ItemListScreen: React.FC<any> = ({ listType }) => {
 
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-  
+  const navigation = useNavigation();
   const {data, status, error, execute} = useApiRequest(fetchItemList);
+
+  //const {data, status, error, execute} = useApiRequest(fetchItemList);
+
   
   const callPodcastList = async () => {
     await execute('RealEstate', {
@@ -113,14 +43,88 @@ const ItemListScreen: React.FC<any> = ({ listType }) => {
       keyWord: AppLocation.City,
       userId: user.userId,
     });
-    console.log('data :-', data);
-    console.log('status :-', status);
-    console.log('error :-', error);
   };
 
   useEffect(() => {
     callPodcastList();
   }, []);
+
+  const renderProductItems = ({item, index}) => {
+    return (
+      <View style={styles.cardContainer}>
+        <Image
+          source={{
+            uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
+          }}
+          style={styles.carImage}
+        />
+  
+        {/* Check and Heart Icons */}
+        <View style={styles.iconContainer}>
+          <View style={styles.checkIcon}>
+            {/* <Icon as={card_check_icon} /> */}
+            <Card_check_icon />
+          </View>
+          <TouchableOpacity style={{}}>
+            {/* <heart_icon /> */}
+            <Heart_icon accessible={true} fontSize={25} />
+          </TouchableOpacity>
+        </View>
+  
+        {/* Car Details */}
+        <VStack space="md" style={styles.detailsContainer}>
+         <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', {listType: 'PROPERTY', postId: item.postId})}>
+          <ZText type={'R16'}>
+            $ {item.price}
+          </ZText>
+          <View style={styles.locationContainer}>
+            {item.location.cityName && (
+              <>
+                <Icon as={Location_Icon} />
+                <ZText type={'R16'}>
+                  {item.location.placeName}
+                </ZText>
+              </>
+            )}
+          </View>
+          
+          <ZText type={'R16'} >
+             {item.title}
+          </ZText>
+         </TouchableOpacity> 
+        </VStack>
+        <Divider className="my-0.5"/>
+        <View style={styles.detailsContainer}>
+            <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
+                 <VStack>
+                     <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Telephone_Icon} size={'xxl'} /></View>
+                     <View style={{paddingVertical: 10}}>
+                        <ZText type={'R14'}>Call</ZText>
+                     </View>
+                 </VStack>
+                 <VStack>
+                     <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Chat_Icon} size={'xxl'} /></View>
+                     <View style={{paddingVertical: 10}}>
+                        <ZText type={'R14'}>Chat</ZText>
+                     </View>
+                 </VStack>
+                 <VStack>
+                     <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Whatsapp_Icon} size={'xxl'} /></View>
+                     <View style={{paddingVertical: 10}}>
+                        <ZText type={'R14'}>Whatsapp</ZText>
+                     </View>
+                 </VStack>
+                 <VStack>
+                     <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Calender_Icon}  size={'xxl'} /></View>
+                     <View style={{paddingVertical: 10}}>
+                        <ZText type={'R14'}>Appointment</ZText>
+                     </View>
+                 </VStack>
+            </HStack>  
+        </View>
+      </View>
+    );
+  };
 
 
   return (

@@ -68,6 +68,7 @@ import Calender_Icon from './icons/calender.svg';
 import Chat_Icon from './icons/chat.svg';
 import Telephone_Icon from './icons/telephone.svg';
 import Whatsapp_Icon from './icons/whatsapp.svg';
+import Share_Icon from './icons/share.svg';
 
 export {
   Follower_Icon,
@@ -135,5 +136,6 @@ export {
   Calender_Icon,
   Chat_Icon,
   Telephone_Icon,
-  Whatsapp_Icon
+  Whatsapp_Icon,
+  Share_Icon
 };

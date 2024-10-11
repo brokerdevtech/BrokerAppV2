@@ -25,7 +25,7 @@ import {
   postsImagesBucketPath,
 } from '../../config/constants';
 
-interface ProductSectionProps {
+interface BrandSectionProps {
   heading: string;
   background: string;
   endpoint: string;
@@ -33,20 +33,17 @@ interface ProductSectionProps {
   request: ListDashboardPostRequest;
 }
 
-const ProductSection = (props: ProductSectionProps) => {
+const BrandSection = (props: BrandSectionProps) => {
   const {data, status, error, execute} = useApiRequest(fetchDashboardData);
   const navigation = useNavigation();
 
-  const callPodcastList = async () => {
+  const callBrandList = async () => {
     await execute(props.endpoint, props.request);
     console.log(props.heading, 'data :-', data);
-
-    console.log('status :-', status);
-    console.log('error :-', error);
   };
 
   useEffect(() => {
-    callPodcastList();
+    callBrandList();
   }, [props]);
 
   const renderProductItems = ({item, index}) => {
@@ -58,41 +55,7 @@ const ProductSection = (props: ProductSectionProps) => {
             uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
           }}
           style={styles.carImage}
-        />
-
-        {/* Check and Heart Icons */}
-        <View style={styles.iconContainer}>
-          <View style={styles.checkIcon}>
-            {/* <Icon as={card_check_icon} /> */}
-            <Card_check_icon />
-          </View>
-          <TouchableOpacity style={{}}>
-            {/* <heart_icon /> */}
-            <Heart_icon accessible={true} fontSize={25} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Car Details */}
-        <View style={styles.detailsContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', {listType: 'PROPERTY', postId: item.postId})}>
-          <ZText type={'R16'} style={styles.price}>
-            $ {item.price}
-          </ZText>
-          <View style={styles.locationContainer}>
-            {item.city && (
-              <>
-                <Icon as={Map_pin} />
-                <ZText type={'R16'} style={styles.locationText}>
-                  {item.city}
-                </ZText>
-              </>
-            )}
-          </View>
-          <ZText type={'R16'} style={styles.carBrand}>
-            {item.title}
-          </ZText>
-          </TouchableOpacity>
-        </View>
+        />        
       </View>
     );
   };
@@ -234,4 +197,4 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
-export default ProductSection;
+export default BrandSection;

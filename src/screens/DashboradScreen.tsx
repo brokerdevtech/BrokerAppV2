@@ -31,7 +31,7 @@ import {Heading} from '@/components/ui/heading';
 import {Box} from '@/components/ui/box';
 import {Button} from '@/components/ui/button';
 import Footer from './Dashboard/Footer';
-import BrandAssociated from './Dashboard/BrandAssociated';
+import BrandSection from './Dashboard/BrandSection';
 import ProductSection from './Dashboard/ProductSection';
 import UserProfile from '../sharedComponents/profile/UserProfile';
 import MarqueeBanner from '../sharedComponents/profile/MarqueeBanner';
@@ -217,12 +217,14 @@ export default function DashboradScreen() {
           heading={'Newly Launch'}
           background={'#FFFFFF'}
           endpoint={`NewlyLaunch`}
+          isShowAll={false}
           request={{pageNo: 1, pageSize: 10, cityName: AppLocation.City}}
         />
         <ProductSection
           heading={'New In Property'}
           background={'#F7F8FA'}
           endpoint={`Newin`}
+          isShowAll={true}
           request={{
             pageNo: 1,
             pageSize: 10,
@@ -234,6 +236,7 @@ export default function DashboradScreen() {
           heading={'New In Car'}
           background={'#FFFFFF'}
           endpoint={`Newin`}
+          isShowAll={true}
           request={{
             pageNo: 1,
             pageSize: 10,
@@ -241,18 +244,6 @@ export default function DashboradScreen() {
             categoryId: 2,
           }}
         />
-        {/* <ProductSection
-          heading={'New In Loan'}
-          background={'#F7F8FA'}
-          endpoint={`Newin`}
-          request={{
-            pageNo: 1,
-            pageSize: 10,
-            cityName: AppLocation.City,
-            categoryId: 4,
-          }}
-        /> */}
-
         {/* Podcast */}
         <View style={styles.container}>
           <HStack space="md" reversed={false} style={styles.heading}>
@@ -274,7 +265,18 @@ export default function DashboradScreen() {
             />
           </HStack>
         </View>
-        <BrandAssociated />
+        <BrandSection
+          heading={'Brands Associated'}
+          background={'#FFFFFF'}
+          endpoint={`Newin`}
+          isShowAll={true}
+          request={{
+            pageNo: 1,
+            pageSize: 10,
+            cityName: AppLocation.City,
+            categoryId: 2,
+          }}
+        />
         <Footer />
       </View>
     </ScrollView>
