@@ -1,34 +1,19 @@
 import React, {useEffect, useState} from 'react';
+
+import {ScrollView, StyleSheet} from 'react-native';
+
+import ZText from './ZText';
+import {useFocusEffect} from '@react-navigation/native';
 import {
-  Container,
-  Content,
-  Form,
-  Item,
-  Input,
-  Label,
-  Button,
-  CheckBox,
-  Text,
-  Stack,
-  Box,
-} from 'native-base';
-import ZSafeAreaView from '../../components/common/ZSafeAreaView';
-import ZHeader from '../../components/common/ZHeader';
-import {Alert, PermissionsAndroid, ScrollView, StyleSheet} from 'react-native';
-import {styles} from '../../themes';
-import FileUpload from '../../components/common/FileUpload';
-import {useFocusEffect, useRoute} from '@react-navigation/native';
-import {getList, updateNestedObject} from '../../utils/helpers';
-import {useSelector} from 'react-redux';
-import DatePicker from 'react-native-datepicker';
-import AppBaseContainer from '../../Hoc/AppBaseContainer';
-import {
-  UpdateProfile,
   getProfile,
-} from '../../../BrokerAppCore/services/profileService';
-import ZText from '../../components/common/ZText';
-import {performStorageOperation} from '../../utils/appPermission';
-import {openSettings} from 'react-native-permissions';
+  UpdateProfile,
+} from '../../BrokerAppCore/services/new/profileServices';
+import {getList, updateNestedObject} from '../utils/helpers';
+import {Box} from '../../components/ui/box';
+import FileUpload from './FileUpload';
+import AppBaseContainer from '../hoc/AppBaseContainer_old';
+import {styles} from '../themes';
+import {useApiRequest} from '../hooks/useApiRequest';
 
 const ProfileKyc: React.FC = ({
   isPageSkeleton,
@@ -39,6 +24,7 @@ const ProfileKyc: React.FC = ({
   navigation,
   user,
   color,
+  toastMessage,
   route,
 }) => {
   const [panName, setPanName] = useState('');
@@ -51,21 +37,24 @@ const ProfileKyc: React.FC = ({
   const [certifiedBroker, setCertifiedBroker] = useState(false);
   const [Profiledata, setProfiledata] = useState(route.params?.data || {});
   const [ProfileDataRest, setProfileDataRest] = useState(false);
-
+  const {
+    data: profiledata,
+    status: profilestatus,
+    error: profileerror,
+    execute: profileexecute,
+  } = useApiRequest(getProfile, setLoading);
+  const {
+    data: profileUpdatedata,
+    status: profileUpdatestatus,
+    error: profileUpdateerror,
+    execute: profileUpdateexecute,
+  } = useApiRequest(UpdateProfile, setLoading);
   useFocusEffect(
     React.useCallback(() => {
-      toggleSkeletonOn();
+      //   toggleSkeletonOn();
       const getUserProfile = async () => {
         try {
-          const result = await getProfile(user.userId);
-
-          setProfiledata(result.data);
-          // const performStorage = await  performStorageOperation();
-          // console.log(performStorage);
-          // if(performStorage==false){
-          //   navigation.goBack();
-          // }
-          toggleSkeletonoff();
+          await profileexecute(user.userId);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
@@ -78,310 +67,130 @@ const ProfileKyc: React.FC = ({
       };
     }, [ProfileDataRest]),
   );
-
-  // const route = useRoute();
-  // const user = useSelector((state: RootState) => state.user.user);
-  // const Profiledata = route.params?.data || {};
-
-  // useEffect(() => {
-  //   toggleSkeletonOn();
-  //   const delay = async () => {
-  //     // Delay for 3 seconds
-  //     await new Promise(resolve => setTimeout(resolve, 3000));
-
-  //     // After the delay, update the message
-  //     toggleSkeletonoff();
-  //     setLoading(true);
-  //     await new Promise(resolve => setTimeout(resolve, 3000));
-  //     setLoading(false);
-  //   };
-  //   delay();
-
-  // }, []);
-
-  const handleSubmit = async docId => {
-    const updateObj = {uidNumberBlob: docId};
-
+  useEffect(() => {
+    if (profilestatus == 200) {
+      setProfiledata(profiledata.data);
+    }
+  }, [profilestatus]);
+  useEffect(() => {
+    if (profileUpdatestatus === 200) {
+      toastMessage('Document upoaded');
+      setProfiledata(profileUpdatedata.data);
+      console.log('++++++=================================================');
+      console.log(profileUpdatedata);
+    }
+  }, [profileUpdatestatus]);
+  const handleSubmit = async (docId, fieldName, successMessage) => {
+    const updateObj = {[fieldName]: docId};
     const deletions = [
       'roles',
       'industries',
       'specializations',
       'userLocations',
     ];
-    let Result: any = updateNestedObject(Profiledata, updateObj, deletions);
+    let Result = updateNestedObject(Profiledata, updateObj, deletions);
 
     Result = {
       ...Result,
       industry: getList(Profiledata.industries),
       specialization: getList(Profiledata.specializations),
+      cityName: Profiledata.location.cityName,
+      stateName: Profiledata.location.stateName,
+      countryName: Profiledata.location.countryName,
       userLocation: [],
     };
-
-    setLoading(true);
-    let k = await UpdateProfile(Result);
-    setProfiledata({...Profiledata, uidNumberBlob: docId});
-    setLoading(false);
-    // Handle form submission here
-    // You can access panName, panNumber, and attachments from state
-    // You can also access certifiedBroker to check if the user wants to be a certified broker
+    delete Result['location'];
+    delete Result['officeLocation'];
+    delete Result['userPermissions'];
+    console.log('++++++++++++++++++++++++++++++++');
+    console.log(Result);
+    await profileUpdateexecute(Result);
+    setProfiledata({...Profiledata, [fieldName]: docId});
   };
-  const handleSubmitPANNumber = async docId => {
-    const updateObj = {uidNumberBlob: docId};
 
-    const deletions = [
-      'roles',
-      'industries',
-      'specializations',
-      'userLocations',
-    ];
-    let Result: any = updateNestedObject(Profiledata, updateObj, deletions);
-
-    Result = {
-      ...Result,
-      industry: getList(Profiledata.industries),
-      specialization: getList(Profiledata.specializations),
-      userLocation: [],
-    };
-
-    setLoading(true);
-    let k = await UpdateProfile(Result);
-    setProfiledata({...Profiledata, uidNumberBlob: docId});
-    setLoading(false);
-    await toast.closeAll();
-    if (!toast.isActive(2)) {
-   toast.show({
-      id: 2,
-      render: () => {
-        return (
-          <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-            Document uploaded successfully
-          </Box>
-        );
-      },
-    });
-  }
-    // Handle form submission here
-    // You can access panName, panNumber, and attachments from state
-    // You can also access certifiedBroker to check if the user wants to be a certified broker
-  };
-  const handleSubmitAddressProof = async docId => {
-    const updateObj = {addressProofBlob: docId};
-
-    const deletions = [
-      'roles',
-      'industries',
-      'specializations',
-      'userLocations',
-    ];
-    let Result: any = updateNestedObject(Profiledata, updateObj, deletions);
-
-    Result = {
-      ...Result,
-      industry: getList(Profiledata.industries),
-      specialization: getList(Profiledata.specializations),
-      userLocation: [],
-    };
-
-    setLoading(true);
-    let k = await UpdateProfile(Result);
-    setProfiledata({...Profiledata, addressProofBlob: docId});
-    setLoading(false);
-    // toast.closeAll();
-    await toast.closeAll();
-    if (!toast.isActive(2)) {
-   toast.show({
-      id: 2,
-      render: () => {
-        return (
-          <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-            Document uploaded successfully
-          </Box>
-        );
-      },
-    });
-  }
-    // Handle form submission here
-    // You can access panName, panNumber, and attachments from state
-    // You can also access certifiedBroker to check if the user wants to be a certified broker
-  };
-  const handleSubmitReraRegistration = async docId => {
-    const updateObj = {reraRegistrationBlob: docId};
-
-    const deletions = [
-      'roles',
-      'industries',
-      'specializations',
-      'userLocations',
-    ];
-    let Result: any = updateNestedObject(Profiledata, updateObj, deletions);
-
-    Result = {
-      ...Result,
-      industry: getList(Profiledata.industries),
-      specialization: getList(Profiledata.specializations),
-      userLocation: [],
-    };
-
-    setLoading(true);
-    let k = await UpdateProfile(Result);
-    setProfiledata({...Profiledata, reraRegistrationBlob: docId});
-    setLoading(false);
-    // toast.closeAll();
-    await toast.closeAll();
-    if (!toast.isActive(2)) {
-   toast.show({
-      id: 2,
-      render: () => {
-        return (
-          <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-            Document uploaded successfully
-          </Box>
-        );
-      },
-    });
-  }    // Handle form submission here
-    // You can access panName, panNumber, and attachments from state
-    // You can also access certifiedBroker to check if the user wants to be a certified broker
-  };
-  const handleSubmitcompanyLogo = async docId => {
-    const updateObj = {companyLogoBlob: docId};
-
-    const deletions = [
-      'roles',
-      'industries',
-      'specializations',
-      'userLocations',
-    ];
-    let Result: any = updateNestedObject(Profiledata, updateObj, deletions);
-
-    Result = {
-      ...Result,
-      industry: getList(Profiledata.industries),
-      specialization: getList(Profiledata.specializations),
-      userLocation: [],
-    };
-
-    setLoading(true);
-    let k = await UpdateProfile(Result);
-    setProfiledata({...Profiledata, companyLogoBlob: docId});
-    setLoading(false);
-    // toast.closeAll();
-    await toast.closeAll();
-    if (!toast.isActive(2)) {
-   toast.show({
-      id: 2,
-      render: () => {
-        return (
-          <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-            Document uploaded successfully
-          </Box>
-        );
-      },
-    });
-  }
-    // Handle form submission here
-    // You can access panName, panNumber, and attachments from state
-    // You can also access certifiedBroker to check if the user wants to be a certified broker
-  };
-  const handleSubmitvisitingCard = async docId => {
-    const updateObj = {visitingCardBlob: docId};
-
-    const deletions = [
-      'roles',
-      'industries',
-      'specializations',
-      'userLocations',
-    ];
-    let Result: any = updateNestedObject(Profiledata, updateObj, deletions);
-
-    Result = {
-      ...Result,
-      industry: getList(Profiledata.industries),
-      specialization: getList(Profiledata.specializations),
-      userLocation: [],
-    };
-
-    setLoading(true);
-    let k = await UpdateProfile(Result);
-    setProfiledata({...Profiledata, visitingCardBlob: docId});
-    setLoading(false);
-    // toast.closeAll();
-    await toast.closeAll();
-    if (!toast.isActive(2)) {
-   toast.show({
-      id: 2,
-      render: () => {
-        return (
-          <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
-            Document uploaded successfully
-          </Box>
-        );
-      },
-    });
-  }
-
-    // Handle form submission here
-    // You can access panName, panNumber, and attachments from state
-    // You can also access certifiedBroker to check if the user wants to be a certified broker
-  };
   return (
     <ScrollView
       bounces={false}
       showsVerticalScrollIndicator={false}
       style={localStyles.root}>
-      <Stack my="5">
-        <FileUpload
-          id="1"
-          Bucket="kycbrokerapp"
-          DisplayText="Upload PAN Number"
-          setLoading={setLoading}
-          OnUpload={handleSubmitPANNumber}
-          FileValue={Profiledata.uidNumberBlob}
-          islocked={true}
-          FileValueText="PAN Number is Uploaded "></FileUpload>
-      </Stack>
-      <Stack my="5">
-        <FileUpload
-          id="2"
-          Bucket="kycbrokerapp"
-          DisplayText="Upload Address Proof"
-          setLoading={setLoading}
-          OnUpload={handleSubmitAddressProof}
-          FileValue={Profiledata.addressProofBlob}
-          islocked={true}
-          FileValueText="Address Proof is Uploaded "></FileUpload>
-      </Stack>
-      <Stack my="5">
-        <FileUpload
-          id="3"
-          Bucket="kycbrokerapp"
-          DisplayText="Upload Rera Registration"
-          setLoading={setLoading}
-          OnUpload={handleSubmitReraRegistration}
-          FileValue={Profiledata.reraRegistrationBlob}
-          islocked={true}
-          FileValueText="Rera Registration is Uploaded "></FileUpload>
-      </Stack>
-      <Stack my="5">
-        <FileUpload
-          id="4"
-          DisplayText="Upload visiting Card"
-          FileValue={Profiledata.reraRegistrationBlob}
-          FileValueText={Profiledata.reraRegistrationBlob}
-          setLoading={setLoading}
-          islocked={false}
-          OnUpload={handleSubmitvisitingCard}></FileUpload>
-      </Stack>
-      <Stack my="5">
-        <FileUpload
-          id="5"
-          DisplayText="Upload Company Logo"
-          FileValue={Profiledata.visitingCardBlob}
-          FileValueText={Profiledata.visitingCardBlob}
-          islocked={false}
-          setLoading={setLoading}
-          OnUpload={handleSubmitcompanyLogo}></FileUpload>
-      </Stack>
+      <FileUpload
+        id="1"
+        Bucket="kycbrokerapp"
+        DisplayText="Upload PAN Number"
+        setLoading={setLoading}
+        OnUpload={docId =>
+          handleSubmit(docId, 'uidNumberBlob', 'PAN Uploaded Successfully')
+        }
+        FileValue={Profiledata.uidNumberBlob}
+        islocked={true}
+        FileValueText="PAN Number is Uploaded "
+      />
+
+      <FileUpload
+        id="2"
+        Bucket="kycbrokerapp"
+        DisplayText="Upload Address Proof"
+        setLoading={setLoading}
+        OnUpload={docId =>
+          handleSubmit(
+            docId,
+            'addressProofBlob',
+            'Address Proof Uploaded Successfully',
+          )
+        }
+        FileValue={Profiledata.addressProofBlob}
+        islocked={true}
+        FileValueText="Address Proof is Uploaded "
+      />
+
+      <FileUpload
+        id="3"
+        Bucket="kycbrokerapp"
+        DisplayText="Upload Rera Registration"
+        setLoading={setLoading}
+        OnUpload={docId =>
+          handleSubmit(
+            docId,
+            'reraRegistrationBlob',
+            'Rera Registration Uploaded Successfully',
+          )
+        }
+        FileValue={Profiledata.reraRegistrationBlob}
+        islocked={true}
+        FileValueText="Rera Registration is Uploaded "
+      />
+
+      <FileUpload
+        id="4"
+        DisplayText="Upload visiting Card"
+        FileValue={Profiledata.reraRegistrationBlob}
+        FileValueText={Profiledata.reraRegistrationBlob}
+        setLoading={setLoading}
+        islocked={false}
+        OnUpload={docId =>
+          handleSubmit(
+            docId,
+            'visitingCardBlob',
+            'Visiting Card Uploaded Successfully',
+          )
+        }
+      />
+
+      <FileUpload
+        id="5"
+        DisplayText="Upload Company Logo"
+        FileValue={Profiledata.visitingCardBlob}
+        FileValueText={Profiledata.visitingCardBlob}
+        islocked={false}
+        setLoading={setLoading}
+        OnUpload={docId =>
+          handleSubmit(
+            docId,
+            'companyLogoBlob',
+            'Company Logo Uploaded Successfully',
+          )
+        }
+      />
 
       {(Profiledata.uidNumberBlob != '' ||
         Profiledata.addressProofBlob != '' ||

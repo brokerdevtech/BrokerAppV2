@@ -107,9 +107,11 @@ const FollowerList: React.FC = ({
 
       if (listType === 'Followers') {
         followercurrentPage_Set(1);
+        followerhasMore_Set(true);
         await followerexecute(route.params.userId, searchText);
       } else {
         followingcurrentPage_Set(1);
+        followinghasMore_Set(true);
         await followingexecute(route.params.userId, searchText);
       }
       pageTitle(`${listType}`);
@@ -129,7 +131,7 @@ const FollowerList: React.FC = ({
 //console.log(followerdata);
 
     if (followerstatus === 200 && followerdata?.length > 0) {
-      console.log(followerdata);
+     // console.log(followerdata);
       setuserLists(followerdata);
     } else if (followingstatus === 200 && followingdata?.length > 0) {
       setuserLists(followingdata);
@@ -168,11 +170,14 @@ const FollowerList: React.FC = ({
           _onFocus={onHighlightInput}
           onBlur={onUnHighlightInput}
         />
-        <View>
+     <View style={{ flex: 1 }}>
           <FlatList
             data={userLists}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
+            initialNumToRender={5}
+            maxToRenderPerBatch={5} // Default is 10
+            removeClippedSubviews={true}
             renderItem={({item, index}) => (
               <View
                 style={{
@@ -197,10 +202,11 @@ const FollowerList: React.FC = ({
               </View>
             )}
             contentContainerStyle={{
-              paddingBottom: 60,
+              paddingBottom: 50,
+              flexGrow: 1,
             }}
             keyExtractor={(item, index) => index.toString()}
-            onEndReachedThreshold={0.3}
+            onEndReachedThreshold={0.5}
             onEndReached={loadMore}
             ListFooterComponent={
               isInfiniteLoading ? (

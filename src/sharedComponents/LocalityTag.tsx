@@ -19,49 +19,55 @@ interface LocalityTagProps {
 const LocalityTag: React.FC<LocalityTagProps> = ({
   onLocalityChange,
   isMandatory = false,
+  screenType = 'default',
+  placeholder = 'Location',
+  selectedLocation = [],
   resetSignal,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [localities, setLocalities] = useState([]);
+  const [localities, setLocalities] = useState(selectedLocation);
   useEffect(() => {
     setLocalities([]);
-    // Add any other state resets here
+    setLocalities(selectedLocation);
   }, [resetSignal]);
   const handleModalOpen = () => {
     setModalVisible(true);
   };
   const handlePlaceSelected = (place: any) => {
     setLocalities([{place}]);
-    // setModalVisible(false);
 
     onLocalityChange(place);
-    // setModalVisible(false);
-    //
-    //
   };
   const removeLocality = (placeID: string) => {
     const updatedLocalities = localities.filter(
       loc => loc.place.placeID !== placeID,
     );
     setLocalities(updatedLocalities);
+
     onLocalityChange(localities);
   };
+  console.log(localities);
+  const selectedLocalityName =
+    localities.length > 0
+      ? localities[0].place.placeName.length > 20
+        ? localities[0].place.placeName.substring(0, 20) + '...'
+        : localities[0].place.placeName
+      : placeholder;
+
+  // console.log(selectedLocation, 't');
   return (
     <TouchableOpacity onPress={handleModalOpen}>
-      <HStack style={(styles.flexRow, styles.contentCenter, localStyles.input)}>
+      <HStack
+        style={
+          (styles.flexRow,
+          styles.contentCenter,
+          screenType == 'default'
+            ? localStyles.input
+            : localStyles.inputPersonalDetail)
+        }>
         {/* <MapPin onPress={handleModalOpen} /> */}
-        <ZText
-          type={'R16'}
-          style={[
-            typography.fontSizes.f16,
-            {
-              fontWeight: '600',
-              // marginBottom: 10,
-              color: '#000000',
-              marginLeft: 0,
-            },
-          ]}>
-          Location
+        <ZText type={'R16'} style={[typography.fontSizes.f16]}>
+          {selectedLocalityName}
         </ZText>
         {isMandatory && (
           <Text style={[typography.fontSizes.f16, {color: 'red'}]}> *</Text>
@@ -75,11 +81,9 @@ const LocalityTag: React.FC<LocalityTagProps> = ({
         {localities.map(option => (
           <TouchableOpacity
             key={option.place.placeID}
-            style={[localStyles.tagsWrap, localStyles.selectedTag]}
-            // onPress={() =>  removeLocality(option.place.placeID)}
-          >
-            <ZText type={'r16'} style={[localStyles.selectedTagText]}>
-              {option.place.name}
+            style={[localStyles.tagsWrap, localStyles.selectedTag]}>
+            <ZText type={'r16'} style={localStyles.selectedTagText}>
+              {option.place.placeName}
             </ZText>
           </TouchableOpacity>
         ))}
@@ -138,14 +142,26 @@ const localStyles = StyleSheet.create({
     color: 'white',
     // borderColor: '#007dc5',
   },
+  disableselectedTag: {
+    backgroundColor: Color.primaryDisable,
+    color: 'white',
+    // borderColor: '#007dc5',
+  },
   unselectedTagText: {
-    backgroundColor: 'transparent',
-    color: '#1D7BBF',
-    borderColor: '#1D7BBF',
+    color: '#000',
   },
   selectedTagText: {color: '#fff'},
   tagText: {
     color: '#007dc5',
+  },
+  inputPersonalDetail: {
+    borderWidth: 0,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    padding: 10,
+    // marginBottom: 20,
+    backgroundColor: '#f9f9f9',
+    height: 43,
   },
 });
 

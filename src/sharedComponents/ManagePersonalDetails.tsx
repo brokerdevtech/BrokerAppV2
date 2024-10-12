@@ -1,55 +1,43 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
   Keyboard,
-  Platform,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {
-  Select,
-  Stack,
-  Button,
-  Text,
-  ScrollView,
-  Box,
-  Input,
-  HStack,
   KeyboardAvoidingView,
-} from 'native-base';
-import ZSafeAreaView from '../../components/common/ZSafeAreaView';
-import ZHeader from '../../components/common/ZHeader';
-import {useRoute} from '@react-navigation/native';
-import {colors, styles} from '../../themes';
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+
+import {styles} from '../themes';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import DBMultiSelectPicker from '../../components/DBMultiSelectPicker';
-import {
-  getCityList,
-  getCountryList,
-  getStateList,
-} from '../../../BrokerAppCore/services/authService';
+
 import DatePicker from 'react-native-date-picker';
-// import RNDateTimePicker from '@react-native-community/datetimepicker';
+
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {moderateScale} from '../../common/constants';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {getList, updateNestedObject} from '../../utils/helpers';
+import AppBaseContainer from '../hoc/AppBaseContainer_old';
+import {Color} from '../styles/GlobalStyles';
+import typography from '../themes/typography';
+import {Box} from '../../components/ui/box';
+import ZText from './ZText';
+import {Input, InputField} from '../../components/ui/input';
+import {HStack} from '../../components/ui/hstack';
+import {Button} from '../../components/ui/button';
+import SingleSelectComponent from './SingleSelectComponent';
+import {Icon} from '../../components/ui/icon';
+import {Calender_Icon} from '../assets/svg';
+import LocalityTag from './LocalityTag';
+import MultiSelectComponent from './MultiSelectModal';
+import {useApiRequest} from '../hooks/useApiRequest';
+import {getBrokerCategoryList} from '../../BrokerAppCore/services/new/authService';
+import {UpdateProfile} from '../../BrokerAppCore/services/new/profileServices';
+import {setUser} from '../../BrokerAppCore/redux/store/user/userSlice';
+import store from '../../BrokerAppCore/redux/store';
+import {getList, updateNestedObject} from '../utils/helpers';
+import {Toast, ToastDescription} from '../../components/ui/toast';
 import {useSelector} from 'react-redux';
-import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
-import {UpdateProfile} from '../../../BrokerAppCore/services/profileService';
-import AppBaseContainer from '../../Hoc/AppBaseContainer';
-import store from '../../../BrokerAppCore/redux/store';
-import {setUser} from '../../../BrokerAppCore/redux/store/user/userSlice';
-import typography from '../../themes/typography';
-import ZInput from '../../components/common/ZInput';
-import ZText from '../../components/common/ZText';
-import DropDownPicker from 'react-native-dropdown-picker';
-import DropDownHandler from '../../components/DropDownHandler';
-import {color} from 'native-base/lib/typescript/theme/styled-system';
-import {Color} from '../../styles/GlobalStyles';
-import SingleSelectComponent from '../../components/Genric/SingleSelectComponent';
+import {RootState} from '../../BrokerAppCore/redux/store/reducers';
+
 const validationSchema = yup.object().shape({
   firstName: yup.string().required('First Name is required'),
   lastName: yup.string().required('Last Name is required'),
@@ -61,9 +49,8 @@ const validationSchema = yup.object().shape({
     .string()
     .required('Phone Number is required')
     .matches(/^\d{10}$/, 'Phone number must be exactly 10 digits'),
-  country: yup.string().required('Country is required'),
-  state: yup.string().required('State is required'),
-  city: yup.string().required('City is required'),
+  Location: yup.object().required('Location is required'),
+  officeLocation: yup.object().required('Location is required'),
   industry: yup
     .array()
     .of(yup.mixed()) // Ensure that it's an array of objects
@@ -84,6 +71,7 @@ const PersonalDetailsForm = ({
   setLoading,
   navigation,
   user,
+  toastMessage,
   color,
   route,
   toast,
@@ -95,194 +83,99 @@ const PersonalDetailsForm = ({
   const [selectedRole, setselectedRole] = useState(
     Profiledata?.roles[0].roleId,
   );
-  const [CountryData, setCountryData] = useState([]);
-  const [statesData, setstatesData] = useState([]);
-  const [cityData, setcityData] = useState([]);
+  const [toastId, setToastId] = React.useState(0);
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const [selectedCountry, setSelectedCountry] = useState(
     Profiledata?.countryId,
   );
+  const [localities, setLocalities] = useState({});
+  const [officeLocalities, setOfficeLocalities] = useState({});
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
-  // const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedState, setSelectedState] = useState(Profiledata?.stateId);
-  const [selectedcity, setselectedcity] = useState(Profiledata?.cityId);
 
-  const [openCountry, setOpenCountry] = useState(false);
-
-  const [openState, setOpenState] = useState(false);
-
-  const [openCity, setOpenCity] = useState(false);
-
+  const {
+    data: categorydata,
+    status: categorystatus,
+    error: categoryerror,
+    execute: categoryexecute,
+  } = useApiRequest(getBrokerCategoryList, setLoading);
+  const {
+    data: profileUpdatedata,
+    status: profileUpdatestatus,
+    error: profileUpdateerror,
+    execute: profileUpdateexecute,
+  } = useApiRequest(UpdateProfile, setLoading);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectDate, setselectDate] = useState(
     Profiledata?.reraExpiryDate
       ? new Date(`${Profiledata.reraExpiryDate}T00:00:00`)
       : '',
   );
+
   const minDate = new Date();
   const formikRef = useRef();
-  //useEffect for CountryData
+  // console.log(user, 'user');
+  const onFiltersLocalityChange = Localitys => {
+    formikRef.current.handleBlur('Location');
+    formikRef.current.setFieldValue('Location', Localitys);
+    setLocalities(Localitys);
+  };
+  const onFiltersOfficeLocalityChange = Localitys => {
+    formikRef.current.handleBlur('officeLocation');
+    formikRef.current.setFieldValue('officeLocation', Localitys);
+    setOfficeLocalities(Localitys);
+  };
+  const fetchCategoryData = async () => {
+    await categoryexecute();
+  };
+
   useEffect(() => {
-    setLoading(true);
+    fetchCategoryData();
   }, []);
-
   useEffect(() => {
-    const getCountryListFromApi = async () => {
-      try {
-        const result = await getCountryList();
+    if (profileUpdatestatus == 200) {
+      const fetdata = async () => {
+        let obj = {
+          ...user,
+          firstName: profileUpdatedata.data.firstName,
+          lastName: profileUpdatedata.data.lastName,
+        };
 
-        setCountryData(result.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    setLoading(true);
-    getCountryListFromApi();
-    // setTimeout(() => { setLoading(false);},1000);
+        store.dispatch(setUser(obj));
 
-    // const response:any =  getCountryList();
-    // ""
-    //
-    // response.then((res:any)=> {
-    //   ""
-    //
-    //   })
-    //   .catch((error:any) => {
-    //
-    //
-    //   });
-    // // fetch('https://broker1.azurewebsites.net/api/v1/Registration/CountryList')
-    // // .then(response => {
-    // //   if (!response.ok) {
-    // //     throw new Error(`Network response was not ok: ${response.status}`);
-    // //   }
-    // //   return response.json(); // Parse the response body as JSON
-    // // })
-    // // .then(data => {
-    // //   // Update the state with the fetched data
-    // //
-    // //
-    // // })
-    // // .catch(error => {
-    // //
-    // //   // Handle any errors that occurred during the fetch
-    // //
-    // // });
-
-    // // const headers = {
-    // //  // Example Authorization header
-    // //  'Accept': 'application/json',
-    // //   'content-type': 'application/json', // Example Content-Type header
-    // //   // Add more custom headers as needed
-    // // };
-
-    // // axios.get('https://broker1.azurewebsites.net/api/v1/Registration/CountryList')
-    // // .then(response => {
-    // //
-    // // })
-    // // .catch(error => {
-    // //
-    // //
-    // // });
-
-    // // https://broker1.azurewebsites.net/api/v1/
-    // // axios.get('http://10.0.2.2:7265/api/v1/Registration/CountryList')
-    // // .then(response => {
-    // //
-    // // })
-    // // .catch(error => {
-    // //
-    // //
-    // // });
-    // // Make an API call to fetch the country list
-    // // const response = getCountryList();
-    // //
-    // // response.then(response => {
-    // //
-    // //
-    // // })
-    // // .catch(error => {
-    // //   ""
-    // //   console.error('Error fetching country list:', error);
-    // // });
-
-    // //
-  }, []);
-  //useEffect for statesData
-  useEffect(() => {
-    if (selectedCountry) {
-      const getStateListFromApi = async () => {
-        try {
-          const result = await getStateList(selectedCountry);
-
-          setstatesData(result.data);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
+        navigation.navigate('ProfileScreen');
       };
-
-      getStateListFromApi();
+      fetdata();
     }
-  }, [selectedCountry]);
-  //useEffect for selectedcity
-  useEffect(() => {
-    if (selectedState) {
-      const getCityListFromApi = async () => {
-        try {
-          const result = await getCityList(selectedState);
-          setLoading(false);
-
-          setcityData(result.data);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-
-      getCityListFromApi();
-    }
-  }, [selectedState]);
-  const handleCountryChange = value => {
-    if (value != selectedCountry) {
-      setSelectedState('');
-      setstatesData([]);
-    }
-    setSelectedCountry(value);
-
-
-  };
-  const handleStateChange = value => {
-    if (value != selectedState) {
-      setselectedcity('');
-      setcityData([]);
-    }
-    setSelectedState(value);
-
-  };
-  const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      formikRef.current.setFieldValue('reraExpiryDate', selectedDate);
-      setselectDate(selectedDate);
-    }
-  };
+  }, [profileUpdatestatus]);
+  const IndustryDataForSelect = categorydata?.data?.categories.map(
+    industry => ({
+      label: industry.categoryName,
+      value: industry.categoryId,
+    }),
+  );
   const handleSubmit = async values => {
-
     try {
-    
- 
-      // Handle form submission here
+      console.log(values, 'val');
       Keyboard.dismiss();
       const year = selectDate.getFullYear().toString();
       const month = (selectDate.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-based, so add 1
       const day = selectDate.getDate().toString().padStart(2, '0');
+      const isLocationchanged = Profiledata.location === values.location;
 
       // Create the formatted date string as "yyyy-mm-dd"
       const formattedDate = `${year}-${month}-${day}`;
-
+      console.log(formattedDate, 'll');
+      // const mappedIndustries = values.industry.map(id => {
+      //   const matchedIndustry = IndustryDataForSelect.find(
+      //     industry => industry.value === id,
+      //   );
+      //   return {
+      //     industryName: matchedIndustry.label,
+      //     industryId: matchedIndustry.value,
+      //   };
+      // });
       const updateObj = {
-        cityId: values.city,
-        stateId: values.state,
-        countryId: values.country,
         contactNo: values.contactNo,
         experience: values.experienceInYears,
         reraExpiryDate: formattedDate,
@@ -307,56 +200,65 @@ const PersonalDetailsForm = ({
       Result = {
         ...Result,
         industry: getList(updatedArr2),
+        // industry: mappedIndustries,
+        cityName: values.Location.City || values.Location.cityName,
+        stateName: values.Location.State || values.Location.stateName,
+        countryName: values.Location.Country || values.Location.countryName,
+        officeCountryName:
+          values.officeLocation.Country || values.Location.countryName,
+        officeStateName:
+          values.officeLocation.State || values.Location.stateName,
+        officeCityName: values.officeLocation.City || values.Location.cityName,
+        officeAddress: values.officeLocation.placeName,
         specialization: getList(Profiledata.specializations),
         userLocation: [],
       };
-
-      setLoading(true);
-      let k = await UpdateProfile(Result);
-      if (k.error) {
-        toast.show({
-          description: k.error,
-        });
-        setLoading(false);
-        return;
-      } else {
-        toast.show({
-          description: 'Profile updated successfully',
-        });
-        setLoading(false);
+      delete Result['location'];
+      delete Result['officeLocation'];
+      delete Result['userPermissions'];
+      console.log(
+        '================================================================',
+      );
+      console.log(Result, 'res');
+      // console.log(profileUpdatestatus);
+      // setLoading(true);
+      await profileUpdateexecute(Result);
+      console.log(profileUpdatestatus);
+      if (profileUpdatestatus == 200) {
+        toastMessage('Profile Updated');
       }
-    
-
-      let obj = {
-        ...user,
-        firstName: k.data.firstName,
-        lastName: k.data.lastName,
-      };
-
-      await store.dispatch(setUser(obj));
-
-      setLoading(false);
-      navigation.navigate('Profile');
     } catch (error) {}
   };
 
-  const CountryDataForSelect = CountryData.map(country => ({
-    label: country.countryName,
-    value: country.countryId,
-  }));
-
-  const StatesDataForSelect = statesData.map(state => ({
-    label: state.stateName,
-    value: state.stateId,
-  }));
-  const CityDataForSelect = cityData.map(city => ({
-    label: city.cityName,
-    value: city.cityId,
-  }));
-  const handleCityChange = value => {
-    setselectedcity(value);
-   
-  };
+  console.log(IndustryDataForSelect, 'data');
+  const AlreadySelectIndustry = Profiledata.industries.map(industry => {
+    return industry.industryId;
+  });
+  // console.log(categorystatus, 'pd');
+  const locationData = [
+    {
+      place: {
+        ...Profiledata.location,
+        placeName: Profiledata.location.cityName,
+      },
+    },
+  ];
+  const OfficeLocationData = [
+    {
+      place: {
+        ...Profiledata.officeLocation,
+        placeName: Profiledata.officeLocation.cityName,
+      },
+    },
+  ];
+  useEffect(() => {
+    const catedate = async () => {
+      if (categorystatus) {
+        await categorydata;
+      }
+    };
+    catedate();
+  }, [categorystatus]);
 
   return (
     <KeyboardAvoidingView
@@ -374,9 +276,8 @@ const PersonalDetailsForm = ({
             lastName: Profiledata.lastName,
             email: Profiledata.email,
             contactNo: Profiledata.contactNo,
-            country: Profiledata.countryId,
-            state: Profiledata.stateId,
-            city: Profiledata.cityId,
+            Location: Profiledata.location,
+            officeLocation: Profiledata.officeLocation,
             industry: Profiledata.industries,
             experienceInYears: Number(Profiledata.experience),
             reraExpiryDate: Profiledata.reraExpiryDate,
@@ -397,549 +298,194 @@ const PersonalDetailsForm = ({
             handleBlur,
           }) => (
             <>
-              <Box mb="5">
-                <Stack>
-                  <ZText type={'M16'} style={localStyles.label}>
-                    First Name
-                  </ZText>
-                  <Input
-                    style={localStyles.InputFont}
-                    placeholder="First Name"
-                    value={values.firstName}
-                    onChangeText={handleChange('firstName')}
-                  />
-                  {errors.firstName && (
-                    <Box pl="3" mt="2">
-                      <ZText type={'R12'} style={styles.errorText}>
-                        {errors.firstName}
-                      </ZText>
-                    </Box>
-                  )}
-                </Stack>
-              </Box>
-              <Box mb="5">
-                <Stack>
-                  <ZText type={'M16'} style={localStyles.label}>
-                    Last Name
-                  </ZText>
-                  <Input
-                    style={localStyles.InputFont}
-                    placeholder="Last Name"
-                    value={values.lastName}
-                    onChangeText={handleChange('lastName')}
-                  />
-                  {errors.lastName && (
-                    <Box pl="3" mt="2">
-                      <ZText type={'R12'} style={styles.errorText}>
-                        {errors.lastName}
-                      </ZText>
-                    </Box>
-                  )}
-                </Stack>
-              </Box>
+              <ZText type={'R15'} style={localStyles.label}>
+                First Name
+              </ZText>
 
-              <Box mb="5">
-                <ZText type={'M16'} style={localStyles.label}>
-                  Email
+              <Input style={localStyles.input}>
+                <InputField
+                  placeholder="First Name"
+                  value={values.firstName}
+                  onChangeText={handleChange('firstName')}
+                />
+              </Input>
+              {errors.firstName && (
+                <ZText type={'R12'} style={styles.errorText}>
+                  {errors.firstName}
                 </ZText>
-                <Stack>
-                  <Input
-                    style={localStyles.InputFont}
-                    placeholder="Email"
-                    value={values.email}
-                    onChangeText={handleChange('email')}
-                  />
-                  {errors.email && (
-                    <Box pl="3" mt="2">
-                      <ZText type={'R12'} style={styles.errorText}>
-                        {errors.email}
-                      </ZText>
-                    </Box>
-                  )}
-                </Stack>
-              </Box>
+              )}
 
-              <Box mb="5">
-                <Stack>
-                  <ZText type={'M16'} style={localStyles.label}>
-                    Phone Number
-                  </ZText>
-                  <Input
-                    style={localStyles.InputFont}
-                    placeholder="Phone Number"
-                    value={values.contactNo}
-                    onChangeText={handleChange('contactNo')}
-                  />
-                  {errors.contactNo && (
-                    <Box pl="3" mt="2">
-                      <ZText type={'R12'} style={styles.errorText}>
-                        {errors.contactNo}
-                      </ZText>
-                    </Box>
-                  )}
-                </Stack>
-              </Box>
-              <Box mb="5">
-                <ZText type={'M16'} style={localStyles.label}>
-                  Industry
+              <ZText type={'R15'} style={localStyles.label}>
+                Last Name
+              </ZText>
+
+              <Input style={localStyles.input}>
+                <InputField
+                  placeholder="Last Name"
+                  value={values.lastName}
+                  onChangeText={handleChange('lastName')}
+                />
+              </Input>
+              {errors.lastName && (
+                <ZText type={'R12'} style={styles.errorText}>
+                  {errors.lastName}
                 </ZText>
-                <Stack>
-                  <DBMultiSelectPicker
-                    data={Profiledata.industries}
-                    id={'industryId'}
-                    TextValue={'industryName'}
-                    pickerName="Select Industry"
-                    onSelectionChange={value => {
-                      setFieldValue('industry', value);
-                    }}></DBMultiSelectPicker>
-                </Stack>
-                {errors.industry && (
-                  <Box pl="3" mt="2">
-                    <ZText type={'R12'} style={styles.errorText}>
-                      {errors.industry}
-                    </ZText>
-                  </Box>
-                )}
-              </Box>
-              <Box mb="5">
-                <Stack>
-                  <ZText type={'M16'} style={localStyles.label}>
-                    Country
-                  </ZText>
+              )}
 
-                  {/* <DropDownPicker
-                  placeholder="Select Country"
-                  open={openCountry}
-                  value={selectedCountry}
-                  items={CountryData}
-                  setOpen={setOpenCountry}
-                  setValue={setSelectedCountry}
-                  searchable={true}
-                  // setItems={CountryData}
-                  schema={{
-                    label: 'countryName', // required
-                    value: 'countryId', // required
-                  }}
-                  onChangeValue={value => {
-                    // console.log("onChangeValue");
-                    // handleCountryChange(value);
-                    // setFieldValue('country', value);
-                    //setFieldValue('state', '');
-                  }}
-                  onSelectItem={item => {
-                    console.log('onSelectItem');
-                    console.log(item);
-                    handleCountryChange(item.countryId);
-                    setFieldValue('country', item.countryId);
-                    setFieldValue('state', '');
-                    console.log(item);
-                  }}
-                  style={{
-                    borderRadius: 5,
-                    borderColor: '#D9D9D9',
-                    paddingLeft: 15,
-                    ...localStyles.InputFont,
-                  }}
-                  textStyle={{
-                    color: 'black',
-                    fontSize: 14,
-                  }}
-                  listMode="MODAL"
-                  searchPlaceholder="Search Country..."
-                  CloseIconComponent={() => (
-                    <Ionicons name="close-outline" size={35} color={'#000'} />
-                  )}
-                  searchTextInputStyle={{
-                    color: '#000',
-                    paddingHorizontal: 10,
-                    paddingVertical: 10,
-                  }}
-                /> */}
-                  {/* <DropDownHandler
-                  alreadySelected={selectedCountry}
-                  data={CountryDataForSelect}
-                  onValueChange={value => {
-                    setFieldValue('country', value);
-                    handleCountryChange(value);
-                  }}
-                  placeholder={'Select Country'}
-                  isDisabled={false}
-                /> */}
-                  <SingleSelectComponent
-                    data={CountryDataForSelect}
-                    onSelectionChange={value => {
-                      // console.log('Country', value);
-                      setFieldValue('country', value);
-                      handleCountryChange(value);
-                      handleBlur('country');
-                    }}
-                    displayText={
-                      selectedCountry
-                        ? Profiledata.countryName
-                        : 'Select Country'
-                    }
-                    title={'Select Country'}
-                    selectedValue={selectedCountry}
-                  />
-                  {/* <Select
-                  style={localStyles.InputFont}
-                  placeholder="Select Country"
-                  selectedValue={selectedCountry}
-                  onValueChange={value => {
-                    handleCountryChange(value);
-                    setFieldValue('country', value);
-                    setFieldValue('state', '');
-                    // setFieldValue('city', '');
-                  }}>
-                  {CountryData.map(country => (
-                    <Select.Item
-                      key={country.countryId}
-                      label={country.countryName}
-                      value={country.countryId}
-                    />
-                  ))}
-                </Select> */}
-                  {errors.country && (
-                    <Box pl="3" mt="2">
-                      <ZText type={'R12'} style={styles.errorText}>
-                        {errors.country}
-                      </ZText>
-                    </Box>
-                  )}
-                </Stack>
-              </Box>
-              <Box mb="5">
-                <Stack>
-                  <ZText type={'M16'} style={localStyles.label}>
-                    State
-                  </ZText>
-                  {/* <DropDownHandler
-                  alreadySelected={selectedState}
-                  data={StatesDataForSelect}
-                  onValueChange={value => {
-                    setFieldValue('state', value);
-                    handleStateChange(value);
-                  }}
-                  placeholder={'Select State'}
-                  isDisabled={!selectedCountry}
-                /> */}
-                  <SingleSelectComponent
-                    selectedValue={selectedState}
-                    data={StatesDataForSelect}
-                    onSelectionChange={value => {
-                      setFieldValue('state', value);
-                      handleStateChange(value);
-                      handleBlur('state');
-                    }}
-                    isDisabled={!selectedCountry}
-                    displayText={
-                      selectedState ? Profiledata.stateName : 'Select state'
-                    }
-                    title={'Select state'}
-                  />
-                  {/* <DropDownPicker
-                  placeholder="Select State"
-                  disabled={statesData.length === 0}
-                  open={openState}
-                  value={selectedState}
-                  items={statesData}
-                  setOpen={setOpenState}
-                  setValue={setSelectedState}
-                  searchable={true}
-                  // setItems={CountryData}
-                  schema={{
-                    label: 'stateName', // required
-                    value: 'stateId', // required
-                  }}
-                  onChangeValue={value => {
-                    console.log('State');
-                    console.log(value);
-                    // handleStateChange(value);
-                    // setFieldValue('state', value);
+              <ZText type={'R15'} style={localStyles.label}>
+                Email
+              </ZText>
 
-                    //setFieldValue('city', '');
-                  }}
-                  onSelectItem={item => {
-                    console.log('onSelectItem');
-                    handleStateChange(item.stateId);
-                    setFieldValue('state', item.stateId);
-                    setFieldValue('city', '');
-                    console.log(item);
-                  }}
-                  style={{
-                    borderRadius: 5,
-                    borderColor: '#D9D9D9',
-                    paddingLeft: 15,
-                  }}
-                  textStyle={{
-                    color: 'black',
-                    fontSize: 14,
-                  }}
-                  listMode="MODAL"
-                  zIndex={10000}
-                  searchPlaceholder="Search State..."
-                  CloseIconComponent={() => (
-                    <Ionicons name="close-outline" size={35} color={'#000'} />
-                  )}
-                  searchTextInputStyle={{
-                    color: '#000',
-                    paddingHorizontal: 10,
-                    paddingVertical: 10,
-                  }}
-                /> */}
-
-                  {/* <Select
-                  style={localStyles.InputFont}
-                  isDisabled={statesData.length === 0}
-                  placeholder="Select State"
-                  selectedValue={selectedState}
-                  onValueChange={value => {
-                    handleStateChange(value);
-                    setFieldValue('state', value);
-
-                    setFieldValue('city', '');
-                  }}>
-                  {statesData.map(state => (
-                    <Select.Item
-                      key={state.stateId}
-                      label={state.stateName}
-                      value={state.stateId}
-                    />
-                  ))}
-                </Select> */}
-                  {errors.state && (
-                    <Box pl="3" mt="2">
-                      <ZText type={'R12'} style={styles.errorText}>
-                        {errors.state}
-                      </ZText>
-                    </Box>
-                  )}
-                </Stack>
-              </Box>
-              <Box mb="5">
-                <ZText type={'M16'} style={localStyles.label}>
-                  city
+              <Input style={localStyles.input}>
+                <InputField
+                  placeholder="Email"
+                  value={values.email}
+                  onChangeText={handleChange('email')}
+                />
+              </Input>
+              {errors.email && (
+                <ZText type={'R12'} style={styles.errorText}>
+                  {errors.email}
                 </ZText>
-                <Stack>
-                  {/* <DropDownPicker
-                  placeholder="Select city"
-                  disabled={cityData.length === 0}
-                  open={openCity}
-                  value={selectedcity}
-                  items={cityData}
-                  setOpen={setOpenCity}
-                  setValue={setselectedcity}
-                  searchable={true}
-                  // setItems={CountryData}
-                  schema={{
-                    label: 'cityName', // required
-                    value: 'cityId', // required
-                  }}
-                  onChangeValue={value => {
-                    // setselectedcity(value);
-                    // setFieldValue('city', value);
-                    // handleBlur('city');
-                  }}
-                  onSelectItem={item => {
-                    setselectedcity(item.cityId);
-                    setFieldValue('city', item.cityId);
-                  }}
-                  style={{
-                    borderRadius: 5,
-                    borderColor: '#D9D9D9',
-                    paddingLeft: 15,
-                  }}
-                  textStyle={{
-                    color: 'black',
-                    fontSize: 14,
-                  }}
-                  listMode="MODAL"
-                  searchPlaceholder="Search City..."
-                  CloseIconComponent={() => (
-                    <Ionicons name="close-outline" size={35} color={'#000'} />
-                  )}
-                  searchTextInputStyle={{
-                    color: '#000',
-                    paddingHorizontal: 10,
-                    paddingVertical: 10,
-                  }}
-                /> */}
-                  <SingleSelectComponent
-                    data={CityDataForSelect}
-                    selectedValue={selectedcity}
-                    onSelectionChange={value => {
-                      setFieldValue('city', value);
-                      handleCityChange(value);
-                      handleBlur('city');
-                    }}
-                    isDisabled={!selectedState}
-                    displayText={
-                      selectedcity ? Profiledata.cityName : 'Select City'
-                    }
-                    title={'Select City'}
-                  />
-                  {/* <DropDownHandler
-                  data={CityDataForSelect}
-                  alreadySelected={selectedcity}
-                  onValueChange={value => {
-                    setFieldValue('city', value);
-                    handleCityChange(value);
-                  }}
-                  placeholder={'Select City'}
-                  isDisabled={!selectedState}
-                /> */}
-                  {/* <Select
-                  style={(localStyles.InputFont, localStyles.selectContainer)}
-                  isDisabled={cityData.length === 0}
-                  placeholder="Select city"
-                  selectedValue={selectedcity}
-                  onValueChange={value => {
-                    setselectedcity(value);
-                    setFieldValue('city', value);
-                  }}>
-                  {cityData.map(city => (
-                    <Select.Item
-                      key={city.cityId}
-                      label={city.cityName}
-                      value={city.cityId}
-                    />
-                  ))}
-                </Select> */}
-                </Stack>
-                {errors.city && (
-                  <Box pl="3" mt="2">
-                    <ZText type={'R12'} style={styles.errorText}>
-                      {errors.city}
-                    </ZText>
-                  </Box>
-                )}
-              </Box>
-              {/* <Box mb="5">
-              <ZText type={'M16'} style={localStyles.label}>
+              )}
+
+              <ZText type={'R15'} style={localStyles.label}>
+                Phone Number
+              </ZText>
+
+              <Input style={localStyles.input}>
+                <InputField
+                  placeholder="Phone Number"
+                  keyboardType="phone-pad"
+                  value={values.contactNo}
+                  onChangeText={handleChange('contactNo')}
+                />
+              </Input>
+              {errors.contactNo && (
+                <ZText type={'R12'} style={styles.errorText}>
+                  {errors.contactNo}
+                </ZText>
+              )}
+
+              <ZText type={'R15'} style={localStyles.label}>
                 Industry
               </ZText>
-              <Stack>
-                <DBMultiSelectPicker
-                  data={Profiledata.industries}
-                  id={'industryId'}
-                  TextValue={'industryName'}
-                  pickerName="Select Industry"
-                  onSelectionChange={value => {
-                    setFieldValue('industry', value);
-                  }}></DBMultiSelectPicker>
-              </Stack>
+              <MultiSelectComponent
+                data={IndustryDataForSelect}
+                onSelectionChange={value => {
+                  setFieldValue('industry', value);
+                }}
+                displayText={
+                  selectedCountry
+                    ? Profiledata.countryName
+                    : 'Select Industries'
+                }
+                alreadySelected={AlreadySelectIndustry}
+                title={'Select Industry'}
+                keyProperty="value"
+                valueProperty="label"
+                // selectedValue={selectedCountry}
+              />
               {errors.industry && (
-                <Box pl="3" mt="2">
-                  <ZText type={'R12'} style={styles.errorText}>
-                    {errors.industry}
-                  </ZText>
-                </Box>
+                <ZText type={'R12'} style={styles.errorText}>
+                  {errors.industry}
+                </ZText>
               )}
-            </Box> */}
-              <Box mb="5">
-                <ZText style={localStyles.label}>experience</ZText>
-                <Stack>
-                  <Input
-                    style={localStyles.InputFont}
-                    placeholder="Experience"
-                    keyboardType="numeric"
-                    min
-                    value={values.experienceInYears.toString()}
-                    onChangeText={handleChange('experienceInYears')}
-                  />
-                  {errors.experienceInYears && (
-                    <Box pl="3" mt="2">
-                      <ZText type={'R12'} style={styles.errorText}>
-                        {errors.experienceInYears}
-                      </ZText>
-                    </Box>
-                  )}
-                </Stack>
-              </Box>
-              <Box mb="5">
-                <Stack>
-                  <HStack space={3} justifyContent="space-between">
-                    <ZText type={'M16'} style={localStyles.label}>
-                      Rera Expiry Date:
-                      {selectDate != '' ? selectDate.toDateString() : ''}
-                    </ZText>
-                    <Ionicons
-                      name="calendar-outline"
-                      size={moderateScale(20)}
-                      color={color.primary}
-                      style={styles.mr5}
-                      onPress={() => {
-                        setShowDatePicker(true);
-                      }}
-                    />
-                  </HStack>
 
-                  {Platform.OS === 'android' && showDatePicker && (
-                    <DateTimePicker
-                      value={date}
-                      mode="date"
-                      is24Hour={true}
-                      display="spinner"
-                      minimumDate={minDate}
-                      onChange={handleDateChange}
-                    />
-                  )}
-                  {Platform.OS === 'ios' && (
-                    <DatePicker
-                      modal
-                      mode="date"
-                      open={showDatePicker}
-                      date={date}
-                      onConfirm={selectedDate => {
-                        setShowDatePicker(false);
-                        if (selectedDate) {
-                          formikRef.current.setFieldValue(
-                            'reraExpiryDate',
-                            selectedDate,
-                          );
-                          setselectDate(selectedDate);
-                        }
-                      }}
-                      onCancel={() => {
-                        setShowDatePicker(false);
-                      }}
-                      minimumDate={minDate}
-                    />
-                  )}
-                  {errors.reraExpiryDate && (
-                    <Box pl="3" mt="2">
-                      <ZText type={'R12'} style={styles.errorText}>
-                        {errors.reraExpiryDate}
-                      </ZText>
-                    </Box>
-                  )}
-                </Stack>
+              <ZText type={'R15'} style={localStyles.label}>
+                experience
+              </ZText>
+
+              <Input style={localStyles.input}>
+                <InputField
+                  placeholder="Experience"
+                  keyboardType="phone-pad"
+                  value={values.experienceInYears.toString()}
+                  onChangeText={handleChange('experienceInYears')}
+                />
+              </Input>
+
+              {errors.experienceInYears && (
+                <ZText type={'R12'} style={styles.errorText}>
+                  {errors.experienceInYears}
+                </ZText>
+              )}
+
+              <ZText type={'R15'} style={localStyles.label}>
+                uid
+              </ZText>
+
+              <Input style={localStyles.input}>
+                <InputField
+                  placeholder="Uid"
+                  value={values.uid}
+                  onChangeText={handleChange('uid')}
+                />
+              </Input>
+              {errors.uid && (
+                <ZText type={'R12'} style={styles.errorText}>
+                  {errors.uid}
+                </ZText>
+              )}
+              <Box mb="5" style={localStyles.BoxStyles}>
+                <LocalityTag
+                  screenType="personal"
+                  selectedLocation={locationData}
+                  onLocalityChange={onFiltersLocalityChange}
+                  isMandatory={true}
+                />
               </Box>
-              <Box mb="5">
-                <Stack>
-                  <ZText type={'M16'} style={localStyles.label}>
-                    uid
-                  </ZText>
-                  <Input
-                    style={localStyles.InputFont}
-                    placeholder="Uid"
-                    value={values.uid}
-                    onChangeText={handleChange('uid')}
-                  />
-                  {errors.uid && (
-                    <Box pl="3" mt="2">
-                      <ZText type={'R12'} style={styles.errorText}>
-                        {errors.uid}
-                      </ZText>
-                    </Box>
-                  )}
-                </Stack>
+              <Box mb="5" style={localStyles.BoxStyles}>
+                <LocalityTag
+                  screenType="personal"
+                  selectedLocation={OfficeLocationData}
+                  placeholder="Office Location"
+                  onLocalityChange={onFiltersOfficeLocalityChange}
+                  isMandatory={true}
+                />
               </Box>
+
+              <TouchableOpacity
+                onPress={() => {
+                  setShowDatePicker(true);
+                }}
+                style={styles.flexRow}>
+                <ZText type={'R16'} style={localStyles.label}>
+                  Rera Expiry Date:
+                  {selectDate != '' ? selectDate.toDateString() : ''}
+                </ZText>
+
+                <Icon as={Calender_Icon} />
+              </TouchableOpacity>
+
+              <DatePicker
+                modal
+                mode="date"
+                open={showDatePicker}
+                date={date}
+                onConfirm={selectedDate => {
+                  setShowDatePicker(false);
+                  if (selectedDate) {
+                    formikRef.current.setFieldValue(
+                      'reraExpiryDate',
+                      selectedDate,
+                    );
+                    setselectDate(selectedDate);
+                  }
+                }}
+                onCancel={() => {
+                  setShowDatePicker(false);
+                }}
+                minimumDate={minDate}
+              />
+
+              {errors.reraExpiryDate && (
+                <ZText type={'R12'} style={styles.errorText}>
+                  {errors.reraExpiryDate}
+                </ZText>
+              )}
+
               <Button
-                mt="5"
-                mb="5"
-                bg="primary.600"
-                block
                 style={[
                   styles.button,
                   dirty && isValid && styles.validButton, // Apply validButton style when form is valid
@@ -997,6 +543,15 @@ const localStyles = StyleSheet.create({
     marginRight: 0, // Adjust as needed
     backgroundColor: '#ffffff',
     borderColor: Color.primary,
+  },
+  input: {
+    borderWidth: 0,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    // padding: 10,
+    marginBottom: 20,
+    backgroundColor: '#f9f9f9',
+    height: 43,
   },
 });
 

@@ -43,9 +43,11 @@ import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import {set} from 'react-hook-form';
 import store from '../../BrokerAppCore/redux/store';
 import {setAppLocation} from '../../BrokerAppCore/redux/store/AppLocation/appLocation';
+import ZAvatarInitials from './ZAvatarInitials';
 
 const CustomHeader = () => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
+  const user = useSelector((state: RootState) => state.user.user);
   const cityToShow = 'Noida';
   const navigation = useNavigation();
   const {
@@ -76,36 +78,23 @@ const CustomHeader = () => {
   useEffect(() => {
     callPodcastList();
   }, []);
-
+  const onPressUser = () => {
+    navigation.toggleDrawer();
+  };
   // console.log('marqueeText', marqueeText);
   //onPress={() => navigation.toggleDrawer()}
+  // console.log(user);
   return (
     <View style={styles.headerSection}>
       <View style={styles.headerContainer}>
         <View style={styles.leftContainer}>
           <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-            <Avatar size="md">
-              <AvatarImage
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
-                }}
-              />
-              <View
-                style={{
-                  height: 15,
-                  width: 15,
-                  backgroundColor: 'white',
-                  position: 'absolute',
-                  bottom: 0,
-                  right: 0,
-                  borderRadius: 30,
-                  padding: 5,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <Icon as={verified_blue} size="sm" stroke="white" />
-              </View>
-            </Avatar>
+            <ZAvatarInitials
+              onPress={onPressUser}
+              sourceUrl={user.profileImage}
+              iconSize="md"
+              name={`${user.firstName} ${user.lastName}`}
+            />
           </TouchableOpacity>
           <View style={styles.appName}>
             <View style={styles.appTitleWrapper}>

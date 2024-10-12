@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable react/self-closing-comp */
 // src/screens/SettingsScreen.tsx
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,7 +14,7 @@ import {
   Pressable,
 } from 'react-native';
 
-import {Avatar, Box, Button, HStack} from 'native-base';
+// import {Avatar, Box, Button, HStack} from 'native-base';
 
 import {useSelector} from 'react-redux';
 
@@ -39,6 +41,25 @@ import {StreamChatGenerics} from '../types';
 import {GetStreamToken} from '../../BrokerAppCore/services/authService';
 
 import {Color} from '../styles/GlobalStyles';
+import TouchableOpacityWithPermissionCheck from './TouchableOpacityWithPermissionCheck';
+import AppBaseContainer from '../hoc/AppBaseContainer_old';
+import {
+  getHeight,
+  imagesBucketcloudfrontPath,
+  moderateScale,
+  PermissionKey,
+} from '../config/constants';
+import ZText from './ZText';
+import {ChevronRightIcon, Icon, ShareIcon} from '../../components/ui/icon';
+import ZSafeAreaView from './ZSafeAreaView';
+import {useFocusEffect} from '@react-navigation/native';
+import ZHeader from './ZHeader';
+import {Box} from '../../components/ui/box';
+import ZAvatarInitials from './ZAvatarInitials';
+import RenderUserDetail from './RenderUserDetails';
+import FollowUnfollowComponent from './FollowUnfollowButton';
+import ButtonWithPermissionCheck from './ButtonWithPermissionCheck';
+import {Chat_icon, Network_icon} from '../assets/svg';
 
 const OtherProfileScreen: React.FC = ({
   toast,
@@ -324,11 +345,7 @@ const OtherProfileScreen: React.FC = ({
   const RightIcon = () => {
     return (
       <TouchableOpacity onPress={shareProfile}>
-        <Ionicons
-          name="arrow-redo-outline"
-          size={moderateScale(30)}
-          color={colors.dark ? colors.primary : colors.primary}
-        />
+        <Icon as={ShareIcon} />
       </TouchableOpacity>
     );
   };
@@ -341,8 +358,14 @@ const OtherProfileScreen: React.FC = ({
           isLeftIcon={false}
           rightIcon={<RightIcon />}
         />
-        <Box flexDirection="coloum" mx="16px">
-          <TouchableOpacity onPress={selectprofilepic}>
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <TouchableOpacity
+            style={{marginBottom: 20}}
+            onPress={selectprofilepic}>
             <ZAvatarInitials
               sourceUrl={ProfileData?.profileImage}
               styles={localStyles.userImage}
@@ -353,7 +376,7 @@ const OtherProfileScreen: React.FC = ({
           </TouchableOpacity>
 
           <ZText
-            type="r18"
+            type="R18"
             align={'center'}
             style={[
               styles.mt5,
@@ -362,30 +385,29 @@ const OtherProfileScreen: React.FC = ({
             ]}>
             {ProfileData?.profileName}
           </ZText>
+        </View>
+        <View
+          style={[
+            styles.flexRow,
+            styles.justifyEvenly,
+            // styles.pl25,
+            styles.flexGrow1,
+            styles.pt15,
+            styles.mt15,
+          ]}>
+          {UserfollowersData.map((item, index) => (
+            <RenderUserDetail
+              item={item}
+              key={index}
+              ParentUserData={route.params}
+            />
+          ))}
+        </View>
 
-          <View
-            style={[
-              styles.flexRow,
-              styles.justifyEvenly,
-              // styles.pl25,
-              styles.flexGrow1,
-              styles.pt15,
-              styles.mt15,
-            ]}>
-            {UserfollowersData.map((item, index) => (
-              <RenderUserDetail
-                item={item}
-                key={index}
-                ParentUserData={route.params}
-              />
-            ))}
-          </View>
-        </Box>
-
-        <Box mx="16px" style={(styles.flexRow, localStyles.shareButton)}>
+        <View style={(styles.flexRow, localStyles.shareButton)}>
           <View style={[localStyles.followBtnContainer]}>
             {ProfileData && loggedInUserId !== userId && (
-              <FollowUnFollow
+              <FollowUnfollowComponent
                 isFollowing={ProfileData?.isFollowing}
                 followedId={userId}
                 onFollow={handleFollow}
@@ -421,9 +443,8 @@ const OtherProfileScreen: React.FC = ({
                 frontIcon={
                   loggedInUserId !== userId &&
                   !ProfileData?.isAddedToMyNetwork ? (
-                    <MaterialIcon
-                      name="account-plus-outline"
-                      size={moderateScale(20)}
+                    <Icon
+                      as={Network_icon}
                       color={colors.primary}
                       style={styles.mr5}
                     />
@@ -484,9 +505,10 @@ const OtherProfileScreen: React.FC = ({
           <TouchableOpacityWithPermissionCheck
             permissionEnum={PermissionKey.AllowChat}
             permissionsArray={userPermissions}
-            tagNames={[Chat]}
+            tagNames={[Icon]}
             onPress={chatProfilePress}>
-            <Chat height="30" width="30" color={colors.primary} />
+            <Icon as={Chat_icon} />
+            {/* <Chat height="30" width="30" color={colors.primary} /> */}
             {/* <Ionicons
               name="chatbubble-outline"
               size={moderateScale(30)}
@@ -494,7 +516,7 @@ const OtherProfileScreen: React.FC = ({
               color={colors.dark ? colors.primary : colors.primary}
             /> */}
           </TouchableOpacityWithPermissionCheck>
-        </Box>
+        </View>
       </>
     );
   };
@@ -563,11 +585,7 @@ const OtherProfileScreen: React.FC = ({
                   <Text style={localStyles.categoryText}>
                     {category.postCount}
                   </Text>
-                  <Ionicons
-                    name={'chevron-forward-outline'}
-                    size={25}
-                    color={Color.primary}
-                  />
+                  <Icon as={ChevronRightIcon} size={25} color={Color.primary} />
                 </View>
               </TouchableOpacity>
             ))}
@@ -576,7 +594,7 @@ const OtherProfileScreen: React.FC = ({
       </>
     );
   };
-  console.log(ProfileData);
+  // console.log(ProfileData);
   return (
     <ZSafeAreaView>
       {/* <ZHeader
@@ -663,7 +681,7 @@ const localStyles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
     marginTop: '5%',
   },
   container: {

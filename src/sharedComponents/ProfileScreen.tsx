@@ -52,7 +52,7 @@ import {HStack} from '../../components/ui/hstack';
 import {Color} from '../styles/GlobalStyles';
 import {Checkerror} from '../utils/utilTokens';
 import {StackNav} from '../navigation/NavigationKeys';
-import {moderateScale} from '../config/constants';
+import {imagesBucketcloudfrontPath, moderateScale} from '../config/constants';
 import {VStack} from '../../components/ui/vstack';
 import ZAvatarInitials from './ZAvatarInitials';
 import ZSafeAreaView from './ZSafeAreaView';
@@ -68,6 +68,7 @@ import {
   getProfile,
   UpdateProfile,
 } from '../../BrokerAppCore/services/new/profileServices';
+import {showRationaleAndRequest} from '../utils/appPermission';
 
 const ProfileScreen: React.FC = ({
   toast,
@@ -77,6 +78,7 @@ const ProfileScreen: React.FC = ({
   setLoading,
   navigation,
   user,
+  toastMessage,
   color,
   route,
 }) => {
@@ -95,6 +97,7 @@ const ProfileScreen: React.FC = ({
   const [ProfilePostData, setProfilePostData] = useState([]);
   const [page, setPage] = useState(1);
   const [isEditing, setIsEditing] = useState(false);
+
   const [biodata, setBiodata] = useState('');
   const [TabSelect, setTabSelect] = useState(0);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -110,7 +113,7 @@ const ProfileScreen: React.FC = ({
     status: profileUpdatestatus,
     error: profileUpdateerror,
     execute: profileUpdateexecute,
-  } = useApiRequest(UpdateProfile);
+  } = useApiRequest(UpdateProfile, setLoading);
   const handleCategoryPress = screen => {
     navigation.navigate(screen, {
       userId: user.userId,
@@ -199,7 +202,7 @@ const ProfileScreen: React.FC = ({
                   <ZText type={'R16'} style={localStyles.categoryText}>
                     {category.postCount}
                   </ZText>
-                  <Icon as={ChevronRightIcon} size={25} color={Color.primary} />
+                  <Icon as={ChevronRightIcon} color={Color.primary} />
                 </View>
               </TouchableOpacity>
             ))}
@@ -215,21 +218,16 @@ const ProfileScreen: React.FC = ({
               style={[localStyles.categoryButton]}
               onPress={onPressSetting}>
               <ZText type={'l18'}>Profile Settings</ZText>
-              <Icon as={ChevronRightIcon} size={25} color={Color.primary} />
+              <Icon as={ChevronRightIcon} color={Color.primary} />
             </TouchableOpacity>
           </View>
         </View>
       </>
     );
   };
-  const handleEditToggle = () => {
-    setModalVisible(!isModalVisible);
-    refRBSheet.current.open();
-  };
+
   const refRBSheet = useRef();
-  const handleBiodataChange = useCallback(text => {
-    setBiodata(text);
-  }, []);
+
   const s3 = useS3();
   const [routes] = useState([
     {key: 'Property', title: 'Property'},
@@ -309,20 +307,19 @@ const ProfileScreen: React.FC = ({
     Result = {
       ...Result,
       industry: getList(ProfileData.industries),
-      countryName: AppLocation.Country,
-      stateName: AppLocation.State,
-      cityName: AppLocation.City,
-
+      countryName: ProfileData.location.countryName,
+      stateName: ProfileData.location.stateName,
+      cityName: ProfileData.location.cityName,
       specialization: getList(ProfileData.specializations),
       userLocation: [],
     };
-    console.log(Result, 'pro');
+    delete Result['location'];
+    delete Result['officeLocation'];
+    delete Result['userPermissions'];
+    // console.log(Result, 'pro');
 
-    profileUpdateexecute(Result);
+    await profileUpdateexecute(Result);
     console.log(profileUpdatestatus);
-    console.log(profileUpdatedata);
-
-    setProfileDataRest(!ProfileDataRest);
   };
   // console.log(profiledata, 'data');
 
@@ -451,58 +448,72 @@ const ProfileScreen: React.FC = ({
       Result = {
         ...Result,
         industry: getList(ProfileData.industries),
+        countryName: ProfileData.location.countryName,
+        stateName: ProfileData.location.stateName,
+        cityName: ProfileData.location.cityName,
         specialization: getList(ProfileData.specializations),
         userLocation: [],
       };
+      delete Result['location'];
+      delete Result['officeLocation'];
+      delete Result['userPermissions'];
+      await profileUpdateexecute(Result);
+      console.log(profileUpdatestatus);
+    } catch (error) {}
+  };
+  useEffect(() => {
+    const updatedata = async () => {
+      if (profileUpdatestatus == 200) {
+        await AsyncStorage.setItem(
+          'User',
+          JSON.stringify(profileUpdatedata.data),
+        );
+        await AsyncStorage.getItem('User');
 
-      setLoading(true);
-      let k = await profileUpdateexecute(Result);
+        await dispatch(setUser(profileUpdatedata.data));
 
-      if (k.status == 'error') {
-        setLoading(false);
-        toast.show({
-          description: k.error,
-        });
-        // return;
-      } else {
-        await AsyncStorage.setItem('User', JSON.stringify(k.data));
-        const storedUser = await AsyncStorage.getItem('User');
-
-        await dispatch(setUser(k.data));
-        //dispatch(updateUserProperties({ profileName:  k.data.profileImage, profileImage: k.data.profileName  }));
-
-        setLoading(false);
         setProfileDataRest(!ProfileDataRest);
       }
-    } catch (error) {
+    };
+    updatedata();
+  }, [profileUpdatestatus]);
+
+  useEffect(() => {
+    if (profileUpdatestatus == 200) {
+      setProfileData(profileUpdatedata?.data);
+      console.log('======================');
+      console.log(profileUpdatedata?.data);
+      const Userfollower: any = [];
+      if (profileUpdatedata.data) {
+        Userfollower.push({
+          title: strings.followers,
+          value: profileUpdatedata.data.followers,
+        });
+        Userfollower.push({
+          title: strings.following,
+          value: profileUpdatedata.data.followings,
+        });
+      }
+      setParentUser({
+        userId: profileUpdatedata.data.userId,
+        userName:
+          profileUpdatedata.data.firstName +
+          ' ' +
+          profileUpdatedata.data.lastName,
+        userImg: profileUpdatedata.data.profileImage,
+      });
+      setUserBio(profileUpdatedata.data?.biodata);
+      setUserfollowersData(Userfollower);
       setLoading(false);
+      toastMessage('Profile Updated');
     }
-  };
-
-  const HeaderCategory = ({item}) => {
-    const truncatedName =
-      item.name.length > 10 ? item.name.slice(0, 10) + '...' : item.name;
-    return (
-      <TouchableOpacity
-        onPress={item.onPress}
-        style={[
-          localStyles.tabItemStyle,
-          {
-            borderBottomWidth: isSelect === item.id ? moderateScale(2) : 0,
-            borderBottomColor:
-              isSelect === item.id ? colors.primary : colors.bColor,
-          },
-        ]}>
-        <ZText type={'B16'}>{truncatedName}</ZText>
-      </TouchableOpacity>
-    );
-  };
-
+  }, [profileUpdatedata, profileUpdatestatus]);
+  // console.log(ProfileData, 'data');
   const PostHeader = () => {
     const fullName = `${ProfileData?.firstName} ${ProfileData?.lastName}`;
     const truncatedFullName =
       fullName.length > 10 ? fullName.slice(0, 15) + '...' : fullName;
-    // console.log(ProfileData?.profileImage, 'imag');
+
     return (
       <>
         <View
@@ -521,7 +532,7 @@ const ProfileScreen: React.FC = ({
                 name={ProfileData?.profileName}
               />
             </TouchableOpacity>
-            <HStack justifyContent="center" marginTop="2px">
+            <HStack>
               <ZText
                 type="R14"
                 align={'center'}
@@ -803,7 +814,7 @@ const localStyles = StyleSheet.create({
   textInput: {
     borderWidth: 1,
     borderColor: Color.primary,
-    borderWidth: 1,
+
     backgroundColor: 'rgba(188, 74, 80, 0.1)',
     padding: 10,
     borderRadius: 5,
@@ -816,7 +827,7 @@ const localStyles = StyleSheet.create({
     width: '100%',
   },
   applyButton: {
-    backgroundColor: '#BC4A4F',
+    backgroundColor: Color.primary,
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
@@ -850,7 +861,7 @@ const localStyles = StyleSheet.create({
   categoryButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: 'space-between',
+    justifyContent: 'space-between',
     // marginBottom: 15,
     padding: 8,
     borderRadius: 4,

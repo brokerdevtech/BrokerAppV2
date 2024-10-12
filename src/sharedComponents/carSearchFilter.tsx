@@ -93,258 +93,50 @@ const CarFilterScreen = () => {
     fetchFilters();
   }, [user.userId]);
 
-  useEffect(() => {
-    console.log(CarFilters);
-   if(CarFilters!=null) 
-   {console.log('CarFilters');
-console.log(CarFilters);
-setSelectedFilters({});
-setCarfiltersState([])
-setCarfiltersState(CarFilters.data.filters)
-setSelectedItem(CarFilters.data.filters[0])
-   }
 
+  useEffect(() => {
+    // This useEffect runs when CarFilters data changes
+    if (CarFilters != null) {
+      console.log('CarFilters:', CarFilters);
+  
+      // Filter out the 'PostedSince' item from the CarFilters data
+      const filtersWithoutPostedSince = CarFilters.data.filters.filter(filter => filter.name !== 'PostedSince');
+  
+      // Set the updated filters into the state
+      setSelectedFilters({});
+      setCarfiltersState(filtersWithoutPostedSince);
+      setSelectedItem(filtersWithoutPostedSince[0]); // Set the first available filter as the selected item
+    }
   }, [CarFilters]);
 
-  // useEffect(() => {
-  //   const fetchFilters = async () => {
-  //     try {
-  //       const {data} = await getCarPostFilters(user.userId, 'Post');
-  //       if (!data?.filters) throw new Error('Unexpected data structure');
-  //        console.log('Fetch Filters Response:', data);
-  //       const filters = data.filters.reduce((acc, filter) => {
-  //         acc[filter.name] = {
-  //           records: filter.records || [],
-  //           dependsOn: filter.dependsOn || null,
-  //         };
-  //         return acc;
-  //       }, {});
-  //       setCarFilter(data.data);
-  //       setFilterData(filters);
-  //       setMenuItems([
-  //         ...staticMenuData,
-  //         ...Object.keys(filters).map((key, index) => ({
-  //           id: (
-  //             parseInt(staticMenuData[staticMenuData.length - 1]?.id || '0') +
-  //             1 +
-  //             index
-  //           ).toString(),
-  //           name: key,
-  //         })),
-  //       ]);
-  //       // console.log(selectedFilters);
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-
-  //   fetchFilters();
-  // }, [user.userId]);
-  const handleBrandSelection = async brandKey => {
-    setSelectedBrand(brandKey);
-    await fetchModels(brandKey);
-    // console.log(brandKey);
-  };
-
-  const handleSelectionChange = (selectedItems, filterName) => {
-    setSelectedFilters(prevFilters => {
-      // Create a shallow copy of the previous filters
-      const updatedFilters = {...prevFilters};
-
-      // Update the specific filter with the new selections
-      updatedFilters[filterName] = selectedItems;
-
-      return updatedFilters;
-    });
-  };
-
+  
   const handleApplyFilters = () => {
-    let ApiFliterObject = {
-      userId: user.userId,
-      Keyword: '',
-      pageSize: 5,
-      pageNumber: 1,
-      minPrice: minValue,
-      maxPrice: maxValue,
-      discount: selectedDiscount,
-      isNewCar: selectedIsnew,
-      kilometerDriven: selectedDriven,
-      makeYear: selectedMaking,
-      radius: 15000,
-      filters: {
-        tags: [],
-      },
-    };
-    console.log(selectedFilters, 'selected');
-    Object.keys(selectedFilters).forEach(filterName => {
-      const selectedItem = selectedFilters[filterName];
-      console.log(selectedItem, 'selected');
-      if (selectedItem) {
-        ApiFliterObject.filters.tags.push({
-          name: filterName,
-          values: [{key: selectedItem.key, value: selectedItem.value}],
-        });
-      }
-    });
+    // Check for mandatory filters
+    const missingMandatoryFilters = CarfiltersState
+    .filter(item => item.isMandatory && !selectedFilters[item.name])
+    .map(item => item.name); // Collect the names of the missing filters
 
-    // Ensure the brand is added separately
-    if (selectedBrand) {
-      ApiFliterObject.filters.tags.push({
-        name: 'Brand',
-        values: [{key: selectedBrand.key, value: selectedBrand.value}],
-      });
-    }
+  // If there are missing mandatory filters, show an alert and exit
+  if (missingMandatoryFilters.length > 0) {
+    alert(`Please select the following mandatory filters: ${missingMandatoryFilters.join(', ')}`);
+    return;
+  }
+  
+   console.log(selectedFilters);
+  
 
-    console.log(JSON.stringify(ApiFliterObject, null, 2));
+    // Proceed with your API call or other logic here
   };
 
-  const settingsConfig = [
-    {
-      id: '1',
-      component: 'VerticalRangeSlider',
-      props: {min: 100000, max: 30000000},
-    },
-    {
-      id: '2',
-      component: 'CheckboxList',
-      props: {
-        data: DiscountData,
-        onSelectionChange: data => {
-          setSelectedDiscount(data.value);
-          // console.log(data.value);
-        },
-      },
-    },
-    {
-      id: '3',
-      component: 'CheckboxList',
-      props: {
-        data: ConditonData,
-        onSelectionChange: data => {
-          setSelectedIsnew(data.value === 'New Car' ? true : false);
-          // console.log(data.value);
-        },
-      },
-    },
-    {
-      id: '4',
-      component: 'CheckboxList',
-      props: {
-        data: DrivenData,
-        onSelectionChange: data => {
-          setSelectedDriven(data.value);
-          // console.log(data.value);
-        },
-      },
-    },
-    {
-      id: '5',
-      component: 'CheckboxList',
-      props: {
-        data: MakingYearData,
-        onSelectionChange: data => {
-          setSelectedMaking(data.value);
-          // console.log(data.value);
-        },
-      },
-    },
-    {
-      id: '7',
-      component: 'CheckboxList',
-      props: {
-        data: filterData['Brand']?.records || [],
 
-        onSelectionChange: handleBrandSelection,
-      },
-    },
-    {
-      id: '8',
-      component: 'CheckboxList',
-      props: {
-        data: modelData,
-        onSelectionChange: data => handleSelectionChange(data, 'Model'),
-      },
-    },
-    {
-      id: '9',
-      component: 'CheckboxList',
-      props: {
-        data: filterData['FuelType']?.records || [],
-        onSelectionChange: data => handleSelectionChange(data, 'FuelType'),
-      },
-    },
-    {
-      id: '10',
-      component: 'CheckboxList',
-      props: {
-        data: filterData['BodyType']?.records || [],
-        onSelectionChange: data => handleSelectionChange(data, 'BodyType'),
-      },
-    },
-    {
-      id: '11',
-      component: 'CheckboxList',
-      props: {
-        data: filterData['Transmission']?.records || [],
-        onSelectionChange: data => handleSelectionChange(data, 'Transmission'),
-      },
-    },
-    {
-      id: '12',
-      component: 'CheckboxList',
-      props: {
-        data: filterData['Ownership']?.records || [],
-        onSelectionChange: data => handleSelectionChange(data, 'Ownership'),
-      },
-    },
-    {
-      id: '13',
-      component: 'CheckboxList',
-      props: {
-        data: filterData['SeatingCapacity']?.records || [],
-        onSelectionChange: data =>
-          handleSelectionChange(data, 'SeatingCapacity'),
-      },
-    },
-    {
-      id: '14',
-      component: 'CheckboxList',
-      props: {
-        data: filterData['RegistrationState']?.records || [],
-        onSelectionChange: data =>
-          handleSelectionChange(data, 'RegistrationState'),
-      },
-    },
-    {
-      id: '15',
-      component: 'CheckboxList',
-      props: {
-        data: filterData['Color']?.records || [],
-        onSelectionChange: data => handleSelectionChange(data, 'Color'),
-      },
-    },
-    {
-      id: '16',
-      component: 'CheckboxList',
-      props: {
-        data: filterData['PostedSince']?.records || [],
-        onSelectionChange: data => handleSelectionChange(data, 'PostedSince'),
-      },
-    },
-    {
-      id: '17',
-      component: 'CheckboxList',
-      props: {
-        data: filterData['InsuranceStatus']?.records || [],
-        onSelectionChange: data =>
-          handleSelectionChange(data, 'InsuranceStatus'),
-      },
-    },
-  ];
-  // console.log(modelData);
+
+
+
+
+
   const renderItem = ({ item }) => {
     // Log the item for debugging purposes
-  
+    const isSelected = item.name === selectedItem?.name; 
   
     return (
       <TouchableOpacity
@@ -352,37 +144,59 @@ setSelectedItem(CarFilters.data.filters[0])
         onPress={() => setSelectedItem(item)}
         style={[
           styles.menuItem,
-          item.name === selectedItem ? styles.selectedMenuItem : null, // Correct comparison
+          isSelected ? styles.selectedMenuItem : null,// Correct comparison
         ]}
       >
-        <Text style={styles.menuItemText}>{item.displayName}</Text>
+        <Text style={styles.menuItemText}>{item.displayName}
+
+        {item.isMandatory ? ' *' : ''}
+        </Text>
       </TouchableOpacity>
     );
   };
+  const updateRecordsByName = async (filtersArray, name, newRecords) => {
+    // Find the item based on the name
+    const item = filtersArray.find(filter => filter.name === name);
+    
+    // Check if item was found and update records
+    if (item) {
+        item.records = newRecords;
+    } else {
+        console.log(`No item found with name: ${name}`);
+    }
+    
+    // Return the modified filters array
+    return filtersArray;
+};
+const SelectItem = async (item) => {
+  console.log("Selected item:", item);
 
-  const SelectItem= async (item) => {
+  // Create a copy of the selected filters object
+  let updatedSelectedFilters = { ...selectedFilters };
+  updatedSelectedFilters[selectedItem.name] = [item];
+  setSelectedFilters(updatedSelectedFilters);
 
-console.log("=============");
-console.log("item");
-console.log(item);
-let selectedFiltersobj= selectedFilters; // Create a copy of the selected filters array
-let object = {};
-console.log(JSON.stringify (selectedFiltersobj));
+  if (selectedItem.dependsOn) {
+    try {
+      // Fetch the cascaded filters for the dependent item
+      const result = await getCarPostCascadedFilters(user.userId, 'Post', selectedItem.dependsOn, item.key);
+      
+      // Update the records for the dependent filter
+      const updatedFilters = await updateRecordsByName(CarfiltersState, selectedItem.dependsOn, result.data.data.filters[0].records);
+      setCarfiltersState(updatedFilters);
 
+      // Automatically navigate to the dependent filter's menu item
+      const dependentFilter = updatedFilters.find(filter => filter.name === selectedItem.dependsOn);
+      if (dependentFilter) {
+        setSelectedItem(dependentFilter);
+      }
 
-// Assign values to the object
-
-selectedFiltersobj[selectedItem.name]=[item];
-console.log(JSON.stringify (selectedFiltersobj));
-setSelectedFilters(selectedFiltersobj);
-
-if(selectedItem.dependsOn!="")
-{
-let result= await getCarPostCascadedFilters(user.userId, 'Post',selectedItem.dependsOn,item.key)
-console.log(JSON.stringify(result));
-}
-
+    } catch (error) {
+      console.error('Error fetching cascaded filters:', error);
+    }
   }
+};
+
   const renderSettingsView = () => {
    
     let ComponentToRender=null;
@@ -397,7 +211,15 @@ if(selectedItem.name=="Brand")
     ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
 
    }
-  
+   if(selectedItem.name=="Model")
+    {
+     let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
+     console.log("=============items=========");
+     console.log(items);
+     console.log("=============items=========");
+     ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
+ 
+    }
   if(selectedItem.name=="FuelType")
     {
    let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;

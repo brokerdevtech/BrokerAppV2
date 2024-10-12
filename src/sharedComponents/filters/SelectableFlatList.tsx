@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 20,
+    padding: 10,
     marginVertical: 10,
     marginHorizontal: 10, // Adjust margin for proper spacing
     shadowColor: '#000', // For iOS
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   cardText: {
-    fontSize: 16,
+    fontSize: 14,
     color: 'red',
   },
   selectedItem: {

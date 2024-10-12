@@ -56,9 +56,9 @@ function UserAvartarWithNameComponent({
   const shouldRenderConnection = userId === loggedInUserId;
   const onPressUser = () => {
     if (appuser.userId === userId) {
-      navigation.navigate(TabNav.Profile);
+      navigation.navigate('ProfileScreen');
     } else {
-      navigation.push(StackNav.ProfileDetail, {
+      navigation.navigate('ProfileDetail', {
         userName: userName,
         userImage: userImage,
         userId: userId,

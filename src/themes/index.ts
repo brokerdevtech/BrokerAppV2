@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
   ...border,
   ...typography,
   button: {
-    padding: 10,
+    // padding: 10,
     backgroundColor: '#C4C4C4', // Default color
     color: 'black', // Text color
     fontSize: 16,

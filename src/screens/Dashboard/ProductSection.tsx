@@ -50,7 +50,7 @@ const ProductSection = (props: ProductSectionProps) => {
   }, [props]);
 
   const renderProductItems = ({item, index}) => {
-    console.log(item.postMedias[0].mediaBlobId, 'media');
+    // console.log(item.postMedias[0].mediaBlobId, 'media');
     return (
       <View style={styles.cardContainer}>
         <Image

@@ -10,6 +10,7 @@
 		00E356F31AD99517003FC87E /* BrokerAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BrokerAppTests.m */; };
 		04B9F4AE21D048BD853F7464 /* Gilroy MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8C737AB26FBE4E628C40194D /* Gilroy MediumItalic.ttf */; };
 		091C00372CA28E1500230001 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 091C00362CA28E1500230001 /* GoogleService-Info.plist */; };
+		0922763C2CB2BDC4004A4E74 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0922763B2CB2BDC3004A4E74 /* Assets.xcassets */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -52,13 +53,14 @@
 		00E356EE1AD99517003FC87E /* BrokerAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BrokerAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* BrokerAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BrokerAppTests.m; sourceTree = "<group>"; };
-		04AFDA3F9F31409B97DF1674 /* Gilroy BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy BlackItalic.ttf"; path = "../assets/font/Gilroy BlackItalic.ttf"; sourceTree = "<group>"; };
+		04AFDA3F9F31409B97DF1674 /* Gilroy BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy BlackItalic.ttf"; path = "../assets/font/Gilroy BlackItalic.ttf"; sourceTree = "<group>"; };
 		07A6EC8E8E067F0ECFABFF86 /* Pods_BrokerApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BrokerApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		091C00362CA28E1500230001 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		0922763B2CB2BDC3004A4E74 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A0FE20E8EA9F09F74412CED /* Pods-BrokerApp-BrokerAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BrokerApp-BrokerAppTests.debug.xcconfig"; path = "Target Support Files/Pods-BrokerApp-BrokerAppTests/Pods-BrokerApp-BrokerAppTests.debug.xcconfig"; sourceTree = "<group>"; };
-		0A1315034E5546BD99E22C53 /* Gilroy ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy ExtraBoldItalic.ttf"; path = "../assets/font/Gilroy ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
+		0A1315034E5546BD99E22C53 /* Gilroy ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy ExtraBoldItalic.ttf"; path = "../assets/font/Gilroy ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		0E707A858D706A6E096E4509 /* Pods-BrokerApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BrokerApp.debug.xcconfig"; path = "Target Support Files/Pods-BrokerApp/Pods-BrokerApp.debug.xcconfig"; sourceTree = "<group>"; };
-		0F2E503D8D5B43569FDAB327 /* Gilroy SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy SemiBold.ttf"; path = "../assets/font/Gilroy SemiBold.ttf"; sourceTree = "<group>"; };
+		0F2E503D8D5B43569FDAB327 /* Gilroy SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy SemiBold.ttf"; path = "../assets/font/Gilroy SemiBold.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* BrokerApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BrokerApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = BrokerApp/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = BrokerApp/AppDelegate.mm; sourceTree = "<group>"; };
@@ -66,26 +68,26 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = BrokerApp/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = BrokerApp/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = BrokerApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		2140A2D7281748D9AA1FE58F /* Gilroy SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy SemiBoldItalic.ttf"; path = "../assets/font/Gilroy SemiBoldItalic.ttf"; sourceTree = "<group>"; };
-		33D4631BD2C54E8F8275EBDD /* Gilroy Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Black.ttf"; path = "../assets/font/Gilroy Black.ttf"; sourceTree = "<group>"; };
-		3BD7EC5B3702481FA39D6915 /* Gilroy Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Thin.ttf"; path = "../assets/font/Gilroy Thin.ttf"; sourceTree = "<group>"; };
-		3F0DF268902444779057EF33 /* Gilroy Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Regular.ttf"; path = "../assets/font/Gilroy Regular.ttf"; sourceTree = "<group>"; };
-		3F9D72400E654F46B4448A35 /* Gilroy BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy BoldItalic.ttf"; path = "../assets/font/Gilroy BoldItalic.ttf"; sourceTree = "<group>"; };
-		59DE3BD605FA4F93A501950E /* Gilroy LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy LightItalic.ttf"; path = "../assets/font/Gilroy LightItalic.ttf"; sourceTree = "<group>"; };
-		5B2CA9A2F21A4A48BC2F6F05 /* Gilroy ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy ExtraBold.ttf"; path = "../assets/font/Gilroy ExtraBold.ttf"; sourceTree = "<group>"; };
-		63AA46EB953C463887E330FC /* Gilroy Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Bold.ttf"; path = "../assets/font/Gilroy Bold.ttf"; sourceTree = "<group>"; };
-		77E3ED9C7CB64659B250EAEF /* Gilroy UltraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy UltraLightItalic.ttf"; path = "../assets/font/Gilroy UltraLightItalic.ttf"; sourceTree = "<group>"; };
-		7AA81925B05844A5B5BBC476 /* Gilroy RegularItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy RegularItalic.ttf"; path = "../assets/font/Gilroy RegularItalic.ttf"; sourceTree = "<group>"; };
+		2140A2D7281748D9AA1FE58F /* Gilroy SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy SemiBoldItalic.ttf"; path = "../assets/font/Gilroy SemiBoldItalic.ttf"; sourceTree = "<group>"; };
+		33D4631BD2C54E8F8275EBDD /* Gilroy Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Black.ttf"; path = "../assets/font/Gilroy Black.ttf"; sourceTree = "<group>"; };
+		3BD7EC5B3702481FA39D6915 /* Gilroy Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Thin.ttf"; path = "../assets/font/Gilroy Thin.ttf"; sourceTree = "<group>"; };
+		3F0DF268902444779057EF33 /* Gilroy Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Regular.ttf"; path = "../assets/font/Gilroy Regular.ttf"; sourceTree = "<group>"; };
+		3F9D72400E654F46B4448A35 /* Gilroy BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy BoldItalic.ttf"; path = "../assets/font/Gilroy BoldItalic.ttf"; sourceTree = "<group>"; };
+		59DE3BD605FA4F93A501950E /* Gilroy LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy LightItalic.ttf"; path = "../assets/font/Gilroy LightItalic.ttf"; sourceTree = "<group>"; };
+		5B2CA9A2F21A4A48BC2F6F05 /* Gilroy ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy ExtraBold.ttf"; path = "../assets/font/Gilroy ExtraBold.ttf"; sourceTree = "<group>"; };
+		63AA46EB953C463887E330FC /* Gilroy Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Bold.ttf"; path = "../assets/font/Gilroy Bold.ttf"; sourceTree = "<group>"; };
+		77E3ED9C7CB64659B250EAEF /* Gilroy UltraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy UltraLightItalic.ttf"; path = "../assets/font/Gilroy UltraLightItalic.ttf"; sourceTree = "<group>"; };
+		7AA81925B05844A5B5BBC476 /* Gilroy RegularItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy RegularItalic.ttf"; path = "../assets/font/Gilroy RegularItalic.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = BrokerApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		8C737AB26FBE4E628C40194D /* Gilroy MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy MediumItalic.ttf"; path = "../assets/font/Gilroy MediumItalic.ttf"; sourceTree = "<group>"; };
-		928B313925534AD8A9DB3C68 /* Gilroy Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Medium.ttf"; path = "../assets/font/Gilroy Medium.ttf"; sourceTree = "<group>"; };
-		A8931A88226C414998E0925C /* Gilroy Heavy.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Heavy.ttf"; path = "../assets/font/Gilroy Heavy.ttf"; sourceTree = "<group>"; };
+		8C737AB26FBE4E628C40194D /* Gilroy MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy MediumItalic.ttf"; path = "../assets/font/Gilroy MediumItalic.ttf"; sourceTree = "<group>"; };
+		928B313925534AD8A9DB3C68 /* Gilroy Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Medium.ttf"; path = "../assets/font/Gilroy Medium.ttf"; sourceTree = "<group>"; };
+		A8931A88226C414998E0925C /* Gilroy Heavy.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Heavy.ttf"; path = "../assets/font/Gilroy Heavy.ttf"; sourceTree = "<group>"; };
 		AA4A825790A51EA6886B05D2 /* Pods-BrokerApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BrokerApp.release.xcconfig"; path = "Target Support Files/Pods-BrokerApp/Pods-BrokerApp.release.xcconfig"; sourceTree = "<group>"; };
-		AE562839BD3142BF88E7F436 /* Gilroy HeavyItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy HeavyItalic.ttf"; path = "../assets/font/Gilroy HeavyItalic.ttf"; sourceTree = "<group>"; };
-		BCB5A20A91CF4C3BB170EE73 /* Gilroy UltraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy UltraLight.ttf"; path = "../assets/font/Gilroy UltraLight.ttf"; sourceTree = "<group>"; };
-		C6DB5E76B7DB483D88F1126E /* Gilroy ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy ThinItalic.ttf"; path = "../assets/font/Gilroy ThinItalic.ttf"; sourceTree = "<group>"; };
+		AE562839BD3142BF88E7F436 /* Gilroy HeavyItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy HeavyItalic.ttf"; path = "../assets/font/Gilroy HeavyItalic.ttf"; sourceTree = "<group>"; };
+		BCB5A20A91CF4C3BB170EE73 /* Gilroy UltraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy UltraLight.ttf"; path = "../assets/font/Gilroy UltraLight.ttf"; sourceTree = "<group>"; };
+		C6DB5E76B7DB483D88F1126E /* Gilroy ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy ThinItalic.ttf"; path = "../assets/font/Gilroy ThinItalic.ttf"; sourceTree = "<group>"; };
 		CB95CF762A23E2B4B3364D46 /* Pods_BrokerApp_BrokerAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BrokerApp_BrokerAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		DB02AEF454F6471894018465 /* Gilroy Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Light.ttf"; path = "../assets/font/Gilroy Light.ttf"; sourceTree = "<group>"; };
+		DB02AEF454F6471894018465 /* Gilroy Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Light.ttf"; path = "../assets/font/Gilroy Light.ttf"; sourceTree = "<group>"; };
 		DDD68D86A3E254F50C02CBA0 /* Pods-BrokerApp-BrokerAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BrokerApp-BrokerAppTests.release.xcconfig"; path = "Target Support Files/Pods-BrokerApp-BrokerAppTests/Pods-BrokerApp-BrokerAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		E693FE0A6F9D45406D8A1325 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = BrokerApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -163,6 +165,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				0922763B2CB2BDC3004A4E74 /* Assets.xcassets */,
 				091C00362CA28E1500230001 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* BrokerApp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -222,7 +225,6 @@
 				77E3ED9C7CB64659B250EAEF /* Gilroy UltraLightItalic.ttf */,
 			);
 			name = Resources;
-			path = "";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -343,6 +345,7 @@
 				A221657A93AC4FF1A04996C3 /* Gilroy ThinItalic.ttf in Resources */,
 				F596F4891FC246698F193605 /* Gilroy UltraLight.ttf in Resources */,
 				5CFDFEA870544D89A0E7DBB9 /* Gilroy UltraLightItalic.ttf in Resources */,
+				0922763C2CB2BDC4004A4E74 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,7 +366,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		4A1FF075DA54490837BEB017 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -586,7 +589,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 5.14;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -613,7 +616,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 5.14;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

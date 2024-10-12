@@ -65,7 +65,7 @@ const GenericForm = ({formikRef}) => {
               {/* <RenderLabel1 labelText={`Title`} /> */}
               <AnimatedTextInput
                 placeholder="Title"
-                style={localStyles.inputBox}
+                // style={localStyles.inputBox}
                 value={values.title}
                 onChangeText={handleChange('title')}
                 onBlur={handleBlur('title')}
