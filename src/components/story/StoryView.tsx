@@ -619,7 +619,7 @@ const StoryView: React.FC = ({route}) => {
         )}
       </View>
 
-      <View style={localStyles.avatarGroupContainer}>
+      {/* <View style={localStyles.avatarGroupContainer}>
         <AvatarGroup>
           <Avatar size="sm">
             <AvatarFallbackText>John Doe</AvatarFallbackText>
@@ -638,7 +638,7 @@ const StoryView: React.FC = ({route}) => {
             />
           </Avatar>
         </AvatarGroup>
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };

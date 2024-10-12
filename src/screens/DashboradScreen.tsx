@@ -36,11 +36,12 @@ import ProductSection from './Dashboard/ProductSection';
 import UserProfile from '../sharedComponents/profile/UserProfile';
 import MarqueeBanner from '../sharedComponents/profile/MarqueeBanner';
 import {fetchDashboardData} from '../../BrokerAppCore/services/new/dashboardService';
+import UserStories from '../components/story/UserStories';
 
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-  console.log(user);
+  console.log(user, '============');
   const {data, status, error, execute} = useApiRequest(fetchPodcastList);
   // const {data: marqueeText, status: marqueeStatus, error: marqueeError, execute: marqueeExecute} = useApiRequest(fetchDashboardData);
   const cityToShow = 'Noida';
@@ -130,7 +131,8 @@ export default function DashboradScreen() {
     <ScrollView style={styles.scrollView}>
       <View>
         <View style={styles.subHeaderSection}>
-          <UserProfile />
+          {/* <UserProfile /> */}
+          <UserStories />
           {marqueeText?.length > 0 && (
             <MarqueeBanner
               marqueeTextList={marqueeText.map(
