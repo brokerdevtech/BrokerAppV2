@@ -68,6 +68,7 @@ import {
   getProfile,
   UpdateProfile,
 } from '../../BrokerAppCore/services/new/profileServices';
+import {showRationaleAndRequest} from '../utils/appPermission';
 
 const ProfileScreen: React.FC = ({
   toast,
@@ -77,6 +78,7 @@ const ProfileScreen: React.FC = ({
   setLoading,
   navigation,
   user,
+  toastMessage,
   color,
   route,
 }) => {
@@ -95,6 +97,7 @@ const ProfileScreen: React.FC = ({
   const [ProfilePostData, setProfilePostData] = useState([]);
   const [page, setPage] = useState(1);
   const [isEditing, setIsEditing] = useState(false);
+
   const [biodata, setBiodata] = useState('');
   const [TabSelect, setTabSelect] = useState(0);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -110,7 +113,7 @@ const ProfileScreen: React.FC = ({
     status: profileUpdatestatus,
     error: profileUpdateerror,
     execute: profileUpdateexecute,
-  } = useApiRequest(UpdateProfile,setLoading);
+  } = useApiRequest(UpdateProfile, setLoading);
   const handleCategoryPress = screen => {
     navigation.navigate(screen, {
       userId: user.userId,
@@ -222,14 +225,9 @@ const ProfileScreen: React.FC = ({
       </>
     );
   };
-  const handleEditToggle = () => {
-    setModalVisible(!isModalVisible);
-    refRBSheet.current.open();
-  };
+
   const refRBSheet = useRef();
-  const handleBiodataChange = useCallback(text => {
-    setBiodata(text);
-  }, []);
+
   const s3 = useS3();
   const [routes] = useState([
     {key: 'Property', title: 'Property'},
@@ -278,36 +276,6 @@ const ProfileScreen: React.FC = ({
     }
   }, [profilestatus]);
 
-
-  useEffect(() => {
-    if (profileUpdatestatus == 200) {
-      setProfileData(profileUpdatedata?.data);
-      const Userfollower: any = [];
-      if (profileUpdatedata.data) {
-        Userfollower.push({
-          title: strings.followers,
-          value: profileUpdatedata.data.followers,
-        });
-        Userfollower.push({
-          title: strings.following,
-          value: profileUpdatedata.data.followings,
-        });
-      }
-
-      setParentUser({
-        userId: profileUpdatedata.data.userId,
-        userName: profileUpdatedata.data.firstName + ' ' + profileUpdatedata.data.lastName,
-        userImg: profileUpdatedata.data.profileImage,
-      });
-
-      setUserBio(profileUpdatedata.data?.biodata);
-
-      setUserfollowersData(Userfollower);
-      setLoading(false);
-    }
-  }, [profileUpdatedata]);
-
-
   const selectprofilepic = () => {
     if (ProfileData?.profileImage != '') {
       setCurrentImage([
@@ -339,18 +307,19 @@ const ProfileScreen: React.FC = ({
     Result = {
       ...Result,
       industry: getList(ProfileData.industries),
-      countryName: AppLocation.Country,
-      stateName: AppLocation.State,
-      cityName: AppLocation.City,
-
+      countryName: ProfileData.location.countryName,
+      stateName: ProfileData.location.stateName,
+      cityName: ProfileData.location.cityName,
       specialization: getList(ProfileData.specializations),
       userLocation: [],
     };
-    console.log(Result, 'pro');
+    delete Result['location'];
+    delete Result['officeLocation'];
+    delete Result['userPermissions'];
+    // console.log(Result, 'pro');
 
     await profileUpdateexecute(Result);
-  
-
+    console.log(profileUpdatestatus);
   };
   // console.log(profiledata, 'data');
 
@@ -479,18 +448,18 @@ const ProfileScreen: React.FC = ({
       Result = {
         ...Result,
         industry: getList(ProfileData.industries),
-        countryName: AppLocation.Country,
-        stateName: AppLocation.State,
-        cityName: AppLocation.City,
+        countryName: ProfileData.location.countryName,
+        stateName: ProfileData.location.stateName,
+        cityName: ProfileData.location.cityName,
         specialization: getList(ProfileData.specializations),
         userLocation: [],
       };
-
-      setLoading(true);
+      delete Result['location'];
+      delete Result['officeLocation'];
+      delete Result['userPermissions'];
       await profileUpdateexecute(Result);
-    } catch (error) {
-      setLoading(false);
-    }
+      console.log(profileUpdatestatus);
+    } catch (error) {}
   };
   useEffect(() => {
     const updatedata = async () => {
@@ -508,6 +477,38 @@ const ProfileScreen: React.FC = ({
     };
     updatedata();
   }, [profileUpdatestatus]);
+
+  useEffect(() => {
+    if (profileUpdatestatus == 200) {
+      setProfileData(profileUpdatedata?.data);
+      console.log('======================');
+      console.log(profileUpdatedata?.data);
+      const Userfollower: any = [];
+      if (profileUpdatedata.data) {
+        Userfollower.push({
+          title: strings.followers,
+          value: profileUpdatedata.data.followers,
+        });
+        Userfollower.push({
+          title: strings.following,
+          value: profileUpdatedata.data.followings,
+        });
+      }
+      setParentUser({
+        userId: profileUpdatedata.data.userId,
+        userName:
+          profileUpdatedata.data.firstName +
+          ' ' +
+          profileUpdatedata.data.lastName,
+        userImg: profileUpdatedata.data.profileImage,
+      });
+      setUserBio(profileUpdatedata.data?.biodata);
+      setUserfollowersData(Userfollower);
+      setLoading(false);
+      toastMessage('Profile Updated');
+    }
+  }, [profileUpdatedata, profileUpdatestatus]);
+  // console.log(ProfileData, 'data');
   const PostHeader = () => {
     const fullName = `${ProfileData?.firstName} ${ProfileData?.lastName}`;
     const truncatedFullName =
@@ -531,7 +532,7 @@ const ProfileScreen: React.FC = ({
                 name={ProfileData?.profileName}
               />
             </TouchableOpacity>
-            <HStack justifyContent="center" marginTop="2px">
+            <HStack>
               <ZText
                 type="R14"
                 align={'center'}
@@ -826,7 +827,7 @@ const localStyles = StyleSheet.create({
     width: '100%',
   },
   applyButton: {
-    backgroundColor: '#BC4A4F',
+    backgroundColor: Color.primary,
     padding: 10,
     borderRadius: 5,
     marginTop: 10,

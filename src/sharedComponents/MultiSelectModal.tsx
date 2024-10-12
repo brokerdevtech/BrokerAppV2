@@ -137,8 +137,7 @@ const MultiSelectComponent = ({
     },
   }));
   useEffect(() => {
-
-    console.log(alreadySelected, selectedItems);
+    // console.log(alreadySelected, selectedItems);
     setTempSelectedItems(selectedItems);
   }, [selectedItems, modalVisible]);
 

@@ -30,6 +30,7 @@ import MyConnectionScreen from '../sharedComponents/MyConnections';
 import ProfileScreen from '../sharedComponents/ProfileScreen';
 import ItemListScreen from '../screens/ItemListScreen';
 import ProfileSetting from '../sharedComponents/ProfileSetting';
+import ItemDetailScreen from '../screens/ItemDetailScreen';
 import ManagePersonalDetails from '../sharedComponents/ManagePersonalDetails';
 import ProfileKyc from '../sharedComponents/ProfileKyc';
 import OtherProfileScreen from '../sharedComponents/OtherProfileScreen';
@@ -158,6 +159,11 @@ const HomeNavigation: React.FC = () => {
         <Stack.Screen
           name="ItemListScreen"
           component={ItemListScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ItemDetailScreen"
+          component={ItemDetailScreen}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

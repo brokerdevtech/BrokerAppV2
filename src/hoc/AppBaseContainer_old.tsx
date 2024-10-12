@@ -4,7 +4,7 @@ import {Text, View} from 'react-native';
 
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
-import {useToast} from '../../components/ui/toast';
+import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 import LoadingSpinner from '../sharedComponents/LoadingSpinner';
 import ZSafeAreaView from '../sharedComponents/ZSafeAreaView';
 import ZHeader from '../sharedComponents/ZHeader';
