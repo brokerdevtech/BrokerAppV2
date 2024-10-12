@@ -37,6 +37,8 @@ import {
 import {Icon} from '../../components/ui/icon';
 import {Divider} from '@/components/ui/divider';
 import {VStack} from '@/components/ui/vstack';
+import UserStories from '../components/story/UserStories';
+import Recommend from '../sharedComponents/RecomendedBrokers';
 
 const renderProductItems = ({item, index}) => {
   // console.log(item.postMedias[0].mediaBlobId, 'media');
@@ -154,7 +156,10 @@ const ItemListScreen: React.FC<any> = ({listType}) => {
               <SearchIcon />
             </View>
           </View>
-          <UserProfile />
+          <UserStories />
+        </View>
+        <View>
+          <Recommend />
         </View>
         <View>
           <HStack space="md" reversed={false} style={{paddingHorizontal: 10}}>

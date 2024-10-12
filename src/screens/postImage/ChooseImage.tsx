@@ -387,9 +387,11 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
         userId: user.userId,
         storyMedia: uploadedImageUrls,
       };
-
-      let storyResult = await Storyexecute(AddStoryobj);
+      console.log(AddStoryobj, '======');
+      await Storyexecute(AddStoryobj);
       setLoadingOverlay(false);
+      console.log(Storystatus, '===========');
+      // console.log( ,"===========");
 
       navigation.navigate('Home');
       if (!toast.isActive(toastId)) {
