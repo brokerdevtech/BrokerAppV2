@@ -30,6 +30,7 @@ export const useApiRequest = <T, P extends any[]>(
         setError(response.message || 'An error occurred');
         setStatus(response.status || 500);
       } else {
+        console.log(JSON.stringify(response));
        // debugger;
         setData(response.data || null);
         setStatus(response.status || 200);

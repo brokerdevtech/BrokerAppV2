@@ -76,7 +76,9 @@ const AppBaseContainer = (WrappedComponent, pageTitle, isHeader = true) => {
           color={color}
           route={route}
           toast={toast}
-          pageTitle={reframePageTitle}></WrappedComponent>
+         
+          pageTitle={reframePageTitle}
+          isLoading={isLoading}></WrappedComponent>
         <LoadingSpinner isVisible={isLoading} />
       </ZSafeAreaView>
     );

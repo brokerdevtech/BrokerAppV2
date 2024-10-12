@@ -127,7 +127,7 @@ function App(): React.JSX.Element {
     // If successful, update the UI accordingly
     // If not, you can display an error message or handle it as needed
     const state = await NetInfo.fetch();
-console.log(state.isConnected);
+
 setColorMode(state.isConnected);
   };
   const checkUser = async () => {
@@ -189,7 +189,7 @@ setColorMode(state.isConnected);
         latitude,
         longitude,
       );
-      console.log(relustGeolocation, 'resultAddress');
+    
       store.dispatch(setAppLocation(resultAddress));
     }
   };

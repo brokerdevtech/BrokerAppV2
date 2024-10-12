@@ -71,13 +71,16 @@ import Calender_Icon from './icons/calender.svg';
 import Chat_Icon from './icons/chat.svg';
 import Telephone_Icon from './icons/telephone.svg';
 import Whatsapp_Icon from './icons/whatsapp.svg';
+import Share_Icon from './icons/share.svg';
 import File_tray_icon from './file_tray.svg';
 import Document_text from './documenttext.svg';
 import Upload_Icon from './upload.svg';
 
 import unchecked from './unchecked.svg';
+import filter_icon from './filters.svg';
 export {
   Follower_Icon,
+  filter_icon,
   Document_text,
   Upload_Icon,
   File_tray_icon,
@@ -149,5 +152,6 @@ export {
   Chat_Icon,
   Telephone_Icon,
   Whatsapp_Icon,
-  unchecked,
+  Share_Icon,
+  unchecked
 };
