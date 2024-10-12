@@ -10,6 +10,7 @@ import {moderateScale} from '../config/constants';
 
 import {Text} from 'react-native';
 
+import ArrowLeftIcon from '../assets/svg/icons/arrow-left.svg' 
 function ZHeader(props) {
   const {
     title,
@@ -50,19 +51,12 @@ function ZHeader(props) {
         ]}>
         {!isHideBack && (
           <TouchableOpacity
-            style={[styles.pr10]}
+           
             onPress={onPressBack || goBack}>
-            <View
-              style={{
-                // ...styles.appTitleMain,
-                // color: '#007acc',
-                padding: 8,
-                borderWidth: 1,
-                borderColor: '#E5E5E5',
-                borderRadius: 40,
-              }}>
-              <Back accessible={true} accessibilityLabel="Back" />
-            </View>
+           
+                  <ArrowLeftIcon />
+              {/* <Back accessible={true} accessibilityLabel="Back" /> */}
+           
           </TouchableOpacity>
         )}
         {!!isLeftIcon && isLeftIcon}
