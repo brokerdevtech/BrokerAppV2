@@ -7,7 +7,7 @@ import { filter_icon } from '../assets/svg';
 const FilterChips = ({ filters ,recordsCount}) => {
  
   return (
-    <View>
+    <View style={styles.Outercontainer}>
     <View style={styles.container}>
       {/* Fixed "Filters" Chip */}
       <View style={styles.fixedChip}>
@@ -38,17 +38,18 @@ const FilterChips = ({ filters ,recordsCount}) => {
 };
 
 const styles = StyleSheet.create({
+
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
   },
   textcontainer: {
     flexDirection: 'row',
     alignItems: 'center',
  
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
   },
   fixedChip: {
     flexDirection: 'row',

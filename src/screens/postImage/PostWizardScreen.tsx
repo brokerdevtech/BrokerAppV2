@@ -60,7 +60,7 @@ const PostWizardScreen: React.FC = ({
 
   const categories = [
     {value: 'property', label: 'Property', disabled: false},
-    {value: 'generic', label: 'Generic', disabled: false},
+    // {value: 'generic', label: 'Generic', disabled: false},
     {value: 'car', label: 'Car', disabled: false},
   ];
   const [selectedcategory, setselectedcategory] = useState('property');

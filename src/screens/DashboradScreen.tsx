@@ -152,7 +152,7 @@ export default function DashboradScreen() {
             _extra={{className: 'col-span-3'}}>
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate('ItemListScreen', {listType: 'PROPERTY'})
+                navigation.navigate('ItemListScreen', {listType: 'RealEstate'})
               }>
               <View style={styles.tabItemContainer}>
                 <TABTravel />
@@ -165,7 +165,10 @@ export default function DashboradScreen() {
           <GridItem
             className="bg-background-0 p-4 rounded-md text-center"
             _extra={{className: 'col-span-3'}}>
-            <TouchableOpacity onPress={() => console.log()}>
+        <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('ItemListScreen', {listType: 'Car'})
+              }>
               <View style={styles.tabItemContainer}>
                 <TABCard />
                 <ZText type={'R16'} style={styles.tabItemTitle}>

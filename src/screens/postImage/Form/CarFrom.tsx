@@ -76,6 +76,13 @@ const CarForm = ({formikRef}) => {
     propDescription: '',
     price: null,
     Location: undefined,
+    registrationYear:undefined,
+    yearOfManufacture:undefined,
+    isNewCar:true,
+    mileage:undefined,
+    kmsDriven:undefined,
+    engineDisplacement:undefined,
+    carEnginePower:undefined,
   };
 
   const handleSubmit = values => {

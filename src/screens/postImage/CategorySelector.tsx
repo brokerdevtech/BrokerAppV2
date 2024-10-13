@@ -70,16 +70,18 @@ const styles = StyleSheet.create({
   },
   radioGroup: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    //justifyContent: 'space-evenly',
     padding: 20,
     borderWidth: 1,
     borderColor: '#E8EFF6',
     borderRadius: 5,
     backgroundColor: '#fff',
+  //  marginRight:10
   },
   radioButtonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight:10
   },
   radioButton: {
     height: 20,

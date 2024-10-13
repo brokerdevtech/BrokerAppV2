@@ -1,223 +1,334 @@
-import React, {useEffect} from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  FlatList,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import {View, Text, ScrollView, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
 import CustomHeader from '../sharedComponents/CustomHeader';
 import ZText from '../sharedComponents/ZText';
 
-import ShortingIcon from '../assets/svg/icons/sorting.svg';
+import ShortingIcon from '../assets/svg/icons/sorting.svg' 
 import FilterIcon from '../assets/svg/icons/filters.svg';
-import ArrowLeftIcon from '../assets/svg/icons/arrow-left.svg';
-import SearchIcon from '../assets/svg/icons/search.svg';
+import ArrowLeftIcon from '../assets/svg/icons/arrow-left.svg' 
+import SearchIcon from '../assets/svg/icons/search.svg' 
 import {HStack} from '@/components/ui/hstack';
 import UserProfile from '../sharedComponents/profile/UserProfile';
-import {
-  Card_check_icon,
-  Heart_icon,
-  Location_Icon,
-  Calender_Icon,
+import {Card_check_icon, Heart_icon, Location_Icon,Calender_Icon,
   Chat_Icon,
   Telephone_Icon,
   Whatsapp_Icon,
-} from '../assets/svg';
-import {imagesBucketcloudfrontPath} from '../config/constants';
+  share_PIcon,
+  bookmark_icon} from '../assets/svg';
+import { imagesBucketcloudfrontPath } from '../config/constants';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
-import {
-  fetchDashboardData,
-  fetchItemList,
-} from '@/BrokerAppCore/services/new/dashboardService';
-import {Icon} from '../../components/ui/icon';
-import {Divider} from '@/components/ui/divider';
+import { fetchDashboardData, fetchItemList } from '@/BrokerAppCore/services/new/dashboardService';
+import {FavouriteIcon, Icon, MessageCircleIcon} from '../../components/ui/icon';
+import { Divider } from '@/components/ui/divider';
 import {VStack} from '@/components/ui/vstack';
-import UserStories from '../components/story/UserStories';
-import Recommend from '../sharedComponents/RecomendedBrokers';
+import MediaGallery from '../sharedComponents/MediaGallery';
+import { useApiPagingWithtotalRequest } from '@/src/hooks/useApiPagingWithtotalRequest';
+import AppBaseContainer from '@/src/hoc/AppBaseContainer_old';
+import LoadingSpinner from '../sharedComponents/LoadingSpinner';
+import { Box } from '../../components/ui/box';
+import FilterChips from '../sharedComponents/FilterChips';
+import margin from '@/themes/margin';
+import { SetPostLikeUnLike } from '../../BrokerAppCore/services/new/dashboardService';
+import PostActions from '../sharedComponents/PostActions';
 
-const renderProductItems = ({item, index}) => {
-  // console.log(item.postMedias[0].mediaBlobId, 'media');
+const ProductItem =  React.memo(
+  ({ item ,listTypeData,User}) => {
+  const MediaGalleryRef = useRef(null);
+
+ 
+
   return (
     <View style={styles.cardContainer}>
-      <Image
+      <MediaGallery
+        ref={MediaGalleryRef}
+        mediaItems={item.postMedias}
+        paused={false}
+      />
+      
+      {/* <Image
         source={{
           uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
         }}
         style={styles.carImage}
-      />
+      /> */}
 
       {/* Check and Heart Icons */}
-      <View style={styles.iconContainer}>
+      {item.isBrokerAppVerified &&
+      (<View style={styles.iconContainer} >
         <View style={styles.checkIcon}>
-          {/* <Icon as={card_check_icon} /> */}
           <Card_check_icon />
         </View>
-        <TouchableOpacity style={{}}>
-          {/* <heart_icon /> */}
-          <Heart_icon accessible={true} fontSize={25} />
-        </TouchableOpacity>
+      
       </View>
+      )
+    }
 
+
+<PostActions item={item} User={User} listTypeData={listTypeData} onUpdateLikeCount={(newCount) => {console.log(newCount)}} />
       {/* Car Details */}
       <VStack space="md" style={styles.detailsContainer}>
-        <ZText type={'R16'}>${item.price}</ZText>
-        <View style={styles.locationContainer}>
-          {item.location.cityName && (
-            <>
-              <Icon as={Location_Icon} />
-              <ZText type={'R16'}>{item.location.placeName}</ZText>
-            </>
-          )}
-        </View>
+<HStack>
+  <Box style={{marginLeft:4 }}>
+  <ZText type={'R16'}>
+        {'\u20B9'} {' '}
+        </ZText>
+  </Box>
+  <Box>
+  <ZText type={'R16'}>
+     {item.price}
+        </ZText>
 
-        <ZText type={'R16'}>{item.title}</ZText>
+  </Box>
+</HStack>
+
+  
+       
+          {item.location?.cityName && (
+
+<HStack>
+  <Box>
+  <Icon as={Location_Icon} />
+  </Box>
+  <Box>
+  <ZText type={'R16'} numberOfLines={1}  // Limits to 2 lines
+  ellipsizeMode="tail"> {' '}
+                {item.location.placeName}
+              </ZText>
+
+  </Box>
+</HStack>
+
+       
+          )}
+  
+  <HStack>
+
+  <Box>
+  <ZText type={'R16'} numberOfLines={1}  // Limits to 2 lines
+  ellipsizeMode="tail">
+                {item.title}
+              </ZText>
+
+  </Box>
+</HStack>  
+       
       </VStack>
+
       <Divider className="my-0.5" />
+
       <View style={styles.detailsContainer}>
-        <HStack
-          space="md"
-          reversed={false}
-          style={{paddingHorizontal: 10, justifyContent: 'space-between'}}>
+        <HStack space="md" style={{ paddingHorizontal: 10, justifyContent: 'space-between' }}>
           <VStack>
-            <View style={{alignItems: 'center', alignContent: 'center'}}>
-              <Icon as={Telephone_Icon} size={'xxl'} />
-            </View>
-            <View style={{paddingVertical: 10}}>
+            <View style={{ alignItems: 'center' }}><Icon as={Telephone_Icon} size={'xxl'} /></View>
+            <View style={{ paddingVertical: 10 }}>
               <ZText type={'R14'}>Call</ZText>
             </View>
           </VStack>
           <VStack>
-            <View style={{alignItems: 'center', alignContent: 'center'}}>
-              <Icon as={Chat_Icon} size={'xxl'} />
-            </View>
-            <View style={{paddingVertical: 10}}>
+            <View style={{ alignItems: 'center' }}><Icon as={Chat_Icon} size={'xxl'} /></View>
+            <View style={{ paddingVertical: 10 }}>
               <ZText type={'R14'}>Chat</ZText>
             </View>
           </VStack>
           <VStack>
-            <View style={{alignItems: 'center', alignContent: 'center'}}>
-              <Icon as={Whatsapp_Icon} size={'xxl'} />
-            </View>
-            <View style={{paddingVertical: 10}}>
+            <View style={{ alignItems: 'center' }}><Icon as={Whatsapp_Icon} size={'xxl'} /></View>
+            <View style={{ paddingVertical: 10 }}>
               <ZText type={'R14'}>Whatsapp</ZText>
             </View>
           </VStack>
           <VStack>
-            <View style={{alignItems: 'center', alignContent: 'center'}}>
-              <Icon as={Calender_Icon} size={'xxl'} />
-            </View>
-            <View style={{paddingVertical: 10}}>
+            <View style={{ alignItems: 'center' }}><Icon as={Calender_Icon} size={'xxl'} /></View>
+            <View style={{ paddingVertical: 10 }}>
               <ZText type={'R14'}>Appointment</ZText>
             </View>
           </VStack>
-        </HStack>
+        </HStack>  
       </View>
     </View>
   );
-};
+});
 
-const ItemListScreen: React.FC<any> = ({listType}) => {
+const ItemListScreen: React.FC<any> = ({
+  isPageSkeleton,
+  toggleSkeletonoff,
+  toggleSkeletonOn,
+  setLoading,
+  navigation,
+  user,
+  color,
+  route,
+  pageTitle,
+  isLoading,
+  listType }) => {
+  const [isInfiniteLoading, setInfiniteLoading] = useState(false);
+  const [FilterChipsData, setFilterChipsData] = useState([]);
+  const [listTypeData, setlistTypeData] = useState(route.params.listType);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
-  const user = useSelector((state: RootState) => state.user.user);
+  console.log("=============user=============");
+console.log(user);
+  const {
+    data,
+    status,
+    error,
+    execute,
+    loadMore,
+    pageSize_Set,
+    currentPage_Set,
+    hasMore_Set,
+    totalPages,recordCount
+  } = useApiPagingWithtotalRequest(fetchItemList,setInfiniteLoading,5);
+  //const {data, status, error, execute} = useApiPagingRequest5(fetchItemList);
+  const renderItem = useCallback(({ item, }) => <ProductItem item={item} listTypeData={listTypeData}  User={user}/>, []);
+  async function set_FilterChipsData() {
 
-  const {data, status, error, execute} = useApiRequest(fetchItemList);
+let FilterChipsData =[];
+FilterChipsData.push({ label: 'Location:'+ AppLocation.placeName },)
 
-  const callPodcastList = async () => {
-    await execute('RealEstate', {
-      pageNo: 1,
-      pageSize: 100,
-      keyWord: AppLocation.City,
+setFilterChipsData(FilterChipsData);
+  
+  }
+
+
+
+  async function callPodcastList() {
+    pageSize_Set(5)
+    currentPage_Set(1);
+    hasMore_Set(true);
+
+    await execute(listTypeData, {
+     keyWord: "",
       userId: user.userId,
+      placeID:AppLocation.placeID,
+      placeName: AppLocation.placeName,
+      geoLocationLatitude: AppLocation.geoLocationLatitude,
+      geoLocationLongitude:AppLocation.geoLocationLongitude
+     
     });
     console.log('data :-', data);
     console.log('status :-', status);
     console.log('error :-', error);
-  };
+  }
 
   useEffect(() => {
+
+if(listTypeData=="RealEstate")
+{
+  pageTitle("Property");
+}
+if(listTypeData=="Car")
+  {
+    pageTitle("Car");
+  }
+
+    set_FilterChipsData();
     callPodcastList();
   }, []);
-
+  const [itemHeight, setItemHeight] = useState(560);
+  // const onItemLayout = (event) => {
+  //   const { height } = event.nativeEvent.layout;
+  //   console.log('itemHeight :',height);
+  //   setItemHeight(height);
+  // };
+  const loadMorepage = async () => {
+    if(!isInfiniteLoading)
+  {  
+      await loadMore(listTypeData, {
+ 
+      keyWord: "",
+      userId: user.userId,
+      placeID:AppLocation.placeID,
+      placeName: AppLocation.placeName,
+      geoLocationLatitude: AppLocation.geoLocationLatitude,
+      geoLocationLongitude:AppLocation.geoLocationLongitude
+     
+    });
+    
+  }
+  };
   return (
-    <View style={styles.listContainer}>
-      <ScrollView>
-        <View style={styles.headerContainer}>
-          <View style={styles.header}>
-            <View style={styles.IconButton}>
-              <ArrowLeftIcon />
-              <ZText type={'R18'}>Property</ZText>
-            </View>
-            <View style={styles.IconButton}>
-              <SearchIcon />
-            </View>
-          </View>
-          <UserStories />
-        </View>
-        <View>
-          <Recommend />
-        </View>
-        <View>
-          <HStack space="md" reversed={false} style={{paddingHorizontal: 10}}>
-            <FlatList
+  
+    
+      <View style={{ flex: 1 }}>
+         <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips>
+         {data&&  
+          <FlatList
               data={data}
-              keyExtractor={item => item.postId.toString()}
-              renderItem={renderProductItems}
-              initialNumToRender={20}
+             
+              renderItem={renderItem}
+              
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-              onEndReachedThreshold={0.8}
-              // ItemSeparatorComponent={() => <View style={styles.separator} />}
-            />
-          </HStack>
+              // initialNumToRender={2}
+              // maxToRenderPerBatch={5}
+             
+            
+             
+              keyExtractor={(item, index) => index.toString()}
+              onEndReachedThreshold={0.2}
+              onEndReached={loadMorepage}
+              ListFooterComponent={
+                isInfiniteLoading ? (
+                  <LoadingSpinner isVisible={isInfiniteLoading} />
+                ) : null
+              }
+             // decelerationRate="fast"
+            //  removeClippedSubviews={true}
+              // getItemLayout={(data, index) => ({
+              //   length: itemHeight,
+              //   offset: itemHeight * index,
+              //   index,
+              // })}
+            />}
+ 
         </View>
-      </ScrollView>
-      <View style={styles.footer}>
-        <ZText type={'S16'}>Properties</ZText>
-        <View style={styles.IconButton}>
-          <ShortingIcon />
-          <ZText type={'S16'}>Sort</ZText>
-        </View>
-        <View style={styles.IconButton}>
-          <FilterIcon />
-          <ZText type={'S16'}>Filter</ZText>
-        </View>
-      </View>
-    </View>
+    //   </ScrollView>
+    //   <View style={styles.footer}>
+    //     <ZText type={'S16'} >Properties</ZText>
+    //     <View style={styles.IconButton}>
+    //       <ShortingIcon />
+    //       <ZText type={'S16'} >Sort</ZText>
+    //     </View>
+    //     <View style={styles.IconButton}>
+    //       <FilterIcon />
+    //       <ZText type={'S16'} >Filter</ZText>
+    //     </View>
+    //   </View>
+    // </View>
+    
   );
-};
+}
+
 
 const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: '#FFF',
     paddingVertical: 10,
+    
   },
   header: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+   justifyContent: "space-between",
+   flexDirection: 'row',
+   paddingHorizontal: 20,
+   paddingVertical: 20,
   },
   listContainer: {
     backgroundColor: '#F7F8FA',
-    flex: 1,
+    flex: 1
   },
-
+  
   footer: {
     justifyContent: 'space-between',
     flexDirection: 'row',
-    height: 80,
+    height: 80,    
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 20
   },
   IconButton: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 12
   },
   footerContainer: {
     backgroundColor: '#FFF',
@@ -273,7 +384,7 @@ const styles = StyleSheet.create({
     width: 375,
     borderRadius: 12,
     backgroundColor: '#FFF',
-    margin: 10,
+    margin: 20,
     paddingBottom: 10,
     shadowColor: 'rgba(0, 0, 0, 0.8)',
     shadowOffset: {width: 0, height: 4},
@@ -329,6 +440,8 @@ const styles = StyleSheet.create({
     color: '#000',
     marginTop: 4,
   },
+
 });
 
-export default ItemListScreen;
+export default AppBaseContainer(ItemListScreen, '', true);
+//export default ItemListScreen;
