@@ -11,11 +11,22 @@ PODS:
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.75.2)
   - ffmpeg-kit-ios-min (6.0)
+  - Firebase/Auth (10.29.0):
+    - Firebase/CoreOnly
+    - FirebaseAuth (~> 10.29.0)
   - Firebase/CoreOnly (10.29.0):
     - FirebaseCore (= 10.29.0)
   - Firebase/Messaging (10.29.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 10.29.0)
+  - FirebaseAppCheckInterop (10.29.0)
+  - FirebaseAuth (10.29.0):
+    - FirebaseAppCheckInterop (~> 10.17)
+    - FirebaseCore (~> 10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
+    - GoogleUtilities/Environment (~> 7.8)
+    - GTMSessionFetcher/Core (< 4.0, >= 2.1)
+    - RecaptchaInterop (~> 100.0)
   - FirebaseCore (10.29.0):
     - FirebaseCoreInternal (~> 10.0)
     - GoogleUtilities/Environment (~> 7.12)
@@ -1760,6 +1771,7 @@ PODS:
     - React-utils (= 0.75.2)
   - ReactNativeLocalization (2.3.2):
     - React-Core
+  - RecaptchaInterop (100.0.0)
   - RNAudioRecorderPlayer (3.6.11):
     - React-Core
   - RNCAsyncStorage (2.0.0):
@@ -1970,8 +1982,10 @@ DEPENDENCIES:
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
+  - Firebase/Auth
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - GoogleSignIn
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCT-Folly/Fabric (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -2073,6 +2087,8 @@ SPEC REPOS:
     - AppAuth
     - ffmpeg-kit-ios-min
     - Firebase
+    - FirebaseAppCheckInterop
+    - FirebaseAuth
     - FirebaseCore
     - FirebaseCoreExtension
     - FirebaseCoreInternal
@@ -2086,6 +2102,7 @@ SPEC REPOS:
     - libwebp
     - nanopb
     - PromisesObjC
+    - RecaptchaInterop
     - SDWebImage
     - SDWebImageWebPCoder
     - SocketRocket
@@ -2294,6 +2311,8 @@ SPEC CHECKSUMS:
   FBLazyVector: 38bb611218305c3bc61803e287b8a81c6f63b619
   ffmpeg-kit-ios-min: 4e9a088f4ee9629435960b9d68e54848975f1931
   Firebase: cec914dab6fd7b1bd8ab56ea07ce4e03dd251c2d
+  FirebaseAppCheckInterop: 6a1757cfd4067d8e00fccd14fcc1b8fd78cfac07
+  FirebaseAuth: e2ebfaf9fb4638a1c9a3b0efd17d1b90943987cd
   FirebaseCore: 30e9c1cbe3d38f5f5e75f48bfcea87d7c358ec16
   FirebaseCoreExtension: 705ca5b14bf71d2564a0ddc677df1fc86ffa600f
   FirebaseCoreInternal: df84dd300b561c27d5571684f389bf60b0a5c934
@@ -2379,6 +2398,7 @@ SPEC CHECKSUMS:
   ReactCodegen: de94475c4712a61ba0b1e1c25eb54db32f56836d
   ReactCommon: 8da2bad9c1e5901f7b5484e42e59578edeece142
   ReactNativeLocalization: fb171138cdc80d5d0d4f20243d2fc82c2b3cc48f
+  RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   RNAudioRecorderPlayer: 0208ee1f2e19ec027552bea44b1ae682f187ed54
   RNCAsyncStorage: d35c79ffba52c1013013e16b1fc295aec2feabb6
   RNCClipboard: 0a720adef5ec193aa0e3de24c3977222c7e52a37
@@ -2404,6 +2424,6 @@ SPEC CHECKSUMS:
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   Yoga: 36d44f1d31d7c11be1067e5c7a70a12c2eed355c
 
-PODFILE CHECKSUM: 9ff3f7030d0f8c32c3790c4dd16ff19fac850321
+PODFILE CHECKSUM: 950027eada2026bbcb7cf2df168140be79627fb8
 
 COCOAPODS: 1.15.2

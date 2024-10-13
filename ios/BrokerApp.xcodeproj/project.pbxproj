@@ -57,6 +57,7 @@
 		07A6EC8E8E067F0ECFABFF86 /* Pods_BrokerApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BrokerApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		091C00362CA28E1500230001 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0922763B2CB2BDC3004A4E74 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0922763D2CBA892F004A4E74 /* BrokerApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BrokerApp.entitlements; path = BrokerApp/BrokerApp.entitlements; sourceTree = "<group>"; };
 		0A0FE20E8EA9F09F74412CED /* Pods-BrokerApp-BrokerAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BrokerApp-BrokerAppTests.debug.xcconfig"; path = "Target Support Files/Pods-BrokerApp-BrokerAppTests/Pods-BrokerApp-BrokerAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		0A1315034E5546BD99E22C53 /* Gilroy ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy ExtraBoldItalic.ttf"; path = "../assets/font/Gilroy ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		0E707A858D706A6E096E4509 /* Pods-BrokerApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BrokerApp.debug.xcconfig"; path = "Target Support Files/Pods-BrokerApp/Pods-BrokerApp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -133,6 +134,7 @@
 		13B07FAE1A68108700A75B9A /* BrokerApp */ = {
 			isa = PBXGroup;
 			children = (
+				0922763D2CBA892F004A4E74 /* BrokerApp.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -581,6 +583,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = BrokerApp/BrokerApp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6VJHVKP7J4;
 				ENABLE_BITCODE = NO;
@@ -609,6 +612,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = BrokerApp/BrokerApp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6VJHVKP7J4;
 				INFOPLIST_FILE = BrokerApp/Info.plist;
