@@ -1429,6 +1429,8 @@ PODS:
     - Yoga
   - react-native-image-resizer (1.4.5):
     - React-Core
+  - react-native-maps (1.18.0):
+    - React-Core
   - react-native-netinfo (11.4.1):
     - React-Core
   - react-native-photo-editor (1.1.6):
@@ -1782,7 +1784,7 @@ PODS:
     - React-Core
   - RNDeviceInfo (11.1.0):
     - React-Core
-  - RNFastImage (8.6.12):
+  - RNFastImage (8.7.0):
     - React-Core
     - SDWebImage (~> 5.18.7)
     - SDWebImageWebPCoder (~> 0.14)
@@ -2025,6 +2027,7 @@ DEPENDENCIES:
   - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-image-resizer (from `../node_modules/react-native-image-resizer`)
+  - react-native-maps (from `../node_modules/react-native-maps`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - "react-native-photo-editor (from `../node_modules/@baronha/react-native-photo-editor`)"
   - react-native-restart (from `../node_modules/react-native-restart`)
@@ -2196,6 +2199,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-picker"
   react-native-image-resizer:
     :path: "../node_modules/react-native-image-resizer"
+  react-native-maps:
+    :path: "../node_modules/react-native-maps"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-photo-editor:
@@ -2365,6 +2370,7 @@ SPEC CHECKSUMS:
   react-native-geolocation-service: 608e1da71a1ac31b4de64d9ef2815f697978c55b
   react-native-image-picker: 5bd900eec966c8f9fe32c5ec844afcd71d052030
   react-native-image-resizer: d9fb629a867335bdc13230ac2a58702bb8c8828f
+  react-native-maps: 2e6e9896195781327ee15b33e3e84bf73c08207a
   react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
   react-native-photo-editor: b08574cd11840a542d828f0d9d8931d6be18c3fe
   react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
@@ -2404,7 +2410,7 @@ SPEC CHECKSUMS:
   RNCClipboard: 0a720adef5ec193aa0e3de24c3977222c7e52a37
   RNDateTimePicker: 40ffda97d071a98a10fdca4fa97e3977102ccd14
   RNDeviceInfo: b899ce37a403a4dea52b7cb85e16e49c04a5b88e
-  RNFastImage: ce2242fa69286c2784e4d8ccf52b266534fdc78e
+  RNFastImage: 2436a2364eea55cd3626732d5ca0b06ef1474cf2
   RNFBApp: 5f87753a8d8b37d229adf85cd0ff37709ffdf008
   RNFBMessaging: 3fa1114c0868dd21f20dfe186adf42297ea316b1
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
