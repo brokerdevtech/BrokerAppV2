@@ -27,6 +27,7 @@ import ZText from './ZText';
 import { useApiRequest } from '../hooks/useApiRequest';
 import { getCarPostCascadedFilters, getCarPostFilters } from '../../BrokerAppCore/services/new/postServices';
 import SelectableFlatList from './filters/SelectableFlatList';
+import AppBaseContainer from '../hoc/AppBaseContainer_old';
 
 const MENU_ITEMS = [
   {id: '1', name: 'Budget'},
@@ -47,36 +48,36 @@ const MENU_ITEMS = [
   {id: '17', name: 'Insurance Status', apiName: 'InsuranceStatus'},
 ];
 
-const CarFilterScreen = () => {
+const CarFilterScreen : React.FC = ({
+  AlertDialogShow,
+  isPageSkeleton,
+  toggleSkeletonoff,
+  toggleSkeletonOn,
+
+  navigation,
+
+  color,
+  route,
+  pageTitle,
+  toast,
+}) => {
   const [menuItems, setMenuItems] = useState(MENU_ITEMS);
-  const [minValue, setMinValue] = useState(500000);
-  const [maxValue, setMaxValue] = useState(20000000);
+  const [imagesArray, setimagesArray] = useState<any>(route.params?.postVisual);
+  const [Isvideo, setIsvideo] = useState<any>(route.params?.Isvideo);
+  const [formValue, setformValue] = useState<any>(route.params?.formValue);
+  const [localities, setlocalities] = useState<any>(route.params?.localities);
+
+
+
+
   const [selectedItem, setSelectedItem] = useState(null);
-  const [filterData, setFilterData] = useState({});
+
   const [selectedFilters, setSelectedFilters] = useState({});
-  const [selectedBrand, setSelectedBrand] = useState(null);
-  const [selectedDriven, setSelectedDriven] = useState(null);
-  const [selectedDiscount, setSelectedDiscount] = useState(null);
-  const [selectedIsnew, setSelectedIsnew] = useState(false);
-  const [selectedMaking, setSelectedMaking] = useState(null);
-  const [modelData, setModelData] = useState([]);
+
+
   const [CarfiltersState, setCarfiltersState] = useState([]);
   const user = useSelector(state => state.user.user);
-  const fetchModels = async brandKey => {
-    try {
-      const {data} = await getCarCascadedFilters(
-        user.userId,
-        'post',
-        'Model',
-        brandKey.key,
-      );
-
-      console.log(data.filters[0].records);
-      setModelData(data.filters[0].records || []);
-    } catch (error) {
-      console.error('Error fetching models:', error);
-    }
-  };
+ 
 
   const {data:CarFilters ,status:CarFiltersstatus, error:CarFilterserror, execute:CarFilterexecute} = useApiRequest(getCarPostFilters);
 
@@ -121,9 +122,19 @@ const CarFilterScreen = () => {
     alert(`Please select the following mandatory filters: ${missingMandatoryFilters.join(', ')}`);
     return;
   }
-  
+  console.log("=====================================selectedFilters");
    console.log(selectedFilters);
-  
+   console.log(imagesArray);
+   console.log(Isvideo);
+   console.log(localities);
+   console.log(formValue);
+   navigation.navigate('CarPostPreview', {
+    filters: selectedFilters,
+    postVisual: imagesArray,
+    Isvideo: Isvideo,
+    localities: localities,
+    formValue: formValue,
+  });
 
     // Proceed with your API call or other logic here
   };
@@ -383,4 +394,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CarFilterScreen;
+export default AppBaseContainer(CarFilterScreen,' ', false);

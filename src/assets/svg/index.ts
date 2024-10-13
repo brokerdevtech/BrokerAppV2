@@ -75,9 +75,10 @@ import Share_Icon from './icons/share.svg';
 import File_tray_icon from './file_tray.svg';
 import Document_text from './documenttext.svg';
 import Upload_Icon from './upload.svg';
-
+import share_PIcon from './share-svgrepo.svg';
 import unchecked from './unchecked.svg';
 import filter_icon from './filters.svg';
+import bookmark_icon from './bookmark.svg';
 export {
   Follower_Icon,
   filter_icon,
@@ -153,5 +154,7 @@ export {
   Telephone_Icon,
   Whatsapp_Icon,
   Share_Icon,
-  unchecked
+  unchecked,
+  share_PIcon,
+  bookmark_icon
 };

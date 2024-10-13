@@ -5,7 +5,7 @@ import {useSelector} from 'react-redux';
 import HomeNavigation from './HomeNavigation';
 import AuthStackNavigation from './AuthStackNavigation';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet'
 interface MainNavigationProps {
   loggedIn: boolean;
   setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
@@ -32,12 +32,15 @@ const [isLoggedIn, setisLoggedIn] = useState(false);
   return (
     <SafeAreaProvider>
       <NavigationContainer>
+      <BottomSheetModalProvider>
         {isLoggedIn ? (
           <HomeNavigation />
         ) : (
           <AuthStackNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
         )}
+        </BottomSheetModalProvider>
       </NavigationContainer>
+
     </SafeAreaProvider>
   );
 };

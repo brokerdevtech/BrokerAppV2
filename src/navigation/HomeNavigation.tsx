@@ -34,6 +34,7 @@ import ItemDetailScreen from '../screens/ItemDetailScreen';
 import ManagePersonalDetails from '../sharedComponents/ManagePersonalDetails';
 import ProfileKyc from '../sharedComponents/ProfileKyc';
 import OtherProfileScreen from '../sharedComponents/OtherProfileScreen';
+import CarPostPreview from '../screens/postImage/previewScreens/CarPostPreview';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -147,6 +148,11 @@ const HomeNavigation: React.FC = () => {
           options={{headerShown: false}}
         />
         <Stack.Screen
+          name="CarPostPreview"
+          component={CarPostPreview}
+          options={{headerShown: false}}
+        />
+            <Stack.Screen
           name="GenericPostPreview"
           component={GenericPostPreview}
           options={{headerShown: false}}

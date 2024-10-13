@@ -14,11 +14,13 @@ import UserProfile from '../sharedComponents/profile/UserProfile';
 import {Card_check_icon, Heart_icon, Location_Icon,Calender_Icon,
   Chat_Icon,
   Telephone_Icon,
-  Whatsapp_Icon} from '../assets/svg';
+  Whatsapp_Icon,
+  share_PIcon,
+  bookmark_icon} from '../assets/svg';
 import { imagesBucketcloudfrontPath } from '../config/constants';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
 import { fetchDashboardData, fetchItemList } from '@/BrokerAppCore/services/new/dashboardService';
-import {Icon} from '../../components/ui/icon';
+import {FavouriteIcon, Icon, MessageCircleIcon} from '../../components/ui/icon';
 import { Divider } from '@/components/ui/divider';
 import {VStack} from '@/components/ui/vstack';
 import MediaGallery from '../sharedComponents/MediaGallery';
@@ -27,10 +29,15 @@ import AppBaseContainer from '@/src/hoc/AppBaseContainer_old';
 import LoadingSpinner from '../sharedComponents/LoadingSpinner';
 import { Box } from '../../components/ui/box';
 import FilterChips from '../sharedComponents/FilterChips';
+import margin from '@/themes/margin';
+import { SetPostLikeUnLike } from '../../BrokerAppCore/services/new/dashboardService';
+import PostActions from '../sharedComponents/PostActions';
 
 const ProductItem =  React.memo(
-  ({ item }) => {
+  ({ item ,listTypeData,User}) => {
   const MediaGalleryRef = useRef(null);
+
+ 
 
   return (
     <View style={styles.cardContainer}>
@@ -48,15 +55,18 @@ const ProductItem =  React.memo(
       /> */}
 
       {/* Check and Heart Icons */}
-      <View style={styles.iconContainer}>
+      {item.isBrokerAppVerified &&
+      (<View style={styles.iconContainer} >
         <View style={styles.checkIcon}>
           <Card_check_icon />
         </View>
-        <TouchableOpacity>
-          <Heart_icon accessible={true} fontSize={25} />
-        </TouchableOpacity>
+      
       </View>
+      )
+    }
 
+
+<PostActions item={item} User={User} listTypeData={listTypeData} onUpdateLikeCount={(newCount) => {console.log(newCount)}} />
       {/* Car Details */}
       <VStack space="md" style={styles.detailsContainer}>
 <HStack>
@@ -75,7 +85,7 @@ const ProductItem =  React.memo(
 
   
        
-          {item.location.cityName && (
+          {item.location?.cityName && (
 
 <HStack>
   <Box>
@@ -154,8 +164,10 @@ const ItemListScreen: React.FC<any> = ({
   listType }) => {
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [FilterChipsData, setFilterChipsData] = useState([]);
+  const [listTypeData, setlistTypeData] = useState(route.params.listType);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
-
+  console.log("=============user=============");
+console.log(user);
   const {
     data,
     status,
@@ -168,7 +180,7 @@ const ItemListScreen: React.FC<any> = ({
     totalPages,recordCount
   } = useApiPagingWithtotalRequest(fetchItemList,setInfiniteLoading,5);
   //const {data, status, error, execute} = useApiPagingRequest5(fetchItemList);
-  const renderItem = useCallback(({ item }) => <ProductItem item={item} />, []);
+  const renderItem = useCallback(({ item, }) => <ProductItem item={item} listTypeData={listTypeData}  User={user}/>, []);
   async function set_FilterChipsData() {
 
 let FilterChipsData =[];
@@ -185,7 +197,7 @@ setFilterChipsData(FilterChipsData);
     currentPage_Set(1);
     hasMore_Set(true);
 
-    await execute('RealEstate', {
+    await execute(listTypeData, {
      keyWord: "",
       userId: user.userId,
       placeID:AppLocation.placeID,
@@ -200,6 +212,16 @@ setFilterChipsData(FilterChipsData);
   }
 
   useEffect(() => {
+
+if(listTypeData=="RealEstate")
+{
+  pageTitle("Property");
+}
+if(listTypeData=="Car")
+  {
+    pageTitle("Car");
+  }
+
     set_FilterChipsData();
     callPodcastList();
   }, []);
@@ -212,7 +234,7 @@ setFilterChipsData(FilterChipsData);
   const loadMorepage = async () => {
     if(!isInfiniteLoading)
   {  
-      await loadMore('RealEstate', {
+      await loadMore(listTypeData, {
  
       keyWord: "",
       userId: user.userId,
@@ -283,7 +305,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: '#FFF',
     paddingVertical: 10,
-   
+    
   },
   header: {
    justifyContent: "space-between",
@@ -362,7 +384,7 @@ const styles = StyleSheet.create({
     width: 375,
     borderRadius: 12,
     backgroundColor: '#FFF',
-    margin: 10,
+    margin: 20,
     paddingBottom: 10,
     shadowColor: 'rgba(0, 0, 0, 0.8)',
     shadowOffset: {width: 0, height: 4},
@@ -421,5 +443,5 @@ const styles = StyleSheet.create({
 
 });
 
-export default AppBaseContainer(ItemListScreen, 'Property', true);
+export default AppBaseContainer(ItemListScreen, '', true);
 //export default ItemListScreen;
