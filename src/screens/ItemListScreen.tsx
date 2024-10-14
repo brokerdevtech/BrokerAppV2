@@ -85,7 +85,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
         }}
       />
       {/* Car Details */}
-      <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', {postId: item.postId})}>
+      <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>
       <VStack space="md" style={styles.detailsContainer}>
         <HStack>
           <Box style={{marginLeft: 4}}>
