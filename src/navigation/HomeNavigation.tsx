@@ -35,6 +35,8 @@ import ManagePersonalDetails from '../sharedComponents/ManagePersonalDetails';
 import ProfileKyc from '../sharedComponents/ProfileKyc';
 import OtherProfileScreen from '../sharedComponents/OtherProfileScreen';
 import CarPostPreview from '../screens/postImage/previewScreens/CarPostPreview';
+import PostLikeList from '../sharedComponents/PostLikeList';
+import PostCommentLikeList from '../sharedComponents/PostCommentLikeList';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -170,6 +172,17 @@ const HomeNavigation: React.FC = () => {
         <Stack.Screen
           name="ItemDetailScreen"
           component={ItemDetailScreen}
+          options={{headerShown: false}}
+        />
+ <Stack.Screen
+          name="PostLikeList"
+          component={PostLikeList}
+          options={{headerShown: false}}
+        />
+
+<Stack.Screen
+          name="PostCommentLikeList"
+          component={PostCommentLikeList}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

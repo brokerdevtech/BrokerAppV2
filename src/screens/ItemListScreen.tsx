@@ -32,7 +32,7 @@ import FilterChips from '../sharedComponents/FilterChips';
 import margin from '@/themes/margin';
 import { SetPostLikeUnLike } from '../../BrokerAppCore/services/new/dashboardService';
 import PostActions from '../sharedComponents/PostActions';
-
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet'
 const ProductItem =  React.memo(
   ({ item ,listTypeData,User}) => {
   const MediaGalleryRef = useRef(null);
@@ -40,6 +40,7 @@ const ProductItem =  React.memo(
  
 
   return (
+ 
     <View style={styles.cardContainer}>
       <MediaGallery
         ref={MediaGalleryRef}
@@ -248,7 +249,7 @@ if(listTypeData=="Car")
   }
   };
   return (
-  
+    <BottomSheetModalProvider>
     
       <View style={{ flex: 1 }}>
          <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips>
@@ -266,7 +267,7 @@ if(listTypeData=="Car")
             
              
               keyExtractor={(item, index) => index.toString()}
-              onEndReachedThreshold={0.2}
+              onEndReachedThreshold={0.5}
               onEndReached={loadMorepage}
               ListFooterComponent={
                 isInfiniteLoading ? (
@@ -282,7 +283,7 @@ if(listTypeData=="Car")
               // })}
             />}
  
-        </View>
+        </View></BottomSheetModalProvider>
     //   </ScrollView>
     //   <View style={styles.footer}>
     //     <ZText type={'S16'} >Properties</ZText>

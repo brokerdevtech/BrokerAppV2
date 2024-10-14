@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { View, TouchableOpacity,Text,StyleSheet, TextInput } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { View, TouchableOpacity,Text,StyleSheet, TextInput, FlatList } from 'react-native';
 import { SetPostLikeUnLike } from '../../BrokerAppCore/services/new/dashboardService';
 import { HStack } from '../../components/ui/hstack';
 import { VStack } from '../../components/ui/vstack';
@@ -12,16 +12,58 @@ import {
     BottomSheetModalProvider,
     BottomSheetBackdrop,
     BottomSheetFooter,
-    BottomSheetTextInput,
+    BottomSheetTextInput,BottomSheetFlatList
   } from '@gorhom/bottom-sheet';
 import { Box } from '../../components/ui/box';
 import { Button, ButtonIcon } from '../../components/ui/button';
-
+import { useApiPagingWithtotalRequest } from '../hooks/useApiPagingWithtotalRequest';
+import { GetCommentList } from '../../BrokerAppCore/services/new/postServices';
+import LoadingSpinner from './LoadingSpinner';
+import ZAvatarInitials from './ZAvatarInitials';
+import moment from 'moment';
+import TextWithPermissionCheck from './TextWithPermissionCheck';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../BrokerAppCore/redux/store/reducers';
+import { moderateScale, PermissionKey } from '../config/constants';
+import TouchableOpacityWithPermissionCheck from './TouchableOpacityWithPermissionCheck';
+import {Like, UnLike, Send, CloseIcon} from '../assets/svg';
+import CommentBottomSheet from './CommentBottomSheet';
+import { useNavigation } from '@react-navigation/native';
 const PostActions = ({ item, User, listTypeData, onUpdateLikeCount }) => {
+  const [isInfiniteLoading, setInfiniteLoading] = useState(false);
+  const {
+    data,
+    status,
+    error,
+    execute,
+    loadMore,
+    pageSize_Set,
+    currentPage_Set,
+    hasMore_Set,
+    totalPages,recordCount
+  } = useApiPagingWithtotalRequest(GetCommentList,setInfiniteLoading,15);
+  const [isOpenArray, setisOpenArray] = useState([]);
+  const navigation = useNavigation();
   const [PostLike, SetPostLike] = useState(item.userLiked === 1);
   const [PostlikesCount, SetPostlikesCount] = useState(item.likes);
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ['50%','100%'], []);
+  const commentSheetRef = useRef(null);
+
+  const snapPoints = useMemo(() => ['60%'], []);
+
+  const userPermissions = useSelector(
+    (state: RootState) => state.user.user.userPermissions,
+  );
+
+  const handleListView =async()=>{
+ 
+    navigation.navigate('PostLikeList', {
+      type: listTypeData, 
+      userId: User?.userId, 
+      ActionId: item?.postId
+    });
+ 
+}
+
   const handleLike = async () => {
     let endpoint = listTypeData === "RealEstate" || listTypeData === "Car" ? "Post" : "";
     const result = await SetPostLikeUnLike(endpoint, "Like", User.userId, item.postId);
@@ -44,47 +86,47 @@ const PostActions = ({ item, User, listTypeData, onUpdateLikeCount }) => {
     }
   };
   const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
+    commentSheetRef.current?.open();
   }, []);
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
-  }, []);
+ 
 
-  const renderFooter = useCallback(
-    props => (
-      <BottomSheetFooter {...props} >
-        <View style={styles.footerContainer}>
-            <HStack style={{justifyContent:'center'}}>
-        <TextInput style={{flex:1}}
-                   multiline={true}
-                  
-                  placeholder="Add a comment..."
-                  onFocus={() => {bottomSheetModalRef.current?.snapToIndex(1)}}
-  onBlur={() => {{bottomSheetModalRef.current?.snapToIndex(0)}}}
-                />
-                <Box style={{justifyContent:'center'}}>
-                <Button size="lg" className="rounded-full p-3.5"  style={{   backgroundColor: 'red',}} >
-  {/* EditIcon is imported from 'lucide-react-native' */}
-  <ButtonIcon as={ArrowUpIcon}  color='white' stroke='white'/>
-</Button>
-               </Box>
-        </HStack>
-        </View>
-      </BottomSheetFooter>
-    ),
-    []
+
+
+async function callCommentList() {
+  pageSize_Set(15)
+  currentPage_Set(0);
+  hasMore_Set(true);
+
+let endpoint=""
+
+  if(listTypeData=="RealEstate")
+    {
+    //pageTitle("Property");
+    }
+    if(listTypeData=="Car")
+    {
+      endpoint="Car"
+    }
+
+
+  await execute(
+    endpoint,
+   User.userId,
+   item.postId,
+   
   );
+  console.log('data :-', data);
+  console.log('status :-', status);
+  console.log('error :-', error);
+}
 
-  const renderBackdrop = useCallback(
-    (props) => (
-        <BottomSheetBackdrop
-            {...props}
-            disappearsOnIndex={1}
-            appearsOnIndex={0}
-        />
-    ),
-    []
-);
+useEffect(() => {
+
+
+  callCommentList();
+}, []);
+
+
   return (
     <>
     <HStack style={{ marginLeft: 20, marginRight: 20, marginTop: 10 }}>
@@ -93,7 +135,10 @@ const PostActions = ({ item, User, listTypeData, onUpdateLikeCount }) => {
           <TouchableOpacity onPress={PostLike ? handleUnLike : handleLike}>
             <Icon as={FavouriteIcon} style={{ marginRight: 5 }} color={PostLike ? 'red' : undefined} />
           </TouchableOpacity>
-          {PostlikesCount > 0 && <ZText type={'R16'}>{PostlikesCount}</ZText>}
+          {PostlikesCount > 0 && 
+           <TouchableOpacity onPress={handleListView}>
+          <ZText type={'R16'}>{PostlikesCount}</ZText>
+          </TouchableOpacity>}
         </HStack>
       </VStack>
 
@@ -115,27 +160,15 @@ const PostActions = ({ item, User, listTypeData, onUpdateLikeCount }) => {
       </VStack>
     </HStack>
 
-
+    <CommentBottomSheet 
      
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={0}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        
-        enablePanDownToClose={true} 
-         backdropComponent={renderBackdrop} 
-        footerComponent={renderFooter}
-      >
-        <BottomSheetView style={styles.contentContainer}
-        
-        >
-          
-          <Text>Awesome</Text>
-         
-        </BottomSheetView>
-      </BottomSheetModal>
-   
+        ref={commentSheetRef}
+        postItem={item}
+        User={User}
+        listTypeData={listTypeData}
+        userPermissions={userPermissions}
+      />
+  
 </>
   );
 };
@@ -150,29 +183,82 @@ const styles = StyleSheet.create({
         color: "white",
         textAlign: "center",
       },
+      bottomcontainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f5f5f5',
+       
+      },
     container: {
       flex: 1,
       padding: 24,
       justifyContent: 'center',
       backgroundColor: 'grey',
+    },  sheetContent: {
+      flex: 1,
+      width:'100%',
+     
     },
     contentContainer: {
-      flex: 1,
-      alignItems: 'center',  // or 'center'
-     height:'100%',
-     backgroundColor: 'red',
+     // paddingBottom: 20,
     },
+  //   contentContainer: {
+  //     height:"90%",
+  // //     flex: 1,
+  // //   //  alignItems: 'center',  // or 'center'
+  // //    height:'100%',
+  // //  //  backgroundColor: 'red',
+  //  paddingBottom: 20,
+  //  marginBottom:200
+  //   },
     footerContainer: {
-        marginTop:"auto",
+    minHeight:50,
         padding: 12,
-        margin: 12,
+       
         borderRadius: 12,
-        backgroundColor: 'white',
+  
+        borderTopWidth: 1,                // Adds a top border
+        borderTopColor: '#ccc',           // Sets the top border color
+        backgroundColor: 'white',         // Sets background color
+        shadowColor: '#000',              // iOS shadow color
+        shadowOffset: { width: 0, height: -2 },  // iOS shadow offset for top shadow
+        shadowOpacity: 0.2,               // iOS shadow opacity
+        shadowRadius: 4,                  // iOS shadow blur
+        elevation: 5,      
+       
       },
       footerText: {
         textAlign: 'center',
         color: 'white',
         fontWeight: '800',
       },
+////////////////////////////////////////////////////////////////
+mainContainer: {
+  flexDirection: 'row',
+  width: '100%',
+  marginBottom: 20,
+  alignItems: 'flex-start',
+  verticalAlign: 'top',
+  paddingHorizontal: 10,
+},
+  profileWrap: {
+  width: moderateScale(50),
+  height: moderateScale(50),
+  borderRadius: moderateScale(25),
+  verticalAlign: 'top',
+marginRight:5
+},
+  profileImage: {
+  width: moderateScale(20),
+  height: moderateScale(20),
+  borderRadius: moderateScale(20),
+  verticalAlign: 'top',
+}
+
+
+
+
+
   });
 export default PostActions;

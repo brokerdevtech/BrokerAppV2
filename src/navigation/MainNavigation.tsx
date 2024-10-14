@@ -32,13 +32,13 @@ const [isLoggedIn, setisLoggedIn] = useState(false);
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-      <BottomSheetModalProvider>
+    
         {isLoggedIn ? (
           <HomeNavigation />
         ) : (
           <AuthStackNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
         )}
-        </BottomSheetModalProvider>
+       
       </NavigationContainer>
 
     </SafeAreaProvider>

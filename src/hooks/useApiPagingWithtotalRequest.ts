@@ -113,5 +113,5 @@ console.log(response);
     setHasMore(hasMore);
   };
 
-  return {data, status, error, execute,loadMore,pageSize_Set,currentPage_Set,hasMore_Set,totalPages,recordCount};
+  return {data, status, error, execute,loadMore,pageSize_Set,currentPage_Set,hasMore_Set,totalPages,recordCount,hasMore};
 };

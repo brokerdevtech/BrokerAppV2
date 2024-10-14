@@ -15,7 +15,8 @@ import Map_pin from './mapPin.svg';
 import Notification_Icon from './notification-bing.svg';
 import Chat_icon from './chat_icon.svg';
 import verified_blue from './verified_blue.svg';
-
+import Send from './send.svg';
+import Like from './like-fill.svg';
 import Volume from './icons/volume.svg';
 import VolumeMute from './icons/volume-mute.svg';
 import OpenEye from './icons/eye.svg';
@@ -80,6 +81,7 @@ import unchecked from './unchecked.svg';
 import filter_icon from './filters.svg';
 import bookmark_icon from './bookmark.svg';
 export {
+ Like ,Send,
   Follower_Icon,
   filter_icon,
   Document_text,
