@@ -50,7 +50,7 @@ import {SetPostLikeUnLike} from '../../BrokerAppCore/services/new/dashboardServi
 import PostActions from '../sharedComponents/PostActions';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet'
 const ProductItem =  React.memo(
-    ({ item, listTypeData, User,, navigation }) => {
+    ({ item, listTypeData, User, navigation }) => {
   const MediaGalleryRef = useRef(null);
 
   return (
