@@ -74,7 +74,8 @@ const ProductSection = (props: ProductSectionProps) => {
 
         {/* Car Details */}
         <View style={styles.detailsContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', {listType: 'PROPERTY', postId: item.postId})}>
+          
+        <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', {postId: item.postId, postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>
           <ZText type={'R16'} style={styles.price}>
             $ {item.price}
           </ZText>

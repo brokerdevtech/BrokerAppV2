@@ -16,7 +16,7 @@ import {useNavigation} from '@react-navigation/native';
 import {moderateScale} from '../../config/constants';
 import {Color} from '../../styles/GlobalStyles';
 import { fetchPodcastList } from '../../../BrokerAppCore/services/new/podcastService';
-
+import ArrowLeftIcon from '../../assets/svg/icons/arrow-left.svg' 
 
 const {width, height} = Dimensions.get('window');
 
@@ -123,12 +123,13 @@ const VideoCarousel = ({route}) => {
   return (
     <View style={{width, height, backgroundColor: 'black'}}>
       <View style={styles.header}>
-        <Ionicons
+        {/* <Ionicons
           name="arrow-back"
           size={moderateScale(30)}
           onPress={() => navigation.goBack()}
           color={Color.white}
-        />
+        /> */}
+        <ArrowLeftIcon onPress={() => navigation.goBack()} />
       </View>
       {data.map((item, index) => {
         let isActive = index === currentIndex;

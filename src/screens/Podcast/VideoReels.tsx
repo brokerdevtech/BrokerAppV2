@@ -10,12 +10,15 @@ import {
 import {useInfiniteScrollWithData} from '../../hooks/useInfiniteScrollWithData';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
-import Ionicons from 'react-native-vector-icons/Ionicons'; //Ionicons
+//import Ionicons from 'react-native-vector-icons/Ionicons'; //Ionicons
 import {moderateScale} from '../../config/constants';
 import {Color} from '../../styles/GlobalStyles';
 import {useNavigation} from '@react-navigation/native';
 import SingleReel from './SingleReel';
 import { fetchPodcastList } from '@/BrokerAppCore/services/new/podcastService';
+import ArrowLeftIcon from '../../assets/svg/icons/arrow-left.svg' 
+
+
 const {width, height} = Dimensions.get('window');
 
 const VideoReels: React.FC = ({route}) => {
@@ -78,12 +81,13 @@ const VideoReels: React.FC = ({route}) => {
   return (
     <View style={[DimensionStyles]}>
       <View style={styles.container}>
-        <Ionicons
+        {/* <Ionicons
           name="arrow-back"
           size={moderateScale(30)}
           onPress={() => navigation.goBack()}
           color={Color.white}
-        />
+        /> */}
+        <ArrowLeftIcon onPress={() => navigation.goBack()} />
         <Text style={styles.titleText}>Podcasts</Text>
       </View>
       <FlatList

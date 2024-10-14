@@ -1,43 +1,57 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {View, Text, ScrollView, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  FlatList,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
 import CustomHeader from '../sharedComponents/CustomHeader';
 import ZText from '../sharedComponents/ZText';
 
-import ShortingIcon from '../assets/svg/icons/sorting.svg' 
+import ShortingIcon from '../assets/svg/icons/sorting.svg';
 import FilterIcon from '../assets/svg/icons/filters.svg';
-import ArrowLeftIcon from '../assets/svg/icons/arrow-left.svg' 
-import SearchIcon from '../assets/svg/icons/search.svg' 
+import ArrowLeftIcon from '../assets/svg/icons/arrow-left.svg';
+import SearchIcon from '../assets/svg/icons/search.svg';
 import {HStack} from '@/components/ui/hstack';
 import UserProfile from '../sharedComponents/profile/UserProfile';
-import {Card_check_icon, Heart_icon, Location_Icon,Calender_Icon,
+import {
+  Card_check_icon,
+  Heart_icon,
+  Location_Icon,
+  Calender_Icon,
   Chat_Icon,
   Telephone_Icon,
   Whatsapp_Icon,
   share_PIcon,
-  bookmark_icon} from '../assets/svg';
-import { imagesBucketcloudfrontPath } from '../config/constants';
+  bookmark_icon,
+} from '../assets/svg';
+import {imagesBucketcloudfrontPath} from '../config/constants';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
-import { fetchDashboardData, fetchItemList } from '@/BrokerAppCore/services/new/dashboardService';
+import {
+  fetchDashboardData,
+  fetchItemList,
+} from '@/BrokerAppCore/services/new/dashboardService';
 import {FavouriteIcon, Icon, MessageCircleIcon} from '../../components/ui/icon';
-import { Divider } from '@/components/ui/divider';
+import {Divider} from '@/components/ui/divider';
 import {VStack} from '@/components/ui/vstack';
 import MediaGallery from '../sharedComponents/MediaGallery';
-import { useApiPagingWithtotalRequest } from '@/src/hooks/useApiPagingWithtotalRequest';
+import {useApiPagingWithtotalRequest} from '@/src/hooks/useApiPagingWithtotalRequest';
 import AppBaseContainer from '@/src/hoc/AppBaseContainer_old';
 import LoadingSpinner from '../sharedComponents/LoadingSpinner';
-import { Box } from '../../components/ui/box';
+import {Box} from '../../components/ui/box';
 import FilterChips from '../sharedComponents/FilterChips';
 import margin from '@/themes/margin';
-import { SetPostLikeUnLike } from '../../BrokerAppCore/services/new/dashboardService';
+import {SetPostLikeUnLike} from '../../BrokerAppCore/services/new/dashboardService';
 import PostActions from '../sharedComponents/PostActions';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet'
 const ProductItem =  React.memo(
-  ({ item ,listTypeData,User}) => {
+    ({ item, listTypeData, User,, navigation }) => {
   const MediaGalleryRef = useRef(null);
-
- 
 
   return (
  
@@ -47,7 +61,7 @@ const ProductItem =  React.memo(
         mediaItems={item.postMedias}
         paused={false}
       />
-      
+
       {/* <Image
         source={{
           uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
@@ -56,96 +70,105 @@ const ProductItem =  React.memo(
       /> */}
 
       {/* Check and Heart Icons */}
-      {item.isBrokerAppVerified &&
-      (<View style={styles.iconContainer} >
-        <View style={styles.checkIcon}>
-          <Card_check_icon />
+      {item.isBrokerAppVerified && (
+        <View style={styles.iconContainer}>
+          <View style={styles.checkIcon}>
+            <Card_check_icon />
+          </View>
         </View>
-      
-      </View>
-      )
-    }
+      )}
 
-
-<PostActions item={item} User={User} listTypeData={listTypeData} onUpdateLikeCount={(newCount) => {console.log(newCount)}} />
+      <PostActions
+        item={item}
+        User={User}
+        listTypeData={listTypeData}
+        onUpdateLikeCount={newCount => {
+          console.log(newCount);
+        }}
+      />
       {/* Car Details */}
+      <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>
       <VStack space="md" style={styles.detailsContainer}>
-<HStack>
-  <Box style={{marginLeft:4 }}>
-  <ZText type={'R16'}>
-        {'\u20B9'} {' '}
-        </ZText>
-  </Box>
-  <Box>
-  <ZText type={'R16'}>
-     {item.price}
-        </ZText>
+        <HStack>
+          <Box style={{marginLeft: 4}}>
+            <ZText type={'R16'}>{'\u20B9'} </ZText>
+          </Box>
+          <Box>
+            <ZText type={'R16'}>{item.price}</ZText>
+          </Box>
+        </HStack>
 
-  </Box>
-</HStack>
-
-  
-       
-          {item.location?.cityName && (
-
-<HStack>
-  <Box>
-  <Icon as={Location_Icon} />
-  </Box>
-  <Box>
-  <ZText type={'R16'} numberOfLines={1}  // Limits to 2 lines
-  ellipsizeMode="tail"> {' '}
+        {item.location?.cityName && (
+          <HStack>
+            <Box>
+              <Icon as={Location_Icon} />
+            </Box>
+            <Box>
+              <ZText
+                type={'R16'}
+                numberOfLines={1} // Limits to 2 lines
+                ellipsizeMode="tail"
+              >
+                {' '}
                 {item.location.placeName}
               </ZText>
+            </Box>
+          </HStack>
+        )}
 
-  </Box>
-</HStack>
-
-       
-          )}
-  
-  <HStack>
-
-  <Box>
-  <ZText type={'R16'} numberOfLines={1}  // Limits to 2 lines
-  ellipsizeMode="tail">
-                {item.title}
-              </ZText>
-
-  </Box>
-</HStack>  
-       
+        <HStack>
+          <Box>
+            <ZText
+              type={'R16'}
+              numberOfLines={1} // Limits to 2 lines
+              ellipsizeMode="tail"
+            >
+              {item.title}
+            </ZText>
+          </Box>
+        </HStack>
       </VStack>
-
+      </TouchableOpacity>
       <Divider className="my-0.5" />
 
       <View style={styles.detailsContainer}>
-        <HStack space="md" style={{ paddingHorizontal: 10, justifyContent: 'space-between' }}>
+        <HStack
+          space="md"
+          style={{paddingHorizontal: 10, justifyContent: 'space-between'}}
+        >
           <VStack>
-            <View style={{ alignItems: 'center' }}><Icon as={Telephone_Icon} size={'xxl'} /></View>
-            <View style={{ paddingVertical: 10 }}>
+            <View style={{alignItems: 'center'}}>
+              <Icon as={Telephone_Icon} size={'xxl'} />
+            </View>
+            <View style={{paddingVertical: 10}}>
               <ZText type={'R14'}>Call</ZText>
             </View>
           </VStack>
           <VStack>
-            <View style={{ alignItems: 'center' }}><Icon as={Chat_Icon} size={'xxl'} /></View>
-            <View style={{ paddingVertical: 10 }}>
+            <View style={{alignItems: 'center'}}>
+              <Icon as={Chat_Icon} size={'xxl'} />
+            </View>
+            <View style={{paddingVertical: 10}}>
               <ZText type={'R14'}>Chat</ZText>
             </View>
           </VStack>
           <VStack>
-            <View style={{ alignItems: 'center' }}><Icon as={Whatsapp_Icon} size={'xxl'} /></View>
-            <View style={{ paddingVertical: 10 }}>
+            <View style={{alignItems: 'center'}}>
+              <Icon as={Whatsapp_Icon} size={'xxl'} />
+            </View>
+            <View style={{paddingVertical: 10}}>
               <ZText type={'R14'}>Whatsapp</ZText>
             </View>
           </VStack>
           <VStack>
-            <View style={{ alignItems: 'center' }}><Icon as={Calender_Icon} size={'xxl'} /></View>
-            <View style={{ paddingVertical: 10 }}>
+            <View style={{alignItems: 'center'}}>
+              <Icon as={Calender_Icon} size={'xxl'} />
+            </View>
+            <View style={{paddingVertical: 10}}>
               <ZText type={'R14'}>Appointment</ZText>
             </View>
           </VStack>
-        </HStack>  
+        </HStack>
       </View>
     </View>
   );
@@ -162,13 +185,14 @@ const ItemListScreen: React.FC<any> = ({
   route,
   pageTitle,
   isLoading,
-  listType }) => {
+  listType,
+}) => {
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
-  console.log("=============user=============");
-console.log(user);
+  console.log('=============user=============');
+  console.log(user);
   const {
     data,
     status,
@@ -178,34 +202,35 @@ console.log(user);
     pageSize_Set,
     currentPage_Set,
     hasMore_Set,
-    totalPages,recordCount
-  } = useApiPagingWithtotalRequest(fetchItemList,setInfiniteLoading,5);
+    totalPages,
+    recordCount,
+  } = useApiPagingWithtotalRequest(fetchItemList, setInfiniteLoading, 5);
   //const {data, status, error, execute} = useApiPagingRequest5(fetchItemList);
-  const renderItem = useCallback(({ item, }) => <ProductItem item={item} listTypeData={listTypeData}  User={user}/>, []);
+  const renderItem = useCallback(
+    ({item}) => (
+      <ProductItem item={item} listTypeData={listTypeData} User={user} navigation={navigation} />
+    ),
+    [],
+  );
   async function set_FilterChipsData() {
+    let FilterChipsData = [];
+    FilterChipsData.push({label: 'Location:' + AppLocation.placeName});
 
-let FilterChipsData =[];
-FilterChipsData.push({ label: 'Location:'+ AppLocation.placeName },)
-
-setFilterChipsData(FilterChipsData);
-  
+    setFilterChipsData(FilterChipsData);
   }
 
-
-
   async function callPodcastList() {
-    pageSize_Set(5)
+    pageSize_Set(5);
     currentPage_Set(1);
     hasMore_Set(true);
 
     await execute(listTypeData, {
-     keyWord: "",
+      keyWord: '',
       userId: user.userId,
-      placeID:AppLocation.placeID,
+      placeID: AppLocation.placeID,
       placeName: AppLocation.placeName,
       geoLocationLatitude: AppLocation.geoLocationLatitude,
-      geoLocationLongitude:AppLocation.geoLocationLongitude
-     
+      geoLocationLongitude: AppLocation.geoLocationLongitude,
     });
     console.log('data :-', data);
     console.log('status :-', status);
@@ -213,15 +238,12 @@ setFilterChipsData(FilterChipsData);
   }
 
   useEffect(() => {
-
-if(listTypeData=="RealEstate")
-{
-  pageTitle("Property");
-}
-if(listTypeData=="Car")
-  {
-    pageTitle("Car");
-  }
+    if (listTypeData == 'RealEstate') {
+      pageTitle('Property');
+    }
+    if (listTypeData == 'Car') {
+      pageTitle('Car');
+    }
 
     set_FilterChipsData();
     callPodcastList();
@@ -233,20 +255,16 @@ if(listTypeData=="Car")
   //   setItemHeight(height);
   // };
   const loadMorepage = async () => {
-    if(!isInfiniteLoading)
-  {  
+    if (!isInfiniteLoading) {
       await loadMore(listTypeData, {
- 
-      keyWord: "",
-      userId: user.userId,
-      placeID:AppLocation.placeID,
-      placeName: AppLocation.placeName,
-      geoLocationLatitude: AppLocation.geoLocationLatitude,
-      geoLocationLongitude:AppLocation.geoLocationLongitude
-     
-    });
-    
-  }
+        keyWord: '',
+        userId: user.userId,
+        placeID: AppLocation.placeID,
+        placeName: AppLocation.placeName,
+        geoLocationLatitude: AppLocation.geoLocationLatitude,
+        geoLocationLongitude: AppLocation.geoLocationLongitude,
+      });
+    }
   };
   return (
     <BottomSheetModalProvider>
@@ -297,39 +315,36 @@ if(listTypeData=="Car")
     //     </View>
     //   </View>
     // </View>
-    
   );
-}
-
+};
 
 const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: '#FFF',
     paddingVertical: 10,
-    
   },
   header: {
-   justifyContent: "space-between",
-   flexDirection: 'row',
-   paddingHorizontal: 20,
-   paddingVertical: 20,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
   listContainer: {
     backgroundColor: '#F7F8FA',
-    flex: 1
+    flex: 1,
   },
-  
+
   footer: {
     justifyContent: 'space-between',
     flexDirection: 'row',
-    height: 80,    
+    height: 80,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   IconButton: {
     flexDirection: 'row',
-    gap: 12
+    gap: 12,
   },
   footerContainer: {
     backgroundColor: '#FFF',
@@ -441,7 +456,6 @@ const styles = StyleSheet.create({
     color: '#000',
     marginTop: 4,
   },
-
 });
 
 export default AppBaseContainer(ItemListScreen, '', true);
