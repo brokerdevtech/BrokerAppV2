@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {View, Text, ScrollView, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
@@ -21,13 +21,14 @@ import { fetchPostByID } from '@/BrokerAppCore/services/new/dashboardService';
 import {Icon, ShareIcon} from '../../components/ui/icon';
 import { Divider } from '@/components/ui/divider';
 import {VStack} from '@/components/ui/vstack';
+import MediaGallery from '../sharedComponents/MediaGallery';
 
 
 const ItemDetailScreen: React.FC<any> = ({ route, navigation }) => {
 
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-
+  const MediaGalleryRef = useRef(null);
   const {data, status, error, execute} = useApiRequest(fetchPostByID);
   
   const callItemDetail = async () => {
@@ -62,13 +63,14 @@ const ItemDetailScreen: React.FC<any> = ({ route, navigation }) => {
             {/* Start */}
             {data !== null && (
             <View style={styles.cardContainer}>
-                 <Image
+                 {/* <Image
                   source={{
                     uri: `${imagesBucketcloudfrontPath}${data?.profileImage}`,
                   }}
                   style={styles.carImage}
-                />
-
+                /> */}
+                <MediaGallery ref={MediaGalleryRef} mediaItems={data?.postMedia} paused={false}/> 
+               
                 {/* Check and Heart Icons */}
                 <View style={styles.iconContainer}>
                   <View style={styles.checkIcon}>

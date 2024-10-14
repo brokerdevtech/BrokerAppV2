@@ -58,8 +58,8 @@ import React, {
   
     const renderCarouselItem = useCallback(
       ({ item }) => {
-        const extension = getExtension(item.mediaBlob || item.mediaBlobId);
-        const sourceUri = `${imagesBucketcloudfrontPath}${item.mediaBlob || item.mediaBlobId}`;
+        const extension = getExtension(item?.mediaBlob || item?.mediaBlobId);
+        const sourceUri = `${imagesBucketcloudfrontPath}${item?.mediaBlob || item?.mediaBlobId}`;
         
         if (extension !== 'mp4') {
           return (    
@@ -96,7 +96,12 @@ import React, {
         ref={flatListRef}
         onScroll={onScroll}
         renderItem={renderCarouselItem}
-        keyExtractor={(item) =>item.mediaBlobId.toString()}
+        keyExtractor={(item, index) => {
+          if(item?.mediaBlobId === undefined) {
+              return index.toString()
+          }
+          return item?.mediaBlobId.toString()
+        }}
         showsHorizontalScrollIndicator={false}
         bounces={false}
     
