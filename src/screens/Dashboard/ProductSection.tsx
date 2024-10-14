@@ -113,6 +113,7 @@ const ProductSection = (props: ProductSectionProps) => {
           data={data}
           keyExtractor={item => item.postId.toString()}
           renderItem={renderProductItems}
+          contentContainerStyle={{paddingVertical:20}}
           initialNumToRender={3}
           showsHorizontalScrollIndicator={false}
           horizontal
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
     height: 213,
     borderRadius: 12,
     backgroundColor: '#FFF', // Equivalent to background: var(--white, #FFF)
-    shadowColor: 'rgba(0, 0, 0, 0.8)', // shadow color
+    // shadowColor: 'rgba(0, 0, 0, 0.8)', // shadow color
     shadowOffset: {width: 0, height: 4}, // shadow offset
     shadowOpacity: 1, // shadow opacity
     shadowRadius: 64, // blur radius (64px)
@@ -180,10 +181,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     margin: 10,
     paddingBottom: 10,
-    shadowColor: 'rgba(0, 0, 0, 0.8)',
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 1,
-    shadowRadius: 20,
+    // shadowColor: 'rgba(0, 0, 0, 0.8)',
+    // shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
     elevation: 4,
   },
   carImage: {

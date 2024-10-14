@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CLIENT_ID</key>
+	<string>291590546828-sq554qt1cr52ng0g2amdd1q8gt0pmrqi.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.291590546828-sq554qt1cr52ng0g2amdd1q8gt0pmrqi</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>291590546828-p446o40mpa54lo9n0c0emb908aup32l4.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDNVZItZBkFWfO_Gjhmb9zCfE7kpLYUv2U</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,15 +21,15 @@
 	<key>STORAGE_BUCKET</key>
 	<string>brokerapp-5e5f3.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:291590546828:ios:137bc6d4e0c29b7b0522a9</string>
 </dict>

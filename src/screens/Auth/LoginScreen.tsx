@@ -24,17 +24,25 @@ import {setUser} from '../../../BrokerAppCore/redux/store/user/userSlice';
 import store from '../../../BrokerAppCore/redux/store';
 import {setTokens} from '../../../BrokerAppCore/redux/store/authentication/authenticationSlice';
 import {useApiRequest} from '../../hooks/useApiRequest';
-import {login, SocialLogin} from '../../../BrokerAppCore/services/new/authService';
+import {
+  login,
+  SocialLogin,
+} from '../../../BrokerAppCore/services/new/authService';
 import {Toast, ToastDescription, useToast} from '../../../components/ui/toast';
 import {useNavigation} from '@react-navigation/native';
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../BrokerAppCore/redux/store/reducers';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
 
 // Configure Google Sign-In
 GoogleSignin.configure({
-  webClientId: '291590546828-c6i0jsih7jphgfoe3ej1tgvangloc5h5.apps.googleusercontent.com', // From the Google Developer Console
+  webClientId:
+    '291590546828-c6i0jsih7jphgfoe3ej1tgvangloc5h5.apps.googleusercontent.com', // From the Google Developer Console
   offlineAccess: true,
+  // iosClientId:'291590546828-ll1pnno0vmbog94lkhfvkoda38lf93sg.apps.googleusercontent.com',
 });
 
 // Validation schema using Yup
@@ -70,32 +78,32 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       setLoading(true);
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      console.log("userInfo");
-      console.log(userInfo); // This contains the token and user details
       
+      console.log('userInfo');
+      console.log(userInfo); // This contains the token and user details
+
       const fcmToken = await getfcmToken();
 
-       await SocialLoginexecute(
+      await SocialLoginexecute(
         userInfo.data?.user.email,
-    "Google",
-       userInfo.data?.idToken,
-       fcmToken?.toString(),
+        'Google',
+        userInfo.data?.idToken,
+        fcmToken?.toString(),
         AppLocation.City,
         AppLocation.State,
         AppLocation.Country,
-       AppLocation.placeID,
-       AppLocation.placeName,
-       AppLocation.geoLocationLatitude,
-       AppLocation.geoLocationLongitude,
+        AppLocation.placeID,
+        AppLocation.placeName,
+        AppLocation.geoLocationLatitude,
+        AppLocation.geoLocationLongitude,
         AppLocation.viewportNorthEastLat,
         AppLocation.viewportNorthEastLng,
-       AppLocation.viewportSouthWestLat,
-      AppLocation.viewportSouthWestLng
-
-       )
+        AppLocation.viewportSouthWestLat,
+        AppLocation.viewportSouthWestLng,
+      );
     } catch (error) {
       setLoading(false);
-      console.log(error); 
+      console.log(error);
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {
@@ -105,13 +113,17 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       } else {
         // some other error happened
       }
-    }
-    finally{
+    } finally {
       //setLoading(false);
     }
   };
-  const {data, status, error, execute} = useApiRequest(login,setLoading);
-  const {data:SocialLogindata, status:SocialLoginstatus, error:SocialLoginerror, execute:SocialLoginexecute} = useApiRequest(SocialLogin);
+  const {data, status, error, execute} = useApiRequest(login, setLoading);
+  const {
+    data: SocialLogindata,
+    status: SocialLoginstatus,
+    error: SocialLoginerror,
+    execute: SocialLoginexecute,
+  } = useApiRequest(SocialLogin);
   const handleLogin = async values => {
     const {email, password} = values;
     setLoading(true);
@@ -180,7 +192,9 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   const afterhandleSocialLogin = async () => {
     console.log('afterhandleSocialLogin');
     if (SocialLogindata) {
-      const storeUserresult = await storeUser(JSON.stringify(SocialLogindata.data));
+      const storeUserresult = await storeUser(
+        JSON.stringify(SocialLogindata.data),
+      );
       const storeTokensresult = await storeTokens(
         SocialLogindata.data.accessToken,
         SocialLogindata.data.refreshToken,
@@ -330,7 +344,9 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         {/* <TouchableOpacity style={styles.socialButton}>
           <Icon as={AppleIcon} stroke="#000" />
         </TouchableOpacity> */}
-        <TouchableOpacity style={styles.socialButton} onPress={signInWithGoogle}>
+        <TouchableOpacity
+          style={styles.socialButton}
+          onPress={signInWithGoogle}>
           <Icon as={GoogleIcon} />
         </TouchableOpacity>
         {/* <TouchableOpacity style={styles.socialButton}>

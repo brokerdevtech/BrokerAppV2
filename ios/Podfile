@@ -53,6 +53,8 @@ target 'BrokerApp' do
   # pod 'SDWebImage', :modular_headers => true
   pod 'SDWebImage', '~> 5.18.7'
   pod 'SDWebImageWebPCoder', '~> 0.14'
+  pod 'GoogleSignIn'
+pod 'Firebase/Auth'
 
   # pod 'SDWebImageWebPCoder', :modular_headers => true
   use_react_native!(
