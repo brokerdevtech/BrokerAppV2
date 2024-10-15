@@ -190,7 +190,7 @@ const UserStories = React.memo(({}) => {
     </View>
   );
   return (
-    <VStack>
+    <VStack style={{ paddingHorizontal: 20}}>
       {/* <ZText type="b22" style={{...globalStyles.mt8}}>
         Stories
       </ZText> */}

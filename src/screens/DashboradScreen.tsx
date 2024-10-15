@@ -282,6 +282,10 @@ export default function DashboradScreen() {
 }
 
 const styles = StyleSheet.create({
+  subHeaderSection: {
+    paddingBottom: 20,
+    backgroundColor: '#fff',
+  },
   scrollView: {
     backgroundColor: '#F7F8FA',
   },
