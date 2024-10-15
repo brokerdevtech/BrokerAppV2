@@ -39,10 +39,10 @@ const ProductSection = (props: ProductSectionProps) => {
 
   const callPodcastList = async () => {
     await execute(props.endpoint, props.request);
-    console.log(props.heading, 'data :-', data);
+    //console.log(props.heading, 'data :-', data);
 
-    console.log('status :-', status);
-    console.log('error :-', error);
+    //console.log('status :-', status);
+    //console.log('error :-', error);
   };
 
   useEffect(() => {

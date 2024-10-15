@@ -244,8 +244,8 @@ const ItemListScreen: React.FC<any> = ({
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
-  console.log('=============user=============');
-  console.log(user);
+  // console.log('=============user=============');
+  // console.log(user);
   const {
     data,
     status,
