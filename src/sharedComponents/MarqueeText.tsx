@@ -231,15 +231,11 @@ const MarqueeText = (props: MarqueeTextProps, ref: Ref<MarqueeTextHandles>): JSX
     containerWidth.current = null;
     marqueeTextWidth.current = null;
   };
-
   const { width, height } = StyleSheet.flatten(style || {});
-
+  const calWidth = 600
   return (
     <View style={[styles.container, { width, height }]}>
-      {/* <Text numberOfLines={1} {...restProps} style={[style, { opacity: isAnimating ? 0 : 1 }]}>
-       
-      </Text> */}
-      <ZText type={'R16'} numberOfLines={1} {...restProps} style={[style, { opacity: isAnimating ? 0 : 1 }]}>
+      <ZText type={'R16'} numberOfLines={1} {...restProps} style={[style, { opacity: isAnimating ? 0 : 1}]}>
          {children}
       </ZText>
 

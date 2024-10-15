@@ -97,15 +97,17 @@ const ProductSection = (props: ProductSectionProps) => {
       </View>
     );
   };
+  
 
+  
   return (
     <View style={{backgroundColor: props.background, paddingVertical: 10}}>
       <HStack space="md" reversed={false} style={styles.heading}>
         <ZText type={'R18'}>{props.heading}</ZText>
         {props.isShowAll && 
-        (<ZText type={'R14'} style={styles.link}>
-          See All
-        </ZText>
+        (<TouchableOpacity onPress={() => navigation.navigate('ItemListScreen', {listType: props.heading === 'New In Car' ? 'Car' : 'RealEstate'})}>  
+            <ZText type={'R14'} style={styles.link}>See All</ZText>
+        </TouchableOpacity>
         )}
       </HStack>
       <HStack space="md" reversed={false} style={{paddingHorizontal: 10}}>
