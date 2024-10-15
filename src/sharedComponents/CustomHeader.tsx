@@ -140,6 +140,7 @@ const styles = StyleSheet.create({
   },
   subHeaderSection: {
     paddingBottom: 20,
+    backgroundColor: '#fff',
   },
   headerContainer: {
     flexDirection: 'row',
