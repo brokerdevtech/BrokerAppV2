@@ -7,6 +7,7 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  Linking,Alert
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
@@ -49,10 +50,54 @@ import margin from '@/themes/margin';
 import {SetPostLikeUnLike} from '../../BrokerAppCore/services/new/dashboardService';
 import PostActions from '../sharedComponents/PostActions';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet'
+
 const ProductItem =  React.memo(
     ({ item, listTypeData, User, navigation }) => {
   const MediaGalleryRef = useRef(null);
+  console.log("=========item");
+  console.log(item);
+  const openWhatsApp = (phoneNumber, message) => {
+    console.log(phoneNumber);
+    // Format the URL with the phone number and message
+    const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
+  
+    // Check if WhatsApp is available and open the link
+    Linking.canOpenURL(url)
+      .then(supported => {
+        if (supported) {
+          Linking.openURL(url);
+        } else {
+          Alert.alert("Error", "WhatsApp is not installed on this device");
+        }
+      })
+      .catch(err => console.error("Error opening WhatsApp", err));
+  };
+  const chatProfilePress = async () => {
+    console.log('Chat profile');
 
+    const members = [User.userId.toString(), item.userId.toString()];
+
+   
+    navigation.navigate('AppChat', {
+      defaultScreen: 'ChannelScreen',
+      defaultParams: members,
+      defaultchannelSubject:`Hi,i want to connect on ${item.title}`
+    });
+   
+  };
+  const makeCall = (phoneNumber) => {
+    const url = `tel:${phoneNumber}`;
+    
+    Linking.canOpenURL(url)
+      .then(supported => {
+        if (supported) {
+          Linking.openURL(url);
+        } else {
+          Alert.alert("Error", "Your device does not support phone calls");
+        }
+      })
+      .catch(err => console.error("Error opening dialer", err));
+  };
   return (
  
     <View style={styles.cardContainer}>
@@ -137,28 +182,36 @@ const ProductItem =  React.memo(
           style={{paddingHorizontal: 10, justifyContent: 'space-between'}}
         >
           <VStack>
+          <TouchableOpacity onPress={() => makeCall("+919910199761")}>
             <View style={{alignItems: 'center'}}>
               <Icon as={Telephone_Icon} size={'xxl'} />
             </View>
             <View style={{paddingVertical: 10}}>
               <ZText type={'R14'}>Call</ZText>
             </View>
+            </TouchableOpacity>
           </VStack>
           <VStack>
+          <TouchableOpacity onPress={() =>chatProfilePress()}>
             <View style={{alignItems: 'center'}}>
               <Icon as={Chat_Icon} size={'xxl'} />
             </View>
             <View style={{paddingVertical: 10}}>
               <ZText type={'R14'}>Chat</ZText>
             </View>
+            </TouchableOpacity>
           </VStack>
           <VStack>
+          <TouchableOpacity onPress={() => openWhatsApp("+919910199761", "test message")}>
             <View style={{alignItems: 'center'}}>
               <Icon as={Whatsapp_Icon} size={'xxl'} />
             </View>
             <View style={{paddingVertical: 10}}>
-              <ZText type={'R14'}>Whatsapp</ZText>
+           
+  <ZText type={'R14'}>WhatsApp</ZText>
+
             </View>
+            </TouchableOpacity>
           </VStack>
           <VStack>
             <View style={{alignItems: 'center'}}>
@@ -417,7 +470,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     position: 'absolute',
     top: 8,
-    left: 8,
+    left: 340,
     right: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -434,7 +487,7 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     paddingLeft: 20,
-    paddingVertical: 20,
+    paddingVertical: 10,
   },
   price: {
     fontSize: 16,

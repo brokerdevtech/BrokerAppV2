@@ -47,7 +47,7 @@ const PostActions = ({ item, User, listTypeData, onUpdateLikeCount }) => {
   const [PostLike, SetPostLike] = useState(item.userLiked === 1);
   const [PostlikesCount, SetPostlikesCount] = useState(item.likes);
   const commentSheetRef = useRef(null);
-
+  const [cardComment, setCardComment] = useState(item.comments);
   const snapPoints = useMemo(() => ['60%'], []);
 
   const userPermissions = useSelector(
@@ -119,7 +119,11 @@ let endpoint=""
   console.log('status :-', status);
   console.log('error :-', error);
 }
-
+const closeModal = useCallback(item => {
+  console.log('closeModal');
+  setCardComment(item);
+ 
+}, []);
 useEffect(() => {
 
 
@@ -147,7 +151,7 @@ useEffect(() => {
         <TouchableOpacity onPress={handlePresentModalPress}>
           <Icon as={MessageCircleIcon} style={{ marginRight: 5 }} />
           </TouchableOpacity>
-          {item.comments > 0 && <ZText type={'R16'}>{item.comments}</ZText>}
+          {cardComment > 0 && <ZText type={'R16'}>{cardComment}</ZText>}
         </HStack>
       </VStack>
 
@@ -155,9 +159,9 @@ useEffect(() => {
         <Icon as={share_PIcon} />
       </VStack>
 
-      <VStack style={{ marginLeft: 'auto' }}>
+      {/* <VStack style={{ marginLeft: 'auto' }}>
         <Icon as={bookmark_icon} />
-      </VStack>
+      </VStack> */}
     </HStack>
 
     <CommentBottomSheet 
@@ -167,6 +171,7 @@ useEffect(() => {
         User={User}
         listTypeData={listTypeData}
         userPermissions={userPermissions}
+        onClose={closeModal}
       />
   
 </>

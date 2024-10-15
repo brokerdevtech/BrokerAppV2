@@ -43,6 +43,7 @@ console.log(response);
         setError(response.message || 'An error occurred');
         setStatus(response.status || 500);
       } else {
+        console.log(response.data);
         setData(response.data.data || null);
         settotalPages(response.data.totalPages || null)
         setrecordCount(response.data.recordCount || null)
@@ -74,13 +75,16 @@ console.log(response);
           setError(response.message || 'An error occurred');
           setStatus(response.status || 500);
         } else {
-          if(response?.data.data.length > 0)
+        
+          if(response?.data.data!=null && response?.data.data.length > 0)
        {   setData((prevData) => [...prevData, ...(response.data.data || [])]);
           setStatus(response.status || 200);
           setCurrentPage((prevPage) => prevPage + 1); // Increment the page count
           console.log( currentPage + 1);
        }
        else{
+        console.log("response?.data.data.length")
+        console.log(response?.data.data)
         setHasMore(false); 
        }
         }

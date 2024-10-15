@@ -1,4 +1,4 @@
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { RootState } from "@reduxjs/toolkit/dist/query";
 import moment from "moment";
 import React from "react";
@@ -14,7 +14,7 @@ import ZAvatarInitials from "./ZAvatarInitials";
 import {Like, UnLike, Send, CloseIcon} from '../assets/svg';
 import ZText from "./ZText";
 
-const ReplyCommentList = ({commentId, listType = '',module}) => {
+const PostCommentReplyList = ({commentId, listType = '',module}) => {
     // console.log("cID ", commentId)
     const user = useSelector((state: RootState) => state.user.user);
     const userPermissions = useSelector(
@@ -25,7 +25,7 @@ const ReplyCommentList = ({commentId, listType = '',module}) => {
     const [isLiked, setisLiked] = useState(false);
     const [isDataRef, setisDataRef] = useState(false);
     const flatListRef = useRef();
- 
+    const navigation = useNavigation();
     const {
         data,
         status,
@@ -139,7 +139,15 @@ const ReplyCommentList = ({commentId, listType = '',module}) => {
         setInfiniteLoading(false);
        }
      };
-
+     const handleListView =async(item)=>{
+ 
+      navigation.navigate('PostCommentReplyLikeList', {
+        type: listType, 
+        userId: user?.userId, 
+        ActionId: item.replyId,
+      });
+   
+  }
 
     const loadMorepage = async () => {
         console.log('loadMorepage');
@@ -170,60 +178,60 @@ const ReplyCommentList = ({commentId, listType = '',module}) => {
     //   setisOpenArray([...isOpenArray, item.commentId])
     // }
     // console.log("openArray ", isOpenArray)
-    const renderItem = ({item, index}) => (
-      <View key={index} style={localStyles.mainContainer}>
-        <View>
-          <ZAvatarInitials
-            item={item}
-            iconSize="40px"
-            sourceUrl={item.profileImage}
-            styles={localStyles.profileImage}
-            name={`${item.firstName} ${item.lastName}`}
-          />
-        </View>
-        <View style={{marginLeft: 10, flex: 1}}>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: '700',
-                  color: '#000',
-                  textTransform: 'capitalize',
-                }}>
-                {`${item.firstName} ${item.lastName}`}
-              </Text>
-            </View>
+    const renderItem = ({ item, index }) => {
+      console.log(item);
+    
+      return (
+        <View key={index} style={localStyles.mainContainer}>
+          <View>
+            <ZAvatarInitials
+              item={item}
+              iconSize="s"
+              sourceUrl={item.profileImage}
+              styles={localStyles.profileImage}
+              name={`${item.firstName} ${item.lastName}`}
+            />
           </View>
-          <Text>{item.reply}</Text>
-          <Text>{getTimeDifference(item.date)}</Text>
+          <View style={{ marginLeft: 10, flex: 1 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '700',
+                    color: '#000',
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {`${item.firstName} ${item.lastName}`}
+                </Text>
+              </View>
+            </View>
+            <Text>{item.reply}</Text>
+            <Text>{getTimeDifference(item.date)}</Text>
+          </View>
+          <View style={localStyles.likeContainer}>
+            <TouchableOpacityWithPermissionCheck
+              tagNames={[Like, UnLike]}
+              permissionEnum={
+                item?.userLiked === 0
+                  ? PermissionKey.AllowUnlikePostCommentReply
+                  : PermissionKey.AllowLikePostCommentReply
+              }
+              permissionsArray={userPermissions}
+              onPress={() => handleReplyLike(item)}
+            >
+              {item?.userLiked === 0 ? <UnLike /> : <Like />}
+            </TouchableOpacityWithPermissionCheck>
+            {item.likeCount > 0 && (
+              <TouchableOpacity onPress={() => handleListView(item)}>
+                <ZText type="L12">{item.likeCount}</ZText>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-        <View style={localStyles.likeContainer}>
-          <TouchableOpacityWithPermissionCheck
-            tagNames={[Like, UnLike]}
-            permissionEnum={
-              item?.userLiked == 0
-                ? PermissionKey.AllowUnlikePostCommentReply
-                : PermissionKey.AllowLikePostCommentReply
-            }
-            permissionsArray={userPermissions}
-            onPress={() => handleReplyLike(item)}>
-            {item?.userLiked == 0 ? <UnLike /> : <Like />}
-          </TouchableOpacityWithPermissionCheck>
-          {item.likeCount > 0 && (
-            <ZText type={'L12'} style={localStyles.likeCount}>
-              {item.likeCount}
-            </ZText>
-          )}
-        </View>
-      </View>
-    );
-  
+      );
+    };
     return (
         <View>
             {/* <Text>ss</Text> */}
@@ -242,6 +250,7 @@ const ReplyCommentList = ({commentId, listType = '',module}) => {
         ListEmptyComponent={() => (isInfiniteLoading ? null : '')}
         ListFooterComponent={renderFooter}
         ref={flatListRef}
+        extraData={hasMore}
       /></View>
     );
   };
@@ -296,4 +305,4 @@ const ReplyCommentList = ({commentId, listType = '',module}) => {
     },
   });
   
-  export default ReplyCommentList;
+  export default PostCommentReplyList;

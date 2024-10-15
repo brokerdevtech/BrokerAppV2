@@ -37,6 +37,7 @@ import OtherProfileScreen from '../sharedComponents/OtherProfileScreen';
 import CarPostPreview from '../screens/postImage/previewScreens/CarPostPreview';
 import PostLikeList from '../sharedComponents/PostLikeList';
 import PostCommentLikeList from '../sharedComponents/PostCommentLikeList';
+import PostCommentReplyLikeList from '../sharedComponents/PostCommentReplyLikeList';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -185,6 +186,14 @@ const HomeNavigation: React.FC = () => {
           component={PostCommentLikeList}
           options={{headerShown: false}}
         />
+
+
+<Stack.Screen
+          name="PostCommentReplyLikeList"
+          component={PostCommentReplyLikeList}
+          options={{headerShown: false}}
+        />
+
       </Stack.Navigator>
     </OverlayProvider>
   );

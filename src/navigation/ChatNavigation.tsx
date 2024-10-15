@@ -101,7 +101,7 @@ const Stack = createStackNavigator();
 const ChatPageStack = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const {defaultScreen, defaultParams} = route.params || {};
+  const {defaultScreen, defaultParams,defaultchannelSubject} = route.params || {};
   const {clientIsReady, unreadCount, AppChatClient, isConnecting} =
     useChatClient();
   const [isClientReady, setIsClientReady] = useState(false);
@@ -121,10 +121,17 @@ const ChatPageStack = () => {
           members: defaultParams,
         });
         await channel.create();
+        if(defaultchannelSubject)
+          await   channel.sendMessage({ text: defaultchannelSubject });
         navigation.navigate('ChannelScreen', {
           channelId: channel?.id,
         });
       }
+ 
+   
+
+
+
     };
 
     if (isClientReady) {

@@ -31,7 +31,7 @@ import { Toast, ToastDescription, ToastTitle, useToast } from '../../components/
 import { useNavigation } from '@react-navigation/native';
 import ReplyCommentList from './ReplyCommentList';
 
-const CommentBottomSheet = forwardRef(({ postItem, User, listTypeData,userPermissions }, ref) => {
+const CommentBottomSheet = forwardRef(({ postItem, User, listTypeData,userPermissions,onClose }, ref) => {
   const navigation = useNavigation();
     const bottomSheetModalRef = useRef(null);
     const snapPoints = useMemo(() => ['60%'], []);
@@ -143,6 +143,13 @@ const CommentBottomSheet = forwardRef(({ postItem, User, listTypeData,userPermis
       }
       }, [Reset ,isOpen]);
 
+      useEffect(() => {
+        //   console.log("===========callCommentList===========")
+        //   console.log(postItem)
+          //  callCommentList();
+          console.log("==============recordCount=======");
+          console.log(recordCount);
+          }, [recordCount]);
     
 
    
@@ -168,7 +175,11 @@ const CommentBottomSheet = forwardRef(({ postItem, User, listTypeData,userPermis
       const handleSheetChanges = useCallback((index) => {
         console.log('handleSheetChanges', index);
         setIsOpen(index >= 0);
-      }, []);
+        if(index-1)
+        {  
+          onClose(recordCount);
+        }
+      }, [recordCount]);
     
     
    
@@ -185,7 +196,7 @@ const renderCommentItem = ({item, index}) => {
             // item={item}
             sourceUrl={item.profileImage}
             onPress={() => onPressUser(item)}
-            iconSize="60px"
+            iconSize="s"
             styles={styles.profileImage}
             name={`${item.firstName} ${item.lastName}`}></ZAvatarInitials>
         </View>
@@ -234,7 +245,7 @@ module="Post"
               /> */}
             </View>
           )}
-          {item.replyCount > 0 && (
+          {item.replyCount > 0 && ! isOpenArray.includes(item.commentId) && (
             <TextWithPermissionCheck
               permissionsArray={userPermissions}
               type="comment"
@@ -324,10 +335,12 @@ module="Post"
   
   const handleViewReply = item => {
     // //
-    console.log(item.commentId);
+
     let listArray = [];
     // console.log("list ",  listArray)
-    listArray[item.commentId] = item.commentId;
+    listArray.push(item.commentId);
+    console.log('listArray');
+    console.log(isOpenArray);
     setisOpenArray([...isOpenArray, ...listArray]);
    // setisDataRef(!isDataRef);
   };
@@ -507,6 +520,7 @@ module="Post"
          enableHandlePanningGesture={false}
        // footerComponent={renderFooter}
         enableDynamicSizing={false}
+       
         >
             {isInfiniteLoading && (
             <View style={styles.spinnerView}>
