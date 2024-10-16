@@ -3,6 +3,7 @@ import {
   Button,
   Image,
   Platform,
+  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -85,6 +86,7 @@ const CustomHeader = () => {
   //onPress={() => navigation.toggleDrawer()}
   // console.log(user);
   return (
+    <SafeAreaView>
     <View style={styles.headerSection}>
       <View style={styles.headerContainer}>
         <View style={styles.leftContainer}>
@@ -111,7 +113,7 @@ const CustomHeader = () => {
         </View>
 
         <View style={styles.rightContainer}>
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity onPress={()=>navigation.navigate('Notification')} style={styles.iconButton}>
             <Icon as={Notification_Icon} size="2xl" />
           </TouchableOpacity>
           <TouchableOpacity
@@ -131,6 +133,7 @@ const CustomHeader = () => {
         SetCityFilter={''}
       />
     </View>
+    </SafeAreaView>
   );
 };
 

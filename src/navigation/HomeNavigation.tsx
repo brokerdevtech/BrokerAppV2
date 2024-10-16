@@ -15,7 +15,7 @@ import PostWizardScreen from '../screens/postImage/PostWizardScreen';
 
 import ChatPageStack from './ChatNavigation';
 import {OverlayProvider} from 'stream-chat-react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useStreamChatTheme} from '../hooks/useStreamChatTheme';
 import VideoCarousel from '../screens/Podcast/VideoCarousel';
 
@@ -38,6 +38,7 @@ import CarPostPreview from '../screens/postImage/previewScreens/CarPostPreview';
 import PostLikeList from '../sharedComponents/PostLikeList';
 import PostCommentLikeList from '../sharedComponents/PostCommentLikeList';
 import PostCommentReplyLikeList from '../sharedComponents/PostCommentReplyLikeList';
+import { Platform } from 'react-native';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -60,8 +61,9 @@ const HomeNavigation: React.FC = () => {
   // console.log('strea============================');
   // console.log(streamChatTheme);
   return (
+    // <SafeAreaView style={{flex:1}}>
     <OverlayProvider bottomInset={bottom} value={{style: streamChatTheme}}>
-      <Stack.Navigator>
+      <Stack.Navigator >
         <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
           <Stack.Screen name="Home" component={AppDrawer} />
         </Stack.Group>
@@ -196,6 +198,7 @@ const HomeNavigation: React.FC = () => {
 
       </Stack.Navigator>
     </OverlayProvider>
+    // </SafeAreaView>
   );
 };
 

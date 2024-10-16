@@ -1,3 +1,4 @@
+/* eslint-disable no-trailing-spaces */
 import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import {
   Text,
@@ -10,44 +11,28 @@ import {
 import {useSelector, shallowEqual} from 'react-redux';
 import {FlatList} from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {StackNav} from '../navigation/NavigationKeys';
-import {styles as globalStyles} from '../themes';
-import {imagesBucketcloudfrontPath} from '../config/constants';
+import {styles as globalStyles, styles} from '../themes';
+import {getHeight, imagesBucketcloudfrontPath, moderateScale} from '../config/constants';
 import FastImage from '@d11/react-native-fast-image';
 import ZText from './ZText';
-import {Icon} from '../../components/ui/icon';
+import {CloseCircleIcon, Icon} from '../../components/ui/icon';
 import {Close} from '../icons/Close';
 import FollowUnfollowComponent from './FollowUnfollowButton';
+import { Close_light_icon } from '../assets/svg';
 
-// Moved outside to prevent re-definition on each render
-const brokerData = [
-  {
-    id: '1',
-    name: 'Design Hunter',
-    username: 'faizur.rh',
-    profileImage: 'https://randomuser.me/api/portraits/men/1.jpg',
-  },
-  {
-    id: '2',
-    name: 'Design Hunter',
-    username: 'dzhunter',
-    profileImage: 'https://randomuser.me/api/portraits/women/1.jpg',
-  },
-  {
-    id: '3',
-    name: 'Tech Guru',
-    username: 'tech.guru',
-    profileImage: 'https://randomuser.me/api/portraits/men/2.jpg',
-  },
-  {
-    id: '4',
-    name: 'Creative Pro',
-    username: 'creative.pro',
-    profileImage: 'https://randomuser.me/api/portraits/women/2.jpg',
-  },
-];
-const RenderBrokerItem = React.memo(({item, onPressBroker}) => {
+import { getRecommendedBrokerList } from '../../BrokerAppCore/services/new/recomendedBroker';
+import { useApiPagingRequest } from '../hooks/useApiPagingRequest';
+import LoadingSpinner from './LoadingSpinner';
+import { useApiRequest } from '../hooks/useApiRequest';
+import AppBaseContainer from '../hoc/AppBaseContainer_old';
+import ZAvatarInitials from './ZAvatarInitials';
+import { Color } from '../styles/GlobalStyles';
+
+
+const RenderBrokerItem = React.memo(({item, }) => {
+  const navigation = useNavigation();
   const getInitials = name => {
     return name
       .split(' ')
@@ -55,85 +40,138 @@ const RenderBrokerItem = React.memo(({item, onPressBroker}) => {
       .join('')
       .toUpperCase();
   };
+  const onPressUser = () => {
+  
+      navigation.navigate('ProfileDetail', {
+        userName: item.userName,
+        userImage: item.userImage,
+        userId: item.userId,
+        loggedInUserId: item.loggedInUserId,
+
+      });
+    
+  };
   return (
     <View style={localStyles.card}>
-      {/* Close button (X) */}
+     
       <TouchableOpacity style={localStyles.closeButton}>
-        <Icon name={Close} color="gray" />
+        {/* <Icon as={Close_light_icon} size='xl' /> */}
       </TouchableOpacity>
 
-      {/* Profile Image */}
-      <Image
-        source={{uri: item.profileImage}}
+
+      <ZAvatarInitials
+        sourceUrl={ item.profileImage}
+        name={item.brokerName}
         style={localStyles.profileImage}
+        iconSize='lg'
       />
 
-      {/* Name and Username */}
-      <ZText type={'M14'} style={localStyles.name}>
-        {item.name}
+      <ZText type={'M14'} style={localStyles.name} align={undefined} color={undefined} children={undefined}>
+        {item.brokerName}
       </ZText>
-      <ZText type={'R12'} style={localStyles.username}>
-        {item.username}
-      </ZText>
-
-      {/* Follow Button */}
-      <FollowUnfollowComponent />
+    <TouchableOpacity style={localStyles.buttonContainer} onPress={onPressUser}>
+      <ZText type={'R14'} color={Color.primary} >View Profile</ZText>
+    </TouchableOpacity>
+      {/* <FollowUnfollowComponent isFollowing={undefined} followedId={undefined} onFollow={undefined} onUnfollow={undefined} /> */}
     </View>
   );
 });
 
-const Recommend = React.memo(() => {
+const Recommend = React.memo(({categoryId}) => {
   const navigation = useNavigation();
-  const APPcity = useSelector(state => state.city, shallowEqual);
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector(state => state.user.user, shallowEqual);
-
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [brokerList, setBrokerList] = useState(null);
+  const [isInfiniteLoading, setInfiniteLoading] = useState(false);
+//  console.log(categoryId,"categoryIdf")
+const [brokerList, setBrokerList] = useState([]);
+const [isFollowing, setIsFollowing] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const cityToShow = APPcity || (user && user.cityName);
-  const onPressBroker = useCallback(
-    (brokerName, profileImage, userId) => {
-      navigation.push(StackNav.ProfileDetail, {
-        userName: brokerName,
-        userImage: profileImage,
-        userId: userId,
-        loggedInUserId: user.userId,
-      });
-    },
-    [navigation, user.userId],
+// console.log(AppLocation)
+ 
+
+  const {
+    data: brokersdata,
+    status: brokersstatus,
+    error: brokerserror,
+    execute: brokersexecute,
+    loadMore: brokersLoadMore,
+    pageSize_Set:brokerspageSize_Set,
+    currentPage_Set:brokerscurrentPage_Set,
+    hasMore_Set:brokershasMore_Set
+  } = useApiPagingRequest(getRecommendedBrokerList,setInfiniteLoading);
+  const getList = async () => {
+    try {
+
+      await brokerscurrentPage_Set(1);
+      await brokershasMore_Set(true);
+      await brokersexecute(user.userId, categoryId, AppLocation.City);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+     
+      getList();
+    }, [])
   );
 
+
+  useEffect(() => {
+    // Bind data to the state when the data fetch is successful
+// console.log(brokersdata,"redf");
+
+if (brokersstatus === 200 && brokersdata?.data?.records?.length > 0) {
+  setBrokerList(brokersdata.data.records);
+} else {
+  setBrokerList([]);  // In case there is no data
+}
+  }, [brokersstatus, brokersdata]);
+
+
+  const loadMore = async () => {
+    if (!isInfiniteLoading) {
+      await brokersLoadMore(user.userId, categoryId, AppLocation.City);
+    }
+  };
+
+
+  
+
+
+
   const renderBrokerItem = useCallback(
-    ({item}) => <RenderBrokerItem item={item} onPressBroker={onPressBroker} />,
-    [onPressBroker],
+    ({item}) => <RenderBrokerItem item={item}  />,
+   
   );
 
   //   if (brokerList === null) {
   //     return <CarouselCardSkeleton />;
   //   }
-
+console.log(brokerList,"BrokerList")
   return (
     <View style={localStyles.container}>
       <View style={localStyles.storiesHeaderWrapper}>
-        <ZText type={'R18'} style={{marginVertical: 20, marginLeft: 10}}>
+        <ZText type={'R18'} style={{ marginVertical: 20, marginLeft: 10 }} align={undefined} color={undefined} children={undefined}>
           Recommended Brokers
         </ZText>
       </View>
-      {brokerData?.length > 0 ? (
+      {brokerList?.length > 0 ? (
         <FlatList
           horizontal
-          data={brokerData}
+          data={brokerList}
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderBrokerItem}
           contentContainerStyle={{paddingHorizontal: 20, paddingVertical: 10}}
           ItemSeparatorComponent={() => <View style={{marginRight: 10}} />}
           showsHorizontalScrollIndicator={false}
           onEndReachedThreshold={0.5}
+          onEndReached={loadMore}
           ListFooterComponent={
-            loadingMore ? (
-              <ActivityIndicator size="large" color="#0000ff" />
+            isInfiniteLoading ? (
+              <LoadingSpinner isVisible={isInfiniteLoading} />
             ) : null
           }
         />
@@ -167,6 +205,7 @@ const localStyles = StyleSheet.create({
   storiesHeaderWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingHorizontal:10,
     // marginLeft: 10,
   },
   otherStories: {
@@ -211,8 +250,8 @@ const localStyles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 20,
-    width: 160,
+    padding: 10,
+    width: 120,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
@@ -220,7 +259,7 @@ const localStyles = StyleSheet.create({
     elevation: 3,
     position: 'relative',
     alignItems: 'center',
-    marginRight: 10, // Space between cards
+    marginRight: 5, // Space between cards
   },
   profileImage: {
     width: 80,
@@ -228,10 +267,25 @@ const localStyles = StyleSheet.create({
     borderRadius: 40,
     marginBottom: 10,
   },
+  buttonContainer: {
+    // ...styles.ph15,
+    // height: getHeight(25),
+    paddingVertical:5,
+    paddingHorizontal:5,
+    minWidth: getHeight(80),
+    borderRadius: moderateScale(8),
+    borderWidth: moderateScale(1),
+    justifyContent:'center',
+    alignItems:'center',
+    textAlign:'center',
+    borderColor:Color.primary,
+    color:Color.primary
+  },
   name: {
     // fontSize: 18,
     // fontWeight: '600',
-    marginBottom: 5,
+    marginBottom: 10,
+    marginVertical:15,
     textAlign: 'center',
   },
   username: {

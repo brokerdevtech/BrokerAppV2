@@ -8,9 +8,10 @@ export const useApiRequest = <T, P extends any[]>(
   const [data, setData] = useState<T | null>(null);
   const [status, setStatus] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
-
+// console.log(...params)
   // Function to trigger the API call
   const execute = async (...params: P) => {
+   
     // Call the external loading function, if provided
     if (setLoading) {
       setLoading(true);
@@ -19,9 +20,10 @@ export const useApiRequest = <T, P extends any[]>(
     setError(null);
 
     try {
+    
       const response = await apiFunction(...params);
-      // console.log('========response');
-      // console.log(JSON.stringify(response));
+      console.log('========broker');
+      console.log(JSON.stringify(response));
       if (setLoading) {
         setLoading(false);
       }
