@@ -38,7 +38,7 @@ import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {
   fetchDashboardData,
   fetchItemList,
-} from '@/BrokerAppCore/services/new/dashboardService';
+} from '../../BrokerAppCore/services/new/dashboardService';
 import {FavouriteIcon, Icon, MessageCircleIcon} from '../../components/ui/icon';
 import {Divider} from '@/components/ui/divider';
 import {VStack} from '@/components/ui/vstack';
@@ -56,7 +56,7 @@ import UserStories from '../components/story/UserStories';
 import Recommend from '../sharedComponents/RecomendedBrokers';
 import ProductSection from './Dashboard/ProductSection';
 
-const rederListHeader=(categoryId,AppLocation,FilterChipsData,recordCount)=>{
+const rederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,recordCount})=>{
   // console.log(categoryId,"categoryId")
   return (
     <>
@@ -80,13 +80,23 @@ const rederListHeader=(categoryId,AppLocation,FilterChipsData,recordCount)=>{
     </>
 
   )
-}
+})
+// const ListHeader = React.memo(({ FilterChipsData, recordsCount }) => (
+//   <>
+//     <View>
+//       <UserStories />
+//     </View>
+//     <Recommend  />
+//     <FilterChips filters={FilterChipsData} recordsCount={recordsCount} />
+//   </>
+// ));
+
 const ProductItem =  React.memo(
     ({ item, listTypeData, User, navigation }) => {
   const MediaGalleryRef = useRef(null);
   console.log('=========item');
   console.log(item);
-  const openWhatsApp = (phoneNumber, message) => {
+  const openWhatsApp = useCallback((phoneNumber, message) => {
     console.log(phoneNumber);
   
     const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
@@ -101,8 +111,8 @@ const ProductItem =  React.memo(
         }
       })
       .catch(err => console.error('Error opening WhatsApp', err));
-  };
-  const chatProfilePress = async () => {
+  },[]);
+  const chatProfilePress = useCallback(async () => {
     console.log('Chat profile');
 
     const members = [User.userId.toString(), item.userId.toString()];
@@ -114,8 +124,8 @@ const ProductItem =  React.memo(
       defaultchannelSubject:`Hi,i want to connect on ${item.title}`,
     });
 
-  };
-  const makeCall = (phoneNumber) => {
+  },[]);
+  const makeCall = useCallback((phoneNumber) => {
     const url = `tel:${phoneNumber}`;
 
     Linking.canOpenURL(url)
@@ -127,7 +137,7 @@ const ProductItem =  React.memo(
         }
       })
       .catch(err => console.error('Error opening dialer', err));
-  };
+  },[]);
   return (
 
     <View style={styles.cardContainer}>
@@ -318,13 +328,18 @@ const ItemListScreen: React.FC<any> = ({
       placeName: AppLocation.placeName,
       geoLocationLatitude: AppLocation.geoLocationLatitude,
       geoLocationLongitude: AppLocation.geoLocationLongitude,
+    }).then(result => {
+      console.log("==========sss");
+      setLoading(false);
     });
     console.log('data :-', data);
     console.log('status :-', status);
     console.log('error :-', error);
+    setLoading(false);
   }
 
   useEffect(() => {
+    setLoading(true);
     if (listTypeData == 'RealEstate') {
       pageTitle('Property');
     }
@@ -349,24 +364,35 @@ const ItemListScreen: React.FC<any> = ({
       });
     }
   };
-  console.log('data :-', data);
+  const rederListHeader = useCallback((categoryId, FilterChipsData, recordsCount) => (
+    <>
+      <View>
+        <UserStories />
+      </View>
+      <Recommend categoryId={categoryId} />
+      <FilterChips filters={FilterChipsData} recordsCount={recordsCount} />
+    </>
+  ), [categoryId, FilterChipsData, recordCount]);
+  const getItemLayout = (data, index) => (
+    { length: itemHeight, offset: itemHeight * index, index }
+  );
   return (
     <>
     <BottomSheetModalProvider>
  
       <View style={{ flex: 1 }}>
-         
+     
          {data &&
           <FlatList
               data={data}
-
+              getItemLayout={getItemLayout}
               renderItem={renderItem}
 
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
              ListHeaderComponent={()=>rederListHeader(categoryId,AppLocation,FilterChipsData,recordCount)}
              keyExtractor={(item, index) => index.toString()}
-              onEndReachedThreshold={0.5}
+              onEndReachedThreshold={0.8}
               onEndReached={loadMorepage}
               ListFooterComponent={
                 isInfiniteLoading ? (
