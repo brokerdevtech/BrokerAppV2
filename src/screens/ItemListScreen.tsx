@@ -56,7 +56,7 @@ import UserStories from '../components/story/UserStories';
 import Recommend from '../sharedComponents/RecomendedBrokers';
 import ProductSection from './Dashboard/ProductSection';
 
-const rederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,recordCount})=>{
+const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,recordCount})=>{
   // console.log(categoryId,"categoryId")
   return (
     <>
@@ -364,15 +364,15 @@ const ItemListScreen: React.FC<any> = ({
       });
     }
   };
-  const rederListHeader = useCallback((categoryId, FilterChipsData, recordsCount) => (
-    <>
-      <View>
-        <UserStories />
-      </View>
-      <Recommend categoryId={categoryId} />
-      <FilterChips filters={FilterChipsData} recordsCount={recordsCount} />
-    </>
-  ), [categoryId, FilterChipsData, recordCount]);
+  // const rederListHeader = useCallback((categoryId, FilterChipsData, recordsCount) => (
+  //   <>
+  //     <View>
+  //       <UserStories />
+  //     </View>
+  //     <Recommend categoryId={categoryId} />
+  //     <FilterChips filters={FilterChipsData} recordsCount={recordsCount} />
+  //   </>
+  // ), [categoryId, FilterChipsData, recordCount]);
   const getItemLayout = (data, index) => (
     { length: itemHeight, offset: itemHeight * index, index }
   );
@@ -390,7 +390,8 @@ const ItemListScreen: React.FC<any> = ({
 
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-             ListHeaderComponent={()=>rederListHeader(categoryId,AppLocation,FilterChipsData,recordCount)}
+             ListHeaderComponent={
+              <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData}recordCount={recordCount}/>}
              keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.8}
               onEndReached={loadMorepage}

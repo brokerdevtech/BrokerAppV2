@@ -79,7 +79,7 @@ const RenderBrokerItem = React.memo(({item, }) => {
   );
 });
 
-const Recommend = React.memo(() => {
+const Recommend = React.memo((categoryIds) => {
   const navigation = useNavigation();
   const route = useRoute();
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
