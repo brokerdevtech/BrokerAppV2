@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { Icon } from '../../components/ui/icon';
 import { filter_icon } from '../assets/svg';
+import ZText from './ZText';
+import padding from '@/themes/padding';
 
 
 const FilterChips = ({ filters ,recordsCount}) => {
@@ -29,8 +31,8 @@ const FilterChips = ({ filters ,recordsCount}) => {
       </ScrollView>
     </View>
     <View style={styles.textcontainer}>
-<Text>{recordsCount} 
-    </Text> 
+<ZText  type="M16" style={{paddingLeft:10}}>Total {recordsCount} 
+    </ZText> 
     </View>
 </View>
   );
@@ -38,17 +40,20 @@ const FilterChips = ({ filters ,recordsCount}) => {
 };
 
 const styles = StyleSheet.create({
-
+  Outercontainer:{
+    backgroundColor:'#F7F8FA',
+  },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 20,
+    backgroundColor:'#F7F8FA',
   },
   textcontainer: {
     flexDirection: 'row',
     alignItems: 'center',
- 
+    paddingVertical: 5,
     paddingHorizontal: 20,
   },
   fixedChip: {
