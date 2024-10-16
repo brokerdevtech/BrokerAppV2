@@ -37,7 +37,7 @@ import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {
   fetchDashboardData,
   fetchItemList,
-} from '@/BrokerAppCore/services/new/dashboardService';
+} from '../../BrokerAppCore/services/new/dashboardService';
 import {FavouriteIcon, Icon, MessageCircleIcon} from '../../components/ui/icon';
 import {Divider} from '@/components/ui/divider';
 import {VStack} from '@/components/ui/vstack';
@@ -54,15 +54,15 @@ import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import UserStories from '../components/story/UserStories';
 import Recommend from '../sharedComponents/RecomendedBrokers';
 
-const rederListHeader=(categoryId)=>{
+const rederListHeader=(categoryId,FilterChipsData,recordsCount)=>{
   // console.log(categoryId,"categoryId")
   return (
     <>
-    <View style={{paddingHorizontal:20}}>
+    <View style={{}}>
     <UserStories/>
     </View>
     <Recommend categoryId={categoryId}/>
-
+<FilterChips filters={FilterChipsData} recordsCount={recordsCount}></FilterChips>
     </>
   )
 }
@@ -348,7 +348,7 @@ const ItemListScreen: React.FC<any> = ({
 
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-             ListHeaderComponent={()=>rederListHeader(categoryId)}
+             ListHeaderComponent={()=>rederListHeader(categoryId,FilterChipsData,recordCount)}
              keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.5}
               onEndReached={loadMorepage}
