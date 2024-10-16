@@ -11,7 +11,7 @@ import {
 import {useSelector, shallowEqual} from 'react-redux';
 import {FlatList} from 'react-native';
 
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation, useRoute} from '@react-navigation/native';
 import {StackNav} from '../navigation/NavigationKeys';
 import {styles as globalStyles, styles} from '../themes';
 import {getHeight, imagesBucketcloudfrontPath, moderateScale} from '../config/constants';
@@ -77,12 +77,13 @@ const RenderBrokerItem = React.memo(({item, }) => {
   );
 });
 
-const Recommend = React.memo(({categoryId}) => {
+const Recommend = React.memo(() => {
   const navigation = useNavigation();
+  const route = useRoute();
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector(state => state.user.user, shallowEqual);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
-//  console.log(categoryId,"categoryIdf")
+  const [categoryId, setCategoryId] = useState(route.params.categoryId);
 const [brokerList, setBrokerList] = useState([]);
 const [isFollowing, setIsFollowing] = useState(false);
   const [page, setPage] = useState(1);
