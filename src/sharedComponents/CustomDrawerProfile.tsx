@@ -147,13 +147,13 @@ const CustomDrawerContent = props => {
           leftIcon={Network_icon}
           rightIcon={ChevronRightIcon}
         />
-        <CustomDrawerItem
+        {/* <CustomDrawerItem
           label="My Ads"
           onPress={() => {}}
           leftIcon={Ads_Icon}
           rightIcon={ChevronRightIcon}
-        />
-        <CustomDrawerItem
+        /> */}
+        {/* <CustomDrawerItem
           label="Language"
           onPress={() => {}}
           leftIcon={Globe}
@@ -176,7 +176,7 @@ const CustomDrawerContent = props => {
           onPress={() => {}}
           leftIcon={info_icon}
           rightIcon={ChevronRightIcon}
-        />
+        /> */}
         <CustomDrawerItem
           label="Log out"
           onPress={() => setShowAlertDialog(true)}

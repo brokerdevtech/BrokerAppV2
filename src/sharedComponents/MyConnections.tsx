@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
@@ -62,6 +63,7 @@ const MyConnectionScreen: React.FC = ({route}) => {
               style={{
                 borderBottomColor: Color.borderColor,
                 borderBottomWidth: 1,
+                paddingVertical:10,
               }}>
               <UserAvartarWithNameComponent
                 userName={item.firstName + ' ' + item?.lastName}

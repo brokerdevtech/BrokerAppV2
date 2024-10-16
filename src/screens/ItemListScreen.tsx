@@ -1,3 +1,4 @@
+/* eslint-disable no-trailing-spaces */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
@@ -53,17 +54,31 @@ import PostActions from '../sharedComponents/PostActions';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import UserStories from '../components/story/UserStories';
 import Recommend from '../sharedComponents/RecomendedBrokers';
+import ProductSection from './Dashboard/ProductSection';
 
-const rederListHeader=(categoryId)=>{
+const rederListHeader=(categoryId,AppLocation,FilterChipsData,recordCount)=>{
   // console.log(categoryId,"categoryId")
   return (
     <>
-    <View style={{paddingHorizontal:20}}>
+   
     <UserStories/>
-    </View>
+    
     <Recommend categoryId={categoryId}/>
-
+    <ProductSection
+          heading={'Newly Launched'}
+          background={'#FFFFFF'}
+          endpoint={`Newin`}
+          isShowAll={true}
+          request={{
+            pageNo: 1,
+            pageSize: 10,
+            cityName: AppLocation.City,
+            categoryId: categoryId,
+          }}
+        />
+         <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips>
     </>
+
   )
 }
 const ProductItem =  React.memo(
@@ -73,10 +88,10 @@ const ProductItem =  React.memo(
   console.log(item);
   const openWhatsApp = (phoneNumber, message) => {
     console.log(phoneNumber);
-    // Format the URL with the phone number and message
+  
     const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
 
-    // Check if WhatsApp is available and open the link
+   
     Linking.canOpenURL(url)
       .then(supported => {
         if (supported) {
@@ -336,8 +351,9 @@ const ItemListScreen: React.FC<any> = ({
   };
   console.log('data :-', data);
   return (
+    <>
     <BottomSheetModalProvider>
-
+ 
       <View style={{ flex: 1 }}>
          
          {data &&
@@ -348,7 +364,7 @@ const ItemListScreen: React.FC<any> = ({
 
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-             ListHeaderComponent={()=>rederListHeader(categoryId)}
+             ListHeaderComponent={()=>rederListHeader(categoryId,AppLocation,FilterChipsData,recordCount)}
              keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.5}
               onEndReached={loadMorepage}
@@ -361,19 +377,20 @@ const ItemListScreen: React.FC<any> = ({
             />}
 
         </View></BottomSheetModalProvider>
-    //   </ScrollView>
-    //   <View style={styles.footer}>
-    //     <ZText type={'S16'} >Properties</ZText>
-    //     <View style={styles.IconButton}>
-    //       <ShortingIcon />
-    //       <ZText type={'S16'} >Sort</ZText>
-    //     </View>
-    //     <View style={styles.IconButton}>
-    //       <FilterIcon />
-    //       <ZText type={'S16'} >Filter</ZText>
-    //     </View>
-    //   </View>
-    // </View>
+    
+      <View style={styles.footer}>
+        <ZText type={'S16'} >Properties</ZText>
+        <View style={styles.IconButton}>
+          <ShortingIcon />
+          <ZText type={'S16'} >Sort</ZText>
+        </View>
+        <View style={styles.IconButton}>
+          <FilterIcon />
+          <ZText type={'S16'} >Filter</ZText>
+        </View>
+      </View>
+    {/* // </View> */}
+   </>
   );
 };
 
@@ -518,5 +535,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppBaseContainer(ItemListScreen, '', true);
+export default AppBaseContainer(ItemListScreen, '', true,true);
 //export default ItemListScreen;

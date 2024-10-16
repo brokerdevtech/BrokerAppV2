@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect} from 'react';
 import {
   View,
@@ -127,9 +128,9 @@ export default function DashboradScreen() {
       <View>
         <View style={styles.subHeaderSection}>
           {/* <UserProfile /> */}
-          <View style={{paddingHorizontal:15}}>
+          {/* <View style={{paddingHorizontal:15}}> */}
           <UserStories />
-          </View>
+          {/* </View> */}
           {marqueeText?.length > 0 && (
             <MarqueeBanner
               marqueeTextList={marqueeText.map(

@@ -51,6 +51,8 @@ const RenderBrokerItem = React.memo(({item, }) => {
       });
     
   };
+  const truncatedFullName =
+  item.brokerName.length > 10 ? item.brokerName.slice(0, 10) + '...' : item.brokerName;
   return (
     <View style={localStyles.card}>
      
@@ -67,7 +69,7 @@ const RenderBrokerItem = React.memo(({item, }) => {
       />
 
       <ZText type={'M14'} style={localStyles.name} align={undefined} color={undefined} children={undefined}>
-        {item.brokerName}
+        {truncatedFullName}
       </ZText>
     <TouchableOpacity style={localStyles.buttonContainer} onPress={onPressUser}>
       <ZText type={'R14'} color={Color.primary} >View Profile</ZText>
@@ -150,11 +152,11 @@ if (brokersstatus === 200 && brokersdata?.data?.records?.length > 0) {
   //   if (brokerList === null) {
   //     return <CarouselCardSkeleton />;
   //   }
-console.log(brokerList,"BrokerList")
+// console.log(brokerList,"BrokerList")
   return (
     <View style={localStyles.container}>
       <View style={localStyles.storiesHeaderWrapper}>
-        <ZText type={'R18'} style={{ marginVertical: 20, marginLeft: 10 }} align={undefined} color={undefined} children={undefined}>
+        <ZText type={'R18'} style={{ marginVertical: 5, marginLeft: 10 }} align={undefined} color={undefined} children={undefined}>
           Recommended Brokers
         </ZText>
       </View>
@@ -164,7 +166,7 @@ console.log(brokerList,"BrokerList")
           data={brokerList}
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderBrokerItem}
-          contentContainerStyle={{paddingHorizontal: 20, paddingVertical: 10}}
+          contentContainerStyle={{paddingHorizontal: 20, paddingVertical: 5}}
           ItemSeparatorComponent={() => <View style={{marginRight: 10}} />}
           showsHorizontalScrollIndicator={false}
           onEndReachedThreshold={0.5}
@@ -200,7 +202,9 @@ const localStyles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    marginTop: 10,
+    // marginTop: 10,
+    backgroundColor:'#F7F8FA',
+    paddingVertical:20
   },
   storiesHeaderWrapper: {
     flexDirection: 'row',
