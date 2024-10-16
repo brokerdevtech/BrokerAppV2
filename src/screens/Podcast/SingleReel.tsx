@@ -32,6 +32,7 @@ import {PermissionKey} from '../../config/constants';
 import TextWithPermissionCheck from '../../sharedComponents/TextWithPermissionCheck';
 import { Box } from '../../../components/ui/box';
 import { Center } from '../../../components/ui/center';
+import { PodcastLike, PodcastUnlike } from '../../../BrokerAppCore/services/podcast';
 
 const SingleReel = ({item, index, currentIndex}) => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -69,10 +70,10 @@ const SingleReel = ({item, index, currentIndex}) => {
           ); // Assuming GetPodcastDetails is a properly defined async function
           SetPodcastDetails(podcastitem.data); // Assuming SetPodcastDetails updates state appropriately
           setStoryState({
-            likeCount: podcastitem.data.likeCount,
-            reactionCount: podcastitem.data.commentCount,
-            viewerCount: podcastitem.data.viewerCount,
-            userLiked: podcastitem.data.userLiked,
+            likeCount: podcastitem.data.data.likeCount,
+            reactionCount: podcastitem.data.data.commentCount,
+            viewerCount: podcastitem.data.data.viewerCount,
+            userLiked: podcastitem.data.data.userLiked,
           });
 
           //handleViewerAdd(); // Make sure this function is defined and does what's expected
@@ -107,18 +108,17 @@ const SingleReel = ({item, index, currentIndex}) => {
   };
   const podcastLikes = (item: any) => {
     Stopplay();
-    navigation.push(StackNav.PostLikes, {
-      storyId: item.podcastId,
-      pageName: 'Podcast Likes',
-      type: 'podcastLikes',
+    navigation.push("PodcastLikeList", {
+      ActionId: item.podcastId,
+      userId: user.userId
     });
   };
   const podcastviewList = (item: any) => {
     Stopplay();
-    navigation.push(StackNav.PostLikes, {
-      storyId: item.podcastId,
-      pageName: 'Podcast View',
-      type: 'podcastview',
+    navigation.push('PodcastViewList', {
+      ActionId: item.podcastId,
+      userId: user.userId
+   
     });
   };
   const handleViewerAdd = async () => {
@@ -141,7 +141,7 @@ const SingleReel = ({item, index, currentIndex}) => {
             }
         }
       if (StoryState?.userLiked && StoryState?.userLiked == 1) {
-        //const result = await PodcastUnlike(user.userId, item.podcastId);
+        const result = await PodcastUnlike(user.userId, item.podcastId);
         
         setStoryState({
           likeCount: result.data.likeCount,
@@ -150,7 +150,7 @@ const SingleReel = ({item, index, currentIndex}) => {
           userLiked: result.data.userLiked,
         });
       } else {
-        //const result = await PodcastLike(user.userId, item.podcastId);
+        const result = await PodcastLike(user.userId, item.podcastId);
 
         setStoryState({
           likeCount: result.data.likeCount,
