@@ -1,3 +1,5 @@
+/* eslint-disable no-trailing-spaces */
+/* eslint-disable no-catch-shadow */
 import {useRef, useState} from 'react';
 import {ApiResponse} from '../../BrokerAppCore/services/new/ApiResponse'; // Assuming ApiResponse is defined
 
@@ -26,9 +28,9 @@ export const useApiPagingRequest = <T, P extends any[]>(
     setCurrentPage(1); // Reset to first page for initial load
 
     try {
-   
+      console.log(...params,"res")
       const response = await apiFunction(...params, 1, pageSize);
-     
+      console.log(response,"res")
       if (setLoading) {
         setLoading(false);
       }

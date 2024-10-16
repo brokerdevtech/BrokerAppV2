@@ -39,7 +39,7 @@ const BrandSection = (props: BrandSectionProps) => {
 
   const callBrandList = async () => {
     await execute(props.endpoint, props.request);
-    console.log(props.heading, 'data :-', data);
+    // console.log(props.heading, 'data :-', data);
   };
 
   useEffect(() => {
@@ -64,11 +64,7 @@ const BrandSection = (props: BrandSectionProps) => {
     <View style={{backgroundColor: props.background, paddingVertical: 10}}>
       <HStack space="md" reversed={false} style={styles.heading}>
         <ZText type={'R18'}>{props.heading}</ZText>
-        {props.isShowAll && 
-        (<ZText type={'R14'} style={styles.link}>
-          See All
-        </ZText>
-        )}
+        <ZText type={'R14'} style={styles.link}></ZText>
       </HStack>
       <HStack space="md" reversed={false} style={{paddingHorizontal: 10}}>
         <FlatList

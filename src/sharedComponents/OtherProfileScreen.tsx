@@ -507,7 +507,7 @@ const OtherProfileScreen: React.FC = ({
             permissionsArray={userPermissions}
             tagNames={[Icon]}
             onPress={chatProfilePress}>
-            <Icon as={Chat_icon} />
+            <Icon as={Chat_icon} size='xxl' />
             {/* <Chat height="30" width="30" color={colors.primary} /> */}
             {/* <Ionicons
               name="chatbubble-outline"
@@ -546,6 +546,7 @@ const OtherProfileScreen: React.FC = ({
   const onTabSelectChange = useCallback(index => {
     setTabSelect(index);
   }, []);
+  console.log(ProfileData)
   const renderContent = () => {
     return (
       <>
@@ -585,7 +586,7 @@ const OtherProfileScreen: React.FC = ({
                   <Text style={localStyles.categoryText}>
                     {category.postCount}
                   </Text>
-                  <Icon as={ChevronRightIcon} size={25} color={Color.primary} />
+                  <Icon as={ChevronRightIcon} size='xl' color={Color.primary} />
                 </View>
               </TouchableOpacity>
             ))}

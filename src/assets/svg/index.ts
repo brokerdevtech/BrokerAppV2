@@ -70,7 +70,7 @@ import Location_Icon from './icons/location.svg';
 
 import Calender_Icon from './icons/calender.svg';
 import Chat_Icon from './icons/chat.svg';
-import Telephone_Icon from './icons/telephone.svg';
+import Telephone_Icon from './telephone.svg';
 import Whatsapp_Icon from './icons/whatsapp.svg';
 import Share_Icon from './icons/share.svg';
 import File_tray_icon from './file_tray.svg';
@@ -80,12 +80,14 @@ import share_PIcon from './share-svgrepo.svg';
 import unchecked from './unchecked.svg';
 import filter_icon from './filters.svg';
 import bookmark_icon from './bookmark.svg';
+import Close_light_icon from './close_lisght.svg';
 export {
  Like ,Send,
   Follower_Icon,
   filter_icon,
   Document_text,
   Upload_Icon,
+  Close_light_icon,
   File_tray_icon,
   Delete_Account_Icon,
   Reset_Pass_Icon,

@@ -6,6 +6,7 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
@@ -15,7 +16,7 @@ import {Grid, GridItem} from '@/components/ui/grid';
 import FastImage from '@d11/react-native-fast-image';
 import {imagesBucketcloudfrontPath} from '../config/constants';
 import ZText from '../sharedComponents/ZText';
-import {useApiRequest} from '@/src/hooks/useApiRequest';
+import { useApiRequest } from '@/src/hooks/useApiRequest';
 import {fetchPodcastList} from '@/BrokerAppCore/services/new/podcastService';
 
 import TABCard from '../assets/svg/Tabicon/tab_card.svg';
@@ -24,16 +25,9 @@ import TABLoan from '../assets/svg/Tabicon/tab_loan.svg';
 import TABTravel from '../assets/svg/Tabicon/tab_travel.svg';
 import TABWealth from '../assets/svg/Tabicon/tab_wealth.svg';
 
-import {Card} from '@/components/ui/card';
-import {Image} from '@/components/ui/image';
-import {VStack} from '@/components/ui/vstack';
-import {Heading} from '@/components/ui/heading';
-import {Box} from '@/components/ui/box';
-import {Button} from '@/components/ui/button';
 import Footer from './Dashboard/Footer';
 import BrandSection from './Dashboard/BrandSection';
 import ProductSection from './Dashboard/ProductSection';
-import UserProfile from '../sharedComponents/profile/UserProfile';
 import MarqueeBanner from '../sharedComponents/profile/MarqueeBanner';
 import {fetchDashboardData} from '../../BrokerAppCore/services/new/dashboardService';
 import UserStories from '../components/story/UserStories';
@@ -41,15 +35,15 @@ import UserStories from '../components/story/UserStories';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-  console.log(user, '============');
+  //console.log(user, '============');
   const {data, status, error, execute} = useApiRequest(fetchPodcastList);
-  // const {data: marqueeText, status: marqueeStatus, error: marqueeError, execute: marqueeExecute} = useApiRequest(fetchDashboardData);
+  //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
   const cityToShow = 'Noida';
   const navigation = useNavigation();
 
   const callPodcastList = async () => {
     await execute(user.userId, 1, 4);
-    // await marqueeExecute(1, 5, 'Marqueue', 'Noida')
+    //await footerExecute()
     // console.log('marqueeText :-', marqueeText);
     // console.log('marqueeStatus :-', marqueeStatus);
     // console.log('marqueeError :-', marqueeError);
@@ -128,11 +122,14 @@ export default function DashboradScreen() {
   };
 
   return (
+    <SafeAreaView style={{flex:1}}>
     <ScrollView style={styles.scrollView}>
       <View>
         <View style={styles.subHeaderSection}>
           {/* <UserProfile /> */}
+          <View style={{paddingHorizontal:15}}>
           <UserStories />
+          </View>
           {marqueeText?.length > 0 && (
             <MarqueeBanner
               marqueeTextList={marqueeText.map(
@@ -141,7 +138,7 @@ export default function DashboradScreen() {
             />
           )}
         </View>
-        <Grid className="gap-3 p-4" _extra={{className: 'grid-cols-9'}}>
+        <Grid className="gap-3 p-4" _extra={{className: 'grid-cols-9'}} >
           <GridItem
             className="bg-background-50 p-2 rounded-md text-center"
             _extra={{className: 'col-span-9'}}>
@@ -152,7 +149,7 @@ export default function DashboradScreen() {
             _extra={{className: 'col-span-3'}}>
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate('ItemListScreen', {listType: 'RealEstate'})
+                navigation.navigate('ItemListScreen', { listType: 'RealEstate' ,categoryId:1})
               }>
               <View style={styles.tabItemContainer}>
                 <TABTravel />
@@ -167,7 +164,7 @@ export default function DashboradScreen() {
             _extra={{className: 'col-span-3'}}>
         <TouchableOpacity
               onPress={() =>
-                navigation.navigate('ItemListScreen', {listType: 'Car'})
+                navigation.navigate('ItemListScreen', {listType: 'Car',categoryId:2})
               }>
               <View style={styles.tabItemContainer}>
                 <TABCard />
@@ -285,16 +282,22 @@ export default function DashboradScreen() {
         <Footer />
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  subHeaderSection: {
+    paddingBottom: 20,
+    backgroundColor: '#fff',
+  },
   scrollView: {
     backgroundColor: '#F7F8FA',
   },
   tabContainer: {
     backgroundColor: '#F7F8FA',
     margin: 10,
+    
   },
   tabItemTitle: {
     marginTop: 10,
@@ -304,6 +307,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignContent: 'center',
+
   },
   container: {
     flexDirection: 'column',
