@@ -12,7 +12,7 @@ import FullScreenSkeleton from '../sharedComponents/Skeleton/FullScreenSkeleton'
 import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import {useS3} from '../Context/S3Context';
 
-const AppBaseContainer = (WrappedComponent, pageTitle, isHeader = true) => {
+const AppBaseContainer = (WrappedComponent, pageTitle, isHeader = true ,isSearch=false) => {
   // const [isPageSkeleton, setisPageSkeleton] = useState(false);
 
   return function BaseContainer(props) {
@@ -60,7 +60,7 @@ const AppBaseContainer = (WrappedComponent, pageTitle, isHeader = true) => {
     // console.log(pa)
     return (
       <ZSafeAreaView>
-        {isHeader && <ZHeader title={pageTitleState} />}
+        {isHeader && <ZHeader title={pageTitleState} isSearch={isSearch} />}
         {isPageSkeleton && <FullScreenSkeleton></FullScreenSkeleton>}
 
         <WrappedComponent

@@ -702,7 +702,7 @@ const localStyles = StyleSheet.create({
     padding: 10,
     // backgroundColor: '#f0f0f0',
     borderWidth: 2,
-    borderColor: '#ccc',
+    borderColor: Color.borderColor,
     borderRadius: 20,
     flexDirection: 'column',
     // justifyContent: 'space-around',

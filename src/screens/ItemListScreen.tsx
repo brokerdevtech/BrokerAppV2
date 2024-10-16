@@ -1,3 +1,4 @@
+/* eslint-disable no-trailing-spaces */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
@@ -53,16 +54,42 @@ import PostActions from '../sharedComponents/PostActions';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import UserStories from '../components/story/UserStories';
 import Recommend from '../sharedComponents/RecomendedBrokers';
+import ProductSection from './Dashboard/ProductSection';
 
-const ListHeader = React.memo(({ FilterChipsData, recordsCount }) => (
-  <>
-    <View>
-      <UserStories />
-    </View>
-    <Recommend  />
-    <FilterChips filters={FilterChipsData} recordsCount={recordsCount} />
-  </>
-));
+const rederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,recordCount})=>{
+  // console.log(categoryId,"categoryId")
+  return (
+    <>
+   
+    <UserStories/>
+    
+    <Recommend categoryId={categoryId}/>
+    <ProductSection
+          heading={'Newly Launched'}
+          background={'#FFFFFF'}
+          endpoint={`Newin`}
+          isShowAll={true}
+          request={{
+            pageNo: 1,
+            pageSize: 10,
+            cityName: AppLocation.City,
+            categoryId: categoryId,
+          }}
+        />
+         <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips>
+    </>
+
+  )
+})
+// const ListHeader = React.memo(({ FilterChipsData, recordsCount }) => (
+//   <>
+//     <View>
+//       <UserStories />
+//     </View>
+//     <Recommend  />
+//     <FilterChips filters={FilterChipsData} recordsCount={recordsCount} />
+//   </>
+// ));
 
 const ProductItem =  React.memo(
     ({ item, listTypeData, User, navigation }) => {
@@ -71,10 +98,10 @@ const ProductItem =  React.memo(
   console.log(item);
   const openWhatsApp = useCallback((phoneNumber, message) => {
     console.log(phoneNumber);
-    // Format the URL with the phone number and message
+  
     const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
 
-    // Check if WhatsApp is available and open the link
+   
     Linking.canOpenURL(url)
       .then(supported => {
         if (supported) {
@@ -350,8 +377,9 @@ const ItemListScreen: React.FC<any> = ({
     { length: itemHeight, offset: itemHeight * index, index }
   );
   return (
+    <>
     <BottomSheetModalProvider>
-
+ 
       <View style={{ flex: 1 }}>
      
          {data &&
@@ -362,9 +390,7 @@ const ItemListScreen: React.FC<any> = ({
 
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-              initialNumToRender={1}
-              maxToRenderPerBatch={4} 
-              ListHeaderComponent={<ListHeader FilterChipsData={FilterChipsData} recordsCount={recordCount} />}
+             ListHeaderComponent={()=>rederListHeader(categoryId,AppLocation,FilterChipsData,recordCount)}
              keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.8}
               onEndReached={loadMorepage}
@@ -377,9 +403,20 @@ const ItemListScreen: React.FC<any> = ({
             />}
 
         </View></BottomSheetModalProvider>
-
-        
-   
+    
+      <View style={styles.footer}>
+        <ZText type={'S16'} >Properties</ZText>
+        <View style={styles.IconButton}>
+          <ShortingIcon />
+          <ZText type={'S16'} >Sort</ZText>
+        </View>
+        <View style={styles.IconButton}>
+          <FilterIcon />
+          <ZText type={'S16'} >Filter</ZText>
+        </View>
+      </View>
+    {/* // </View> */}
+   </>
   );
 };
 
@@ -524,5 +561,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppBaseContainer(ItemListScreen, '', true);
+export default AppBaseContainer(ItemListScreen, '', true,true);
 //export default ItemListScreen;

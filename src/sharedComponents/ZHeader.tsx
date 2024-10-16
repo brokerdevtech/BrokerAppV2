@@ -1,6 +1,6 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import {Back} from '../assets/svg';
-import React from 'react';
+import {Back, SearchFill} from '../assets/svg';
+import React, { useState } from 'react';
 import {styles} from '../themes';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import ZText from './ZText';
@@ -11,6 +11,8 @@ import {moderateScale} from '../config/constants';
 import {Text} from 'react-native';
 
 import ArrowLeftIcon from '../assets/svg/icons/arrow-left.svg' 
+import { Icon, SearchIcon } from '../../components/ui/icon';
+import { Input, InputField, InputIcon, InputSlot } from '../../components/ui/input';
 function ZHeader(props) {
   const {
     title,
@@ -20,12 +22,12 @@ function ZHeader(props) {
     isLeftIcon,
     goNext,
     onNextPress,
-
+    isSearch,
     type,
   } = props;
   const navigation = useNavigation();
   const colors = useSelector((state: RootState) => state.theme.theme);
-
+  const [showSearchBox,setShowSearchBox]=useState(false);
   const goBack = () => {
     if (navigation.canGoBack()) {
       navigation.goBack();
@@ -68,14 +70,33 @@ function ZHeader(props) {
           </TouchableOpacity>
         )}
         {!!isLeftIcon && isLeftIcon}
-
-        <ZText
-          numberOfLines={1}
-          style={[styles.pr10, styles.ml20, localStyles.titleText]}
-          type={'R18'}>
-          {title}
-        </ZText>
+        {showSearchBox ? (
+          <Input style={[localStyles.input, {flex: 1}]}>
+            <InputField
+              type='text'
+              placeholder="Search"
+            />
+            <InputSlot style={{paddingRight: 10}}>
+              <InputIcon as={SearchIcon} stroke="#000" />
+            </InputSlot>
+          </Input>
+        ) : (
+          <ZText
+            numberOfLines={1}
+            style={[styles.pr10, styles.ml20, localStyles.titleText]}
+            type={'R18'}>
+            {title}
+          </ZText>
+        )}
       </View>
+      {isSearch && !showSearchBox &&    <TouchableOpacity
+           
+           onPress={()=>setShowSearchBox((showBox)=>!showBox)}>
+       
+              <Icon as={SearchIcon} size='xl'/>
+
+       
+         </TouchableOpacity>}
       {!!rightIcon && rightIcon}
       <Text
         onPress={onNextPress}
@@ -101,6 +122,16 @@ const localStyles = StyleSheet.create({
     backgroundColor: 'white',
   },
   titleText: {
-    width: moderateScale(200),
+    width: moderateScale(300),
+  },
+  input: {
+    borderWidth: 0,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    // padding: 10,
+    // marginBottom: 20,
+    backgroundColor: '#f9f9f9',
+    height: 43,
+    marginLeft:10
   },
 });
