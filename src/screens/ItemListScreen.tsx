@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
@@ -7,7 +8,7 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  Linking,Alert
+  Linking,Alert,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
@@ -41,65 +42,79 @@ import {FavouriteIcon, Icon, MessageCircleIcon} from '../../components/ui/icon';
 import {Divider} from '@/components/ui/divider';
 import {VStack} from '@/components/ui/vstack';
 import MediaGallery from '../sharedComponents/MediaGallery';
-import {useApiPagingWithtotalRequest} from '@/src/hooks/useApiPagingWithtotalRequest';
-import AppBaseContainer from '@/src/hoc/AppBaseContainer_old';
+import {useApiPagingWithtotalRequest} from '../../src/hooks/useApiPagingWithtotalRequest';
+import AppBaseContainer from '../../src/hoc/AppBaseContainer_old';
 import LoadingSpinner from '../sharedComponents/LoadingSpinner';
 import {Box} from '../../components/ui/box';
 import FilterChips from '../sharedComponents/FilterChips';
 import margin from '@/themes/margin';
 import {SetPostLikeUnLike} from '../../BrokerAppCore/services/new/dashboardService';
 import PostActions from '../sharedComponents/PostActions';
-import {BottomSheetModalProvider} from '@gorhom/bottom-sheet'
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import UserStories from '../components/story/UserStories';
+import Recommend from '../sharedComponents/RecomendedBrokers';
 
+const rederListHeader=(categoryId)=>{
+  // console.log(categoryId,"categoryId")
+  return (
+    <>
+    <View style={{paddingHorizontal:20}}>
+    <UserStories/>
+    </View>
+    <Recommend categoryId={categoryId}/>
+
+    </>
+  )
+}
 const ProductItem =  React.memo(
     ({ item, listTypeData, User, navigation }) => {
   const MediaGalleryRef = useRef(null);
-  console.log("=========item");
+  console.log('=========item');
   console.log(item);
   const openWhatsApp = (phoneNumber, message) => {
     console.log(phoneNumber);
     // Format the URL with the phone number and message
     const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
-  
+
     // Check if WhatsApp is available and open the link
     Linking.canOpenURL(url)
       .then(supported => {
         if (supported) {
           Linking.openURL(url);
         } else {
-          Alert.alert("Error", "WhatsApp is not installed on this device");
+          Alert.alert('Error', 'WhatsApp is not installed on this device');
         }
       })
-      .catch(err => console.error("Error opening WhatsApp", err));
+      .catch(err => console.error('Error opening WhatsApp', err));
   };
   const chatProfilePress = async () => {
     console.log('Chat profile');
 
     const members = [User.userId.toString(), item.userId.toString()];
 
-   
+
     navigation.navigate('AppChat', {
       defaultScreen: 'ChannelScreen',
       defaultParams: members,
-      defaultchannelSubject:`Hi,i want to connect on ${item.title}`
+      defaultchannelSubject:`Hi,i want to connect on ${item.title}`,
     });
-   
+
   };
   const makeCall = (phoneNumber) => {
     const url = `tel:${phoneNumber}`;
-    
+
     Linking.canOpenURL(url)
       .then(supported => {
         if (supported) {
           Linking.openURL(url);
         } else {
-          Alert.alert("Error", "Your device does not support phone calls");
+          Alert.alert('Error', 'Your device does not support phone calls');
         }
       })
-      .catch(err => console.error("Error opening dialer", err));
+      .catch(err => console.error('Error opening dialer', err));
   };
   return (
- 
+
     <View style={styles.cardContainer}>
       <MediaGallery
         ref={MediaGalleryRef}
@@ -146,7 +161,7 @@ const ProductItem =  React.memo(
         {item.location?.cityName && (
           <HStack>
             <Box>
-              <Icon as={Location_Icon} />
+              <Icon as={Location_Icon} size='xl'/>
             </Box>
             <Box>
               <ZText
@@ -182,7 +197,7 @@ const ProductItem =  React.memo(
           style={{paddingHorizontal: 10, justifyContent: 'space-between'}}
         >
           <VStack>
-          <TouchableOpacity onPress={() => makeCall("+919910199761")}>
+          <TouchableOpacity onPress={() => makeCall('+919910199761')}>
             <View style={{alignItems: 'center'}}>
               <Icon as={Telephone_Icon} size={'xxl'} />
             </View>
@@ -202,12 +217,12 @@ const ProductItem =  React.memo(
             </TouchableOpacity>
           </VStack>
           <VStack>
-          <TouchableOpacity onPress={() => openWhatsApp("+919910199761", "test message")}>
+          <TouchableOpacity onPress={() => openWhatsApp('+919910199761', 'test message')}>
             <View style={{alignItems: 'center'}}>
               <Icon as={Whatsapp_Icon} size={'xxl'} />
             </View>
             <View style={{paddingVertical: 10}}>
-           
+
   <ZText type={'R14'}>WhatsApp</ZText>
 
             </View>
@@ -243,9 +258,13 @@ const ItemListScreen: React.FC<any> = ({
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
+  const [categoryId, setCategoryId] = useState(route.params.categoryId);
+  
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   // console.log('=============user=============');
   // console.log(user);
+
+  console.log(categoryId,"categoryIdff")
   const {
     data,
     status,
@@ -302,11 +321,7 @@ const ItemListScreen: React.FC<any> = ({
     callPodcastList();
   }, []);
   const [itemHeight, setItemHeight] = useState(560);
-  // const onItemLayout = (event) => {
-  //   const { height } = event.nativeEvent.layout;
-  //   console.log('itemHeight :',height);
-  //   setItemHeight(height);
-  // };
+
   const loadMorepage = async () => {
     if (!isInfiniteLoading) {
       await loadMore(listTypeData, {
@@ -319,25 +334,22 @@ const ItemListScreen: React.FC<any> = ({
       });
     }
   };
+  console.log('data :-', data);
   return (
     <BottomSheetModalProvider>
-    
+
       <View style={{ flex: 1 }}>
-         <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips>
-         {data&&  
+         
+         {data &&
           <FlatList
               data={data}
-             
+
               renderItem={renderItem}
-              
+
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-              // initialNumToRender={2}
-              // maxToRenderPerBatch={5}
-             
-            
-             
-              keyExtractor={(item, index) => index.toString()}
+             ListHeaderComponent={()=>rederListHeader(categoryId)}
+             keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.5}
               onEndReached={loadMorepage}
               ListFooterComponent={
@@ -345,15 +357,9 @@ const ItemListScreen: React.FC<any> = ({
                   <LoadingSpinner isVisible={isInfiniteLoading} />
                 ) : null
               }
-             // decelerationRate="fast"
-            //  removeClippedSubviews={true}
-              // getItemLayout={(data, index) => ({
-              //   length: itemHeight,
-              //   offset: itemHeight * index,
-              //   index,
-              // })}
+        
             />}
- 
+
         </View></BottomSheetModalProvider>
     //   </ScrollView>
     //   <View style={styles.footer}>
@@ -451,6 +457,7 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     width: 375,
+
     borderRadius: 12,
     backgroundColor: '#FFF',
     margin: 20,

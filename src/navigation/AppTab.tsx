@@ -86,6 +86,7 @@ const AppTab: React.FC = () => {
       style={{
         flex: 1,
         backgroundColor: 'white',
+        height:50,
       }}>
       <Tab.Navigator
         initialRouteName="AppTabHome"
@@ -102,7 +103,7 @@ const AppTab: React.FC = () => {
           headerStyle: {
             borderBottomWidth: 0, // Add bottom border
             borderBottomColor: '#e1e1e1', // Border color
-            height: Platform.OS === 'android' ? 65 : 120,
+            height: Platform.OS === 'android' ? 65 : 100,
           },
           // headerTitle: props => (
           //   <CustomHeader

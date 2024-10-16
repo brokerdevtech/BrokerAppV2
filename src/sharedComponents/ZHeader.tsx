@@ -53,10 +53,18 @@ function ZHeader(props) {
           <TouchableOpacity
            
             onPress={onPressBack || goBack}>
-           
+            <View
+          style={{
+            // ...styles.appTitleMain,
+            // color: '#007acc',
+            padding: 8,
+            borderWidth: 1,
+            borderColor: '#E5E5E5',
+            borderRadius: 40,
+          }}>
                   <ArrowLeftIcon />
               {/* <Back accessible={true} accessibilityLabel="Back" /> */}
-           
+              </View>
           </TouchableOpacity>
         )}
         {!!isLeftIcon && isLeftIcon}

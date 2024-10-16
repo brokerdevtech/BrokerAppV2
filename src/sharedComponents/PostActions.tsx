@@ -137,7 +137,7 @@ useEffect(() => {
       <VStack style={{ marginRight: 10 }}>
         <HStack>
           <TouchableOpacity onPress={PostLike ? handleUnLike : handleLike}>
-            <Icon as={FavouriteIcon} style={{ marginRight: 5 }} color={PostLike ? 'red' : undefined} />
+            <Icon as={FavouriteIcon} size='xxl' style={{ marginRight: 5 }} color={PostLike ? 'red' : undefined} />
           </TouchableOpacity>
           {PostlikesCount > 0 && 
            <TouchableOpacity onPress={handleListView}>
@@ -147,16 +147,16 @@ useEffect(() => {
       </VStack>
 
       <VStack style={{ marginRight: 10 }}>
-        <HStack>
-        <TouchableOpacity onPress={handlePresentModalPress}>
-          <Icon as={MessageCircleIcon} style={{ marginRight: 5 }} />
+        <HStack style={{justifyContent:'center' ,alignItems:'center'}}>
+        <TouchableOpacity  onPress={handlePresentModalPress}>
+          <Icon as={MessageCircleIcon} style={{ marginRight: 5 }} size='xxl'/>
           </TouchableOpacity>
           {cardComment > 0 && <ZText type={'R16'}>{cardComment}</ZText>}
         </HStack>
       </VStack>
 
       <VStack style={{ marginRight: 10 }}>
-        <Icon as={share_PIcon} />
+        <Icon as={share_PIcon} size='xxl'/>
       </VStack>
 
       {/* <VStack style={{ marginLeft: 'auto' }}>

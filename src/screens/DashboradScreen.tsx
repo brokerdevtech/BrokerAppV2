@@ -6,6 +6,7 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
@@ -121,11 +122,14 @@ export default function DashboradScreen() {
   };
 
   return (
+    <SafeAreaView style={{flex:1}}>
     <ScrollView style={styles.scrollView}>
       <View>
         <View style={styles.subHeaderSection}>
           {/* <UserProfile /> */}
+          <View style={{paddingHorizontal:15}}>
           <UserStories />
+          </View>
           {marqueeText?.length > 0 && (
             <MarqueeBanner
               marqueeTextList={marqueeText.map(
@@ -134,7 +138,7 @@ export default function DashboradScreen() {
             />
           )}
         </View>
-        <Grid className="gap-3 p-4" _extra={{className: 'grid-cols-9'}}>
+        <Grid className="gap-3 p-4" _extra={{className: 'grid-cols-9'}} >
           <GridItem
             className="bg-background-50 p-2 rounded-md text-center"
             _extra={{className: 'col-span-9'}}>
@@ -145,7 +149,7 @@ export default function DashboradScreen() {
             _extra={{className: 'col-span-3'}}>
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate('ItemListScreen', { listType: 'RealEstate'})
+                navigation.navigate('ItemListScreen', { listType: 'RealEstate' ,categoryId:1})
               }>
               <View style={styles.tabItemContainer}>
                 <TABTravel />
@@ -160,7 +164,7 @@ export default function DashboradScreen() {
             _extra={{className: 'col-span-3'}}>
         <TouchableOpacity
               onPress={() =>
-                navigation.navigate('ItemListScreen', {listType: 'Car'})
+                navigation.navigate('ItemListScreen', {listType: 'Car',categoryId:2})
               }>
               <View style={styles.tabItemContainer}>
                 <TABCard />
@@ -278,6 +282,7 @@ export default function DashboradScreen() {
         <Footer />
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -288,6 +293,7 @@ const styles = StyleSheet.create({
   tabContainer: {
     backgroundColor: '#F7F8FA',
     margin: 10,
+    
   },
   tabItemTitle: {
     marginTop: 10,
@@ -297,6 +303,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignContent: 'center',
+
   },
   container: {
     flexDirection: 'column',

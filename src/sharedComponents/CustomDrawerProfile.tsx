@@ -47,6 +47,7 @@ import {Logout} from '../../BrokerAppCore/services/new/authService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {clearTokens} from '../utils/utilTokens';
 import {useApiRequest} from '../hooks/useApiRequest';
+import ZAvatarInitials from './ZAvatarInitials';
 
 
 const CustomDrawerItem = ({label, onPress, leftIcon, rightIcon}) => {
@@ -96,12 +97,15 @@ const CustomDrawerContent = props => {
     // Reset navigation stack or redirect as necessary here
     setIsloading(false);
   };
+  console.log(user)
   return (
     <DrawerContentScrollView {...props} style={{marginLeft: 10}}>
       <View style={[styles.drawerHeader, styles.bottomBorder]}>
-        <Image
-          source={{uri: `${imagesBucketcloudfrontPath}${user?.profileImage}`}}
+        <ZAvatarInitials
+          sourceUrl={user?.profileImage}
+          name={`${user?.firstName} ${user?.lastName}`}
           style={styles.profileImage}
+          iconSize={'xl'}
         />
         <ZText type={'R18'} style={styles.nameText}>
           {user?.firstName} {user?.lastName}
