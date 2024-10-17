@@ -62,10 +62,9 @@ import ProductSection from './Dashboard/ProductSection';
 const ProductItem =  React.memo(
     ({ item, listTypeData, User, navigation }) => {
   const MediaGalleryRef = useRef(null);
-  console.log('=========item');
-  console.log(item);
+ 
   const openWhatsApp = useCallback((phoneNumber, message) => {
-    console.log(phoneNumber);
+ 
   
     const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
 
@@ -81,7 +80,7 @@ const ProductItem =  React.memo(
       .catch(err => console.error('Error opening WhatsApp', err));
   },[]);
   const chatProfilePress = useCallback(async () => {
-    console.log('Chat profile');
+ 
 
     const members = [User.userId.toString(), item.userId.toString()];
 
@@ -254,10 +253,9 @@ const MyItemListScreen: React.FC<any> = ({
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
   const [PageuserId, setPageuserId] = useState(route.params.userId);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
-  // console.log('=============user=============');
-  // console.log(user);
+  
 
-  console.log(categoryId,"categoryIdff")
+
   const {
     data,
     status,
@@ -290,12 +288,10 @@ const MyItemListScreen: React.FC<any> = ({
     hasMore_Set(true);
 
     await execute(listTypeData,PageuserId ).then(result => {
-      console.log("==========sss");
+      
       setLoading(false);
     });
-    console.log('data :-', data);
-    console.log('status :-', status);
-    console.log('error :-', error);
+  
     setLoading(false);
   }
 

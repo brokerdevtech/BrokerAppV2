@@ -1,14 +1,23 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { Icon } from '../../components/ui/icon';
 import { filter_icon } from '../assets/svg';
 import ZText from './ZText';
 import padding from '@/themes/padding';
+import { SkeletonText } from '../../components/ui/skeleton';
 
 
 const FilterChips = ({ filters ,recordsCount}) => {
  
   return (
+    <>
+    {(filters === undefined) ? (
+      <SkeletonText 
+      _lines={2} 
+      gap={1}  
+      style={{ width: "90%", height: 24 }} 
+    />
+    ):(
     <View style={styles.Outercontainer}>
     <View style={styles.container}>
       {/* Fixed "Filters" Chip */}
@@ -34,7 +43,7 @@ const FilterChips = ({ filters ,recordsCount}) => {
 <ZText  type="M16" style={{paddingLeft:10}}>Total {recordsCount} 
     </ZText> 
     </View>
-</View>
+</View>)}</>
   );
 
 };

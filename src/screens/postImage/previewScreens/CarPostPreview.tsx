@@ -87,14 +87,14 @@ const CarPostPreview: React.FC = ({
       value: filter[type].map(item => item.value).join(", ")
     }));
 
-    console.log("flatData", flatData);
+   
 setdisplayfilter(flatData);
   }, [filter]);
 
  
   useEffect(() => {
     // This useEffect runs when CarFilters data changes
-  console.log(Genericstatus);
+
 if(Genericstatus==200)
 {
  navigation.navigate('Home');
@@ -206,10 +206,9 @@ if(Genericstatus==200)
             Platform.OS === 'ios' && !image.Edit
               ? image.uri
               : image.destinationPathuri;
-          console.log('image', image.destinationPathuri);
-          console.log(image.destinationPathuri, 'uripath2');
+       
           const responseBlob = await uriToBlob(image.destinationPath);
-          console.log(responseBlob, 'response');
+       
           const fileExtension = getFileExtensionFromMimeType(
             responseBlob?._data.type,
           );
@@ -226,7 +225,7 @@ if(Genericstatus==200)
         }
 
         const results = await Promise.all(uploadPromises);
-        console.log(results, 'result');
+    
         uploadedImageUrls = results.map((result, index) => {
           if (result) {
             return {mediaBlobId: result.Key};
@@ -235,7 +234,7 @@ if(Genericstatus==200)
             return null;
           }
         });
-        console.log('deleteImage');
+  
         for (const item of imagesArray) {
           if (item.Edit) {
             await deleteImage(item.destinationPath);
@@ -271,9 +270,9 @@ if(Genericstatus==200)
       }
 
       const successfulUploads = uploadedImageUrls.filter(url => url !== null);
-      console.log(successfulUploads, 'success');
+     
       if (successfulUploads.length > 0) {
-        console.log('requestApi');
+     
         await requestAPI(successfulUploads, FormValue, Formtags);
       } else {
         setLoading(false);
@@ -292,7 +291,7 @@ if(Genericstatus==200)
 
     try {
       setLoading(true);
-      console.log('previe');
+   
       let tags = [];
       let localitie = route.params?.localities;
 
@@ -367,9 +366,8 @@ if(Genericstatus==200)
         requestOption.insuranceStatus=filter["InsuranceStatus"][0].value
       }
 
-      console.log('=============apiCall============');
-      console.log(requestOption);
-      console.log(user);
+     
+ 
       await Genericexecute(requestOption);
 
       // navigation.navigate('Home');
@@ -410,7 +408,7 @@ if(Genericstatus==200)
       )}
     </View>
   );
-  console.log(localities);
+
   return (
     <ZSafeAreaView>
       <ZHeader

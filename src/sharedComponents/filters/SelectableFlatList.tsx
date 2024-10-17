@@ -4,8 +4,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native
 const SelectableFlatList = ({ data,numColumn, onSelectItem,preselectedItem  }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   useEffect(() => {
-    console.log("preselectedItem=");
-    console.log(preselectedItem);
+   
     if (preselectedItem) {
       setSelectedItem(preselectedItem);
     }

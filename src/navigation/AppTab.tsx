@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable no-unreachable */
-import {Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Platform, StyleSheet, TouchableOpacity, View,Text} from 'react-native';
 import ZText from '../sharedComponents/ZText';
 import {useNavigation} from '@react-navigation/native';
 import {styles} from '../themes';
@@ -51,11 +51,11 @@ const HomePageStack = () => {
     </Stack.Navigator>
   );
 };
-
+const PlaceholderScreen = () => <View><Text>Coming Soon</Text></View>;
 const AppTab: React.FC = () => {
   const navigation = useNavigation();
   const userP = useSelector((state: RootState) => state.user.user);
-  console.log(userP);
+
   const userPermissions = useSelector(
     (state: RootState) => state.user.user?.userPermissions,
   );
@@ -79,7 +79,7 @@ const AppTab: React.FC = () => {
     //  onOpen();
 
     navigation.navigate('ChooseImage');
-    console.log('press');
+
   };
 
   return (
@@ -143,7 +143,7 @@ const AppTab: React.FC = () => {
               />
             ),
           }}
-          component={() => null}
+          component={PlaceholderScreen}
           // component={MyNetworkScreen}
         />
 
@@ -207,7 +207,7 @@ const AppTab: React.FC = () => {
               />
             ),
           }}
-          component={() => null}
+          component={PlaceholderScreen}
           // component={MyNetworkScreen}
         />
         <Tab.Screen

@@ -389,7 +389,7 @@ export default function RegisterScreen({setLoggedIn}) {
             <Select
               selectedValue={'Real Estate Sector'}
               onValueChange={(selectedValue: any) => {
-                console.log('Selected category ID:', selectedValue); // Log the category ID
+           
                 setFieldValue('BrokerCategory', selectedValue);
                 handleBlur('BrokerCategory');
               }}>

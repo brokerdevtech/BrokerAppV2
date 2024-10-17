@@ -36,7 +36,7 @@ const RegistrationYear = ({ startYear = 1990, endYear = new Date().getFullYear()
       <Select
              selectedValue={"Real Estate Sector"}
               onValueChange={(selectedValue: any) => {
-                console.log('Selected category ID:', selectedValue); // Log the category ID
+               
                 // setFieldValue('BrokerCategory', selectedValue);
                 // handleBlur('BrokerCategory');
               }}>

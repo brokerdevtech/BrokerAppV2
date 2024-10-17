@@ -90,7 +90,7 @@ const MyConnectionScreen: React.FC = ({route}) => {
       )}
     </View>
   );
-  console.log(connectiondata, 'con');
+
   // Render upline connections
   const renderUpline = () => (
     <View style={{flex: 1}}>

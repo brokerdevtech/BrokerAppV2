@@ -262,7 +262,7 @@ const OtherProfileScreen: React.FC = ({
     }
   };
   const chatProfilePress = async () => {
-    console.log('Chat profile');
+
 
     const members = [user.userId.toString(), userId.toString()];
 
@@ -523,17 +523,29 @@ const OtherProfileScreen: React.FC = ({
 
   const dummyData = [{key: 'dummy'}];
   const handleCategoryPress = screen => {
-    navigation.navigate(screen, {
-      userId: route.params.userId,
-      userName: ProfileData.profileName,
+    navigation.navigate(screen.navigationScreen, {
+      listType:screen.listType,
+      categoryId:screen.categoryId,
+      userId: user.userId,
     });
   };
+ 
   const categories = [
     {
       name: 'Propety',
 
-      navigationScreen: 'MyPropertyPost',
+      navigationScreen: 'MyItemListScreen',
       postCount: ProfileData?.realEstatePostCount,
+      listType:'RealEstate',
+      categoryId:'1'
+    },
+
+    {
+      name: 'Cars',
+      navigationScreen: 'MyItemListScreen',
+      postCount: ProfileData?.carPostCount,
+        listType:'Car',
+      categoryId:'2'
     },
   ];
   const [TabSelect, setTabSelect] = useState(0);
@@ -541,7 +553,7 @@ const OtherProfileScreen: React.FC = ({
   const onTabSelectChange = useCallback(index => {
     setTabSelect(index);
   }, []);
-  console.log(ProfileData)
+
   const renderContent = () => {
     return (
       <>
@@ -570,7 +582,7 @@ const OtherProfileScreen: React.FC = ({
                     localStyles.disabledCategoryButton,
                 ]}
                 disabled={!category.navigationScreen}
-                onPress={() => handleCategoryPress(category.navigationScreen)}>
+                onPress={() => handleCategoryPress(category)}>
                 <ZText type={'l18'}>{category.name}</ZText>
                 <View
                   style={{

@@ -46,8 +46,10 @@ import {
   AvatarGroup,
   AvatarImage,
 } from '@/components/ui/avatar';
-import {CloseIcon} from '../../assets/svg';
+import {CloseIcon, LikeWhite, OpenEye, UnLikeWhite} from '../../assets/svg';
 import {Icon} from '../../../components/ui/icon';
+import TextWithPermissionCheck from '../../sharedComponents/TextWithPermissionCheck';
+import { Center } from '../../../components/ui/center';
 
 const {width, height} = Dimensions.get('window');
 const avatars = [
@@ -92,7 +94,7 @@ const StoryView: React.FC = ({route}) => {
   });
   const extraAvatars = avatars.slice(3);
   const remainingCount = extraAvatars.length;
-  //console.log(route.params.userImage);
+
   const [userImage, setuserImage] = useState(route.params.userImage);
   const [content, setContent] = useState([
     ...route.params.userImage.storyDetails,
@@ -228,16 +230,16 @@ const StoryView: React.FC = ({route}) => {
       useNativeDriver: false,
     }).start(({finished}) => {
       if (finished) {
-        // console.log("Animated");
+
         onPressNext(); // Move to the next item
       }
     });
   }
 
   const onLoadVideo = status => {
-    // console.log('Video loaded, duration:', status.duration);
+
     const videoDuration = secondsToMilliseconds(status.duration);
-    // console.log('Duration in ms:', videoDuration);
+
     setEnd(videoDuration); // Set the end based on video duration
     play(videoDuration); // Start playing the story with the correct duration
   };
@@ -286,7 +288,7 @@ const StoryView: React.FC = ({route}) => {
 
   // next() is for changing the content of the current content to +1
   function onPressNext() {
-    // console.log("onPressNext");
+ 
 
     if (KeybordShow) {
       Keyboard.dismiss();
@@ -342,12 +344,25 @@ const StoryView: React.FC = ({route}) => {
   //   progress.setValue(0);
   //   play();
   // };
-
+  const storyLikeList = (item: any) => {
+    togglePlayPause();
+    navigation.push("StoryLikeList", {
+      ActionId: item.storyId,
+      userId: user.userId
+    });
+  };
+  const storyviewList = (item: any) => {
+    togglePlayPause();
+     navigation.push("StoryViewList", {
+      ActionId: item.storyId,
+      userId: user.userId
+     });
+  };
   const onLoadVideo1 = status => {
-    // console.log('Video loaded, duration:', status.duration);
+
 
     const videoDuration = secondsToMilliseconds(status.duration);
-    // console.log('Duration in ms:', videoDuration);
+  
     setEnd(videoDuration);
 
     progress.setValue(0);
@@ -362,8 +377,7 @@ const StoryView: React.FC = ({route}) => {
     // togglePlayPause();
   };
   const closeModal = async (item: any) => {
-    //setCardComment(item);
-    // console.log("closeModal");
+
     setOpen(false);
     await new Promise(resolve => setTimeout(resolve, 200));
 
@@ -449,8 +463,6 @@ const StoryView: React.FC = ({route}) => {
     });
   };
 
-  // console.log('___________****************___________*********______');
-  // console.log(userImage);
   return (
     <SafeAreaView style={localStyles.containerModal}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
@@ -548,9 +560,9 @@ const StoryView: React.FC = ({route}) => {
           display="flex"
           alignItems="center"
           style={localStyles.likeBtnStyle}>
-          {/* <TouchableOpacityWithPermissionCheck
+          <TouchableOpacityWithPermissionCheck
             fontColor={colors.white}
-            // tagNames={[LikeWhite, UnLikeWhite]}
+             tagNames={[LikeWhite, UnLikeWhite]}
             permissionEnum={
               StoryState.userLiked
                 ? PermissionKey.AllowUnLikeStory
@@ -559,12 +571,12 @@ const StoryView: React.FC = ({route}) => {
             permissionsArray={userPermissions}
             onPress={() => storyLike(reversedContent[current])}>
             {StoryState.userLiked ? (
-              // <LikeWhite accessible={true} accessibilityLabel="Like White" />
+               <LikeWhite accessible={true} accessibilityLabel="Like White" />
             ) : (
-              // <UnLikeWhite
-              //   accessible={true}
-              //   accessibilityLabel="unlike white"
-              // />
+              <UnLikeWhite
+                accessible={true}
+                accessibilityLabel="unlike white"
+              />
             )}
           </TouchableOpacityWithPermissionCheck>
           <TextWithPermissionCheck
@@ -575,9 +587,25 @@ const StoryView: React.FC = ({route}) => {
             fontColor={colors.white}
             onPress={() => storyLikeList(reversedContent[current])}>
             {StoryState.likeCount}
-          </TextWithPermissionCheck> */}
+          </TextWithPermissionCheck>
         </Box>
-
+        <Box
+          display="flex"
+          alignItems="center"
+          style={localStyles.likeBtnStyle}>
+          <TouchableOpacityWithPermissionCheck
+            fontColor={colors.white}
+            tagNames={[Center, OpenEye, ZText]}
+            permissionEnum={PermissionKey.AllowViewStoryViewers}
+            onPress={() => storyviewList(reversedContent[current])}>
+            <Center>
+              <OpenEye accessible={true} accessibilityLabel="open eye" />
+              <ZText type={'L16'} style={{color: colors.white}}>
+                {StoryState.viewerCount}
+              </ZText>
+            </Center>
+          </TouchableOpacityWithPermissionCheck>
+        </Box>
         <Box
           display="flex"
           alignItems="center"

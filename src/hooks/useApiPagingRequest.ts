@@ -28,13 +28,13 @@ export const useApiPagingRequest = <T, P extends any[]>(
     setCurrentPage(1); // Reset to first page for initial load
 
     try {
-      console.log(...params,"res")
+    
       const response = await apiFunction(...params, 1, pageSize);
-      console.log(response,"res")
+  
       if (setLoading) {
         setLoading(false);
       }
-console.log(response);
+
       if (!response.success) {
         setError(response.message || 'An error occurred');
         setStatus(response.status || 500);
@@ -72,7 +72,7 @@ console.log(response);
        {   setData((prevData) => [...prevData, ...(response.data || [])]);
           setStatus(response.status || 200);
           setCurrentPage((prevPage) => prevPage + 1); // Increment the page count
-          console.log( currentPage + 1);
+  
        }
        else{
         setHasMore(false); 

@@ -20,8 +20,7 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
   const paramsRef = useRef<P | null>(null); 
 
   const execute = async (...params: P) => {
-    console.log("useApiPagingRequest===================",params);
-    console.log("useApiPagingRequest===================",pageSize);
+
     // Call the external loading function, if provided
     paramsRef.current = params; // Store the parameters for future use
     if (setLoading) {
@@ -38,12 +37,12 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
       if (setLoading) {
         setLoading(false);
       }
-console.log(response);
+
       if (!response.success) {
         setError(response.message || 'An error occurred');
         setStatus(response.status || 500);
       } else {
-        console.log(response.data);
+      
         setData(response.data.data || null);
         settotalPages(response.data.totalPages || null)
         setrecordCount(response.data.recordCount || null)
@@ -80,11 +79,10 @@ console.log(response);
        {   setData((prevData) => [...prevData, ...(response.data.data || [])]);
           setStatus(response.status || 200);
           setCurrentPage((prevPage) => prevPage + 1); // Increment the page count
-          console.log( currentPage + 1);
+      
        }
        else{
-        console.log("response?.data.data.length")
-        console.log(response?.data.data)
+
         setHasMore(false); 
        }
         }

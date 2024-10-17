@@ -156,7 +156,7 @@ const PersonalDetailsForm = ({
   );
   const handleSubmit = async values => {
     try {
-      console.log(values, 'val');
+    
       Keyboard.dismiss();
       const year = selectDate.getFullYear().toString();
       const month = (selectDate.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-based, so add 1
@@ -165,7 +165,7 @@ const PersonalDetailsForm = ({
 
       // Create the formatted date string as "yyyy-mm-dd"
       const formattedDate = `${year}-${month}-${day}`;
-      console.log(formattedDate, 'll');
+   
       // const mappedIndustries = values.industry.map(id => {
       //   const matchedIndustry = IndustryDataForSelect.find(
       //     industry => industry.value === id,
@@ -216,21 +216,17 @@ const PersonalDetailsForm = ({
       delete Result['location'];
       delete Result['officeLocation'];
       delete Result['userPermissions'];
-      console.log(
-        '================================================================',
-      );
-      console.log(Result, 'res');
-      // console.log(profileUpdatestatus);
-      // setLoading(true);
+   
+    
       await profileUpdateexecute(Result);
-      console.log(profileUpdatestatus);
+
       if (profileUpdatestatus == 200) {
         toastMessage('Profile Updated');
       }
     } catch (error) {}
   };
 
-  console.log(IndustryDataForSelect, 'data');
+
   const AlreadySelectIndustry = Profiledata.industries.map(industry => {
     return industry.industryId;
   });

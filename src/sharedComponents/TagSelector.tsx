@@ -5,7 +5,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 
 const TagSelector = ({ tags }) => {
 
-    console.log(tags);
+
   const [selectedTags, setSelectedTags] = useState([]);
   const bottomSheetRef = useRef(null);
 

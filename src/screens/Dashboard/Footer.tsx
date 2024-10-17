@@ -22,7 +22,7 @@ const Footer = () => {
   useEffect(() => {
    callFooterList();
   }, []);
-  console.log("Footer Data ====>", data)
+//   console.log("Footer Data ====>", data)
   return (
    <View style={styles.footerContainer}>
        <View style={styles.footerAppDescription}>

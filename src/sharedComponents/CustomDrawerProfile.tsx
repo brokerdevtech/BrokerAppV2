@@ -97,7 +97,7 @@ const CustomDrawerContent = props => {
     // Reset navigation stack or redirect as necessary here
     setIsloading(false);
   };
-  console.log(user)
+
   return (
     <DrawerContentScrollView {...props} style={{marginLeft: 10}}>
       <View style={[styles.drawerHeader, styles.bottomBorder]}>

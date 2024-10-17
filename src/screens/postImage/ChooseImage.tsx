@@ -284,7 +284,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
   };
 
   const onChooseImage = photo => {
-    console.log(thumbnail, 'initial');
+  
     if (isMultiSelect) {
       const isAlreadySelected = thumbnail.some(
         item => item.uri === photo.node.image.uri,
@@ -387,10 +387,10 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
         userId: user.userId,
         storyMedia: uploadedImageUrls,
       };
-      console.log(AddStoryobj, '======');
+
       await Storyexecute(AddStoryobj);
       setLoadingOverlay(false);
-      console.log(Storystatus, '===========');
+ ;
       // console.log( ,"===========");
 
       navigation.navigate('Home');

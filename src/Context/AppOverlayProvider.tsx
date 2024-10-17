@@ -34,7 +34,7 @@ export const AppOverlayProvider = (
 
   const overlayOpacity = useSharedValue(0);
   const {height, width} = useWindowDimensions();
-  // console.log('appn overlay from ios ');
+
   useEffect(() => {
     const backAction = () => {
       if (overlay !== 'none') {

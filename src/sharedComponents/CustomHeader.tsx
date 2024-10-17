@@ -64,8 +64,7 @@ const CustomHeader = () => {
     await marqueeExecute('Marqueue', request);
   };
   const handlePlaceSelected = (place: any) => {
-    console.log(place);
-    console.log(AppLocation);
+
 
     store.dispatch(setAppLocation(place));
   };

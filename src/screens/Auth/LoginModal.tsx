@@ -39,10 +39,7 @@ export default function LoginModal({
 
   const handleLogin = async () => {
     await execute(username, password);
-    console.log('Data :-', data);
-    console.log('Error :-', error);
-    console.log(username, password);
-    console.log('Status :-', status);
+ 
   };
   const afterhandleLogin = async () => {
     if (data) {

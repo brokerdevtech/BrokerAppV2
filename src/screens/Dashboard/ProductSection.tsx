@@ -24,6 +24,7 @@ import {
   imagesBucketcloudfrontPath,
   postsImagesBucketPath,
 } from '../../config/constants';
+import RectangularCardSkeleton from '../../sharedComponents/Skeleton/RectangularCardSkeleton';
 
 interface ProductSectionProps {
   heading: string;
@@ -38,6 +39,8 @@ const ProductSection = (props: ProductSectionProps) => {
   const navigation = useNavigation();
 
   const callPodcastList = async () => {
+    console.log("props.request");
+    console.log(props.request);
     await execute(props.endpoint, props.request);
     //console.log(props.heading, 'data :-', data);
 
@@ -101,29 +104,40 @@ const ProductSection = (props: ProductSectionProps) => {
 
   
   return (
-    <View style={{backgroundColor: props.background, paddingVertical: 10}}>
-      <HStack space="md" reversed={false} style={styles.heading}>
-        <ZText type={'R18'}>{props.heading}</ZText>
-        {props.isShowAll && 
-        (<TouchableOpacity onPress={() => navigation.navigate('ItemListScreen', {listType: props.heading === 'New In Car' ? 'Car' : 'RealEstate'})}>  
-            <ZText type={'R14'} style={styles.link}>See All</ZText>
-        </TouchableOpacity>
-        )}
-      </HStack>
-      <HStack space="md" reversed={false} style={{paddingHorizontal: 10}}>
-        <FlatList
-          data={data}
-          keyExtractor={item => item.postId.toString()}
-          renderItem={renderProductItems}
-          contentContainerStyle={{paddingVertical:20}}
-          initialNumToRender={3}
-          showsHorizontalScrollIndicator={false}
-          horizontal
-          onEndReachedThreshold={0.8}
-          // ItemSeparatorComponent={() => <View style={styles.separator} />}
-        />
-      </HStack>
-    </View>
+    <>
+    {(data == null) ? (
+      <RectangularCardSkeleton type='NewIN' />
+    ) : (
+      <View style={{ backgroundColor: props.background, paddingVertical: 10 }}>
+        <HStack space="md" reversed={false} style={styles.heading}>
+          <ZText type={'R18'}>{props.heading}</ZText>
+          {props.isShowAll && (
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ItemListScreen', {
+                listType: props.heading === 'New In Car' ? 'Car' : 'RealEstate'
+              })}
+            >
+              <ZText type={'R14'} style={styles.link}>See All</ZText>
+            </TouchableOpacity>
+          )}
+        </HStack>
+        <HStack space="md" reversed={false} style={{ paddingHorizontal: 10 }}>
+          <FlatList
+            data={data}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderProductItems}
+            contentContainerStyle={{ paddingVertical: 20 }}
+            initialNumToRender={3}
+            showsHorizontalScrollIndicator={false}
+            horizontal
+           // onEndReachedThreshold={0.8}
+            // Uncomment the following line if you want to add a separator between items
+            // ItemSeparatorComponent={() => <View style={styles.separator} />}
+          />
+        </HStack>
+      </View>
+    )}
+    </>
   );
 };
 const styles = StyleSheet.create({

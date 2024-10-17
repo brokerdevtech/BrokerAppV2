@@ -89,7 +89,7 @@ const chatClient = StreamChat.getInstance(chatApiKey);
     try {
 
     await removeItemStorage('fcmToken');
-   console.log("ss");
+
      // await firebase.messaging().requestPermission();
       // User has authorised
       await  getfcmToken();

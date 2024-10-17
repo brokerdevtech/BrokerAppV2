@@ -16,7 +16,7 @@ const MainNavigation: React.FC<MainNavigationProps> = ({
   setLoggedIn,
 }) => {
   const appuser = useSelector((state: RootState) => state.user);
-console.log(appuser);
+
 const [isLoggedIn, setisLoggedIn] = useState(false);
 
 

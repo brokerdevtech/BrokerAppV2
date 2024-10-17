@@ -115,22 +115,30 @@ const ProfileScreen: React.FC = ({
     execute: profileUpdateexecute,
   } = useApiRequest(UpdateProfile, setLoading);
   const handleCategoryPress = screen => {
-    navigation.navigate(screen, {
+    navigation.navigate(screen.navigationScreen, {
+      listType:screen.listType,
+      categoryId:screen.categoryId,
       userId: user.userId,
     });
   };
+
+  
   const categories = [
     {
       name: 'Propety',
 
-      navigationScreen: 'MyPropertyPost',
+      navigationScreen: 'MyItemListScreen',
       postCount: ProfileData?.realEstatePostCount,
+      listType:'RealEstate',
+      categoryId:'1'
     },
 
     {
       name: 'Cars',
-      navigationScreen: 'MyCarsPost',
+      navigationScreen: 'MyItemListScreen',
       postCount: ProfileData?.carPostCount,
+        listType:'Car',
+      categoryId:'2'
     },
   ];
   const renderContent = () => {
@@ -187,7 +195,7 @@ const ProfileScreen: React.FC = ({
                     localStyles.disabledCategoryButton,
                 ]}
                 disabled={!category.navigationScreen}
-                onPress={() => handleCategoryPress(category.navigationScreen)}>
+                onPress={() => handleCategoryPress(category)}>
                 <ZText type={'l18'}>{category.name}</ZText>
                 <View
                   style={{
@@ -315,7 +323,7 @@ const ProfileScreen: React.FC = ({
     // console.log(Result, 'pro');
 
     await profileUpdateexecute(Result);
-    console.log(profileUpdatestatus);
+
   };
   // console.log(profiledata, 'data');
 
@@ -454,7 +462,7 @@ const ProfileScreen: React.FC = ({
       delete Result['officeLocation'];
       delete Result['userPermissions'];
       await profileUpdateexecute(Result);
-      console.log(profileUpdatestatus);
+    
     } catch (error) {}
   };
   useEffect(() => {
@@ -477,8 +485,7 @@ const ProfileScreen: React.FC = ({
   useEffect(() => {
     if (profileUpdatestatus == 200) {
       setProfileData(profileUpdatedata?.data);
-      console.log('======================');
-      console.log(profileUpdatedata?.data);
+   
       const Userfollower: any = [];
       if (profileUpdatedata.data) {
         Userfollower.push({

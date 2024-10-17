@@ -90,7 +90,7 @@ const FileUpload = ({
     const responseBlob = await uriToBlob(selectedFile[0].uri);
 
     const fileExtension = getFileExtensionFromMimeType(selectedFile[0].type);
-    console.log(fileExtension, 'res');
+   
     const docId = uuid.v4();
     const imageName = docId + '.' + fileExtension;
     const params = {
