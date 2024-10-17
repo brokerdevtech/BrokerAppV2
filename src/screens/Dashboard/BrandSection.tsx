@@ -55,16 +55,16 @@ const BrandSection = (props: BrandSectionProps) => {
             uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
           }}
           style={styles.carImage}
-        />        
+        />
       </View>
     );
   };
 
   return (
-    <View style={{backgroundColor: props.background, paddingVertical: 10}}>
+    <View style={{backgroundColor: props.background, paddingVertical: 2}}>
       <HStack space="md" reversed={false} style={styles.heading}>
         <ZText type={'R18'}>{props.heading}</ZText>
-        <ZText type={'R14'} style={styles.link}></ZText>
+        <ZText type={'R14'} style={styles.link} />
       </HStack>
       <HStack space="md" reversed={false} style={{paddingHorizontal: 10}}>
         <FlatList

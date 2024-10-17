@@ -535,11 +535,6 @@ const OtherProfileScreen: React.FC = ({
       navigationScreen: 'MyPropertyPost',
       postCount: ProfileData?.realEstatePostCount,
     },
-    {
-      name: 'Genric',
-      navigationScreen: 'MyGenericPost',
-      postCount: ProfileData?.genericPostCount,
-    },
   ];
   const [TabSelect, setTabSelect] = useState(0);
 

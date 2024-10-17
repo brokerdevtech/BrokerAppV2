@@ -34,6 +34,7 @@ import React from 'react';
 import DashboradScreen from '../screens/DashboradScreen';
 import ChooseImage from '../screens/postImage/ChooseImage';
 import {Color} from '../styles/GlobalStyles';
+import AllSkeletonComponent from '../sharedComponents/Skeleton/AllSkeletonComponent';
 
 const Tab = createBottomTabNavigator();
 
@@ -226,7 +227,7 @@ const AppTab: React.FC = () => {
               />
             ),
           }}
-          component={() => null}
+          component={AllSkeletonComponent}
           // component={MyNetworkScreen}
         />
       </Tab.Navigator>

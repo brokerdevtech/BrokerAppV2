@@ -126,11 +126,7 @@ const ProfileScreen: React.FC = ({
       navigationScreen: 'MyPropertyPost',
       postCount: ProfileData?.realEstatePostCount,
     },
-    {
-      name: 'Genric',
-      navigationScreen: 'MyGenericPost',
-      postCount: ProfileData?.genericPostCount,
-    },
+
     {
       name: 'Cars',
       navigationScreen: 'MyCarsPost',
@@ -231,7 +227,7 @@ const ProfileScreen: React.FC = ({
   const s3 = useS3();
   const [routes] = useState([
     {key: 'Property', title: 'Property'},
-    {key: 'Generic', title: `Generic`},
+
   ]);
 
   useFocusEffect(
