@@ -298,6 +298,7 @@ const ItemDetailScreen: React.FC<any> = ({ route, navigation }) => {
   const {data, status, error, execute} = useApiRequest(fetchPostByID);
   
   const callItemDetail = async () => {
+    console.log(route)
     await execute(route.params.postType, route.params.postId);
 
   };
