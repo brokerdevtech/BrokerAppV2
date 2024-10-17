@@ -25,16 +25,17 @@ import {Skeleton} from '../../../components/ui/skeleton';
 import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
 import {getDashboardStory} from '../../../BrokerAppCore/services/Story';
 import {VStack} from '../../../components/ui/vstack';
+import CircularSkeleton from '../../sharedComponents/Skeleton/CircularSkeleton';
 
-const StoriesSkeleton = () => {
-  return (
-    <HStack space={2} style={globalStyles.p5}>
-      {Array.from({length: 8}).map((_, index) => (
-        <Skeleton key={index} variant="rounded" />
-      ))}
-    </HStack>
-  );
-};
+// const StoriesSkeleton = () => {
+//   return (
+//     <HStack space={2} style={globalStyles.p5}>
+//       {Array.from({length: 8}).map((_, index) => (
+//         <Skeleton key={index} variant="rounded" />
+//       ))}
+//     </HStack>
+//   );
+// };
 
 const UserStories = React.memo(({}) => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -170,7 +171,7 @@ const UserStories = React.memo(({}) => {
       </ZText> */}
       <HStack>
         {StoryData === null ? (
-          <StoriesSkeleton />
+          <CircularSkeleton />
         ) : (
           <FlatList
             data={StoryData}
@@ -178,6 +179,8 @@ const UserStories = React.memo(({}) => {
             keyExtractor={item => item.userId}
             renderItem={renderItem}
             horizontal={true}
+            initialNumToRender={2}
+            maxToRenderPerBatch={4}
             ListEmptyComponent={
               permissionGrantedDashBoard ? (
                 <EmptyListComponent />

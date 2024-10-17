@@ -57,7 +57,7 @@ const AppBaseContainer = (WrappedComponent, pageTitle, isHeader = true ,isSearch
         });
       }
     };
-    // console.log(pa)
+
     return (
       <ZSafeAreaView>
         {isHeader && <ZHeader title={pageTitleState} isSearch={isSearch} />}

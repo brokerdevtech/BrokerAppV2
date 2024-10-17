@@ -299,10 +299,7 @@ const ItemDetailScreen: React.FC<any> = ({ route, navigation }) => {
   
   const callItemDetail = async () => {
     await execute(route.params.postType, route.params.postId);
-    console.log('data :-', data);
-    console.log('paramData :-', route.params);
-    ///console.log('status :-', status);
-    //console.log('error :-', error);
+
   };
 
   useEffect(() => {

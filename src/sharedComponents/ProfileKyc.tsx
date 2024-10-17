@@ -76,8 +76,7 @@ const ProfileKyc: React.FC = ({
     if (profileUpdatestatus === 200) {
       toastMessage('Document upoaded');
       setProfiledata(profileUpdatedata.data);
-      console.log('++++++=================================================');
-      console.log(profileUpdatedata);
+
     }
   }, [profileUpdatestatus]);
   const handleSubmit = async (docId, fieldName, successMessage) => {
@@ -102,8 +101,7 @@ const ProfileKyc: React.FC = ({
     delete Result['location'];
     delete Result['officeLocation'];
     delete Result['userPermissions'];
-    console.log('++++++++++++++++++++++++++++++++');
-    console.log(Result);
+
     await profileUpdateexecute(Result);
     setProfiledata({...Profiledata, [fieldName]: docId});
   };

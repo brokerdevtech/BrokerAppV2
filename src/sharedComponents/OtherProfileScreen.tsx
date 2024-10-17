@@ -262,7 +262,7 @@ const OtherProfileScreen: React.FC = ({
     }
   };
   const chatProfilePress = async () => {
-    console.log('Chat profile');
+
 
     const members = [user.userId.toString(), userId.toString()];
 
@@ -541,7 +541,7 @@ const OtherProfileScreen: React.FC = ({
   const onTabSelectChange = useCallback(index => {
     setTabSelect(index);
   }, []);
-  console.log(ProfileData)
+
   const renderContent = () => {
     return (
       <>

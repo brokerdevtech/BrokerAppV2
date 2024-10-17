@@ -33,7 +33,7 @@ const avatarStyle = tva({
     size: {
       'xs': 'w-6 h-6',
       'sm': 'w-8 h-8',
-    's': 'w-9 h-9',
+    's': 'w-10 h-10',
       'md': 'w-12 h-12',
       'lg': 'w-16 h-16',
       'xl': 'w-24 h-24',
@@ -67,7 +67,7 @@ const avatarBadgeStyle = tva({
     size: {
       'xs': 'w-2 h-2',
       'sm': 'w-2 h-2',
-      's': 'w-9 h-9',
+      's': 'w-10 h-10',
       'md': 'w-3 h-3',
       'lg': 'w-4 h-4',
       'xl': 'w-6 h-6',

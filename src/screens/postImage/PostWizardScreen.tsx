@@ -195,7 +195,7 @@ const PostWizardScreen: React.FC = ({
       </TouchableOpacity>
     );
   };
-  console.log(carFormikref);
+
   return (
     <ZSafeAreaView>
       <ZHeader

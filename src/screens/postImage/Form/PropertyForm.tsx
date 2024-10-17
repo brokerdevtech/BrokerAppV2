@@ -82,7 +82,7 @@ const PropertyForm = ({formikRef}) => {
 
   const handleSubmit = values => {
     // Handle form submission here
-    console.log(values);
+
     if (formikRef.current) {
       // formikRef.current.submitForm();
     }

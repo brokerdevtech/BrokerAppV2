@@ -10,6 +10,7 @@ import {
   Image,
   TouchableOpacity,
   Linking,Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
@@ -59,7 +60,7 @@ import flex from '@/themes/flex';
 import padding from '@/themes/padding';
 
 const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,recordCount})=>{
-  // console.log(categoryId,"categoryId")
+   console.log(AppLocation.City,"categoryId")
   return (
     <>
    
@@ -96,10 +97,9 @@ const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,record
 const ProductItem =  React.memo(
     ({ item, listTypeData, User, navigation }) => {
   const MediaGalleryRef = useRef(null);
-  console.log('=========item');
-  console.log(item);
+
   const openWhatsApp = useCallback((phoneNumber, message) => {
-    console.log(phoneNumber);
+  
   
     const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
 
@@ -115,7 +115,7 @@ const ProductItem =  React.memo(
       .catch(err => console.error('Error opening WhatsApp', err));
   },[]);
   const chatProfilePress = useCallback(async () => {
-    console.log('Chat profile');
+ 
 
     const members = [User.userId.toString(), item.userId.toString()];
 
@@ -291,7 +291,7 @@ const ItemListScreen: React.FC<any> = ({
   // console.log('=============user=============');
   // console.log(user);
 
-  console.log(categoryId,"categoryIdff")
+
   const {
     data,
     status,
@@ -323,7 +323,7 @@ const ItemListScreen: React.FC<any> = ({
     currentPage_Set(1);
     hasMore_Set(true);
 
-    await execute(listTypeData, {
+     execute(listTypeData, {
       keyWord: '',
       userId: user.userId,
       placeID: AppLocation.placeID,
@@ -331,12 +331,10 @@ const ItemListScreen: React.FC<any> = ({
       geoLocationLatitude: AppLocation.geoLocationLatitude,
       geoLocationLongitude: AppLocation.geoLocationLongitude,
     }).then(result => {
-      console.log("==========sss");
+     
       setLoading(false);
     });
-    console.log('data :-', data);
-    console.log('status :-', status);
-    console.log('error :-', error);
+   
     setLoading(false);
   }
 
@@ -389,11 +387,12 @@ const ItemListScreen: React.FC<any> = ({
               data={data}
               getItemLayout={getItemLayout}
               renderItem={renderItem}
-
+ initialNumToRender={2}
+        maxToRenderPerBatch={4}
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
              ListHeaderComponent={
-              <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData}recordCount={recordCount}/>}
+              <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
              keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.8}
               onEndReached={loadMorepage}
@@ -402,10 +401,18 @@ const ItemListScreen: React.FC<any> = ({
                   <LoadingSpinner isVisible={isInfiniteLoading} />
                 ) : null
               }
-        
+              ListEmptyComponent={() => (
+                data === undefined ? (
+                  <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+                ) : (
+                  <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>No Data Found</Text>
+                  </View>
+                )
+              )}
             />}
 
-        </View></BottomSheetModalProvider>
+        </View>
     
       <View style={styles.footer}>
         <ZText type={'S16'} >Properties</ZText>
@@ -417,13 +424,27 @@ const ItemListScreen: React.FC<any> = ({
           <FilterIcon />
           <ZText type={'S16'} >Filter</ZText>
         </View>
-      </View>
+      </View></BottomSheetModalProvider>
     {/* // </View> */}
    </>
   );
 };
 
 const styles = StyleSheet.create({
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#555',  // Use a subtle color to match your design
+    textAlign: 'center',
+  },
+  loader: {
+    marginVertical: 20,
+  },
   headerContainer: {
     backgroundColor: '#FFF',
     paddingVertical: 10,

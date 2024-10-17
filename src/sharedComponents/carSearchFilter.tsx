@@ -98,7 +98,7 @@ const CarFilterScreen : React.FC = ({
   useEffect(() => {
     // This useEffect runs when CarFilters data changes
     if (CarFilters != null) {
-      console.log('CarFilters:', CarFilters);
+ 
   
       // Filter out the 'PostedSince' item from the CarFilters data
       const filtersWithoutPostedSince = CarFilters.data.filters.filter(filter => filter.name !== 'PostedSince');
@@ -122,12 +122,7 @@ const CarFilterScreen : React.FC = ({
     alert(`Please select the following mandatory filters: ${missingMandatoryFilters.join(', ')}`);
     return;
   }
-  console.log("=====================================selectedFilters");
-   console.log(selectedFilters);
-   console.log(imagesArray);
-   console.log(Isvideo);
-   console.log(localities);
-   console.log(formValue);
+
    navigation.navigate('CarPostPreview', {
     filters: selectedFilters,
     postVisual: imagesArray,
@@ -180,7 +175,7 @@ const CarFilterScreen : React.FC = ({
     return filtersArray;
 };
 const SelectItem = async (item) => {
-  console.log("Selected item:", item);
+ 
 
   // Create a copy of the selected filters object
   let updatedSelectedFilters = { ...selectedFilters };
@@ -211,32 +206,26 @@ const SelectItem = async (item) => {
   const renderSettingsView = () => {
    
     let ComponentToRender=null;
-   console.log(selectedItem?.name);
+
    if(selectedItem!=null){
 if(selectedItem.name=="Brand")
    {
     let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
-    console.log("=============items=========");
-    console.log(items);
-    console.log("=============items=========");
+
     ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
 
    }
    if(selectedItem.name=="Model")
     {
      let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
-     console.log("=============items=========");
-     console.log(items);
-     console.log("=============items=========");
+  
      ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
  
     }
   if(selectedItem.name=="FuelType")
     {
    let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
-   console.log("=============items=========");
-    console.log(items);
-    console.log("=============items=========");
+ 
      ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
  
     }
@@ -244,18 +233,14 @@ if(selectedItem.name=="Brand")
     if(selectedItem.name=="BodyType")
       {
      let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
-     console.log("=============items=========");
-      console.log(items);
-      console.log("=============items=========");
+  ;
        ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
    
       }
       if(selectedItem.name=="Transmission")
         {
        let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
-       console.log("=============items=========");
-        console.log(items);
-        console.log("=============items=========");
+   
          ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
      
         }
@@ -263,36 +248,28 @@ if(selectedItem.name=="Brand")
         if(selectedItem.name=="Ownership")
           {
          let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
-         console.log("=============items=========");
-          console.log(items);
-          console.log("=============items=========");
+       
            ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
        
           }
           if(selectedItem.name=="SeatingCapacity")
             {
            let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
-           console.log("=============items=========");
-            console.log(items);
-            console.log("=============items=========");
+   
              ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
          
             }
             if(selectedItem.name=="RegistrationState")
               {
              let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
-             console.log("=============items=========");
-              console.log(items);
-              console.log("=============items=========");
+          
                ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
            
               }
               if(selectedItem.name=="RegistrationState")
                 {
                let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
-               console.log("=============items=========");
-                console.log(items);
-                console.log("=============items=========");
+          
                  ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
              
                 }
@@ -300,18 +277,14 @@ if(selectedItem.name=="Brand")
                 if(selectedItem.name=="Color")
                   {
                  let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
-                 console.log("=============items=========");
-                  console.log(items);
-                  console.log("=============items=========");
+         
                    ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
                
                   }
                   if(selectedItem.name=="InsuranceStatus")
                     {
                    let items=  selectedFilters[selectedItem.name]?selectedFilters[selectedItem.name][0]:null;
-                   console.log("=============items=========");
-                    console.log(items);
-                    console.log("=============items=========");
+                
                      ComponentToRender=<SelectableFlatList data={selectedItem.records} numColumn="2"  onSelectItem={SelectItem}  preselectedItem={items}  ></SelectableFlatList>
                  
                     }

@@ -46,9 +46,7 @@ const PostCommentReplyList = ({commentId, listType = '',module}) => {
     
         await execute(listType,module,user.userId,commentId)
     
-        console.log('data :-', data);
-        console.log('status :-', status);
-        console.log('error :-', error);
+      
       }
 
 
@@ -77,7 +75,7 @@ const PostCommentReplyList = ({commentId, listType = '',module}) => {
          
   
           try {
-            console.log("useFocusEffect");
+         
             // Await for the getPosts function to complete
             await callCommentReplyList();
           } catch (error) {
@@ -113,9 +111,9 @@ const PostCommentReplyList = ({commentId, listType = '',module}) => {
                      item.replyId,
                     );
                     if (result?.success == true) {
-                       console.log("==result==");
+                     
                            item.likeCount = item.likeCount - 1;
-                           item.userLiked = false;
+                           item.userLiked = 0;
                          //  setisLiked(false);
                          }
                    }
@@ -126,9 +124,9 @@ const PostCommentReplyList = ({commentId, listType = '',module}) => {
                            item.replyId,
                           );   
                           if (result?.success == true) {
-                           console.log("==result==");
+                      
                                item.likeCount = item.likeCount + 1;
-                               item.userLiked = true;
+                               item.userLiked = 1;
                              //  setisLiked(false);
                              }
                    }
@@ -179,7 +177,7 @@ const PostCommentReplyList = ({commentId, listType = '',module}) => {
     // }
     // console.log("openArray ", isOpenArray)
     const renderItem = ({ item, index }) => {
-      console.log(item);
+
     
       return (
         <View key={index} style={localStyles.mainContainer}>

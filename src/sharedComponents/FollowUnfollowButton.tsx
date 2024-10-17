@@ -48,8 +48,7 @@ export default function FollowUnfollowComponent({
       }
     }
   };
-  console.log('onPressFollow', isFollowing);
-  console.log('onFollow', isFollow);
+
   return (
     <ButtonWithPermissionCheck
       title={isFollow ? strings.unfollow : strings.follow}

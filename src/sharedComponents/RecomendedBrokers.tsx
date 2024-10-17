@@ -29,6 +29,7 @@ import { useApiRequest } from '../hooks/useApiRequest';
 import AppBaseContainer from '../hoc/AppBaseContainer_old';
 import ZAvatarInitials from './ZAvatarInitials';
 import { Color } from '../styles/GlobalStyles';
+import RectangularCardSkeleton from './Skeleton/RectangularCardSkeleton';
 
 
 const RenderBrokerItem = React.memo(({item, }) => {
@@ -86,7 +87,7 @@ const Recommend = React.memo((categoryIds) => {
   const user = useSelector(state => state.user.user, shallowEqual);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
-const [brokerList, setBrokerList] = useState([]);
+const [brokerList, setBrokerList] = useState(null);
 const [isFollowing, setIsFollowing] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -106,8 +107,8 @@ const [isFollowing, setIsFollowing] = useState(false);
   const getList = async () => {
     try {
 
-      await brokerscurrentPage_Set(1);
-      await brokershasMore_Set(true);
+       brokerscurrentPage_Set(1);
+       brokershasMore_Set(true);
       await brokersexecute(user.userId, categoryId, AppLocation.City);
     } catch (error) {
       console.log(error);
@@ -129,7 +130,7 @@ const [isFollowing, setIsFollowing] = useState(false);
 if (brokersstatus === 200 && brokersdata?.data?.records?.length > 0) {
   setBrokerList(brokersdata.data.records);
 } else {
-  setBrokerList([]);  // In case there is no data
+  setBrokerList(null);  // In case there is no data
 }
   }, [brokersstatus, brokersdata]);
 
@@ -161,28 +162,32 @@ if (brokersstatus === 200 && brokersdata?.data?.records?.length > 0) {
           Recommended Brokers
         </ZText>
       </View>
+
+
       {brokerList?.length > 0 ? (
-        <FlatList
-          horizontal
-          data={brokerList}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderBrokerItem}
-          contentContainerStyle={{paddingHorizontal: 20, paddingVertical: 5}}
-          ItemSeparatorComponent={() => <View style={{marginRight: 10}} />}
-          showsHorizontalScrollIndicator={false}
-          onEndReachedThreshold={0.5}
-          onEndReached={loadMore}
-          ListFooterComponent={
-            isInfiniteLoading ? (
-              <LoadingSpinner isVisible={isInfiniteLoading} />
-            ) : null
-          }
-        />
-      ) : (
-        <Text style={localStyles.noDataText}>
-          No recommended broker in your city.
-        </Text>
-      )}
+  <FlatList
+    horizontal
+    data={brokerList}
+    keyExtractor={(item, index) => index.toString()}
+    renderItem={renderBrokerItem}
+    contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 5 }}
+    ItemSeparatorComponent={() => <View style={{ marginRight: 10 }} />}
+    showsHorizontalScrollIndicator={false}
+    onEndReachedThreshold={0.5}
+    onEndReached={loadMore}
+    ListFooterComponent={
+      isInfiniteLoading ? (
+        <LoadingSpinner isVisible={isInfiniteLoading} />
+      ) : null
+    }
+  />
+) : brokerList == null ? (
+  <RectangularCardSkeleton />
+) : (
+  <Text style={localStyles.noDataText}>
+    No recommended broker in your city.
+  </Text>
+)}
     </View>
   );
 });

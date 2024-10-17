@@ -315,7 +315,7 @@ const ProfileScreen: React.FC = ({
     // console.log(Result, 'pro');
 
     await profileUpdateexecute(Result);
-    console.log(profileUpdatestatus);
+
   };
   // console.log(profiledata, 'data');
 
@@ -454,7 +454,7 @@ const ProfileScreen: React.FC = ({
       delete Result['officeLocation'];
       delete Result['userPermissions'];
       await profileUpdateexecute(Result);
-      console.log(profileUpdatestatus);
+    
     } catch (error) {}
   };
   useEffect(() => {
@@ -477,8 +477,7 @@ const ProfileScreen: React.FC = ({
   useEffect(() => {
     if (profileUpdatestatus == 200) {
       setProfileData(profileUpdatedata?.data);
-      console.log('======================');
-      console.log(profileUpdatedata?.data);
+   
       const Userfollower: any = [];
       if (profileUpdatedata.data) {
         Userfollower.push({

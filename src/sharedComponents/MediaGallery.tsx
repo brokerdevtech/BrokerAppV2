@@ -24,7 +24,7 @@ import React, {
   const MediaGallery = forwardRef((props, ref) => {
     const { mediaItems } = props;
     const screenWidth  =375;
-    console.log(mediaItems)
+  
     const playerRef = useRef(null);
     const carouselRef = useRef(null);
 

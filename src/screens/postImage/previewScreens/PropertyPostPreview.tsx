@@ -400,7 +400,7 @@ const PropertyPostPreview: React.FC = ({
       </Box>
     );
   };
-  console.log(localities);
+
   return (
     <ZSafeAreaView>
       <ZHeader

@@ -159,10 +159,9 @@ const GenericPostPreview: React.FC = ({
             Platform.OS === 'ios' && !image.Edit
               ? image.uri
               : image.destinationPathuri;
-          console.log('image', image.destinationPathuri);
-          console.log(image.destinationPathuri, 'uripath2');
+         
           const responseBlob = await uriToBlob(image.destinationPath);
-          console.log(responseBlob, 'response');
+      
           const fileExtension = getFileExtensionFromMimeType(
             responseBlob?._data.type,
           );
@@ -179,7 +178,7 @@ const GenericPostPreview: React.FC = ({
         }
 
         const results = await Promise.all(uploadPromises);
-        console.log(results, 'result');
+      
         uploadedImageUrls = results.map((result, index) => {
           if (result) {
             return {mediaBlobId: result.Key};
@@ -188,7 +187,7 @@ const GenericPostPreview: React.FC = ({
             return null;
           }
         });
-        console.log('deleteImage');
+    
         for (const item of imagesArray) {
           if (item.Edit) {
             await deleteImage(item.destinationPath);
@@ -224,9 +223,9 @@ const GenericPostPreview: React.FC = ({
       }
 
       const successfulUploads = uploadedImageUrls.filter(url => url !== null);
-      console.log(successfulUploads, 'success');
+    
       if (successfulUploads.length > 0) {
-        console.log('requestApi');
+      
         await requestAPI(successfulUploads, FormValue, Formtags);
       } else {
         setLoading(false);
@@ -245,7 +244,7 @@ const GenericPostPreview: React.FC = ({
 
     try {
       setLoading(true);
-      console.log('previe');
+   
       let tags = [];
       let localitie = route.params?.localities;
 
@@ -266,7 +265,7 @@ const GenericPostPreview: React.FC = ({
         viewportSouthWestLng: localitie.viewportSouthWestLng,
         postMedia: mediaData,
       };
-      console.log('apiCall');
+      
       await Genericexecute(requestOption);
 
       navigation.navigate('Home');
@@ -307,7 +306,7 @@ const GenericPostPreview: React.FC = ({
       )}
     </View>
   );
-  console.log(localities);
+
   return (
     <ZSafeAreaView>
       <ZHeader

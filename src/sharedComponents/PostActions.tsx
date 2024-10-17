@@ -115,12 +115,10 @@ let endpoint=""
    item.postId,
    
   );
-  console.log('data :-', data);
-  console.log('status :-', status);
-  console.log('error :-', error);
+
 }
 const closeModal = useCallback(item => {
-  console.log('closeModal');
+
   setCardComment(item);
  
 }, []);

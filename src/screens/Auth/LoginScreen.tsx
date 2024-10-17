@@ -79,8 +79,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       
-      console.log('userInfo');
-      console.log(userInfo); // This contains the token and user details
+ 
 
       const fcmToken = await getfcmToken();
 
@@ -103,7 +102,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       );
     } catch (error) {
       setLoading(false);
-      console.log(error);
+    
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {
@@ -190,7 +189,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     }
   };
   const afterhandleSocialLogin = async () => {
-    console.log('afterhandleSocialLogin');
+
     if (SocialLogindata) {
       const storeUserresult = await storeUser(
         JSON.stringify(SocialLogindata.data),
@@ -233,7 +232,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   };
   useEffect(() => {
     if (SocialLogindata) {
-      console.log('Data is available:', data);
+     
       afterhandleSocialLogin();
       // Proceed with storing tokens and user data
     }
@@ -241,7 +240,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   }, [SocialLogindata]);
   useEffect(() => {
     if (data) {
-      console.log('Data is available:', data);
+    
       afterhandleLogin();
       // Proceed with storing tokens and user data
     }

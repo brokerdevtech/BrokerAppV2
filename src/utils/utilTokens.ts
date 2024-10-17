@@ -143,7 +143,7 @@ export const Checkerror = async result => {
   }
 };
 export const removeItemStorage = async item => {
-  console.log(item);
+ 
   await AsyncStorage.removeItem(item);
 };
 export const getItemStorage = async (item, value) => {
@@ -153,7 +153,7 @@ export const getItemStorage = async (item, value) => {
 };
 export const getfcmToken = async () => {
   let fcmToken = await AsyncStorage.getItem('fcmToken');
-  console.log('Old FCM token', fcmToken);
+
   if (!fcmToken) {
     fcmToken = await firebase.messaging().getToken();
     if (fcmToken) {

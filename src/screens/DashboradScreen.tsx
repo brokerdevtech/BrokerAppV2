@@ -36,7 +36,7 @@ import UserStories from '../components/story/UserStories';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-  //console.log(user, '============');
+ 
   const {data, status, error, execute} = useApiRequest(fetchPodcastList);
   //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
   const cityToShow = 'Noida';
@@ -45,9 +45,7 @@ export default function DashboradScreen() {
   const callPodcastList = async () => {
     await execute(user.userId, 1, 4);
     //await footerExecute()
-    // console.log('marqueeText :-', marqueeText);
-    // console.log('marqueeStatus :-', marqueeStatus);
-    // console.log('marqueeError :-', marqueeError);
+    
   };
   const callmarList = async () => {
     const request = {pageNo: 1, pageSize: 10, cityName: cityToShow};
@@ -74,7 +72,7 @@ export default function DashboradScreen() {
     });
   };
 
-  const renderPodcastItems = ({item, index}) => {
+  const RenderPodcastItems = React.memo(({ item, index }) => {
     return (
       <TouchableOpacity
         onPress={() => handleThumbnailTap(item, index)}
@@ -85,16 +83,16 @@ export default function DashboradScreen() {
           marginRight: 8,
           flexDirection: 'row',
           justifyContent: 'space-between',
-        }}>
+        }}
+      >
         <FastImage
-          source={{uri: `${imagesBucketcloudfrontPath}${item.mediaThumbnail}`}}
+          source={{ uri: `${imagesBucketcloudfrontPath}${item.mediaThumbnail}` }}
           style={{
             borderRadius: 8,
             width: '100%',
             height: '100%',
           }}
         />
-
         <View
           style={{
             position: 'absolute',
@@ -104,23 +102,25 @@ export default function DashboradScreen() {
             bottom: 0,
             justifyContent: 'flex-end',
             padding: 8,
-          }}>
+          }}
+        >
           <View>
             <ZText
-              type={'r14'}
+              type="r14"
               style={{
                 color: 'white',
                 textShadowColor: 'rgba(0, 0, 0, 0.1)',
-                textShadowOffset: {width: 0, height: 2},
+                textShadowOffset: { width: 0, height: 2 },
                 textShadowRadius: 4,
-              }}>
+              }}
+            >
               {item.viewerCount} views
             </ZText>
           </View>
         </View>
       </TouchableOpacity>
     );
-  };
+  });
 
   return (
     <SafeAreaView style={{flex:1}}>
@@ -259,11 +259,13 @@ export default function DashboradScreen() {
             <FlatList
               data={data}
               keyExtractor={item => item.podcastId.toString()}
-              renderItem={renderPodcastItems}
+              renderItem={({ item, index }) => (
+                <RenderPodcastItems item={item} index={index} />
+              )}
               initialNumToRender={3}
               showsHorizontalScrollIndicator={false}
               horizontal
-              onEndReachedThreshold={0.8}
+             // onEndReachedThreshold={0.8}
               // onEndReached={fetchMoreData}
             />
           </HStack>

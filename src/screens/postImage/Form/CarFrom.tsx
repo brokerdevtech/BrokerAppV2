@@ -86,7 +86,7 @@ const CarForm = ({formikRef}) => {
   };
 
   const handleSubmit = values => {
-    console.log(values);
+    
     if (formikRef.current) {
       // formikRef.current.submitForm();
     }
@@ -95,7 +95,7 @@ const CarForm = ({formikRef}) => {
   for (let year = 2024; year >= 2000; year--) {
     years.push({label:year.toString(), value:year});
   }
-console.log(years)
+
   const handleYearChange = (year) => {
     console.log("Selected Year:", year);
   };
@@ -126,8 +126,8 @@ console.log(years)
         }) => (
           <View style={localStyles.containerView}>
             <View>
-              {console.log(values)}
-              {/* Rest of the form */}
+             
+           
             </View>
             <Box style={localStyles.BoxStyles}>
               <HStack style={localStyles.inputContainer}>
@@ -201,7 +201,7 @@ console.log(years)
   <SingleSelectComponent
                         data={years}
                         onSelectionChange={value => {
-                          console.log(value);
+                        
                           setFieldValue('registrationYear', Number(value));
                           // handleCountryChange(value);
                           handleBlur('registrationYear');
@@ -229,7 +229,7 @@ console.log(years)
   <SingleSelectComponent
                         data={years}
                         onSelectionChange={value => {
-                          console.log(value);
+                         
                           setFieldValue('yearOfManufacture', Number(value));
                           // handleCountryChange(value);
                           handleBlur('yearOfManufacture');

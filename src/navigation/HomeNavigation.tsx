@@ -42,6 +42,8 @@ import { Platform } from 'react-native';
 import MyItemListScreen from '../screens/MyItemListScreen';
 import PodcastLikeList from '../sharedComponents/PodcastLikeList';
 import PodcastViewList from '../sharedComponents/PodcastViewList';
+import StoryLikeList from '../sharedComponents/StoryLikeList';
+import StoryViewList from '../sharedComponents/StoryViewList';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -75,11 +77,11 @@ const HomeNavigation: React.FC = () => {
           name="AppChat"
           component={ChatPageStack}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           options={{headerShown: false}}
           name="VideoReels"
           component={VideoCarousel}
-        />
+        /> */}
         {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         <Stack.Screen name="HomeTab" component={DashboradScreen} />
@@ -212,6 +214,18 @@ const HomeNavigation: React.FC = () => {
           component={PostCommentReplyLikeList}
           options={{headerShown: false}}
         />
+ <Stack.Screen
+          name="StoryLikeList"
+          component={StoryLikeList}
+          options={{headerShown: false}}
+        />
+
+<Stack.Screen
+          name="StoryViewList"
+          component={StoryViewList}
+          options={{headerShown: false}}
+        />
+
 
       </Stack.Navigator>
     </OverlayProvider>

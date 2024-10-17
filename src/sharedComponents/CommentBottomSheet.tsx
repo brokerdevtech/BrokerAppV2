@@ -147,8 +147,7 @@ const CommentBottomSheet = forwardRef(({ postItem, User, listTypeData,userPermis
         //   console.log("===========callCommentList===========")
         //   console.log(postItem)
           //  callCommentList();
-          console.log("==============recordCount=======");
-          console.log(recordCount);
+       
           }, [recordCount]);
     
 
@@ -339,8 +338,7 @@ module="Post"
     let listArray = [];
     // console.log("list ",  listArray)
     listArray.push(item.commentId);
-    console.log('listArray');
-    console.log(isOpenArray);
+
     setisOpenArray([...isOpenArray, ...listArray]);
    // setisDataRef(!isDataRef);
   };
@@ -367,7 +365,7 @@ module="Post"
                   item.commentId,
                  );
                  if (result?.success == true) {
-                    console.log("==result==");
+          
                         item.likeCount = item.likeCount - 1;
                         item.userLiked = false;
                       //  setisLiked(false);
@@ -380,7 +378,7 @@ module="Post"
                         item.commentId,
                        );   
                        if (result?.success == true) {
-                        console.log("==result==");
+                     
                             item.likeCount = item.likeCount + 1;
                             item.userLiked = true;
                           //  setisLiked(false);
