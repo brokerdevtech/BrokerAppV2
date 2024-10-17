@@ -5,14 +5,16 @@
  * @format
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './global.css';
 import Geolocation from 'react-native-geolocation-service';
 import {StreamChat} from 'stream-chat';
 //import "./global.css";
 import type {PropsWithChildren} from 'react';
 import {
+  Animated,
   Button,
+  Easing,
   PermissionsAndroid,
   Platform,
   StyleSheet,
@@ -85,6 +87,11 @@ function App(): React.JSX.Element {
   const [isConnected, setIsConnected] = useState(true);
   const isDarkMode = useColorScheme() === 'dark';
   const [loggedIn, setLoggedIn] = useState(false);
+  const [isSplashVisible, setIsSplashVisible] = useState(true);
+
+  // Create animated values
+  const opacityAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
   const [colorMode, setColorMode] = React.useState<'dark' | 'light'>(
     defaultTheme,
   );
@@ -120,6 +127,28 @@ function App(): React.JSX.Element {
   //     setLocationPermission(newStatus); // Update status after returning from settings
   //   }
   // };
+  useEffect(() => {
+
+    Animated.parallel([
+      Animated.timing(opacityAnim, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.out(Easing.quad), 
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 3, 
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+   
+    setTimeout(() => {
+      setIsSplashVisible(false);
+    }, 3000); 
+  }, []);
+
   const retryAction = async () => {
     // Implement your retry logic here
     // For example, you can attempt to fetch data from an API
@@ -231,24 +260,38 @@ setColorMode(state.isConnected);
   }, []);
 
   return (
-    <>
-    {isConnected ? (
-    <Provider store={store}>
-      <S3Provider>
-        <GestureHandlerRootView style={{flex: 1}}>
-          <GluestackUIProvider mode={colorMode}>
-            <MainNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-          </GluestackUIProvider>
-        </GestureHandlerRootView>
-      </S3Provider>
-    </Provider>): (
-      <View style={styles.container}>
-        <Text style={styles.text}>
-          You are not connected to the internet.
-        </Text>
-        <Button title="Retry" onPress={retryAction} />
-      </View>
-    )}</>
+      <>
+      {isConnected ? (
+        isSplashVisible ? (
+          <View style={styles.splashContainer}>
+            <Animated.Image
+              source={require('./src/assets/images/BA.png')} // Replace with your logo path
+              style={[
+                styles.logo,
+                {
+                  opacity: opacityAnim,
+                  transform: [{ scale: scaleAnim }],
+                },
+              ]}
+              resizeMode="contain"
+            />
+          </View>
+        ) : (
+          <Provider store={store}>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <GluestackUIProvider>
+                <MainNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+              </GluestackUIProvider>
+            </GestureHandlerRootView>
+          </Provider>
+        )
+      ) : (
+        <View style={styles.container}>
+          <Text style={styles.text}>You are not connected to the internet.</Text>
+          <Button title="Retry" onPress={retryAction} />
+        </View>
+      )}
+    </>
   );
 }
 
@@ -278,6 +321,16 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+  splashContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff', // Customize splash background color
+  },
+  logo: {
+    width: 200, // Adjust size according to your needs
+    height: 200,
   },
 });
 

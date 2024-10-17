@@ -29,7 +29,6 @@
 		60577A986F434CBBB003BE65 /* Gilroy ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0A1315034E5546BD99E22C53 /* Gilroy ExtraBoldItalic.ttf */; };
 		675EEBEA587C4C59976C45F2 /* Gilroy BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3F9D72400E654F46B4448A35 /* Gilroy BoldItalic.ttf */; };
 		6A2332E485614FF8A23D0A90 /* Gilroy LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 59DE3BD605FA4F93A501950E /* Gilroy LightItalic.ttf */; };
-		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		A221657A93AC4FF1A04996C3 /* Gilroy ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C6DB5E76B7DB483D88F1126E /* Gilroy ThinItalic.ttf */; };
 		A4A4808B36484706ABC0B5BD /* Gilroy Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 928B313925534AD8A9DB3C68 /* Gilroy Medium.ttf */; };
 		C5A29677B5974A87857B030A /* Gilroy Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3F0DF268902444779057EF33 /* Gilroy Regular.ttf */; };
@@ -79,7 +78,6 @@
 		63AA46EB953C463887E330FC /* Gilroy Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Bold.ttf"; path = "../assets/font/Gilroy Bold.ttf"; sourceTree = "<group>"; };
 		77E3ED9C7CB64659B250EAEF /* Gilroy UltraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy UltraLightItalic.ttf"; path = "../assets/font/Gilroy UltraLightItalic.ttf"; sourceTree = "<group>"; };
 		7AA81925B05844A5B5BBC476 /* Gilroy RegularItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy RegularItalic.ttf"; path = "../assets/font/Gilroy RegularItalic.ttf"; sourceTree = "<group>"; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = BrokerApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8C737AB26FBE4E628C40194D /* Gilroy MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy MediumItalic.ttf"; path = "../assets/font/Gilroy MediumItalic.ttf"; sourceTree = "<group>"; };
 		928B313925534AD8A9DB3C68 /* Gilroy Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Medium.ttf"; path = "../assets/font/Gilroy Medium.ttf"; sourceTree = "<group>"; };
 		A8931A88226C414998E0925C /* Gilroy Heavy.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy Heavy.ttf"; path = "../assets/font/Gilroy Heavy.ttf"; sourceTree = "<group>"; };
@@ -139,7 +137,6 @@
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				E693FE0A6F9D45406D8A1325 /* PrivacyInfo.xcprivacy */,
@@ -323,7 +320,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				091C00372CA28E1500230001 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				52533493C986C664D152FD10 /* PrivacyInfo.xcprivacy in Resources */,
