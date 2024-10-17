@@ -81,7 +81,11 @@ import unchecked from './unchecked.svg';
 import filter_icon from './filters.svg';
 import bookmark_icon from './bookmark.svg';
 import Close_light_icon from './close_lisght.svg';
-export {
+
+import CommentWhite from './icons/commentWhite.svg';
+import TrashWhite from './icons/trashWhite.svg';
+
+export {CommentWhite,TrashWhite,
  Like ,Send,
   Follower_Icon,
   filter_icon,
