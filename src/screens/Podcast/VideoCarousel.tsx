@@ -6,6 +6,7 @@ import {
   View,
   PanResponder,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
@@ -16,7 +17,8 @@ import {useNavigation} from '@react-navigation/native';
 import {moderateScale} from '../../config/constants';
 import {Color} from '../../styles/GlobalStyles';
 import { fetchPodcastList } from '../../../BrokerAppCore/services/new/podcastService';
-import ArrowLeftIcon from '../../assets/svg/icons/arrow-left.svg' 
+// import ArrowLeftIcon from '../../assets/svg/icons/arrow-left.svg' 
+import { ArrowLeftIcon, Icon } from '../../../components/ui/icon';
 
 const {width, height} = Dimensions.get('window');
 
@@ -129,7 +131,9 @@ const VideoCarousel = ({route}) => {
           onPress={() => navigation.goBack()}
           color={Color.white}
         /> */}
-        <ArrowLeftIcon onPress={() => navigation.goBack()} />
+     <TouchableOpacity onPress={() => navigation.goBack()}  style={{padding: 10,}}>
+          <Icon as={ArrowLeftIcon} width={80}  height={80}  fill={'white'} color={'white'}/></TouchableOpacity>
+        {/* <ArrowLeftIcon fill={'white'} color={'white'} onPress={() => navigation.goBack()} /> */}
       </View>
       {data.map((item, index) => {
         let isActive = index === currentIndex;
@@ -162,6 +166,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 1,
     padding: 10,
+    
   },
   videoContainer: {
     width,

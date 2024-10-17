@@ -39,6 +39,9 @@ import PostLikeList from '../sharedComponents/PostLikeList';
 import PostCommentLikeList from '../sharedComponents/PostCommentLikeList';
 import PostCommentReplyLikeList from '../sharedComponents/PostCommentReplyLikeList';
 import { Platform } from 'react-native';
+import MyItemListScreen from '../screens/MyItemListScreen';
+import PodcastLikeList from '../sharedComponents/PodcastLikeList';
+import PodcastViewList from '../sharedComponents/PodcastViewList';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -172,6 +175,11 @@ const HomeNavigation: React.FC = () => {
           component={ItemListScreen}
           options={{headerShown: false}}
         />
+             <Stack.Screen
+          name="MyItemListScreen"
+          component={MyItemListScreen}
+          options={{headerShown: false}}
+        />
         <Stack.Screen
           name="ItemDetailScreen"
           component={ItemDetailScreen}
@@ -182,7 +190,16 @@ const HomeNavigation: React.FC = () => {
           component={PostLikeList}
           options={{headerShown: false}}
         />
-
+ <Stack.Screen
+          name="PodcastLikeList"
+          component={PodcastLikeList}
+          options={{headerShown: false}}
+        />
+         <Stack.Screen
+          name="PodcastViewList"
+          component={PodcastViewList}
+          options={{headerShown: false}}
+        />
 <Stack.Screen
           name="PostCommentLikeList"
           component={PostCommentLikeList}

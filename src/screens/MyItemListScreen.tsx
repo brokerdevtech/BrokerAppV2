@@ -38,6 +38,7 @@ import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {
   fetchDashboardData,
   fetchItemList,
+  fetchMyItemList,
 } from '../../BrokerAppCore/services/new/dashboardService';
 import {FavouriteIcon, Icon, MessageCircleIcon} from '../../components/ui/icon';
 import {Divider} from '@/components/ui/divider';
@@ -55,43 +56,8 @@ import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import UserStories from '../components/story/UserStories';
 import Recommend from '../sharedComponents/RecomendedBrokers';
 import ProductSection from './Dashboard/ProductSection';
-import flex from '@/themes/flex';
-import padding from '@/themes/padding';
 
-const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,recordCount})=>{
-  // console.log(categoryId,"categoryId")
-  return (
-    <>
-   
-    <UserStories/>
-    
-    <Recommend categoryId={categoryId}/>
-    <ProductSection
-          heading={'Newly Launched'}
-          background={'#FFFFFF'}
-          endpoint={`Newin`}
-          isShowAll={false}
-          request={{
-            pageNo: 1,
-            pageSize: 10,
-            cityName: AppLocation.City,
-            categoryId: categoryId,
-          }}
-        />
-         <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips>
-    </>
 
-  )
-})
-// const ListHeader = React.memo(({ FilterChipsData, recordsCount }) => (
-//   <>
-//     <View>
-//       <UserStories />
-//     </View>
-//     <Recommend  />
-//     <FilterChips filters={FilterChipsData} recordsCount={recordsCount} />
-//   </>
-// ));
 
 const ProductItem =  React.memo(
     ({ item, listTypeData, User, navigation }) => {
@@ -220,46 +186,46 @@ const ProductItem =  React.memo(
 
       <View style={styles.detailsContainer}>
         <HStack
-          // space="md"
-          style={{paddingHorizontal: 10,justifyContent: 'space-between'}}
+          space="md"
+          style={{paddingHorizontal: 10, justifyContent: 'space-between'}}
         >
-          <VStack style={{alignItems: 'center'}}>
+          <VStack>
           <TouchableOpacity onPress={() => makeCall('+919910199761')}>
             <View style={{alignItems: 'center'}}>
               <Icon as={Telephone_Icon} size={'xxl'} />
             </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10}}>
+            <View style={{paddingVertical: 10}}>
               <ZText type={'R14'}>Call</ZText>
             </View>
             </TouchableOpacity>
           </VStack>
-          <VStack style={{alignItems: 'center'}}>
+          <VStack>
           <TouchableOpacity onPress={() =>chatProfilePress()}>
             <View style={{alignItems: 'center'}}>
               <Icon as={Chat_Icon} size={'xxl'} />
             </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10}}>
+            <View style={{paddingVertical: 10}}>
               <ZText type={'R14'}>Chat</ZText>
             </View>
             </TouchableOpacity>
           </VStack>
-          <VStack style={{alignItems: 'center'}}>
+          <VStack>
           <TouchableOpacity onPress={() => openWhatsApp('+919910199761', 'test message')}>
             <View style={{alignItems: 'center'}}>
               <Icon as={Whatsapp_Icon} size={'xxl'} />
             </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10}}>
+            <View style={{paddingVertical: 10}}>
 
   <ZText type={'R14'}>WhatsApp</ZText>
 
             </View>
             </TouchableOpacity>
           </VStack>
-          <VStack style={{alignItems: 'center'}}>
+          <VStack>
             <View style={{alignItems: 'center'}}>
               <Icon as={Calender_Icon} size={'xxl'} />
             </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10}}>
+            <View style={{paddingVertical: 10}}>
               <ZText type={'R14'}>Appointment</ZText>
             </View>
           </VStack>
@@ -269,7 +235,7 @@ const ProductItem =  React.memo(
   );
 });
 
-const ItemListScreen: React.FC<any> = ({
+const MyItemListScreen: React.FC<any> = ({
   isPageSkeleton,
   toggleSkeletonoff,
   toggleSkeletonOn,
@@ -286,7 +252,7 @@ const ItemListScreen: React.FC<any> = ({
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
-  
+  const [PageuserId, setPageuserId] = useState(route.params.userId);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   // console.log('=============user=============');
   // console.log(user);
@@ -303,7 +269,7 @@ const ItemListScreen: React.FC<any> = ({
     hasMore_Set,
     totalPages,
     recordCount,
-  } = useApiPagingWithtotalRequest(fetchItemList, setInfiniteLoading, 5);
+  } = useApiPagingWithtotalRequest(fetchMyItemList, setInfiniteLoading, 5);
   //const {data, status, error, execute} = useApiPagingRequest5(fetchItemList);
   const renderItem = useCallback(
     ({item}) => (
@@ -323,14 +289,7 @@ const ItemListScreen: React.FC<any> = ({
     currentPage_Set(1);
     hasMore_Set(true);
 
-    await execute(listTypeData, {
-      keyWord: '',
-      userId: user.userId,
-      placeID: AppLocation.placeID,
-      placeName: AppLocation.placeName,
-      geoLocationLatitude: AppLocation.geoLocationLatitude,
-      geoLocationLongitude: AppLocation.geoLocationLongitude,
-    }).then(result => {
+    await execute(listTypeData,PageuserId ).then(result => {
       console.log("==========sss");
       setLoading(false);
     });
@@ -356,14 +315,7 @@ const ItemListScreen: React.FC<any> = ({
 
   const loadMorepage = async () => {
     if (!isInfiniteLoading) {
-      await loadMore(listTypeData, {
-        keyWord: '',
-        userId: user.userId,
-        placeID: AppLocation.placeID,
-        placeName: AppLocation.placeName,
-        geoLocationLatitude: AppLocation.geoLocationLatitude,
-        geoLocationLongitude: AppLocation.geoLocationLongitude,
-      });
+      await loadMore(listTypeData,PageuserId);
     }
   };
   // const rederListHeader = useCallback((categoryId, FilterChipsData, recordsCount) => (
@@ -392,8 +344,7 @@ const ItemListScreen: React.FC<any> = ({
 
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-             ListHeaderComponent={
-              <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData}recordCount={recordCount}/>}
+          
              keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.8}
               onEndReached={loadMorepage}
@@ -407,7 +358,7 @@ const ItemListScreen: React.FC<any> = ({
 
         </View></BottomSheetModalProvider>
     
-      <View style={styles.footer}>
+      {/* <View style={styles.footer}>
         <ZText type={'S16'} >Properties</ZText>
         <View style={styles.IconButton}>
           <ShortingIcon />
@@ -417,7 +368,7 @@ const ItemListScreen: React.FC<any> = ({
           <FilterIcon />
           <ZText type={'S16'} >Filter</ZText>
         </View>
-      </View>
+      </View> */}
     {/* // </View> */}
    </>
   );
@@ -430,7 +381,6 @@ const styles = StyleSheet.create({
   },
   header: {
     justifyContent: 'space-between',
-  
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingVertical: 20,
@@ -508,7 +458,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: '#FFF',
     margin: 20,
-  
+    paddingBottom: 10,
     shadowColor: 'rgba(0, 0, 0, 0.8)',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 1,
@@ -541,8 +491,7 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     paddingLeft: 20,
-    paddingBottom: 15,
-     paddingTop: 15,
+    paddingVertical: 10,
   },
   price: {
     fontSize: 16,
@@ -566,5 +515,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppBaseContainer(ItemListScreen, '', true,true);
+export default AppBaseContainer(MyItemListScreen, '', true,true);
 //export default ItemListScreen;
