@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     justifyContent: 'space-between',
-    marginBottom: 10,
+    // marginBottom: 10,
     paddingHorizontal: 20,
   },
   headingTitle: {
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 8,
   },
   separator: {
-    width: 10, // Space between cards
+    width: 5, // Space between cards
   },
   tagImage: {
     width: 132,
@@ -181,8 +181,9 @@ const styles = StyleSheet.create({
     width: 132,
     borderRadius: 12,
     backgroundColor: '#FFF',
-    margin: 10,
-    paddingBottom: 10,
+    // marginRight: 10,
+    marginLeft: 10,
+    // paddingBottom: 10,
     // shadowColor: 'rgba(0, 0, 0, 0.8)',
     // shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.5,
@@ -236,6 +237,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#000',
     marginTop: 4,
+    marginBottom: 4,
   },
 });
 export default ProductSection;

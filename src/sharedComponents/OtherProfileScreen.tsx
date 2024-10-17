@@ -522,29 +522,18 @@ const OtherProfileScreen: React.FC = ({
   };
 
   const dummyData = [{key: 'dummy'}];
-
   const handleCategoryPress = screen => {
-    navigation.navigate(screen.navigationScreen, {
+    navigation.navigate(screen, {
       userId: route.params.userId,
-      listType:screen.listType,
-      categoryId:screen.categoryId
+      userName: ProfileData.profileName,
     });
   };
   const categories = [
     {
       name: 'Propety',
 
-      navigationScreen: 'MyItemListScreen',
+      navigationScreen: 'MyPropertyPost',
       postCount: ProfileData?.realEstatePostCount,
-      listType: 'RealEstate' ,
-      categoryId:1
-    },
-    {
-      name: 'Cars',
-      navigationScreen: 'MyItemListScreen',
-      postCount: ProfileData?.carPostCount,
-      listType: 'Car',
-      categoryId:2
     },
   ];
   const [TabSelect, setTabSelect] = useState(0);
@@ -581,7 +570,7 @@ const OtherProfileScreen: React.FC = ({
                     localStyles.disabledCategoryButton,
                 ]}
                 disabled={!category.navigationScreen}
-                onPress={() => handleCategoryPress(category)}>
+                onPress={() => handleCategoryPress(category.navigationScreen)}>
                 <ZText type={'l18'}>{category.name}</ZText>
                 <View
                   style={{

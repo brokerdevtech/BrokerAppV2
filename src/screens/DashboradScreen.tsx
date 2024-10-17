@@ -312,13 +312,15 @@ const styles = StyleSheet.create({
   },
   container: {
     flexDirection: 'column',
-    margin: 10,
+    margin: 20,
+    marginRight:10
   },
   heading: {
     flexDirection: 'row',
     flex: 1,
     justifyContent: 'space-between',
     marginBottom: 10,
+
   },
   headingTitle: {
     color: '#000',

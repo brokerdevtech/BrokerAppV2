@@ -126,34 +126,8 @@ const UserStories = React.memo(({}) => {
     }, []),
   );
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //   setStoryData(stories);
-  //  setPage(1);
-  //  setLoading(false);
-  // }, []));
-  // const onPressStory = useCallback(
-  //   userImage => {
-  //     navigation.navigate(StackNav.StoryView, {
-  //       userImage: userImage,
-  //     });
-  //   },
-  //   [navigation],
-  // );
 
-  // const onPressStory = item => {
-  //   if (item?.userId === user.userId) {
-  //     navigation.navigate(TabNav.Profile);
-  //   } else {
-  //     navigation.push(StackNav.ProfileDetail, {
-  //       userName: item?.postedBy,
-  //       userImage: item?.profileImage,
-  //       userId: item?.userId,
-  //       loggedInUserId: user.userId,
-  //       // connectionId: connectionId,
-  //     });
-  //   }
-  // };
+
   const onPressStory = item => {
     // navigation.navigate(StackNav.StoryView, {
     //   userImage: item,

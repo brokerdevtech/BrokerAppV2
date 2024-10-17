@@ -428,6 +428,9 @@ const PersonalDetailsForm = ({
                 </ZText>
               )}
               <Box mb="5" style={localStyles.BoxStyles}>
+              <ZText type={'R15'} style={localStyles.label}>
+                Your Location
+              </ZText>
                 <LocalityTag
                   screenType="personal"
                   selectedLocation={locationData}
@@ -436,6 +439,9 @@ const PersonalDetailsForm = ({
                 />
               </Box>
               <Box mb="5" style={localStyles.BoxStyles}>
+              <ZText type={'R15'} style={localStyles.label}>
+              Office Location
+              </ZText>
                 <LocalityTag
                   screenType="personal"
                   selectedLocation={OfficeLocationData}
@@ -449,13 +455,13 @@ const PersonalDetailsForm = ({
                 onPress={() => {
                   setShowDatePicker(true);
                 }}
-                style={styles.flexRow}>
+                style={{justifyContent:'space-between' ,flexDirection :'row'}}>
                 <ZText type={'R16'} style={localStyles.label}>
                   Rera Expiry Date:
                   {selectDate != '' ? selectDate.toDateString() : ''}
                 </ZText>
 
-                <Icon as={Calender_Icon} />
+                <Icon as={Calender_Icon} size='xl'/>
               </TouchableOpacity>
 
               <DatePicker

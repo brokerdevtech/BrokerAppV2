@@ -66,7 +66,7 @@ const HomeNavigation: React.FC = () => {
   return (
     // <SafeAreaView style={{flex:1}}>
     <OverlayProvider bottomInset={bottom} value={{style: streamChatTheme}}>
-      <Stack.Navigator >
+      <Stack.Navigator  screenOptions={globalScreenOptions}>
         <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
           <Stack.Screen name="Home" component={AppDrawer} />
         </Stack.Group>

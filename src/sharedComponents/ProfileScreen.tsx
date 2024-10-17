@@ -115,28 +115,22 @@ const ProfileScreen: React.FC = ({
     execute: profileUpdateexecute,
   } = useApiRequest(UpdateProfile, setLoading);
   const handleCategoryPress = screen => {
-    navigation.navigate(screen.navigationScreen, {
+    navigation.navigate(screen, {
       userId: user.userId,
-      listType:screen.listType,
-      categoryId:screen.categoryId
     });
   };
   const categories = [
     {
       name: 'Propety',
 
-      navigationScreen: 'MyItemListScreen',
+      navigationScreen: 'MyPropertyPost',
       postCount: ProfileData?.realEstatePostCount,
-      listType: 'RealEstate' ,
-      categoryId:1
     },
-   
+
     {
       name: 'Cars',
-      navigationScreen: 'MyItemListScreen',
+      navigationScreen: 'MyCarsPost',
       postCount: ProfileData?.carPostCount,
-      listType: 'Car',
-      categoryId:2
     },
   ];
   const renderContent = () => {
@@ -193,7 +187,7 @@ const ProfileScreen: React.FC = ({
                     localStyles.disabledCategoryButton,
                 ]}
                 disabled={!category.navigationScreen}
-                onPress={() => handleCategoryPress(category)}>
+                onPress={() => handleCategoryPress(category.navigationScreen)}>
                 <ZText type={'l18'}>{category.name}</ZText>
                 <View
                   style={{
@@ -233,7 +227,7 @@ const ProfileScreen: React.FC = ({
   const s3 = useS3();
   const [routes] = useState([
     {key: 'Property', title: 'Property'},
-    {key: 'Generic', title: `Generic`},
+
   ]);
 
   useFocusEffect(
