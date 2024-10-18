@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import {View, Text, ScrollView, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import React, { useEffect, useRef, useState } from 'react';
+import {View, Text, ScrollView, StyleSheet, FlatList, Image, TouchableOpacity, Share } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
 import CustomHeader from '../sharedComponents/CustomHeader';
@@ -25,6 +26,33 @@ import MediaGallery from '../sharedComponents/MediaGallery';
 
 
 const propertyDetails = (data: any) => {
+  const generateLink = async () => {
+  
+    console.log(data);
+     try {
+       const response = await fetch(
+         `https://tinyurl.com/api-create.php?url=${encodeURIComponent(
+           `brokerapp://ItemDetailScreen/${data?.postId}/Post`,
+         )}`,
+       );
+       const text = await response.text();
+       console.log('TinyURL Response:', text);
+       return text;
+     } catch (error) {}
+   };
+
+   const sharePost = async () => {
+
+ 
+     const getLink = await generateLink();
+     console.log('Generated Link:', getLink);
+     try {
+       await Share.share({
+         message: getLink,
+       });
+     } catch (error) {
+     } 
+   };
   return (
           <>
                 <View style={styles.iconContainer}>
@@ -72,7 +100,7 @@ const propertyDetails = (data: any) => {
                             </View>
                         </VStack>
                         <VStack>
-                            <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Share_Icon} size={'xxl'} /></View>
+                            <TouchableOpacity style={{alignItems: 'center', alignContent: 'center'}} onPress={sharePost}><Icon as={Share_Icon} size={'xxl'} /></TouchableOpacity>
                             <View style={{paddingVertical: 10}}>
                                 <ZText type={'R14'}>Share</ZText>
                             </View>
@@ -136,6 +164,33 @@ const propertyDetails = (data: any) => {
 }
 
 const carDetails = (data: any) => {
+  const generateLink = async () => {
+  
+    // console.log(data);
+     try {
+       const response = await fetch(
+         `https://tinyurl.com/api-create.php?url=${encodeURIComponent(
+           `brokerapp://ItemDetailScreen/${data?.postId}/Car/Post`,
+         )}`,
+       );
+       const text = await response.text();
+       console.log('TinyURL Response:', text);
+       return text;
+     } catch (error) {}
+   };
+
+   const sharePost = async () => {
+
+ 
+     const getLink = await generateLink();
+     console.log('Generated Link:', getLink);
+     try {
+       await Share.share({
+         message: getLink,
+       });
+     } catch (error) {
+     } 
+   };
   return (
           <>
                 {/* Check and Heart Icons */}
@@ -184,7 +239,7 @@ const carDetails = (data: any) => {
                             </View>
                         </VStack>
                         <VStack>
-                            <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Share_Icon} size={'xxl'} /></View>
+                            <TouchableOpacity onPress={sharePost} style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Share_Icon} size={'xxl'} /></TouchableOpacity>
                             <View style={{paddingVertical: 10}}>
                                 <ZText type={'R14'}>Share</ZText>
                             </View>
@@ -298,7 +353,7 @@ const ItemDetailScreen: React.FC<any> = ({ route, navigation }) => {
   const {data, status, error, execute} = useApiRequest(fetchPostByID);
   
   const callItemDetail = async () => {
-    console.log(route)
+    console.log(route ,"route")
     await execute(route.params.postType, route.params.postId);
 
   };
@@ -317,9 +372,9 @@ const ItemDetailScreen: React.FC<any> = ({ route, navigation }) => {
                     <ArrowLeftIcon onPress={() => navigation.goBack()} />
                     <ZText type={'R18'} >{data?.title}</ZText>
                  </View>
-                 <View style={styles.IconButton}>
+                 {/* <View style={styles.IconButton}>
                     <Share_Icon />
-                 </View>
+                 </View> */}
              </View>
         </View>
         <View>
