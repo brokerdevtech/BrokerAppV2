@@ -85,9 +85,9 @@ const NotificationItem = ({
 
   const onPressUser = CommentUser => {
     if (CommentUser?.userId === user.userId) {
-      navigation.navigate(TabNav.Profile);
+      navigation.navigate('ProfileScreen');
     } else {
-      navigation.push(StackNav.ProfileDetail, {
+      navigation.push('ProfileDetail', {
         userName: CommentUser?.postedBy,
         userImage: CommentUser?.profileImage,
         userId: CommentUser?.userId,

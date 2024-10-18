@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { View, TouchableOpacity,Text,StyleSheet, TextInput, FlatList, ActivityIndicator } from 'react-native';
 import { SetPostLikeUnLike } from '../../BrokerAppCore/services/new/dashboardService';
@@ -12,7 +13,7 @@ import {
     BottomSheetModalProvider,
     BottomSheetBackdrop,
     BottomSheetFooter,
-    BottomSheetTextInput,BottomSheetFlatList
+    BottomSheetTextInput,BottomSheetFlatList,
   } from '@gorhom/bottom-sheet';
 import { Box } from '../../components/ui/box';
 import { Button, ButtonIcon } from '../../components/ui/button';
@@ -39,9 +40,9 @@ const CommentBottomSheet = forwardRef(({ postItem, User, listTypeData,userPermis
     const [replyCommentId, setreplyCommentId] = useState(0);
     const [postId, setpostId] = useState(postItem.postId);
     const [Reset, setReset] = useState(false);
-    const [isOpen, setIsOpen] = useState(false); 
-    const toast = useToast()
-    const [toastId, setToastId] = React.useState(0)
+    const [isOpen, setIsOpen] = useState(false);
+    const toast = useToast();
+    const [toastId, setToastId] = React.useState(0);
     const [isInfiniteLoading, setInfiniteLoading] = useState(false);
     const [replyCommentIndex, setreplyCommentIndex] = useState(0);
     const [isDataRef, setisDataRef] = useState(false);
@@ -54,52 +55,52 @@ const CommentBottomSheet = forwardRef(({ postItem, User, listTypeData,userPermis
       pageSize_Set,
       currentPage_Set,
       hasMore_Set,
-      totalPages,recordCount
+      totalPages,recordCount,
     } = useApiPagingWithtotalRequest(GetCommentList,setInfiniteLoading,5);
     const [isOpenArray, setisOpenArray] = useState([]);
 
     const showNewToast = (NewToasttext) => {
-        const newId = Math.random()
-        setToastId(newId)
+        const newId = Math.random();
+        setToastId(newId);
         toast.show({
           id: newId,
-          placement: "top",
+          placement: 'top',
           duration: 3000,
           render: ({ id }) => {
-            const uniqueToastId = "toast-" + id
+            const uniqueToastId = 'toast-' + id;
             return (
               <Toast nativeID={uniqueToastId} action="muted" variant="solid">
-              
+
                 <ToastDescription>
                  {NewToasttext}
                 </ToastDescription>
               </Toast>
-            )
+            );
           },
-        })
-      }
+        });
+      };
     async function callCommentList() {
-       await pageSize_Set(5)
+       await pageSize_Set(5);
        await currentPage_Set(0);
        await  hasMore_Set(true);
-      
-      let endpoint=""
-      
-        if(listTypeData=="RealEstate")
+
+      let endpoint = '';
+
+        if(listTypeData == 'RealEstate')
           {
           //pageTitle("Property");
           }
-          if(listTypeData=="Car")
+          if(listTypeData == 'Car')
           {
-            endpoint="Car"
+            endpoint = 'Car';
           }
-      
-      
+
+
         await execute(
           endpoint,
          User.userId,
          postItem.postId,
-         
+
         );
         console.log('data :-', data);
         console.log('status :-', status);
@@ -109,24 +110,24 @@ const CommentBottomSheet = forwardRef(({ postItem, User, listTypeData,userPermis
         console.log('loadMorepage');
         if(!isInfiniteLoading)
       {  console.log('loadMorepage');
-        let endpoint=""
-      
-        if(listTypeData=="RealEstate")
+        let endpoint = '';
+
+        if(listTypeData == 'RealEstate')
           {
           //pageTitle("Property");
           }
-          if(listTypeData=="Car")
+          if(listTypeData == 'Car')
           {
-            endpoint="Car"
+            endpoint = 'Car';
           }
-      
+
           await loadMore( endpoint,
             User.userId,
             postItem.postId
         );
-        
+
       }
-      }; 
+      };
       useEffect(() => {
     //   console.log("===========callCommentList===========")
     //   console.log(postItem)
@@ -147,11 +148,11 @@ const CommentBottomSheet = forwardRef(({ postItem, User, listTypeData,userPermis
         //   console.log("===========callCommentList===========")
         //   console.log(postItem)
           //  callCommentList();
-       
-          }, [recordCount]);
-    
 
-   
+          }, [recordCount]);
+
+
+
       const renderBackdrop = useCallback(
         (props) => (
             <BottomSheetBackdrop
@@ -165,23 +166,23 @@ const CommentBottomSheet = forwardRef(({ postItem, User, listTypeData,userPermis
 
     useImperativeHandle(ref, () => ({
         open: () => {
-      
+
           bottomSheetModalRef.current?.present();
-         
+
         },
       }));
-    
+
       const handleSheetChanges = useCallback((index) => {
         console.log('handleSheetChanges', index);
         setIsOpen(index >= 0);
-        if(index-1)
-        {  
+        if(index - 1)
+        {
           onClose(recordCount);
         }
       }, [recordCount]);
-    
-    
-   
+
+
+
 const renderCommentItem = ({item, index}) => {
     return (
       <View key={index} style={styles.mainContainer}>
@@ -195,9 +196,9 @@ const renderCommentItem = ({item, index}) => {
             // item={item}
             sourceUrl={item.profileImage}
             onPress={() => onPressUser(item)}
-            iconSize="s"
+            iconSize="md"
             styles={styles.profileImage}
-            name={`${item.firstName} ${item.lastName}`}></ZAvatarInitials>
+            name={`${item.firstName} ${item.lastName}`} />
         </View>
         <View style={{marginLeft: 10, flex: 1}}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -235,7 +236,7 @@ const renderCommentItem = ({item, index}) => {
 commentId={item.commentId}
 listType={listTypeData}
 module="Post"
-></ReplyCommentList>
+ />
 
 
               {/* <ReplyListComp
@@ -244,7 +245,7 @@ module="Post"
               /> */}
             </View>
           )}
-          {item.replyCount > 0 && ! isOpenArray.includes(item.commentId) && (
+          {item.replyCount > 0 && !isOpenArray.includes(item.commentId) && (
             <TextWithPermissionCheck
               permissionsArray={userPermissions}
               type="comment"
@@ -274,7 +275,7 @@ module="Post"
             {item?.userLiked ? <Like /> : <UnLike />}
           </TouchableOpacityWithPermissionCheck>
           {item.likeCount > 0 && (
-            <TouchableOpacity onPress={() =>{handleListView(item)}}>
+            <TouchableOpacity onPress={() =>{handleListView(item);}}>
               <ZText type={'L12'}>{item.likeCount}</ZText>
             </TouchableOpacity>
           )}
@@ -283,15 +284,15 @@ module="Post"
     );
   };
 
-  const handleListView =async(item)=>{
- 
+  const handleListView = async(item)=>{
+
     navigation.navigate('PostCommentLikeList', {
-      type: listTypeData, 
-      userId: User?.userId, 
+      type: listTypeData,
+      userId: User?.userId,
       ActionId: item.commentId,
     });
- 
-}
+
+};
 
 
 
@@ -305,33 +306,43 @@ module="Post"
     //     userImage: CommentUser.profileImage,
     //     userId: CommentUser.userId,
     //     loggedInUserId: user.userId,
-  
+
     //     // connectionId: connectionId,
     //   });
     //   onClose(commentsCount);
     // }
+    if (CommentUser?.userId === User.userId) {
+      navigation.navigate('ProfileScreen');
+    } else {
+      navigation.push('ProfileDetail', {
+        userName: CommentUser?.postedBy,
+        userImage: CommentUser?.profileImage,
+        userId: CommentUser?.userId,
+        loggedInUserId: User.userId,
+      });
+    }
   };
   const getTimeDifference = createdAt => {
     const now = moment().local();
     const created = moment(createdAt).local();
-  
+
     const daysDifference = now.diff(created, 'days');
-  
+
     if (daysDifference >= 7) {
       const weeks = Math.floor(daysDifference / 7);
       return weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
     }
-  
+
     // Convert createdAt to local time before using fromNow()
     return created.fromNow();
   };
   const handleReplyClick = (comment, index) => {
     setNewComment(`@${comment.firstName} ${comment.lastName} `);
-  
+
     setreplyCommentId(comment.commentId);
     setreplyCommentIndex(index);
   };
-  
+
   const handleViewReply = item => {
     // //
 
@@ -344,19 +355,19 @@ module="Post"
   };
   const handleCommentLike = async item => {
      let result;
-    let endpoint=""
+    let endpoint = '';
       if(!isInfiniteLoading)
       {
         setInfiniteLoading(true);
-   
-    if(listTypeData=="RealEstate")
+
+    if(listTypeData == 'RealEstate')
       {
       //pageTitle("Property");
-      endpoint="Post"
+      endpoint = 'Post';
       }
-      if(listTypeData=="Car")
+      if(listTypeData == 'Car')
       {
-        endpoint="Car"
+        endpoint = 'Car';
       }
      if (item?.userLiked && item?.userLiked == 1) {
 
@@ -365,7 +376,7 @@ module="Post"
                   item.commentId,
                  );
                  if (result?.success == true) {
-          
+
                         item.likeCount = item.likeCount - 1;
                         item.userLiked = false;
                       //  setisLiked(false);
@@ -376,23 +387,23 @@ module="Post"
                     result = await SetPostCommentLikeUnLike(endpoint,'Like',
                         User.userId,
                         item.commentId,
-                       );   
+                       );
                        if (result?.success == true) {
-                     
+
                             item.likeCount = item.likeCount + 1;
                             item.userLiked = true;
                           //  setisLiked(false);
                           }
                 }
 
-           
-  
+
+
      setisDataRef(!isDataRef);
      setInfiniteLoading(false);
     }
   };
   const handleSendPress = () => {
-  
+
     handleAddComment();
   };
       const renderFooter = () => (
@@ -430,31 +441,31 @@ module="Post"
 
         if (!isInfiniteLoading) {
             setInfiniteLoading(true);
-    
+
           if (newComment.length < 1) {
             if (!toast.isActive(toastId)) {
-                showNewToast("Please enter some text.")
+                showNewToast('Please enter some text.');
               }
-          
-            
+
+
             setInfiniteLoading(false);
             return;
           }
-          let endpoint=""
-      
-                if(listTypeData=="RealEstate")
+          let endpoint = '';
+
+                if(listTypeData == 'RealEstate')
                   {
                   //pageTitle("Property");
                   }
-                  if(listTypeData=="Car")
+                  if(listTypeData == 'Car')
                   {
-                    endpoint="Car"
+                    endpoint = 'Car';
                   }
           // setLoading(true);
           if (replyCommentId === 0) {
             if (postId != 0 && newComment !== '') {
-            
-               
+
+
 
 
               const postComment = await AddComment(
@@ -480,11 +491,11 @@ module="Post"
             //   //  await getCommentData();
             //   setisSubmitPressed(true);
             //   setNewComment('');
-    
+
             //   // handleViewReply({commentId:replyCommentId});
             //   // setLoading(false);
             //   setfullloading(false);
-    
+
             //   setComments(comments => {
             //     return comments.map(item => {
             //       if (item.commentId === postComment.data.commentId) {
@@ -496,7 +507,7 @@ module="Post"
             //   setreplyCommentId(0);
             //   setreplyCommentIndex(0);
             //   handleViewReply(postComment.data);
-    
+
               //scrollToItem(replyCommentIndex) ;
               //  handleViewReply({commentId:replyCommentId})
             }
@@ -513,12 +524,12 @@ module="Post"
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         enableOverDrag={false}
-        enablePanDownToClose={true} 
-         backdropComponent={renderBackdrop} 
+        enablePanDownToClose={true}
+         backdropComponent={renderBackdrop}
          enableHandlePanningGesture={false}
        // footerComponent={renderFooter}
         enableDynamicSizing={false}
-       
+
         >
             {isInfiniteLoading && (
             <View style={styles.spinnerView}>
@@ -526,9 +537,9 @@ module="Post"
             </View>
           )}
 
-          
+
               <VStack  style={styles.sheetContent}>
-        <Box style={{width:"100%",flex:2}}>
+        <Box style={{width:'100%',flex:2}}>
             <BottomSheetFlatList
               data={data}
               renderItem={renderCommentItem}
@@ -537,14 +548,14 @@ module="Post"
               onEndReached={loadMorepage}
               extraData={isDataRef}
             /></Box>
-   <Box style={{ marginTop:"auto",minHeight:50}}>
+   <Box style={{ marginTop:'auto',minHeight:50}}>
             {renderFooter()}
             </Box>
             </VStack >
         </BottomSheetModal>
       );
     });
-    
+
     const styles = StyleSheet.create({
         spinnerView: {
             position: 'absolute',
@@ -558,21 +569,21 @@ module="Post"
             backgroundColor: '#F5FCFF88',
           },
         textInput: {
-            alignSelf: "stretch",
+            alignSelf: 'stretch',
             marginHorizontal: 12,
             marginBottom: 12,
             padding: 12,
             borderRadius: 12,
-            backgroundColor: "grey",
-            color: "white",
-            textAlign: "center",
+            backgroundColor: 'grey',
+            color: 'white',
+            textAlign: 'center',
           },
           bottomcontainer: {
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: '#f5f5f5',
-           
+
           },
         container: {
           flex: 1,
@@ -582,7 +593,7 @@ module="Post"
         },  sheetContent: {
           flex: 1,
           width:'100%',
-         
+
         },
         contentContainer: {
          // paddingBottom: 20,
@@ -597,11 +608,11 @@ module="Post"
       //  marginBottom:200
       //   },
         footerContainer: {
-        minHeight:50,
+        minHeight:40,
             padding: 12,
-           
-            borderRadius: 12,
-      
+
+borderTopLeftRadius:12,
+borderTopRightRadius:12,
             borderTopWidth: 1,                // Adds a top border
             borderTopColor: '#ccc',           // Sets the top border color
             backgroundColor: 'white',         // Sets background color
@@ -609,8 +620,8 @@ module="Post"
             shadowOffset: { width: 0, height: -2 },  // iOS shadow offset for top shadow
             shadowOpacity: 0.2,               // iOS shadow opacity
             shadowRadius: 4,                  // iOS shadow blur
-            elevation: 5,      
-           
+            elevation: 5,
+
           },
           footerText: {
             textAlign: 'center',
@@ -624,23 +635,23 @@ module="Post"
       marginBottom: 20,
       alignItems: 'flex-start',
       verticalAlign: 'top',
-      paddingHorizontal: 10,
+      paddingHorizontal: 20,
     },
       profileWrap: {
       width: moderateScale(50),
       height: moderateScale(50),
       borderRadius: moderateScale(25),
       verticalAlign: 'top',
-    marginRight:5
+    marginRight:5,
     },
       profileImage: {
       width: moderateScale(20),
       height: moderateScale(20),
       borderRadius: moderateScale(20),
       verticalAlign: 'top',
-    }
-    
-    
+    },
+
+
     });
-    
+
     export default CommentBottomSheet;
