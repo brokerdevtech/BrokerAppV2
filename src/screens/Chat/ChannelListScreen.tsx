@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable no-trailing-spaces */
 import React, { useMemo, useRef, useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useNavigation, useScrollToTop } from '@react-navigation/native';
@@ -13,14 +15,15 @@ import type { ChannelSort } from 'stream-chat';
 
 import type { StreamChatGenerics } from '../../types';
 import { ChatScreenHeader } from '../../sharedComponents/chat/ChatScreenHeader';
+import { Icon, SearchIcon } from '../../../components/ui/icon';
 
 const styles = StyleSheet.create({
   channelListContainer: {
     height: '100%',
     position: 'absolute',
     width: '100%',
-    paddingLeft:10,       
-    // paddingRight:10   
+    paddingHorizontal:15,
+    paddingVertical:15
   },
   emptyIndicatorContainer: {
     alignItems: 'center',
@@ -33,15 +36,17 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     alignItems: 'center',
-    borderRadius: 30,
+    borderRadius: 10,
     borderWidth: 1,
     flexDirection: 'row',
-    margin: 8,
+    margin: 15,
+    height:55,
     paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingVertical: 10,
   },
   searchInput: {
     flex: 1,
+    // height:45,
     fontSize: 14,
     includeFontPadding: false, // for android vertical text centering
     padding: 0, // removal of default text input padding on android
@@ -128,7 +133,7 @@ export const ChannelListScreen: React.FC = () => {
       <View style={[styles.flex,
       {
      
-        
+        marginTop:15
       },
       ]}>
         <View
@@ -141,7 +146,8 @@ export const ChannelListScreen: React.FC = () => {
             },
           ]}
         >
-          <Search pathFill={black} />
+          {/* <Search pathFill={black} /> */}
+          <Icon as={SearchIcon} size='xl'/>
           <TextInput
             onChangeText={(text) => {
               setSearchInputText(text);
@@ -153,7 +159,7 @@ export const ChannelListScreen: React.FC = () => {
             onSubmitEditing={({ nativeEvent: { text } }) => {
               setSearchQuery(text);
             }}
-            placeholder='Search'
+            placeholder='search people...'
             placeholderTextColor={grey}
             ref={searchInputRef}
             returnKeyType='search'
@@ -191,13 +197,16 @@ export const ChannelListScreen: React.FC = () => {
           <View style={[styles.channelListContainer, { opacity: searchQuery ? 0 : 1 }]}>
             <ChannelList<StreamChatGenerics>
               additionalFlatListProps={{
+               
                 getItemLayout: (_, index) => ({
                   index,
                   length: 65,
                   offset: 65 * index,
                 }),
                 keyboardDismissMode: 'on-drag',
+                
               }}
+          
               filters={filters}
               HeaderNetworkDownIndicator={() => null}
               maxUnreadCount={99}

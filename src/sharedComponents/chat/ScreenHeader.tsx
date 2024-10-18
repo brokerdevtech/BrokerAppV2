@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     width: 70,
   },
   safeAreaContainer: {
-    borderBottomWidth: 1,
+    // borderBottomWidth: 1,
   },
   subTitle: {
     fontSize: 12,

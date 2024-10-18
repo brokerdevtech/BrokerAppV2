@@ -67,6 +67,7 @@ import Delete_Account_Icon from './deleteAccount.svg';
 import Reset_Pass_Icon from './resetPass.svg';
 import KyC_Icon from './kyc.svg';
 import Location_Icon from './icons/location.svg';
+import NewChat_Icon from './Newchat.svg';
 
 import Calender_Icon from './icons/calender.svg';
 import Chat_Icon from './icons/chat.svg';
@@ -91,6 +92,7 @@ export {
   File_tray_icon,
   Delete_Account_Icon,
   Reset_Pass_Icon,
+  NewChat_Icon,
   KyC_Icon,
   Heart_tab_icon,
   Home_tab_icon,

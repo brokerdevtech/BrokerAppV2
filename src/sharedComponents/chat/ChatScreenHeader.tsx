@@ -1,5 +1,7 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
-import { Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import { useChatContext, useTheme } from 'stream-chat-react-native';
 
@@ -16,7 +18,10 @@ import type { DrawerNavigatorParamList, StackNavigatorParamList } from '../../ty
 import { NetworkDownIndicator } from './NetworkDownIndicator';
 import { GoBack } from '../../icons/GoBack';
 import {HStack} from '@/components/ui/hstack';
-
+import ArrowLeftIcon from '../../assets/svg/icons/arrow-left.svg';
+import { Icon } from '../../../components/ui/icon';
+import { NewChat_Icon } from '../../assets/svg';
+import ZText from '../ZText';
 const styles = StyleSheet.create({
   avatar: {
     borderRadius: 20,
@@ -40,20 +45,34 @@ export const BackButton: React.FC<{
   const navigation = useNavigation<ScreenHeaderNavigationProp>();
 
   return (
+    <View style={{flexDirection:'row' , alignItems:'center' ,justifyContent:'space-between'}}>
     <TouchableOpacity
       onPress={() => {
         navigation.goBack();
-      
+
       }}
       style={styles.backButton}
     >
-      <GoBack />
-     
+      {/* <GoBack /> */}
+      <View
+          style={{
+            // ...styles.appTitleMain,
+            // color: '#007acc',
+            padding: 8,
+            borderWidth: 1,
+            borderColor: '#E5E5E5',
+            borderRadius: 40,
+          }}>
+                  <ArrowLeftIcon />
+             
+              </View>
     </TouchableOpacity>
+    <ZText type={"S16"} style={{marginLeft:20}}>Message</ZText>
+    </View>
   );
 };
 
-export const ChatScreenHeader: React.FC<{ title?: string }> = ({ title = 'Chat' }) => {
+export const ChatScreenHeader: React.FC<{ title?: string }> = ({ title = '' }) => {
   const {
     theme: {
       colors: { accent_blue },
@@ -72,25 +91,21 @@ export const ChatScreenHeader: React.FC<{ title?: string }> = ({ title = 'Chat' 
 
 
 
- 
- <Image
-            source={{
-              uri: chatClient?.user?.image,
-            }}
-            style={styles.avatar}
-          />
+
+
           </HStack>
       )}
       RightContent={() => (
-        <RoundButton
+        <TouchableOpacity
           onPress={() => {
             navigation.navigate('NewDirectMessagingScreen');
           }}
         >
-          <NewDirectMessageIcon active color={accent_blue} height={25} width={25} />
-        </RoundButton>
+
+          <Icon as={NewChat_Icon} size='xl'/>
+        </TouchableOpacity>
       )}
-      Title={isOnline ? undefined : () => <NetworkDownIndicator titleSize='large' />}
+      // Title={isOnline ? undefined : () => <NetworkDownIndicator titleSize="large" />}
       titleText={title}
     />
   );
