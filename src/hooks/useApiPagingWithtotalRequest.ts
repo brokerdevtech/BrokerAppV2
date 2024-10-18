@@ -1,10 +1,10 @@
-import {useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {ApiResponse} from '../../BrokerAppCore/services/new/ApiResponse'; // Assuming ApiResponse is defined
 
 export const useApiPagingWithtotalRequest = <T, P extends any[]>(
   apiFunction: (...args: [...P, number, number]) => Promise<ApiResponse<T>>,
   setLoading?: (loading: boolean) => void, 
-  ApipageSize:number=10
+  ApipageSize:number=5
   // Loading function passed from outside
 ) => {
   const [data, setData] = useState<T | null>(null);
@@ -16,10 +16,10 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
   const [pageSize, setPageSize] = useState<number>(ApipageSize); // Default page size
   const [hasMore, setHasMore] = useState<boolean>(true); 
   // Function to trigger the API call
-
+  const isMounted = useRef(true); // Flag to track if the component is mounted
   const paramsRef = useRef<P | null>(null); 
 
-  const execute = async (...params: P) => {
+  const execute =  useCallback(async (...params: P) => {
 
     // Call the external loading function, if provided
     paramsRef.current = params; // Store the parameters for future use
@@ -29,11 +29,11 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
 
     setError(null);
     setCurrentPage(1); // Reset to first page for initial load
-
+    setHasMore(true); // Reset hasMore for fresh load
     try {
    
       const response = await apiFunction(...params, 1, pageSize);
-     
+      if (isMounted.current) { // Only update state if the component is mounted
       if (setLoading) {
         setLoading(false);
       }
@@ -48,17 +48,19 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
         setrecordCount(response.data.recordCount || null)
         setStatus(response.status || 200);
       }
-    } catch (error: any) {
+   }
+   } catch (error: any) {
+    if (isMounted.current) {
       if (setLoading) {
         setLoading(false);
       }
 
       setError('An unexpected error occurred');
-      setStatus(500);
+      setStatus(500);}
     }
-  };
+  }, [apiFunction, pageSize, setLoading]);
 
-  const loadMore = async (...params: P) => {
+  const loadMore  = useCallback(async (...params: P) => {
     if (hasMore) {
       if (setLoading) {
         setLoading(true);
@@ -69,7 +71,7 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
         const response = await apiFunction(...params, currentPage + 1, pageSize);
 
      
-
+        if (isMounted.current) { 
         if (!response.success) {
           setError(response.message || 'An error occurred');
           setStatus(response.status || 500);
@@ -87,33 +89,40 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
        }
         }
 
-          // Check if more data is available
+         }   // Check if more data is available
       
         
       } catch (error: any) {
-       
+        if (isMounted.current) { 
 
         setError('An unexpected error occurred');
-        setStatus(500);
+        setStatus(500);}
       }
       finally {
-        if (setLoading) {
+        if (isMounted.current && setLoading) {
           setLoading(false);
         }
       }
     }
-  };
+  }, [apiFunction, currentPage, hasMore, pageSize, status, setLoading]);
 
-  const pageSize_Set = async (pageSize:number) => {
-    setPageSize(pageSize);
-  };
+  const pageSize_Set = useCallback((newPageSize: number) => {
+    setPageSize(newPageSize);
+  }, []);
 
-  const currentPage_Set = async (currentPage:number) => {
-    setCurrentPage(currentPage);
-  };
-  const hasMore_Set = async (hasMore:boolean) => {
-    setHasMore(hasMore);
-  };
+  const currentPage_Set = useCallback((newCurrentPage: number) => {
+    setCurrentPage(newCurrentPage);
+  }, []);
 
+  const hasMore_Set = useCallback((newHasMore: boolean) => {
+    setHasMore(newHasMore);
+  }, []);
+  useEffect(() => {
+    isMounted.current = true; // Set mounted to true when the hook is initialized
+    return () => {
+      isMounted.current = false; // Set mounted to false when the component unmounts
+      if (setLoading) setLoading(false); // Reset loading state when unmounted
+    };
+  }, [setLoading]);
   return {data, status, error, execute,loadMore,pageSize_Set,currentPage_Set,hasMore_Set,totalPages,recordCount,hasMore};
 };

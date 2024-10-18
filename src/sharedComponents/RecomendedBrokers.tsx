@@ -126,11 +126,12 @@ const [isFollowing, setIsFollowing] = useState(false);
   useEffect(() => {
     // Bind data to the state when the data fetch is successful
 // console.log(brokersdata,"redf");
-
+// console.log("brokersdata",brokersdata.data.records);
 if (brokersstatus === 200 && brokersdata?.data?.records?.length > 0) {
+  console.log("brokersdata",brokersdata.data.records);
   setBrokerList(brokersdata.data.records);
 } else {
-  setBrokerList(null);  // In case there is no data
+  setBrokerList([]);  // In case there is no data
 }
   }, [brokersstatus, brokersdata]);
 
@@ -180,6 +181,7 @@ if (brokersstatus === 200 && brokersdata?.data?.records?.length > 0) {
         <LoadingSpinner isVisible={isInfiniteLoading} />
       ) : null
     }
+  
   />
 ) : brokerList == null ? (
   <RectangularCardSkeleton />

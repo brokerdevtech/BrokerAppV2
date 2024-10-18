@@ -1,10 +1,11 @@
 import React, {useEffect} from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   StyleSheet,
   TouchableOpacity,
-  View,
+  View,Text
 } from 'react-native';
 import {HStack} from '@/components/ui/hstack';
 import {VStack} from '@/components/ui/vstack';
@@ -39,8 +40,8 @@ const ProductSection = (props: ProductSectionProps) => {
   const navigation = useNavigation();
 
   const callPodcastList = async () => {
-    console.log("props.request");
-    console.log(props.request);
+    // console.log("props.request");
+    // console.log(props.request);
    execute(props.endpoint, props.request);
     //console.log(props.heading, 'data :-', data);
 
@@ -108,7 +109,7 @@ const ProductSection = (props: ProductSectionProps) => {
     {(data == null) ? (
       <RectangularCardSkeleton type='NewIN' />
     ) : (
-      <View style={{ backgroundColor: props.background, paddingVertical: 10 }}>
+      <View style={{ backgroundColor: props.background, paddingVertical: 10,flex: 1, }}>
         <HStack space="md" reversed={false} style={styles.heading}>
           <ZText type={'R18'}>{props.heading}</ZText>
           {props.isShowAll && (
@@ -121,15 +122,24 @@ const ProductSection = (props: ProductSectionProps) => {
             </TouchableOpacity>
           )}
         </HStack>
-        <HStack space="md" reversed={false} style={{ paddingHorizontal: 10 }}>
+        <HStack space="md" reversed={false} style={{ paddingHorizontal: 10}}>
           <FlatList
             data={data}
             keyExtractor={(item, index) => index.toString()}
             renderItem={renderProductItems}
-            contentContainerStyle={{ paddingVertical: 20 }}
+            contentContainerStyle={{ paddingVertical: 20,flex: 1 }}
             initialNumToRender={3}
             showsHorizontalScrollIndicator={false}
             horizontal
+            ListEmptyComponent={() => (
+              data === undefined ? (
+                <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+              ) : (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>No Data Found </Text>
+                </View>
+              )
+            )}
            // onEndReachedThreshold={0.8}
             // Uncomment the following line if you want to add a separator between items
             // ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -141,6 +151,23 @@ const ProductSection = (props: ProductSectionProps) => {
   );
 };
 const styles = StyleSheet.create({
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+    width: '100%',
+
+    display:'flex',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#555',  // Use a subtle color to match your design
+    textAlign: 'center',
+  },
+  loader: {
+    marginVertical: 20,
+  },
   footerContainer: {
     backgroundColor: '#FFF',
   },

@@ -1,8 +1,7 @@
-import React from 'react';
-import {ActivityIndicator, StyleSheet, View} from 'react-native';
-
-import Animated from 'react-native-reanimated';
-import {Heading} from '../../components/ui/heading';
+import React, { useEffect } from 'react';
+import { ActivityIndicator, StyleSheet, View, Image } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, withRepeat } from 'react-native-reanimated';
+import { Heading } from '../../components/ui/heading';
 
 const LoadingSpinner = ({
   isVisible,
@@ -10,6 +9,25 @@ const LoadingSpinner = ({
   color = '#007dc5',
   imageSource,
 }) => {
+  // Shared value for scale animation (pulsing effect)
+  const scale = useSharedValue(1);
+
+  // Define the animation style using Reanimated's `useAnimatedStyle`
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
+
+  // Start the animation on mount
+  useEffect(() => {
+    scale.value = withRepeat(
+      withTiming(1.2, { duration: 500 }), // Increase scale to 1.2 over 500ms
+      -1, // Repeat indefinitely
+      true // Reverse the animation on each iteration
+    );
+  }, [scale]);
+
   if (!isVisible) {
     return null; // If isVisible is false, don't render anything
   }
@@ -17,25 +35,19 @@ const LoadingSpinner = ({
   return (
     <View style={styles.overlay}>
       <View style={styles.imageWrapper}>
-        <Animated.View
-          animation="pulse"
-          easing="ease-out"
-          iterationCount="infinite"
-          style={{alignItems: 'center'}}>
+        {/* Pulser animation applied to ActivityIndicator and message */}
+        <Animated.View style={[animatedStyle, { alignItems: 'center' }]}>
           <ActivityIndicator size="large" color={color} />
           <Heading color="#333333" fontSize="sm" style={styles.text}>
             {message}
           </Heading>
         </Animated.View>
 
+        {/* Optional image with animation */}
         {imageSource && (
           <Animated.Image
-            animation="flipInX"
-            iterationCount="infinite"
-            duration={1000}
-            easing="linear"
             source={imageSource}
-            style={styles.image}
+            style={[styles.image, animatedStyle]} // Apply the same pulsing effect to the image
           />
         )}
       </View>

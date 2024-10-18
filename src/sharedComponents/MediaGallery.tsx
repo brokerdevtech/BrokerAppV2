@@ -120,7 +120,9 @@ import React, {
           offset: parentWidth * index,
           index,
         })}
-        removeClippedSubviews={true}
+        windowSize={3} // Improve performance by limiting render window
+        initialNumToRender={1} // Optimize initial load
+        removeClippedSubviews={true} // Optimize memory usage
       />
       {/* Pagination */}
       <View style={styles.paginationContainer}>

@@ -330,21 +330,19 @@ const ItemListScreen: React.FC<any> = ({
   }
 
   async function callPodcastList() {
-    pageSize_Set(5);
-    currentPage_Set(1);
-    hasMore_Set(true);
+    // pageSize_Set(5);
+    // currentPage_Set(1);
+    // hasMore_Set(true);
 
      execute(listTypeData, {
       keyWord: brandName,
+      cityName: AppLocation.City,
       userId: user.userId,
       placeID: AppLocation.placeID,
       placeName: AppLocation.placeName,
       geoLocationLatitude: AppLocation.geoLocationLatitude,
       geoLocationLongitude: AppLocation.geoLocationLongitude,
       isSearch:false
-    }).then(result => {
-     
-      setLoading(false);
     });
    
     setLoading(false);
@@ -368,6 +366,7 @@ const ItemListScreen: React.FC<any> = ({
     if (!isInfiniteLoading) {
       await loadMore(listTypeData, {
         keyWord: '',
+       cityName: AppLocation.City,
         userId: user.userId,
         placeID: AppLocation.placeID,
         placeName: AppLocation.placeName,
@@ -396,7 +395,9 @@ const ItemListScreen: React.FC<any> = ({
       {/* <ScrollView style={{ flex: 1 }}>
         <SafeAreaView> */}
       {/* <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>    */}
-         {data &&
+        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
+        {data &&
           <FlatList
               data={data}
               getItemLayout={getItemLayout}
@@ -408,13 +409,15 @@ const ItemListScreen: React.FC<any> = ({
              ListHeaderComponent={
               <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
              keyExtractor={(item, index) => index.toString()}
-              onEndReachedThreshold={0.8}
+              onEndReachedThreshold={0.6}
               onEndReached={loadMorepage}
+              contentContainerStyle={{ paddingBottom: 100 }}
               ListFooterComponent={
                 isInfiniteLoading ? (
-                  <LoadingSpinner isVisible={isInfiniteLoading} />
+                  <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
                 ) : null
               }
+              removeClippedSubviews={true}
               ListEmptyComponent={() => (
                 data === undefined ? (
                   <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
@@ -451,12 +454,9 @@ const ItemListScreen: React.FC<any> = ({
 // onEndReached={loadMorepage}
 // />  
             }
-
-{/* </SafeAreaView>
-     
-        </ScrollView> */}
-    
-      <View style={styles.footer}>
+        </View>
+        <View style={{marginTop:"auto",height:80 }}>
+        <View style={styles.footer}>
         <ZText type={'S16'} >Properties</ZText>
         <View style={styles.IconButton}>
           <ShortingIcon />
@@ -467,6 +467,16 @@ const ItemListScreen: React.FC<any> = ({
           <ZText type={'S16'} >Filter</ZText>
         </View>
       </View>
+        </View>
+
+        </View>
+  
+
+{/* </SafeAreaView>
+     
+        </ScrollView> */}
+    
+     
       
       </BottomSheetModalProvider>
     {/* // </View> */}

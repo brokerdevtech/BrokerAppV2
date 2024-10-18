@@ -46,6 +46,7 @@ const CommentBottomSheet = forwardRef(({ postItem, User, listTypeData,userPermis
     const [isInfiniteLoading, setInfiniteLoading] = useState(false);
     const [replyCommentIndex, setreplyCommentIndex] = useState(0);
     const [isDataRef, setisDataRef] = useState(false);
+    const [newReplyName, setnewReplyName] = useState('');
     const {
       data,
       status,
@@ -135,7 +136,8 @@ const CommentBottomSheet = forwardRef(({ postItem, User, listTypeData,userPermis
       if(isOpen)
       {
         setInfiniteLoading(true);
-        
+        setisOpenArray([])
+
         setNewComment('');
         setreplyCommentId(0);
         setreplyCommentIndex(0);
@@ -340,7 +342,7 @@ module="Post"
   };
   const handleReplyClick = (comment, index) => {
     setNewComment(`@${comment.firstName} ${comment.lastName} `);
-
+    setnewReplyName(`@${comment.firstName} ${comment.lastName} `);
     setreplyCommentId(comment.commentId);
     setreplyCommentIndex(index);
   };
@@ -482,10 +484,13 @@ module="Post"
             }
           } else {
             if (postId != 0 && newComment !== '') {
+              console.log(newReplyName);
+              const newStr = newComment.replace(newReplyName, "");
+
               const postComment = await ReplyComment(
                 User.userId,
                 replyCommentId,
-                newComment,
+                newStr,
                 endpoint,
               );
           console.log(postComment);
