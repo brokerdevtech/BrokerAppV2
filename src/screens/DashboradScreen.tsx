@@ -273,7 +273,7 @@ export default function DashboradScreen() {
         <BrandSection
           heading={'Brands Associated'}
           background={'#FFFFFF'}
-          endpoint={`Newin`}
+          endpoint={`BrandAssociate`}
           isShowAll={true}
           request={{
             pageNo: 1,

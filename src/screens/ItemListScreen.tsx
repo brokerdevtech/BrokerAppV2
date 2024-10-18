@@ -287,10 +287,11 @@ const ItemListScreen: React.FC<any> = ({
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
-  
+  const brandName = route.params.brandName !== undefined ? route.params.brandName : "";
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   // console.log('=============user=============');
   // console.log(user);
+  console.log('brandName ====> ', brandName)
 
 
   const {
@@ -325,7 +326,7 @@ const ItemListScreen: React.FC<any> = ({
     hasMore_Set(true);
 
      execute(listTypeData, {
-      keyWord: '',
+      keyWord: brandName,
       userId: user.userId,
       placeID: AppLocation.placeID,
       placeName: AppLocation.placeName,
