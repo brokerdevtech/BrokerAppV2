@@ -39,8 +39,8 @@ const ProductSection = (props: ProductSectionProps) => {
   const navigation = useNavigation();
 
   const callPodcastList = async () => {
-    console.log("props.request");
-    console.log(props.request);
+    // console.log("props.request");
+    // console.log(props.request);
    execute(props.endpoint, props.request);
     //console.log(props.heading, 'data :-', data);
 

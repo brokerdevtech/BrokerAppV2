@@ -16,39 +16,40 @@ const dynamicImageSkeletonHeight = screenHeight * 0.25; // 25% of the screen hei
 // const SkeletonRownumber = screenHeight-(screenHeight * 0.5) / 24; 
 const FullScreenSkeleton = () => {
   return (
-    <VStack space={"xl"} style={{ marginTop:10,paddingHorizontal:10,  height:screenHeight}}>
+    <></>
+    // <VStack space={"xl"} style={{ marginTop:10,paddingHorizontal:10,  height:screenHeight}}>
  
-       <Box className="w-[400px] gap-4 p-3 rounded-md bg-background-100" style={{ height:"98%",
-        paddingHorizontal:10, 
-        paddingVertical:10,
-       }}>
-       <Skeleton variant="sharp"   style={{height:screenHeight * 0.4}}/>
+    //    <Box className="w-[400px] gap-4 p-3 rounded-md bg-background-100" style={{ height:"98%",
+    //     paddingHorizontal:10, 
+    //     paddingVertical:10,
+    //    }}>
+    //    <Skeleton variant="sharp"   style={{height:screenHeight * 0.4}}/>
       
-       {/* <HStack className="gap-2 align-middle">
-         <Skeleton variant="circular"
-         style={{height:24,width:24}}
-         />
-         <SkeletonText _lines={2} gap={1}  style={{width:"90%",height:24}} />
-       </HStack> */}
-    {/* Repeated Skeleton Rows */}
-    {Array.from({ length: 7 }).map((_, index) => (
-        <HStack key={index} className="gap-2 align-middle">
-          <Skeleton 
-            variant="circular" 
-            style={{ height: 24, width: 24 }} 
-          />
-          <SkeletonText 
-            _lines={2} 
-            gap={1}  
-            style={{ width: "90%", height: 24 }} 
-          />
-        </HStack>
-      ))}
+    //    {/* <HStack className="gap-2 align-middle">
+    //      <Skeleton variant="circular"
+    //      style={{height:24,width:24}}
+    //      />
+    //      <SkeletonText _lines={2} gap={1}  style={{width:"90%",height:24}} />
+    //    </HStack> */}
+    // {/* Repeated Skeleton Rows */}
+    // {Array.from({ length: 7 }).map((_, index) => (
+    //     <HStack key={index} className="gap-2 align-middle">
+    //       <Skeleton 
+    //         variant="circular" 
+    //         style={{ height: 24, width: 24 }} 
+    //       />
+    //       <SkeletonText 
+    //         _lines={2} 
+    //         gap={1}  
+    //         style={{ width: "90%", height: 24 }} 
+    //       />
+    //     </HStack>
+    //   ))}
 
       
-     </Box>
+    //  </Box>
   
-    </VStack>
+    // </VStack>
   );
 };
 

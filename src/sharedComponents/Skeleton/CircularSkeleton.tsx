@@ -8,21 +8,22 @@ import { styles } from '../../themes'
 
 export default function CircularSkeleton() {
   return (
-   
-    <HStack space={"xl"} style={{ marginTop:10,paddingHorizontal:10}}>
- {Array.from({ length: 6 }).map((_, index) => (
-     <HStack key={index} className="gap-2 align-middle">
-       <Skeleton 
-         variant="circular" 
+   <></>
+//     <HStack space={"xl"} style={{ padding:10}}>
+//  {Array.from({ length: 6 }).map((_, index) => (
+//      <HStack key={index} className="gap-2 align-middle">
+//        <Skeleton 
+     
+//          variant="circular" 
+     
+//          style={{ height: 40, width: 40 }} 
 
-         style={{ height: 60, width: 60 }} 
+//        />
 
-       />
+//      </HStack>
+//    ))}
 
-     </HStack>
-   ))}
-
- </HStack>
+//  </HStack>
 
   )
 }
