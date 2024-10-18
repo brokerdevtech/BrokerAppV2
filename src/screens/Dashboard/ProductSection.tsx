@@ -41,7 +41,7 @@ const ProductSection = (props: ProductSectionProps) => {
   const callPodcastList = async () => {
     console.log("props.request");
     console.log(props.request);
-    await execute(props.endpoint, props.request);
+   execute(props.endpoint, props.request);
     //console.log(props.heading, 'data :-', data);
 
     //console.log('status :-', status);

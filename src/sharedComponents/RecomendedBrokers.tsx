@@ -109,7 +109,7 @@ const [isFollowing, setIsFollowing] = useState(false);
 
        brokerscurrentPage_Set(1);
        brokershasMore_Set(true);
-      await brokersexecute(user.userId, categoryId, AppLocation.City);
+       brokersexecute(user.userId, categoryId, AppLocation.City);
     } catch (error) {
       console.log(error);
     }
