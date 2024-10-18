@@ -1,5 +1,5 @@
 /* eslint-disable react/react-in-jsx-scope */
-import {useState} from 'react';
+import {lazy, Suspense, useState} from 'react';
 import {
   CardStyleInterpolators,
   createStackNavigator,
@@ -12,8 +12,8 @@ import ChooseImage from '../screens/postImage/ChooseImage';
 import StoryView from '../components/story/StoryView';
 
 import PostWizardScreen from '../screens/postImage/PostWizardScreen';
-
-import ChatPageStack from './ChatNavigation';
+const ChatPageStack = lazy(() => import('./ChatNavigation'));
+//import ChatPageStack from './ChatNavigation';
 import {OverlayProvider} from 'stream-chat-react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useStreamChatTheme} from '../hooks/useStreamChatTheme';
@@ -38,7 +38,7 @@ import CarPostPreview from '../screens/postImage/previewScreens/CarPostPreview';
 import PostLikeList from '../sharedComponents/PostLikeList';
 import PostCommentLikeList from '../sharedComponents/PostCommentLikeList';
 import PostCommentReplyLikeList from '../sharedComponents/PostCommentReplyLikeList';
-import { Platform } from 'react-native';
+import { ActivityIndicator, Platform } from 'react-native';
 import MyItemListScreen from '../screens/MyItemListScreen';
 import PodcastLikeList from '../sharedComponents/PodcastLikeList';
 import PodcastViewList from '../sharedComponents/PodcastViewList';
@@ -46,6 +46,13 @@ import StoryLikeList from '../sharedComponents/StoryLikeList';
 import StoryViewList from '../sharedComponents/StoryViewList';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
+
+
+const ChatPageStackLazy = () => (
+  <Suspense fallback={<ActivityIndicator />}>
+    <ChatPageStack />
+  </Suspense>
+);
 
 const globalScreenOptions = {
   gestureEnabled: false,
@@ -75,7 +82,9 @@ const HomeNavigation: React.FC = () => {
         <Stack.Screen
           options={{headerShown: false}}
           name="AppChat"
-          component={ChatPageStack}
+          component={
+            ChatPageStackLazy
+            }
         />
         {/* <Stack.Screen
           options={{headerShown: false}}

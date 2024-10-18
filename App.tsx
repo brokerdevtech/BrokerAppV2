@@ -278,12 +278,14 @@ setColorMode(state.isConnected);
           </View>
         ) : (
           <Provider store={store}>
+                 <S3Provider>
             <GestureHandlerRootView style={{ flex: 1 }}>
               <GluestackUIProvider>
                 <MainNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
               </GluestackUIProvider>
             </GestureHandlerRootView>
-          </Provider>
+            </S3Provider>
+          </Provider> 
         )
       ) : (
         <View style={styles.container}>

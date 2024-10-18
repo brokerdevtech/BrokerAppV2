@@ -13,14 +13,13 @@ import {
   Alert,
 } from 'react-native';
 
-// import {
-//   LikeWhite,
-//   UnLikeWhite,
-//   OpenEye,
-//   CommentWhite,
-//   TrashWhite,
-// } from '../assets/svgs';
+import {
+ 
+  CommentWhite,
+  TrashWhite,
+} from '../../assets/svg';
 
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import LinearGradient from 'react-native-linear-gradient';
 import Video from 'react-native-video';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -50,6 +49,7 @@ import {CloseIcon, LikeWhite, OpenEye, UnLikeWhite} from '../../assets/svg';
 import {Icon} from '../../../components/ui/icon';
 import TextWithPermissionCheck from '../../sharedComponents/TextWithPermissionCheck';
 import { Center } from '../../../components/ui/center';
+import StoryCommentBottomSheet from '../../sharedComponents/StoryCommentBottomSheet';
 
 const {width, height} = Dimensions.get('window');
 const avatars = [
@@ -122,6 +122,7 @@ const StoryView: React.FC = ({route}) => {
   const animation = useRef(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [scaleValue] = useState(new Animated.Value(1));
+  const commentSheetRef = useRef(null);
   useFocusEffect(
     useCallback(() => {
       // Initial setup that you want to run when the component gains focus
@@ -370,18 +371,21 @@ const StoryView: React.FC = ({route}) => {
     // setEnd(secondsToMilliseconds(status.duration));
   };
   const StoryComment = () => {
-    setActionSheetKey(prevKey => prevKey + 1);
-    setstoryId(reversedContent[current].storyId);
+    // setActionSheetKey(prevKey => prevKey + 1);
+    // setstoryId(reversedContent[current].storyId);
     togglePlayPause();
+    commentSheetRef.current?.open();
     setOpen(true);
     // togglePlayPause();
   };
   const closeModal = async (item: any) => {
-
+    console.log("==========item==============");
+console.log(item);
     setOpen(false);
-    await new Promise(resolve => setTimeout(resolve, 200));
+    // await new Promise(resolve => setTimeout(resolve, 200));
 
-    setStoryState(item);
+   setStoryState(item);
+   await new Promise(resolve => setTimeout(resolve, 200));
     togglePlayPause();
     // setPostId(0);
   };
@@ -465,6 +469,7 @@ const StoryView: React.FC = ({route}) => {
 
   return (
     <SafeAreaView style={localStyles.containerModal}>
+       <BottomSheetModalProvider>
       <StatusBar backgroundColor="black" barStyle="light-content" />
 
       <View style={localStyles.backgroundContainer}>
@@ -610,7 +615,7 @@ const StoryView: React.FC = ({route}) => {
           display="flex"
           alignItems="center"
           style={localStyles.likeBtnStyle}>
-          {/* <TouchableOpacityWithPermissionCheck
+          <TouchableOpacityWithPermissionCheck
             fontColor={colors.white}
             tagNames={[Center, OpenEye, ZText]}
             permissionEnum={PermissionKey.AllowViewStoryReaction}
@@ -624,7 +629,7 @@ const StoryView: React.FC = ({route}) => {
                 {StoryState.reactionCount}
               </ZText>
             </Center>
-          </TouchableOpacityWithPermissionCheck> */}
+          </TouchableOpacityWithPermissionCheck>
         </Box>
         {user.userId === userImage.userId && (
           <Box
@@ -667,6 +672,19 @@ const StoryView: React.FC = ({route}) => {
           </Avatar>
         </AvatarGroup>
       </View> */}
+
+      
+    <StoryCommentBottomSheet 
+     
+     ref={commentSheetRef}
+     StoryStateParam={StoryState}
+     postItem={reversedContent[current]}
+     User={user}
+     listTypeData={''}
+     userPermissions={userPermissions}
+     onClose={closeModal}
+   />
+    </BottomSheetModalProvider>
     </SafeAreaView>
   );
 };

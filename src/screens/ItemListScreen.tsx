@@ -58,6 +58,7 @@ import Recommend from '../sharedComponents/RecomendedBrokers';
 import ProductSection from './Dashboard/ProductSection';
 import flex from '@/themes/flex';
 import padding from '@/themes/padding';
+import { FlashList } from '@shopify/flash-list';
 
 const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,recordCount})=>{
    console.log(AppLocation.City,"categoryId")
@@ -286,10 +287,11 @@ const ItemListScreen: React.FC<any> = ({
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
-  
+  const brandName = route.params.brandName !== undefined ? route.params.brandName : "";
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   // console.log('=============user=============');
   // console.log(user);
+  console.log('brandName ====> ', brandName)
 
 
   const {
@@ -324,12 +326,13 @@ const ItemListScreen: React.FC<any> = ({
     hasMore_Set(true);
 
      execute(listTypeData, {
-      keyWord: '',
+      keyWord: brandName,
       userId: user.userId,
       placeID: AppLocation.placeID,
       placeName: AppLocation.placeName,
       geoLocationLatitude: AppLocation.geoLocationLatitude,
       geoLocationLongitude: AppLocation.geoLocationLongitude,
+      isSearch:false
     }).then(result => {
      
       setLoading(false);
@@ -361,6 +364,7 @@ const ItemListScreen: React.FC<any> = ({
         placeName: AppLocation.placeName,
         geoLocationLatitude: AppLocation.geoLocationLatitude,
         geoLocationLongitude: AppLocation.geoLocationLongitude,
+        isSearch:false
       });
     }
   };
@@ -380,39 +384,65 @@ const ItemListScreen: React.FC<any> = ({
     <>
     <BottomSheetModalProvider>
  
-      <View style={{ flex: 1 }}>
-     
+      <ScrollView style={{ flex: 1 }}>
+      <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>   
          {data &&
-          <FlatList
-              data={data}
-              getItemLayout={getItemLayout}
-              renderItem={renderItem}
- initialNumToRender={2}
-        maxToRenderPerBatch={4}
-              showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={false}
-             ListHeaderComponent={
-              <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
-             keyExtractor={(item, index) => index.toString()}
-              onEndReachedThreshold={0.8}
-              onEndReached={loadMorepage}
-              ListFooterComponent={
-                isInfiniteLoading ? (
-                  <LoadingSpinner isVisible={isInfiniteLoading} />
-                ) : null
-              }
-              ListEmptyComponent={() => (
-                data === undefined ? (
-                  <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
-                ) : (
-                  <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyText}>No Data Found</Text>
-                  </View>
-                )
-              )}
-            />}
+//           <FlatList
+//               data={data}
+//               getItemLayout={getItemLayout}
+//               renderItem={renderItem}
+//  initialNumToRender={2}
+//         maxToRenderPerBatch={4}
+//               showsHorizontalScrollIndicator={false}
+//               showsVerticalScrollIndicator={false}
+//             //  ListHeaderComponent={
+//             //   <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
+//              keyExtractor={(item, index) => index.toString()}
+//               onEndReachedThreshold={0.8}
+//               onEndReached={loadMorepage}
+//               ListFooterComponent={
+//                 isInfiniteLoading ? (
+//                   <LoadingSpinner isVisible={isInfiniteLoading} />
+//                 ) : null
+//               }
+//               ListEmptyComponent={() => (
+//                 data === undefined ? (
+//                   <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+//                 ) : (
+//                   <View style={styles.emptyContainer}>
+//                     <Text style={styles.emptyText}>No Data Found</Text>
+//                   </View>
+//                 )
+//               )}
+//             />
+        
+ <FlashList
+data={data}
+renderItem={renderItem}
+// ListHeaderComponent={
+//                 <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
+               keyExtractor={(item, index) => index.toString()}
+               ListFooterComponent={
+                                isInfiniteLoading ? (
+                                  <LoadingSpinner isVisible={isInfiniteLoading} />
+                                ) : null
+                              }
+                              ListEmptyComponent={() => (
+                                data === undefined ? (
+                                  <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+                                ) : (
+                                  <View style={styles.emptyContainer}>
+                                    <Text style={styles.emptyText}>No Data Found</Text>
+                                  </View>
+                                )
+                              )}
+estimatedItemSize={100}
+onEndReachedThreshold={0.8}              
+onEndReached={loadMorepage}
+/>  
+            }
 
-        </View>
+        </ScrollView>
     
       <View style={styles.footer}>
         <ZText type={'S16'} >Properties</ZText>
