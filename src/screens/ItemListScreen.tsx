@@ -336,6 +336,7 @@ const ItemListScreen: React.FC<any> = ({
 
      execute(listTypeData, {
       keyWord: brandName,
+      cityName: AppLocation.City,
       userId: user.userId,
       placeID: AppLocation.placeID,
       placeName: AppLocation.placeName,
@@ -365,6 +366,7 @@ const ItemListScreen: React.FC<any> = ({
     if (!isInfiniteLoading) {
       await loadMore(listTypeData, {
         keyWord: '',
+       cityName: AppLocation.City,
         userId: user.userId,
         placeID: AppLocation.placeID,
         placeName: AppLocation.placeName,
