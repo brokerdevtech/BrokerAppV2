@@ -81,7 +81,7 @@ const ProductSection = (props: ProductSectionProps) => {
           
         <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', {postId: item.postId, postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>
           <ZText type={'R16'} style={styles.price}>
-            $ {item.price}
+          {'\u20B9'} {item.price}
           </ZText>
           <View style={styles.locationContainer}>
             {item.city && (
@@ -115,21 +115,24 @@ const ProductSection = (props: ProductSectionProps) => {
           {props.isShowAll && (
             <TouchableOpacity
               onPress={() => navigation.navigate('ItemListScreen', {
-                listType: props.heading === 'New In Car' ? 'Car' : 'RealEstate'
+                listType: props.heading === 'New In Car' ? 'Car' : 'RealEstate',
+                categoryId:props.heading === 'New In Car' ? 2 : 1
               })}
             >
               <ZText type={'R14'} style={styles.link}>See All</ZText>
             </TouchableOpacity>
           )}
         </HStack>
-        <HStack space="md" reversed={false} style={{ paddingHorizontal: 10}}>
+        <HStack space="md" reversed={false} style={{ paddingHorizontal: 10, flexDirection: 'row',
+    flex: 2,
+    justifyContent: 'space-between',}}>
           <FlatList
             data={data}
             keyExtractor={(item, index) => index.toString()}
             renderItem={renderProductItems}
-            contentContainerStyle={{ paddingVertical: 20,flex: 1 }}
+            contentContainerStyle={{ paddingVertical: 20 }}
             initialNumToRender={3}
-            showsHorizontalScrollIndicator={false}
+            showsHorizontalScrollIndicator={true}
             horizontal
             ListEmptyComponent={() => (
               data === undefined ? (
