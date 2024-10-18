@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, TouchableOpacity,Text,StyleSheet, TextInput, FlatList } from 'react-native';
+import { View, TouchableOpacity,Text,StyleSheet, TextInput, FlatList, Share } from 'react-native';
 import { SetPostLikeUnLike } from '../../BrokerAppCore/services/new/dashboardService';
 import { HStack } from '../../components/ui/hstack';
 import { VStack } from '../../components/ui/vstack';
 import { ArrowUpIcon, EditIcon, FavouriteIcon, Icon, MessageCircleIcon } from '../../components/ui/icon';
 import { bookmark_icon, share_PIcon } from '../assets/svg';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 import ZText from './ZText';
 import {
     BottomSheetModal,
@@ -12,7 +13,7 @@ import {
     BottomSheetModalProvider,
     BottomSheetBackdrop,
     BottomSheetFooter,
-    BottomSheetTextInput,BottomSheetFlatList
+    BottomSheetTextInput,BottomSheetFlatList,
   } from '@gorhom/bottom-sheet';
 import { Box } from '../../components/ui/box';
 import { Button, ButtonIcon } from '../../components/ui/button';
@@ -40,7 +41,7 @@ const PostActions = ({ item, User, listTypeData, onUpdateLikeCount }) => {
     pageSize_Set,
     currentPage_Set,
     hasMore_Set,
-    totalPages,recordCount
+    totalPages,recordCount,
   } = useApiPagingWithtotalRequest(GetCommentList,setInfiniteLoading,15);
   const [isOpenArray, setisOpenArray] = useState([]);
   const navigation = useNavigation();
@@ -54,19 +55,55 @@ const PostActions = ({ item, User, listTypeData, onUpdateLikeCount }) => {
     (state: RootState) => state.user.user.userPermissions,
   );
 
-  const handleListView =async()=>{
- 
+console.log(listTypeData);
+// TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}
+  const generateLink = async () => {
+   let postType = listTypeData === 'RealEstate' ? 'Post' : 'Car/Post';
+   console.log(postType);
+    try {
+      const response = await fetch(
+        `https://tinyurl.com/api-create.php?url=${encodeURIComponent(
+          `brokerapp://ItemDetailScreen/${item?.postId}/${postType}`,
+        )}`,
+      );
+      const text = await response.text();
+      console.log('TinyURL Response:', text);
+      return text;
+    } catch (error) {}
+  };
+
+  const [isSharing, setIsSharing] = useState(false);
+  const sharePost = async () => {
+    if (isSharing) {
+
+      return;
+    }
+    setIsSharing(true);
+
+    const getLink = await generateLink();
+    console.log('Generated Link:', getLink);
+    try {
+      await Share.share({
+        message: getLink,
+      });
+    } catch (error) {
+    } finally {
+      setIsSharing(false); // Reset the flag after sharing is done or fails
+    }
+  };
+  const handleListView = async()=>{
+
     navigation.navigate('PostLikeList', {
-      type: listTypeData, 
-      userId: User?.userId, 
-      ActionId: item?.postId
+      type: listTypeData,
+      userId: User?.userId,
+      ActionId: item?.postId,
     });
- 
-}
+
+};
 
   const handleLike = async () => {
-    let endpoint = listTypeData === "RealEstate" || listTypeData === "Car" ? "Post" : "";
-    const result = await SetPostLikeUnLike(endpoint, "Like", User.userId, item.postId);
+    let endpoint = listTypeData === 'RealEstate' || listTypeData === 'Car' ? 'Post' : '';
+    const result = await SetPostLikeUnLike(endpoint, 'Like', User.userId, item.postId);
 
     if (result.success) {
       SetPostLike(true);
@@ -76,8 +113,8 @@ const PostActions = ({ item, User, listTypeData, onUpdateLikeCount }) => {
   };
 
   const handleUnLike = async () => {
-    let endpoint = listTypeData === "RealEstate" || listTypeData === "Car" ? "Post" : "";
-    const result = await SetPostLikeUnLike(endpoint, "UnLike", User.userId, item.postId);
+    let endpoint = listTypeData === 'RealEstate' || listTypeData === 'Car' ? 'Post' : '';
+    const result = await SetPostLikeUnLike(endpoint, 'UnLike', User.userId, item.postId);
 
     if (result.success) {
       SetPostLike(false);
@@ -88,24 +125,24 @@ const PostActions = ({ item, User, listTypeData, onUpdateLikeCount }) => {
   const handlePresentModalPress = useCallback(() => {
     commentSheetRef.current?.open();
   }, []);
- 
+
 
 
 
 async function callCommentList() {
-  pageSize_Set(15)
+  pageSize_Set(15);
   currentPage_Set(0);
   hasMore_Set(true);
 
-let endpoint=""
+let endpoint = '';
 
-  if(listTypeData=="RealEstate")
+  if(listTypeData == 'RealEstate')
     {
     //pageTitle("Property");
     }
-    if(listTypeData=="Car")
+    if(listTypeData == 'Car')
     {
-      endpoint="Car"
+      endpoint = 'Car';
     }
 
 
@@ -113,14 +150,14 @@ let endpoint=""
     endpoint,
    User.userId,
    item.postId,
-   
+
   );
 
 }
 const closeModal = useCallback(item => {
 
   setCardComment(item);
- 
+
 }, []);
 useEffect(() => {
 
@@ -135,9 +172,9 @@ useEffect(() => {
       <VStack style={{ marginRight: 10 }}>
         <HStack style={{justifyContent:'center',alignItems:'center'}}>
           <TouchableOpacity onPress={PostLike ? handleUnLike : handleLike}>
-            <Icon as={FavouriteIcon} size='xxl' style={{ marginRight: 5 }} color={PostLike ? 'red' : undefined} />
+            <Icon as={FavouriteIcon} size="xxl" style={{ marginRight: 5 }} color={PostLike ? 'red' : undefined} />
           </TouchableOpacity>
-          {PostlikesCount > 0 && 
+          {PostlikesCount > 0 &&
            <TouchableOpacity onPress={handleListView}>
           <ZText type={'R16'}>{PostlikesCount}</ZText>
           </TouchableOpacity>}
@@ -147,14 +184,16 @@ useEffect(() => {
       <VStack style={{ marginRight: 10 }}>
         <HStack style={{justifyContent:'center' ,alignItems:'center'}}>
         <TouchableOpacity  onPress={handlePresentModalPress}>
-          <Icon as={MessageCircleIcon} style={{ marginRight: 5 }} size='xxl'/>
+          <Icon as={MessageCircleIcon} style={{ marginRight: 5 }} size="xxl"/>
           </TouchableOpacity>
           {cardComment > 0 && <ZText type={'R16'}>{cardComment}</ZText>}
         </HStack>
       </VStack>
 
       <VStack style={{ marginRight: 10 }}>
-        <Icon as={share_PIcon} size='xxl'/>
+      <TouchableOpacity  onPress={sharePost}>
+        <Icon as={share_PIcon} size="xxl"/>
+        </TouchableOpacity>
       </VStack>
 
       {/* <VStack style={{ marginLeft: 'auto' }}>
@@ -162,8 +201,8 @@ useEffect(() => {
       </VStack> */}
     </HStack>
 
-    <CommentBottomSheet 
-     
+    <CommentBottomSheet
+
         ref={commentSheetRef}
         postItem={item}
         User={User}
@@ -171,27 +210,27 @@ useEffect(() => {
         userPermissions={userPermissions}
         onClose={closeModal}
       />
-  
+
 </>
   );
 };
 const styles = StyleSheet.create({
     textInput: {
-        alignSelf: "stretch",
+        alignSelf: 'stretch',
         marginHorizontal: 12,
         marginBottom: 12,
         padding: 12,
         borderRadius: 12,
-        backgroundColor: "grey",
-        color: "white",
-        textAlign: "center",
+        backgroundColor: 'grey',
+        color: 'white',
+        textAlign: 'center',
       },
       bottomcontainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#f5f5f5',
-       
+
       },
     container: {
       flex: 1,
@@ -201,7 +240,7 @@ const styles = StyleSheet.create({
     },  sheetContent: {
       flex: 1,
       width:'100%',
-     
+
     },
     contentContainer: {
      // paddingBottom: 20,
@@ -218,9 +257,9 @@ const styles = StyleSheet.create({
     footerContainer: {
     minHeight:50,
         padding: 12,
-       
+
         borderRadius: 12,
-  
+
         borderTopWidth: 1,                // Adds a top border
         borderTopColor: '#ccc',           // Sets the top border color
         backgroundColor: 'white',         // Sets background color
@@ -228,8 +267,8 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: -2 },  // iOS shadow offset for top shadow
         shadowOpacity: 0.2,               // iOS shadow opacity
         shadowRadius: 4,                  // iOS shadow blur
-        elevation: 5,      
-       
+        elevation: 5,
+
       },
       footerText: {
         textAlign: 'center',
@@ -250,14 +289,14 @@ mainContainer: {
   height: moderateScale(50),
   borderRadius: moderateScale(25),
   verticalAlign: 'top',
-marginRight:5
+marginRight:5,
 },
   profileImage: {
   width: moderateScale(20),
   height: moderateScale(20),
   borderRadius: moderateScale(20),
   verticalAlign: 'top',
-}
+},
 
 
 
