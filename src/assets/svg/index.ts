@@ -84,8 +84,8 @@ import Close_light_icon from './close_lisght.svg';
 
 import CommentWhite from './icons/commentWhite.svg';
 import TrashWhite from './icons/trashWhite.svg';
-
-export {CommentWhite,TrashWhite,
+import description_icon from './description.svg'
+export {CommentWhite,TrashWhite,description_icon,
  Like ,Send,
   Follower_Icon,
   filter_icon,

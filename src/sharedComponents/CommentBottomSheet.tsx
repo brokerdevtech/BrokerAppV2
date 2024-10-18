@@ -134,10 +134,12 @@ const CommentBottomSheet = forwardRef(({ postItem, User, listTypeData,userPermis
       if(isOpen)
       {
         setInfiniteLoading(true);
+        
         setNewComment('');
         setreplyCommentId(0);
         setreplyCommentIndex(0);
         setToastId(0);
+        
         callCommentList();
 
       }

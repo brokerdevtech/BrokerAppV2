@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import {View, Text, ScrollView, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import {View, Text, ScrollView, StyleSheet, FlatList, Image, TouchableOpacity, SafeAreaView } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
 import CustomHeader from '../sharedComponents/CustomHeader';
@@ -14,7 +14,8 @@ import UserProfile from '../sharedComponents/profile/UserProfile';
 import {Card_check_icon, Heart_icon, Location_Icon,Calender_Icon,
   Chat_Icon,
   Telephone_Icon,
-  Whatsapp_Icon, Share_Icon} from '../assets/svg';
+  Whatsapp_Icon, Share_Icon,
+  description_icon} from '../assets/svg';
 import { imagesBucketcloudfrontPath } from '../config/constants';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
 import { fetchPostByID } from '@/BrokerAppCore/services/new/dashboardService';
@@ -22,22 +23,33 @@ import {Icon, ShareIcon} from '../../components/ui/icon';
 import { Divider } from '@/components/ui/divider';
 import {VStack} from '@/components/ui/vstack';
 import MediaGallery from '../sharedComponents/MediaGallery';
+import PostActions from '../sharedComponents/PostActions';
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import { Box } from '../../components/ui/box';
 
-
-const propertyDetails = (data: any) => {
+const propertyDetails = (data: any,user:any) => {
   return (
           <>
-                <View style={styles.iconContainer}>
-                  <View style={styles.checkIcon}>
-                    <Card_check_icon />
-                  </View>
-                  <TouchableOpacity style={{}}>
-                    <Heart_icon accessible={true} fontSize={25} />
-                  </TouchableOpacity>
-                </View>
-
+                
+              {  data.isBrokerAppVerified && (
+        <View style={styles.iconContainer}>
+          <View style={styles.checkIcon}>
+            <Card_check_icon />
+          </View>
+        </View>
+      )}
+          <PostActions
+        item={data}
+        User={user}
+        listTypeData={'RealEstate'}
+        onUpdateLikeCount={newCount => {
+          console.log(newCount);
+        }}
+      />
+          
                 {/* Car Details */}
                 <VStack space="md" style={styles.detailsContainer}>
+                  
                   <ZText type={'R16'}>
                     $ {data?.price}
                   </ZText>
@@ -45,20 +57,39 @@ const propertyDetails = (data: any) => {
                      {data.location.cityName && (
                       <>
                         <Icon as={Location_Icon} />
-                        <ZText type={'R16'}>
-                          {data?.location.placeName}
-                        </ZText>
+                        <ZText
+                type={'R16'}
+                numberOfLines={2} // Limits to 2 lines
+                ellipsizeMode="tail"
+              >
+                {' '}
+                {data.location.placeName}
+              </ZText>
+                   
                       </>
                     )}
                   </View>
-                  
-                  <ZText type={'R16'} >
-                    {data.title}
-                  </ZText>
+                  <View style={styles.locationContainer}>
+                     {data.location.cityName && (
+                      <>
+                     <Box>
+              <Icon as={description_icon} fill='black' size='xl'/>
+            </Box>
+            <ZText
+              type={'R16'}
+              numberOfLines={2} // Limits to 2 lines
+              ellipsizeMode="tail"
+            > {' '}
+              {data.title}
+            </ZText>
+                      </>
+                    )}
+                  </View>
+             
                 </VStack>
-                <Divider className="my-0.5"/>
+                {/* <Divider className="my-0.5"/> */}
                 <View style={styles.detailsContainer}>
-                    <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
+                    {/* <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
                         <VStack>
                             <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Telephone_Icon} size={'xxl'} /></View>
                             <View style={{paddingVertical: 10}}>
@@ -83,7 +114,7 @@ const propertyDetails = (data: any) => {
                                 <ZText type={'R14'}>{data.buyers} Have Buyer</ZText>
                             </View>
                         </VStack>
-                    </HStack> 
+                    </HStack>  */}
                     <VStack space="md">
                        <Divider className="my-0.5"/>
                         <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
@@ -135,19 +166,24 @@ const propertyDetails = (data: any) => {
   )
 }
 
-const carDetails = (data: any) => {
+const carDetails = (data: any,user:any) => {
+  console.log(data)
   return (
           <>
-                {/* Check and Heart Icons */}
-                <View style={styles.iconContainer}>
-                  <View style={styles.checkIcon}>
-                    <Card_check_icon />
-                  </View>
-                  <TouchableOpacity style={{}}>
-                    <Heart_icon accessible={true} fontSize={25} />
-                  </TouchableOpacity>
-                </View>
-
+                   {  data.isBrokerAppVerified && (
+        <View style={styles.iconContainer}>
+          <View style={styles.checkIcon}>
+            <Card_check_icon />
+          </View>
+        </View>
+      )}
+   <PostActions
+        item={data}
+        User={user}
+        listTypeData={'Car'}
+        onUpdateLikeCount={newCount => {
+          console.log(newCount);
+        }}></PostActions>
                 {/* Car Details */}
                 <VStack space="md" style={styles.detailsContainer}>
                   <ZText type={'R16'}>
@@ -157,20 +193,38 @@ const carDetails = (data: any) => {
                      {data.location.cityName && (
                       <>
                         <Icon as={Location_Icon} />
-                        <ZText type={'R16'}>
-                          {data?.location.placeName}
-                        </ZText>
+                        <ZText
+                type={'R16'}
+                numberOfLines={2} // Limits to 2 lines
+                ellipsizeMode="tail"
+              >
+                {' '}
+                {data.location.placeName}
+              </ZText>
+                   
                       </>
                     )}
                   </View>
-                  
-                  <ZText type={'R16'} >
-                    {data.title}
-                  </ZText>
+                  <View style={styles.locationContainer}>
+                     {data.location.cityName && (
+                      <>
+                     <Box>
+              <Icon as={description_icon} fill='black' size='xl'/>
+            </Box>
+            <ZText
+              type={'R16'}
+              numberOfLines={2} // Limits to 2 lines
+              ellipsizeMode="tail"
+            > {' '}
+              {data.title}
+            </ZText>
+                      </>
+                    )}
+                  </View>
                 </VStack>
-                <Divider className="my-0.5"/>
+                {/* <Divider className="my-0.5"/> */}
                 <View style={styles.detailsContainer}>
-                    <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
+                    {/* <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
                         <VStack>
                             <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Telephone_Icon} size={'xxl'} /></View>
                             <View style={{paddingVertical: 10}}>
@@ -195,7 +249,7 @@ const carDetails = (data: any) => {
                                 <ZText type={'R14'}>{data.buyers} Have Buyer</ZText>
                             </View>
                         </VStack>
-                    </HStack> 
+                    </HStack>  */}
                     <VStack space="md">
                        <Divider className="my-0.5"/>
                         <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
@@ -309,8 +363,10 @@ const ItemDetailScreen: React.FC<any> = ({ route, navigation }) => {
 
 
   return (
-    <View style={styles.listContainer}>
-      <ScrollView >
+    <BottomSheetModalProvider>
+
+      <ScrollView style={styles.listContainer} >
+
         <View style={styles.headerContainer}>
              <View style={styles.header}>
                  <View style={styles.IconButton}>
@@ -323,19 +379,21 @@ const ItemDetailScreen: React.FC<any> = ({ route, navigation }) => {
              </View>
         </View>
         <View>
-          <HStack space="md" reversed={false} style={{paddingHorizontal: 10}}>
+          <HStack space="md" reversed={false} style={{}}>
             {/* Start */}
             {data !== null && (
                <View style={styles.cardContainer}>
                   <MediaGallery ref={MediaGalleryRef} mediaItems={data?.postMedia} paused={false}/>
-                  {route.params.postType === 'Post' ? propertyDetails(data) : carDetails(data)}
+                  {route.params.postType === 'Post' ? propertyDetails(data,user) : carDetails(data,user)}
                </View>    
             )}
             {/* End */}
           </HStack>
         </View>
+      
       </ScrollView>
-    </View>
+   
+    </BottomSheetModalProvider>
   );
 }
 
@@ -354,7 +412,8 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     backgroundColor: '#FFF',
-    flex: 1
+    flex: 1,
+  //paddingHorizontal: 20,
   },
   
   footer: {
@@ -420,16 +479,21 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   cardContainer: {
-    width: 375,
+
+    //width: 375,
     //borderRadius: 12,
     backgroundColor: '#FFF',
-    margin: 10,
-    paddingBottom: 10,
+    
+   // paddingBottom: 10,
+    width:"100%",
     //shadowColor: 'rgba(0, 0, 0, 0.8)',
     //shadowOffset: {width: 0, height: 4},
     //shadowOpacity: 1,
     //shadowRadius: 20,
     //elevation: 4,
+    
+    paddingHorizontal: 20,
+
   },
   carImage: {
     width: 375,
@@ -442,7 +506,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     position: 'absolute',
     top: 8,
-    left: 8,
+   // left: 8,
     right: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',

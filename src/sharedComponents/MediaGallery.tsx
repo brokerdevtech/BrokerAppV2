@@ -27,7 +27,7 @@ import React, {
   
     const playerRef = useRef(null);
     const carouselRef = useRef(null);
-
+    const [parentWidth, setParentWidth] = useState(0);
 
   
 
@@ -63,7 +63,7 @@ import React, {
         
         if (extension !== 'mp4') {
           return (    
-            <View style={styles.card}>
+            <View style={[styles.card, { width: parentWidth }]}>
          
             <AppFastImage
               uri={sourceUri}
@@ -72,7 +72,7 @@ import React, {
           );
         }
         return (
-          <View style={styles.card}>
+          <View  style={[styles.card, { width: parentWidth }]}>
           <VideoPlayer
             ref={playerRef}
             sourceUri={sourceUri}
@@ -81,14 +81,19 @@ import React, {
           /></View>
         );
       },
-      [getExtension]
+      [getExtension,parentWidth]
     );
 
 
 
     return (
    
-      <View style={styles.container}>
+      <View style={styles.container}
+      onLayout={(event) => {
+        const { width } = event.nativeEvent.layout;
+        setParentWidth(width); // Capture the parent component's width
+      }}
+      >
  <FlatList
         data={mediaItems}
         horizontal
@@ -107,12 +112,12 @@ import React, {
     
 
         scrollEventThrottle={16}
-        snapToInterval={screenWidth}
+        snapToInterval={parentWidth}
         snapToAlignment="center"
         decelerationRate="fast"
         getItemLayout={(data, index) => ({
-          length: screenWidth,
-          offset: screenWidth * index,
+          length: parentWidth,
+          offset: parentWidth * index,
           index,
         })}
         removeClippedSubviews={true}
@@ -161,12 +166,14 @@ CenterBox:{
 
 
     card: {
+      display: 'flex',
+      
   //    backgroundColor: '#764ABC',
   borderRadius: 12,
      // padding: 10,
       justifyContent: 'center',
       alignItems: 'center',
-      width: 375,
+      width: "100%",
       // marginHorizontal: 20 ,
       height:200
     },
