@@ -12,6 +12,7 @@ import {
 import { VStack } from '../../components/ui/vstack';
 import { Skeleton } from '../../components/ui/skeleton';
 import FastImage from '@d11/react-native-fast-image';
+import flex from '@/themes/flex';
 //import FastImage from 'react-native-fast-image';
 
 const AppFastImage = ({uri}) => {
@@ -36,7 +37,7 @@ const AppFastImage = ({uri}) => {
         style={{...styles.vertical}}
         onPress={() => setIsFullscreen(true)} // Open the image in fullscreen on tap
       >
-      
+    
         <FastImage
           onLoadStart={() => setIsLoading(true)}
           source={{uri}}
@@ -78,6 +79,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 12,
+    display:'flex',
+    justifyContent: 'center'
   },
   fullscreenContainer: {
     flex: 1,

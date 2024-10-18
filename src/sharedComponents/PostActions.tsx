@@ -168,7 +168,7 @@ useEffect(() => {
 
   return (
     <>
-    <HStack style={{ marginLeft: 20, marginRight: 20, marginTop: 10 }}>
+    <HStack style={{ marginRight: 20, marginTop: 10 }}>
       <VStack style={{ marginRight: 10 }}>
         <HStack style={{justifyContent:'center',alignItems:'center'}}>
           <TouchableOpacity onPress={PostLike ? handleUnLike : handleLike}>

@@ -33,6 +33,7 @@ import {
   Whatsapp_Icon,
   share_PIcon,
   bookmark_icon,
+  description_icon,
 } from '../assets/svg';
 import {imagesBucketcloudfrontPath} from '../config/constants';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
@@ -59,6 +60,7 @@ import ProductSection from './Dashboard/ProductSection';
 import flex from '@/themes/flex';
 import padding from '@/themes/padding';
 import { FlashList } from '@shopify/flash-list';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,recordCount})=>{
    console.log(AppLocation.City,"categoryId")
@@ -165,7 +167,7 @@ const ProductItem =  React.memo(
           </View>
         </View>
       )}
-
+<View style={{marginLeft:20}}>
       <PostActions
         item={item}
         User={User}
@@ -173,7 +175,7 @@ const ProductItem =  React.memo(
         onUpdateLikeCount={newCount => {
           console.log(newCount);
         }}
-      />
+      /></View>
       {/* Car Details */}
       <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>
       <VStack space="md" style={styles.detailsContainer}>
@@ -191,10 +193,10 @@ const ProductItem =  React.memo(
             <Box>
               <Icon as={Location_Icon} size='xl'/>
             </Box>
-            <Box>
+            <Box style={{width:'100%' ,flex:1}}>
               <ZText
                 type={'R16'}
-                numberOfLines={1} // Limits to 2 lines
+                numberOfLines={2} // Limits to 2 lines
                 ellipsizeMode="tail"
               >
                 {' '}
@@ -205,15 +207,18 @@ const ProductItem =  React.memo(
         )}
 
         <HStack>
+          <HStack style={{width:'100%' ,flex:1}}>
           <Box>
+              <Icon as={description_icon} fill='black' size='xl'/>
+            </Box>
             <ZText
               type={'R16'}
-              numberOfLines={1} // Limits to 2 lines
+              numberOfLines={2} // Limits to 2 lines
               ellipsizeMode="tail"
-            >
+            > {' '}
               {item.title}
             </ZText>
-          </Box>
+          </HStack>
         </HStack>
       </VStack>
       </TouchableOpacity>
@@ -291,7 +296,7 @@ const ItemListScreen: React.FC<any> = ({
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   // console.log('=============user=============');
   // console.log(user);
-  console.log('brandName ====> ', brandName)
+  // console.log('brandName ====> ', brandName)
 
 
   const {
@@ -315,8 +320,12 @@ const ItemListScreen: React.FC<any> = ({
   );
   async function set_FilterChipsData() {
     let FilterChipsData = [];
+    if(brandName !== "") 
+      {FilterChipsData.push({label: 'Brand:' + brandName});}
     FilterChipsData.push({label: 'Location:' + AppLocation.placeName});
-
+    // if(brandName !== "") {
+    //   FilterChipsData.push({label: 'Brands Associated :' + brandName});
+    // }
     setFilterChipsData(FilterChipsData);
   }
 
@@ -381,68 +390,71 @@ const ItemListScreen: React.FC<any> = ({
     { length: itemHeight, offset: itemHeight * index, index }
   );
   return (
-    <>
+  <>
     <BottomSheetModalProvider>
  
-      <ScrollView style={{ flex: 1 }}>
-      <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>   
+      {/* <ScrollView style={{ flex: 1 }}>
+        <SafeAreaView> */}
+      {/* <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>    */}
          {data &&
-//           <FlatList
-//               data={data}
-//               getItemLayout={getItemLayout}
-//               renderItem={renderItem}
-//  initialNumToRender={2}
-//         maxToRenderPerBatch={4}
-//               showsHorizontalScrollIndicator={false}
-//               showsVerticalScrollIndicator={false}
-//             //  ListHeaderComponent={
-//             //   <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
-//              keyExtractor={(item, index) => index.toString()}
-//               onEndReachedThreshold={0.8}
-//               onEndReached={loadMorepage}
-//               ListFooterComponent={
-//                 isInfiniteLoading ? (
-//                   <LoadingSpinner isVisible={isInfiniteLoading} />
-//                 ) : null
-//               }
-//               ListEmptyComponent={() => (
-//                 data === undefined ? (
-//                   <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
-//                 ) : (
-//                   <View style={styles.emptyContainer}>
-//                     <Text style={styles.emptyText}>No Data Found</Text>
-//                   </View>
-//                 )
-//               )}
-//             />
+          <FlatList
+              data={data}
+              getItemLayout={getItemLayout}
+              renderItem={renderItem}
+ initialNumToRender={2}
+        maxToRenderPerBatch={4}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+             ListHeaderComponent={
+              <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
+             keyExtractor={(item, index) => index.toString()}
+              onEndReachedThreshold={0.8}
+              onEndReached={loadMorepage}
+              ListFooterComponent={
+                isInfiniteLoading ? (
+                  <LoadingSpinner isVisible={isInfiniteLoading} />
+                ) : null
+              }
+              ListEmptyComponent={() => (
+                data === undefined ? (
+                  <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+                ) : (
+                  <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>No Data Found</Text>
+                  </View>
+                )
+              )}
+            />
         
- <FlashList
-data={data}
-renderItem={renderItem}
-// ListHeaderComponent={
-//                 <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
-               keyExtractor={(item, index) => index.toString()}
-               ListFooterComponent={
-                                isInfiniteLoading ? (
-                                  <LoadingSpinner isVisible={isInfiniteLoading} />
-                                ) : null
-                              }
-                              ListEmptyComponent={() => (
-                                data === undefined ? (
-                                  <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
-                                ) : (
-                                  <View style={styles.emptyContainer}>
-                                    <Text style={styles.emptyText}>No Data Found</Text>
-                                  </View>
-                                )
-                              )}
-estimatedItemSize={100}
-onEndReachedThreshold={0.8}              
-onEndReached={loadMorepage}
-/>  
+//  <FlashList
+// data={data}
+// renderItem={renderItem}
+// // ListHeaderComponent={
+// //                 <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
+//                keyExtractor={(item, index) => index.toString()}
+//                ListFooterComponent={
+//                                 isInfiniteLoading ? (
+//                                   <LoadingSpinner isVisible={isInfiniteLoading} />
+//                                 ) : null
+//                               }
+//                               ListEmptyComponent={() => (
+//                                 data === undefined ? (
+//                                   <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+//                                 ) : (
+//                                   <View style={styles.emptyContainer}>
+//                                     <Text style={styles.emptyText}>No Data Found</Text>
+//                                   </View>
+//                                 )
+//                               )}
+// estimatedItemSize={100}
+// onEndReachedThreshold={0.8}              
+// onEndReached={loadMorepage}
+// />  
             }
 
-        </ScrollView>
+{/* </SafeAreaView>
+     
+        </ScrollView> */}
     
       <View style={styles.footer}>
         <ZText type={'S16'} >Properties</ZText>
@@ -454,9 +466,11 @@ onEndReached={loadMorepage}
           <FilterIcon />
           <ZText type={'S16'} >Filter</ZText>
         </View>
-      </View></BottomSheetModalProvider>
+      </View>
+      
+      </BottomSheetModalProvider>
     {/* // </View> */}
-   </>
+    </>
   );
 };
 
@@ -554,12 +568,11 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   cardContainer: {
-    width: 375,
+    //width: '100%',
 
     borderRadius: 12,
     backgroundColor: '#FFF',
-    margin: 20,
-  
+   margin:20,
     shadowColor: 'rgba(0, 0, 0, 0.8)',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 1,

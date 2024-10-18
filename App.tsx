@@ -127,27 +127,27 @@ function App(): React.JSX.Element {
   //     setLocationPermission(newStatus); // Update status after returning from settings
   //   }
   // };
-  useEffect(() => {
+  // useEffect(() => {
 
-    Animated.parallel([
-      Animated.timing(opacityAnim, {
-        toValue: 1,
-        duration: 1000,
-        easing: Easing.out(Easing.quad), 
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        friction: 3, 
-        useNativeDriver: true,
-      }),
-    ]).start();
+  //   Animated.parallel([
+  //     Animated.timing(opacityAnim, {
+  //       toValue: 1,
+  //       duration: 1000,
+  //       easing: Easing.out(Easing.quad), 
+  //       useNativeDriver: true,
+  //     }),
+  //     Animated.spring(scaleAnim, {
+  //       toValue: 1,
+  //       friction: 3, 
+  //       useNativeDriver: true,
+  //     }),
+  //   ]).start();
 
    
-    setTimeout(() => {
-      setIsSplashVisible(false);
-    }, 3000); 
-  }, []);
+  //   // setTimeout(() => {
+  //   //   setIsSplashVisible(false);
+  //   // }, 3000); 
+  // }, []);
 
   const retryAction = async () => {
     // Implement your retry logic here
@@ -248,17 +248,73 @@ setColorMode(state.isConnected);
     let granted = await checkPermission();
     let UserLocation = await getUserLocation(granted);
   };
-  useEffect(() => {
-    allPermission();
-    checkUser();
+  // useEffect(() => {
+  //   Animated.parallel([
+  //     Animated.timing(opacityAnim, {
+  //       toValue: 1,
+  //       duration: 1000,
+  //       easing: Easing.out(Easing.quad), 
+  //       useNativeDriver: true,
+  //     }),
+  //     Animated.spring(scaleAnim, {
+  //       toValue: 1,
+  //       friction: 3, 
+  //       useNativeDriver: true,
+  //     }),
+  //   ]).start();
+  //   await allPermission();
+  //  await checkUser();
 
+  //   const unsubscribe = NetInfo.addEventListener(state => {
+  //     setIsConnected(state.isConnected);
+  //   });
+  //   setIsSplashVisible(false);
+
+  // }, []);
+
+
+  useEffect(() => {
+    const runAsyncFunctions = async () => {
+      try {
+        await allPermission();
+        await checkUser();
+        setIsSplashVisible(false);
+      } catch (error) {
+        console.error("Error in permission or user check:", error);
+      }
+    };
+  
+    // Run animations in parallel
+    Animated.parallel([
+      Animated.timing(opacityAnim, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 3,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  
+    // Execute async functions
+    runAsyncFunctions();
+  
+    // Subscribe to network state changes
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected);
     });
-
-
+  
+    // Set splash visibility
+   // setIsSplashVisible(false);
+  
+    // Cleanup on unmount
+    return () => {
+      unsubscribe();
+    };
   }, []);
-
   return (
       <>
       {isConnected ? (
