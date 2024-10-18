@@ -334,7 +334,7 @@ const ItemListScreen: React.FC<any> = ({
     // currentPage_Set(1);
     // hasMore_Set(true);
 
-   await  execute(listTypeData, {
+     execute(listTypeData, {
       keyWord: brandName,
       userId: user.userId,
       placeID: AppLocation.placeID,
@@ -407,7 +407,7 @@ const ItemListScreen: React.FC<any> = ({
              ListHeaderComponent={
               <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
              keyExtractor={(item, index) => index.toString()}
-              onEndReachedThreshold={0.8}
+              onEndReachedThreshold={0.6}
               onEndReached={loadMorepage}
               contentContainerStyle={{ paddingBottom: 100 }}
               ListFooterComponent={
@@ -415,6 +415,7 @@ const ItemListScreen: React.FC<any> = ({
                   <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
                 ) : null
               }
+              removeClippedSubviews={true}
               ListEmptyComponent={() => (
                 data === undefined ? (
                   <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
