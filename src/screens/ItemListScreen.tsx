@@ -316,7 +316,9 @@ const ItemListScreen: React.FC<any> = ({
   async function set_FilterChipsData() {
     let FilterChipsData = [];
     FilterChipsData.push({label: 'Location:' + AppLocation.placeName});
-
+    if(brandName !== "") {
+      FilterChipsData.push({label: 'Brands Associated :' + brandName});
+    }
     setFilterChipsData(FilterChipsData);
   }
 
