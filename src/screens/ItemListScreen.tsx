@@ -323,7 +323,9 @@ const ItemListScreen: React.FC<any> = ({
     if(brandName)
       {FilterChipsData.push({label: 'Brand:' + brandName});}
     FilterChipsData.push({label: 'Location:' + AppLocation.placeName});
-  
+    if(brandName !== "") {
+      FilterChipsData.push({label: 'Brands Associated :' + brandName});
+    }
     setFilterChipsData(FilterChipsData);
   }
 
