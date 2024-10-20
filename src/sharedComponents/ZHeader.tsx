@@ -1,6 +1,6 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Back, SearchFill} from '../assets/svg';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {styles} from '../themes';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import ZText from './ZText';
@@ -23,11 +23,23 @@ function ZHeader(props) {
     goNext,
     onNextPress,
     isSearch,
+    handleSearch,
     type,
   } = props;
   const navigation = useNavigation();
   const colors = useSelector((state: RootState) => state.theme.theme);
   const [showSearchBox,setShowSearchBox]=useState(false);
+  const [searchText,setSearchText]=useState("");
+
+
+  const searchInput = (e: any, mode: string) => {
+    if(e.nativeEvent.key == "Enter"){
+      handleSearch(searchText)
+    }
+    if(mode === 'ICON') {
+      handleSearch(searchText)
+    }
+  }
   const goBack = () => {
     if (navigation.canGoBack()) {
       navigation.goBack();
@@ -75,9 +87,12 @@ function ZHeader(props) {
             <InputField
               type='text'
               placeholder="Search"
+              onChangeText={searchKeyword => setSearchText(searchKeyword)}
+              defaultValue={searchText}
+              onKeyPress={(event) => searchInput(event, 'INPUT')}
             />
-            <InputSlot style={{paddingRight: 10}}>
-              <InputIcon as={SearchIcon} stroke="#000" />
+            <InputSlot style={{paddingRight: 10}} onTouchStart={(event) => searchInput(event, 'ICON')}>
+              <InputIcon as={SearchIcon} stroke="#000"  />
             </InputSlot>
           </Input>
         ) : (

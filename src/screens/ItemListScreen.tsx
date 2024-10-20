@@ -287,6 +287,7 @@ const ItemListScreen: React.FC<any> = ({
   pageTitle,
   isLoading,
   listType,
+  searchKeyword,
 }) => {
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [FilterChipsData, setFilterChipsData] = useState([]);
@@ -296,7 +297,6 @@ const ItemListScreen: React.FC<any> = ({
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   // console.log('=============user=============');
   // console.log(user);
-  // console.log('brandName ====> ', brandName)
 
 
   const {
@@ -320,9 +320,18 @@ const ItemListScreen: React.FC<any> = ({
   );
   async function set_FilterChipsData() {
     let FilterChipsData = [];
-    if(brandName !== "") 
-      {FilterChipsData.push({label: 'Brand:' + brandName});}
-    FilterChipsData.push({label: 'Location:' + AppLocation.placeName});
+      if(searchKeyword !== "") 
+      {
+        FilterChipsData.push({label: 'Search:' + searchKeyword});
+      }
+
+      if(brandName !== "") 
+      {
+        FilterChipsData.push({label: 'Brand:' + brandName});
+      }
+      
+
+      FilterChipsData.push({label: 'Location:' + AppLocation.placeName});
     // if(brandName !== "") {
     //   FilterChipsData.push({label: 'Brands Associated :' + brandName});
     // }
@@ -335,7 +344,7 @@ const ItemListScreen: React.FC<any> = ({
     // hasMore_Set(true);
 
      execute(listTypeData, {
-      keyWord: brandName,
+      keyWord: searchKeyword !== "" ? searchKeyword : brandName,
       cityName: AppLocation.City,
       userId: user.userId,
       placeID: AppLocation.placeID,
