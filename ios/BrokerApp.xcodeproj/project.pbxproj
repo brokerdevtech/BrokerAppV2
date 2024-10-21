@@ -11,6 +11,8 @@
 		04B9F4AE21D048BD853F7464 /* Gilroy MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8C737AB26FBE4E628C40194D /* Gilroy MediumItalic.ttf */; };
 		091C00372CA28E1500230001 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 091C00362CA28E1500230001 /* GoogleService-Info.plist */; };
 		0922763C2CB2BDC4004A4E74 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0922763B2CB2BDC3004A4E74 /* Assets.xcassets */; };
+		09A91A282CC36FEA00429EF8 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 09A91A272CC36FEA00429EF8 /* main.jsbundle */; };
+		09A91A2A2CC378B500429EF8 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09A91A292CC378B500429EF8 /* Launch Screen.storyboard */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -57,6 +59,8 @@
 		091C00362CA28E1500230001 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0922763B2CB2BDC3004A4E74 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0922763D2CBA892F004A4E74 /* BrokerApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BrokerApp.entitlements; path = BrokerApp/BrokerApp.entitlements; sourceTree = "<group>"; };
+		09A91A272CC36FEA00429EF8 /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
+		09A91A292CC378B500429EF8 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		0A0FE20E8EA9F09F74412CED /* Pods-BrokerApp-BrokerAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BrokerApp-BrokerAppTests.debug.xcconfig"; path = "Target Support Files/Pods-BrokerApp-BrokerAppTests/Pods-BrokerApp-BrokerAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		0A1315034E5546BD99E22C53 /* Gilroy ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy ExtraBoldItalic.ttf"; path = "../assets/font/Gilroy ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		0E707A858D706A6E096E4509 /* Pods-BrokerApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BrokerApp.debug.xcconfig"; path = "Target Support Files/Pods-BrokerApp/Pods-BrokerApp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -140,6 +144,8 @@
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				E693FE0A6F9D45406D8A1325 /* PrivacyInfo.xcprivacy */,
+				09A91A272CC36FEA00429EF8 /* main.jsbundle */,
+				09A91A292CC378B500429EF8 /* Launch Screen.storyboard */,
 			);
 			name = BrokerApp;
 			sourceTree = "<group>";
@@ -324,6 +330,7 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				52533493C986C664D152FD10 /* PrivacyInfo.xcprivacy in Resources */,
 				3807C12E412346FE8E953D6F /* Gilroy Black.ttf in Resources */,
+				09A91A2A2CC378B500429EF8 /* Launch Screen.storyboard in Resources */,
 				413908239A7E485F81300706 /* Gilroy BlackItalic.ttf in Resources */,
 				36BD9F84960049F7A7A7C44B /* Gilroy Bold.ttf in Resources */,
 				675EEBEA587C4C59976C45F2 /* Gilroy BoldItalic.ttf in Resources */,
@@ -332,6 +339,7 @@
 				D9470C4DEF8149B9871CD846 /* Gilroy Heavy.ttf in Resources */,
 				527B804EC2854B2BBA95EAE5 /* Gilroy HeavyItalic.ttf in Resources */,
 				48BCEE04B8364C118ADAD98D /* Gilroy Light.ttf in Resources */,
+				09A91A282CC36FEA00429EF8 /* main.jsbundle in Resources */,
 				6A2332E485614FF8A23D0A90 /* Gilroy LightItalic.ttf in Resources */,
 				A4A4808B36484706ABC0B5BD /* Gilroy Medium.ttf in Resources */,
 				04B9F4AE21D048BD853F7464 /* Gilroy MediumItalic.ttf in Resources */,
@@ -364,7 +372,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=/Users/prashantvashisth/.nvm/versions/node/v18.17.0/bin/node\n";
+			shellScript = "export NODE_BINARY=/Users/prashantvashisth/.nvm/versions/node/v18.17.0/bin/node\n\n\n";
 		};
 		4A1FF075DA54490837BEB017 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
