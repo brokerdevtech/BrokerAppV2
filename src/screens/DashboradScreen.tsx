@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect} from 'react';
 import {
@@ -17,7 +18,7 @@ import {Grid, GridItem} from '@/components/ui/grid';
 import FastImage from '@d11/react-native-fast-image';
 import {imagesBucketcloudfrontPath} from '../config/constants';
 import ZText from '../sharedComponents/ZText';
-import { useApiRequest } from '@/src/hooks/useApiRequest';
+import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {fetchPodcastList} from '@/BrokerAppCore/services/new/podcastService';
 
 import TABCard from '../assets/svg/Tabicon/tab_card.svg';
@@ -36,7 +37,7 @@ import UserStories from '../components/story/UserStories';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
- 
+
   const {data, status, error, execute} = useApiRequest(fetchPodcastList);
   //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
   const cityToShow = 'Noida';
@@ -45,7 +46,6 @@ export default function DashboradScreen() {
   const callPodcastList = async () => {
     await execute(user.userId, 1, 4);
     //await footerExecute()
-    
   };
   const callmarList = async () => {
     const request = {pageNo: 1, pageSize: 10, cityName: cityToShow};
@@ -72,7 +72,7 @@ export default function DashboradScreen() {
     });
   };
 
-  const RenderPodcastItems = React.memo(({ item, index }) => {
+  const RenderPodcastItems = React.memo(({item, index}) => {
     return (
       <TouchableOpacity
         onPress={() => handleThumbnailTap(item, index)}
@@ -83,10 +83,9 @@ export default function DashboradScreen() {
           marginRight: 8,
           flexDirection: 'row',
           justifyContent: 'space-between',
-        }}
-      >
+        }}>
         <FastImage
-          source={{ uri: `${imagesBucketcloudfrontPath}${item.mediaThumbnail}` }}
+          source={{uri: `${imagesBucketcloudfrontPath}${item.mediaThumbnail}`}}
           style={{
             borderRadius: 8,
             width: '100%',
@@ -102,18 +101,16 @@ export default function DashboradScreen() {
             bottom: 0,
             justifyContent: 'flex-end',
             padding: 8,
-          }}
-        >
+          }}>
           <View>
             <ZText
               type="r14"
               style={{
                 color: 'white',
                 textShadowColor: 'rgba(0, 0, 0, 0.1)',
-                textShadowOffset: { width: 0, height: 2 },
+                textShadowOffset: {width: 0, height: 2},
                 textShadowRadius: 4,
-              }}
-            >
+              }}>
               {item.viewerCount} views
             </ZText>
           </View>
@@ -123,168 +120,174 @@ export default function DashboradScreen() {
   });
 
   return (
-    <SafeAreaView style={{flex:1}}>
-    <ScrollView style={styles.scrollView}>
-      <View>
-        <View style={styles.subHeaderSection}>
-          {/* <UserProfile /> */}
-          {/* <View style={{paddingHorizontal:15}}> */}
-          <UserStories />
-          {/* </View> */}
-          {marqueeText?.length > 0 && (
-            <MarqueeBanner
-              marqueeTextList={marqueeText.map(
-                (item: any) => item.marqueueText,
-              )}
-            />
-          )}
-        </View>
-        <Grid className="gap-3 p-4" _extra={{className: 'grid-cols-9'}} >
-          <GridItem
-            className="bg-background-50 p-2 rounded-md text-center"
-            _extra={{className: 'col-span-9'}}>
-            <ZText type={'R18'}>Find what you are looking for</ZText>
-          </GridItem>
-          <GridItem
-            className="bg-background-0 p-4 rounded-md text-center"
-            _extra={{className: 'col-span-3'}}>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('ItemListScreen', { listType: 'RealEstate' ,categoryId:1})
-              }>
+    <SafeAreaView style={{flex: 1}}>
+      <ScrollView style={styles.scrollView}>
+        <View>
+          <View style={styles.subHeaderSection}>
+            {/* <UserProfile /> */}
+            {/* <View style={{paddingHorizontal:15}}> */}
+            <UserStories />
+            {/* </View> */}
+            {marqueeText?.length > 0 && (
+              <MarqueeBanner
+                marqueeTextList={marqueeText.map(
+                  (item: any) => item.marqueueText,
+                )}
+              />
+            )}
+          </View>
+          <Grid className="gap-3 p-4" _extra={{className: 'grid-cols-9'}}>
+            <GridItem
+              className="bg-background-50 p-2 rounded-md text-center"
+              _extra={{className: 'col-span-9'}}>
+              <ZText type={'R18'}>Find what you are looking for</ZText>
+            </GridItem>
+            <GridItem
+              className="bg-background-0 p-4 rounded-md text-center"
+              _extra={{className: 'col-span-3'}}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('ItemListScreen', {
+                    listType: 'RealEstate',
+                    categoryId: 1,
+                  })
+                }>
+                <View style={styles.tabItemContainer}>
+                  <TABTravel />
+                  <ZText type={'R16'} style={styles.tabItemTitle}>
+                    Property
+                  </ZText>
+                </View>
+              </TouchableOpacity>
+            </GridItem>
+            <GridItem
+              className="bg-background-0 p-4 rounded-md text-center"
+              _extra={{className: 'col-span-3'}}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('ItemListScreen', {
+                    listType: 'Car',
+                    categoryId: 2,
+                  })
+                }>
+                <View style={styles.tabItemContainer}>
+                  <TABCard />
+                  <ZText type={'R16'} style={styles.tabItemTitle}>
+                    Car
+                  </ZText>
+                </View>
+              </TouchableOpacity>
+            </GridItem>
+            <GridItem
+              className="bg-background-0 p-4 rounded-md text-center"
+              _extra={{className: 'col-span-3'}}>
+              <View style={styles.tabItemContainer}>
+                <TABLoan />
+                <ZText type={'R16'} style={styles.tabItemTitle}>
+                  Loan
+                </ZText>
+              </View>
+            </GridItem>
+            <GridItem
+              className="bg-background-0 p-4 rounded-md text-center"
+              _extra={{className: 'col-span-3'}}>
+              <View style={styles.tabItemContainer}>
+                <TABInsurance />
+                <ZText type={'R16'} style={styles.tabItemTitle}>
+                  Insurance
+                </ZText>
+              </View>
+            </GridItem>
+            <GridItem
+              className="bg-background-0 p-4 rounded-md text-center"
+              _extra={{className: 'col-span-3'}}>
               <View style={styles.tabItemContainer}>
                 <TABTravel />
                 <ZText type={'R16'} style={styles.tabItemTitle}>
-                  Property
+                  Travel
                 </ZText>
               </View>
-            </TouchableOpacity>
-          </GridItem>
-          <GridItem
-            className="bg-background-0 p-4 rounded-md text-center"
-            _extra={{className: 'col-span-3'}}>
-        <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('ItemListScreen', {listType: 'Car',categoryId:2})
-              }>
+            </GridItem>
+            <GridItem
+              className="bg-background-0 p-4 rounded-md text-center"
+              _extra={{className: 'col-span-3'}}>
               <View style={styles.tabItemContainer}>
-                <TABCard />
+                <TABWealth />
                 <ZText type={'R16'} style={styles.tabItemTitle}>
-                  Car
+                  Wealth
                 </ZText>
               </View>
-            </TouchableOpacity>
-          </GridItem>
-          <GridItem
-            className="bg-background-0 p-4 rounded-md text-center"
-            _extra={{className: 'col-span-3'}}>
-            <View style={styles.tabItemContainer}>
-              <TABLoan />
-              <ZText type={'R16'} style={styles.tabItemTitle}>
-                Loan
+            </GridItem>
+          </Grid>
+          <ProductSection
+            heading={'Newly Launch'}
+            background={'#FFFFFF'}
+            endpoint={`NewlyLaunch`}
+            isShowAll={false}
+            request={{pageNo: 1, pageSize: 10, cityName: AppLocation.City}}
+          />
+          <ProductSection
+            heading={'New In Property'}
+            background={'#F7F8FA'}
+            endpoint={`Newin`}
+            isShowAll={true}
+            request={{
+              pageNo: 1,
+              pageSize: 10,
+              cityName: AppLocation.City,
+              categoryId: 1,
+            }}
+          />
+          <ProductSection
+            heading={'New In Car'}
+            background={'#FFFFFF'}
+            endpoint={`Newin`}
+            isShowAll={true}
+            request={{
+              pageNo: 1,
+              pageSize: 10,
+              cityName: AppLocation.City,
+              categoryId: 2,
+            }}
+          />
+          {/* Podcast */}
+          <View style={styles.container}>
+            <HStack space="md" reversed={false} style={styles.heading}>
+              <ZText type={'R18'}>Podcast</ZText>
+              <ZText type={'R14'} style={styles.headingLink}>
+                See All
               </ZText>
-            </View>
-          </GridItem>
-          <GridItem
-            className="bg-background-0 p-4 rounded-md text-center"
-            _extra={{className: 'col-span-3'}}>
-            <View style={styles.tabItemContainer}>
-              <TABInsurance />
-              <ZText type={'R16'} style={styles.tabItemTitle}>
-                Insurance
-              </ZText>
-            </View>
-          </GridItem>
-          <GridItem
-            className="bg-background-0 p-4 rounded-md text-center"
-            _extra={{className: 'col-span-3'}}>
-            <View style={styles.tabItemContainer}>
-              <TABTravel />
-              <ZText type={'R16'} style={styles.tabItemTitle}>
-                Travel
-              </ZText>
-            </View>
-          </GridItem>
-          <GridItem
-            className="bg-background-0 p-4 rounded-md text-center"
-            _extra={{className: 'col-span-3'}}>
-            <View style={styles.tabItemContainer}>
-              <TABWealth />
-              <ZText type={'R16'} style={styles.tabItemTitle}>
-                Wealth
-              </ZText>
-            </View>
-          </GridItem>
-        </Grid>
-        <ProductSection
-          heading={'Newly Launch'}
-          background={'#FFFFFF'}
-          endpoint={`NewlyLaunch`}
-          isShowAll={false}
-          request={{pageNo: 1, pageSize: 10, cityName: AppLocation.City}}
-        />
-        <ProductSection
-          heading={'New In Property'}
-          background={'#F7F8FA'}
-          endpoint={`Newin`}
-          isShowAll={true}
-          request={{
-            pageNo: 1,
-            pageSize: 10,
-            cityName: AppLocation.City,
-            categoryId: 1,
-          }}
-        />
-        <ProductSection
-          heading={'New In Car'}
-          background={'#FFFFFF'}
-          endpoint={`Newin`}
-          isShowAll={true}
-          request={{
-            pageNo: 1,
-            pageSize: 10,
-            cityName: AppLocation.City,
-            categoryId: 2,
-          }}
-        />
-        {/* Podcast */}
-        <View style={styles.container}>
-          <HStack space="md" reversed={false} style={styles.heading}>
-            <ZText type={'R18'}>Podcast</ZText>
-            <ZText type={'R14'} style={styles.headingLink}>
-              See All
-            </ZText>
-          </HStack>
-          <HStack space="md" reversed={false} style={styles.list}>
-            <FlatList
-              data={data}
-              keyExtractor={item => item.podcastId.toString()}
-              renderItem={({ item, index }) => (
-                <RenderPodcastItems item={item} index={index} />
-              )}
-              initialNumToRender={3}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-             // onEndReachedThreshold={0.8}
-              // onEndReached={fetchMoreData}
-            />
-          </HStack>
+            </HStack>
+            <HStack space="md" reversed={false} style={styles.list}>
+              <FlatList
+                data={data}
+                keyExtractor={item => item.podcastId.toString()}
+                renderItem={({item, index}) => (
+                  <RenderPodcastItems item={item} index={index} />
+                )}
+                initialNumToRender={3}
+                showsHorizontalScrollIndicator={false}
+                horizontal
+                // onEndReachedThreshold={0.8}
+                // onEndReached={fetchMoreData}
+              />
+            </HStack>
+          </View>
+          <BrandSection
+            heading={'Brands Associated'}
+            background={'#FFFFFF'}
+            endpoint={`BrandAssociate`}
+            isShowAll={true}
+            request={{
+              pageNo: 1,
+              pageSize: 10,
+              cityName: AppLocation.City,
+              categoryId: 2,
+            }}
+          />
+          <Footer />
         </View>
-        <BrandSection
-          heading={'Brands Associated'}
-          background={'#FFFFFF'}
-          endpoint={`BrandAssociate`}
-          isShowAll={true}
-          request={{
-            pageNo: 1,
-            pageSize: 10,
-            cityName: AppLocation.City,
-            categoryId: 2,
-          }}
-        />
-        <Footer />
-      </View>
-    </ScrollView>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -300,7 +303,6 @@ const styles = StyleSheet.create({
   tabContainer: {
     backgroundColor: '#F7F8FA',
     margin: 10,
-    
   },
   tabItemTitle: {
     marginTop: 10,
@@ -310,19 +312,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignContent: 'center',
-
   },
   container: {
     flexDirection: 'column',
     margin: 20,
-    marginRight:10
+    marginRight: 10,
   },
   heading: {
     flexDirection: 'row',
     flex: 1,
     justifyContent: 'space-between',
     marginBottom: 10,
-
   },
   headingTitle: {
     color: '#000',

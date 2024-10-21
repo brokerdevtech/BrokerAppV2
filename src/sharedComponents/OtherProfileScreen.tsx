@@ -262,8 +262,6 @@ const OtherProfileScreen: React.FC = ({
     }
   };
   const chatProfilePress = async () => {
-
-
     const members = [user.userId.toString(), userId.toString()];
 
     // const chatClient = StreamChat.getInstance(chatApiKey);
@@ -507,7 +505,7 @@ const OtherProfileScreen: React.FC = ({
             permissionsArray={userPermissions}
             tagNames={[Icon]}
             onPress={chatProfilePress}>
-            <Icon as={Chat_icon} size='xxl' />
+            <Icon as={Chat_icon} size="xxl" />
             {/* <Chat height="30" width="30" color={colors.primary} /> */}
             {/* <Ionicons
               name="chatbubble-outline"
@@ -524,28 +522,28 @@ const OtherProfileScreen: React.FC = ({
   const dummyData = [{key: 'dummy'}];
   const handleCategoryPress = screen => {
     navigation.navigate(screen.navigationScreen, {
-      listType:screen.listType,
-      categoryId:screen.categoryId,
+      listType: screen.listType,
+      categoryId: screen.categoryId,
       userId: user.userId,
     });
   };
- 
+
   const categories = [
     {
-      name: 'Propety',
+      name: 'Property',
 
       navigationScreen: 'MyItemListScreen',
       postCount: ProfileData?.realEstatePostCount,
-      listType:'RealEstate',
-      categoryId:'1'
+      listType: 'RealEstate',
+      categoryId: '1',
     },
 
     {
       name: 'Cars',
       navigationScreen: 'MyItemListScreen',
       postCount: ProfileData?.carPostCount,
-        listType:'Car',
-      categoryId:'2'
+      listType: 'Car',
+      categoryId: '2',
     },
   ];
   const [TabSelect, setTabSelect] = useState(0);
@@ -593,7 +591,7 @@ const OtherProfileScreen: React.FC = ({
                   <Text style={localStyles.categoryText}>
                     {category.postCount}
                   </Text>
-                  <Icon as={ChevronRightIcon} size='xl' color={Color.primary} />
+                  <Icon as={ChevronRightIcon} size="xl" color={Color.primary} />
                 </View>
               </TouchableOpacity>
             ))}

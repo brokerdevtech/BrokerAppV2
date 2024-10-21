@@ -1,69 +1,80 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, { useEffect, useRef, useState } from 'react';
-import {View, Text, ScrollView, StyleSheet, FlatList, Image, TouchableOpacity, Share } from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  Share,
+} from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
 import CustomHeader from '../sharedComponents/CustomHeader';
 import ZText from '../sharedComponents/ZText';
 
-import ShortingIcon from '../assets/svg/icons/sorting.svg' 
+import ShortingIcon from '../assets/svg/icons/sorting.svg';
 import FilterIcon from '../assets/svg/icons/filters.svg';
-import ArrowLeftIcon from '../assets/svg/icons/arrow-left.svg' 
-import SearchIcon from '../assets/svg/icons/search.svg' 
+import ArrowLeftIcon from '../assets/svg/icons/arrow-left.svg';
+import SearchIcon from '../assets/svg/icons/search.svg';
 import {HStack} from '@/components/ui/hstack';
 import UserProfile from '../sharedComponents/profile/UserProfile';
-import {Card_check_icon, Heart_icon, Location_Icon,Calender_Icon,
+import {
+  Card_check_icon,
+  Heart_icon,
+  Location_Icon,
+  Calender_Icon,
   Chat_Icon,
   Telephone_Icon,
-  Whatsapp_Icon, Share_Icon} from '../assets/svg';
-import { imagesBucketcloudfrontPath } from '../config/constants';
+  Whatsapp_Icon,
+  Share_Icon,
+} from '../assets/svg';
+import {imagesBucketcloudfrontPath} from '../config/constants';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
-import { fetchPostByID } from '@/BrokerAppCore/services/new/dashboardService';
+import {fetchPostByID} from '@/BrokerAppCore/services/new/dashboardService';
 import {Icon, ShareIcon} from '../../components/ui/icon';
-import { Divider } from '@/components/ui/divider';
+import {Divider} from '@/components/ui/divider';
 import {VStack} from '@/components/ui/vstack';
 import MediaGallery from '../sharedComponents/MediaGallery';
 import PostActions from '../sharedComponents/PostActions';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 
-const propertyDetails = (data: any,user:any) => {
+const propertyDetails = (data: any, user: any) => {
   const generateLink = async () => {
-  
     console.log(data);
-     try {
-       const response = await fetch(
-         `https://tinyurl.com/api-create.php?url=${encodeURIComponent(
-           `brokerapp://ItemDetailScreen/${data?.postId}/Post`,
-         )}`,
-       );
-       const text = await response.text();
-       console.log('TinyURL Response:', text);
-       return text;
-     } catch (error) {}
-   };
+    try {
+      const response = await fetch(
+        `https://tinyurl.com/api-create.php?url=${encodeURIComponent(
+          `brokerapp://ItemDetailScreen/${data?.postId}/Post`,
+        )}`,
+      );
+      const text = await response.text();
+      console.log('TinyURL Response:', text);
+      return text;
+    } catch (error) {}
+  };
 
-   const sharePost = async () => {
-
- 
-     const getLink = await generateLink();
-     console.log('Generated Link:', getLink);
-     try {
-       await Share.share({
-         message: getLink,
-       });
-     } catch (error) {
-     } 
-   };
+  const sharePost = async () => {
+    const getLink = await generateLink();
+    console.log('Generated Link:', getLink);
+    try {
+      await Share.share({
+        message: getLink,
+      });
+    } catch (error) {}
+  };
   return (
-          <>
-              {data.isBrokerAppVerified && (
+    <>
+      {data.isBrokerAppVerified && (
         <View style={styles.iconContainer}>
           <View style={styles.checkIcon}>
             <Card_check_icon />
           </View>
         </View>
       )}
-<PostActions
+      <PostActions
         item={data}
         User={user}
         listTypeData={'RealEstate'}
@@ -71,29 +82,25 @@ const propertyDetails = (data: any,user:any) => {
           console.log(newCount);
         }}
       />
-                {/* Car Details */}
-                <VStack space="md" style={styles.detailsContainer}>
-                  <ZText type={'R16'}>
-                  {'\u20B9'} {data?.price}
-                  </ZText>
-                  <View style={styles.locationContainer}>
-                     {data.location.cityName && (
-                      <>
-                        <Icon as={Location_Icon} />
-                        <ZText type={'R16'}>
-                          {data?.location.placeName}
-                        </ZText>
-                      </>
-                    )}
-                  </View>
-                  
-                  <ZText type={'R16'} >
-                    {data.title}
-                  </ZText>
-                </VStack>
-                {/* <Divider className="my-0.5"/> */}
-                <View style={styles.detailsContainer}>
-                    {/* <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
+      {/* Car Details */}
+      <VStack space="md" style={styles.detailsContainer}>
+        <ZText type={'R16'}>
+          {'\u20B9'} {data?.price}
+        </ZText>
+        <View style={styles.locationContainer}>
+          {data.location.cityName && (
+            <>
+              <Icon as={Location_Icon} />
+              <ZText type={'R16'}>{data?.location.placeName}</ZText>
+            </>
+          )}
+        </View>
+
+        <ZText type={'R16'}>{data.title}</ZText>
+      </VStack>
+      {/* <Divider className="my-0.5"/> */}
+      <View style={styles.detailsContainer}>
+        {/* <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
                         <VStack>
                             <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Telephone_Icon} size={'xxl'} /></View>
                             <View style={{paddingVertical: 10}}>
@@ -119,96 +126,143 @@ const propertyDetails = (data: any,user:any) => {
                             </View>
                         </VStack>
                     </HStack>  */}
-                    <VStack space="md">
-                       <Divider className="my-0.5"/>
-                        <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Project</ZText></View>
-                          <View><ZText type={'R14'}>{data.projectName}</ZText></View>
-                        </HStack>
-                       <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Developed By</ZText></View>
-                          <View><ZText type={'R14'}>{data.developerName}</ZText></View>
-                        </HStack>
-                       <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Construction Status</ZText></View>
-                          <View><ZText type={'R14'}>{data.constructionStatus}</ZText></View>
-                        </HStack>
-                       <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Bedroom</ZText></View>
-                          <View><ZText type={'R14'}>{data.bedroomType}</ZText></View>
-                        </HStack>
-                       <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Balcony</ZText></View>
-                          <View><ZText type={'R14'}>{data.balconyType}</ZText></View>
-                        </HStack>
-                       <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Amenities</ZText></View>
-                          <View><ZText type={'R14'}>{data.postPropertyAmenities.map((item: PropertyAmenities) => item.propertyAmenity).join(',')}</ZText></View>
-                        </HStack>
-                       <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Property Status</ZText></View>
-                          <View><ZText type={'R14'}>{data.propertyStatus}</ZText></View>
-                        </HStack>
-                       <Divider className="my-0.5"/>
-                       <VStack space="md">
-                          <View>
-                             <ZText type={'R18'}>Nearby Facilities</ZText>
-                          </View>
-                          <HStack>
+        <VStack space="md">
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Project</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.projectName}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Developed By</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.developerName}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Construction Status</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.constructionStatus}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Bedroom</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.bedroomType}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Balcony</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.balconyType}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Amenities</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>
+                {data.postPropertyAmenities
+                  .map((item: PropertyAmenities) => item.propertyAmenity)
+                  .join(',')}
+              </ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Property Status</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.propertyStatus}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <VStack space="md">
+            <View>
+              <ZText type={'R18'}>Nearby Facilities</ZText>
+            </View>
+            <HStack></HStack>
+          </VStack>
+        </VStack>
+      </View>
+    </>
+  );
+};
 
-                          </HStack>
-                       </VStack>
-                    </VStack> 
-                </View>
-              </>
-  )
-}
-
-const carDetails = (data: any,user:any) => {
+const carDetails = (data: any, user: any) => {
   const generateLink = async () => {
-  
     // console.log(data);
-     try {
-       const response = await fetch(
-         `https://tinyurl.com/api-create.php?url=${encodeURIComponent(
-           `brokerapp://ItemDetailScreen/${data?.postId}/Car/Post`,
-         )}`,
-       );
-       const text = await response.text();
-       console.log('TinyURL Response:', text);
-       return text;
-     } catch (error) {}
-   };
+    try {
+      const response = await fetch(
+        `https://tinyurl.com/api-create.php?url=${encodeURIComponent(
+          `brokerapp://ItemDetailScreen/${data?.postId}/Car/Post`,
+        )}`,
+      );
+      const text = await response.text();
+      console.log('TinyURL Response:', text);
+      return text;
+    } catch (error) {}
+  };
 
-   const sharePost = async () => {
-
- 
-     const getLink = await generateLink();
-     console.log('Generated Link:', getLink);
-     try {
-       await Share.share({
-         message: getLink,
-       });
-     } catch (error) {
-     } 
-   };
+  const sharePost = async () => {
+    const getLink = await generateLink();
+    console.log('Generated Link:', getLink);
+    try {
+      await Share.share({
+        message: getLink,
+      });
+    } catch (error) {}
+  };
   return (
-          <>
-                {/* Check and Heart Icons */}
-                {data.isBrokerAppVerified && (
+    <>
+      {/* Check and Heart Icons */}
+      {data.isBrokerAppVerified && (
         <View style={styles.iconContainer}>
           <View style={styles.checkIcon}>
             <Card_check_icon />
           </View>
         </View>
       )}
-<PostActions
+      <PostActions
         item={data}
         User={user}
         listTypeData={'Car'}
@@ -216,29 +270,25 @@ const carDetails = (data: any,user:any) => {
           console.log(newCount);
         }}
       />
-                {/* Car Details */}
-                <VStack space="md" style={styles.detailsContainer}>
-                  <ZText type={'R16'}>
-                  {'\u20B9'} {data?.price}
-                  </ZText>
-                  <View style={styles.locationContainer}>
-                     {data.location.cityName && (
-                      <>
-                        <Icon as={Location_Icon} />
-                        <ZText type={'R16'}>
-                          {data?.location.placeName}
-                        </ZText>
-                      </>
-                    )}
-                  </View>
-                  
-                  <ZText type={'R16'} >
-                    {data.title}
-                  </ZText>
-                </VStack>
-                {/* <Divider className="my-0.5"/> */}
-                <View style={styles.detailsContainer}>
-                    {/* <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
+      {/* Car Details */}
+      <VStack space="md" style={styles.detailsContainer}>
+        <ZText type={'R16'}>
+          {'\u20B9'} {data?.price}
+        </ZText>
+        <View style={styles.locationContainer}>
+          {data.location.cityName && (
+            <>
+              <Icon as={Location_Icon} />
+              <ZText type={'R16'}>{data?.location.placeName}</ZText>
+            </>
+          )}
+        </View>
+
+        <ZText type={'R16'}>{data.title}</ZText>
+      </VStack>
+      {/* <Divider className="my-0.5"/> */}
+      <View style={styles.detailsContainer}>
+        {/* <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
                         <VStack>
                             <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Telephone_Icon} size={'xxl'} /></View>
                             <View style={{paddingVertical: 10}}>
@@ -264,179 +314,292 @@ const carDetails = (data: any,user:any) => {
                             </View>
                         </VStack>
                     </HStack>  */}
-                    <VStack space="md">
-                       <Divider className="my-0.5"/>
-                        <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Brand Name</ZText></View>
-                          <View><ZText type={'R14'}>{data.brand}</ZText></View>
-                        </HStack>
-                       <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Model Name</ZText></View>
-                          <View><ZText type={'R14'}>{data.model}</ZText></View>
-                        </HStack>
-                       <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Fuel Type</ZText></View>
-                          <View><ZText type={'R14'}>{data.fuelType}</ZText></View>
-                        </HStack>
-                       <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Color</ZText></View>
-                          <View><ZText type={'R14'}>{data.color}</ZText></View>
-                        </HStack>
-                       <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
+        <VStack space="md">
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Brand Name</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.brand}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Model Name</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.model}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Fuel Type</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.fuelType}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Color</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.color}</ZText>
+            </View>
+          </HStack>
+          {/* <Divider className="my-0.5" /> */}
+          {/* <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
                           <View><ZText type={'R14'}>Balcony</ZText></View>
                           <View><ZText type={'R14'}>{data.balconyType}</ZText></View>
-                        </HStack>
-                       <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Transmission</ZText></View>
-                          <View><ZText type={'R14'}>{data.transmission}</ZText></View>
-                        </HStack>
-                        <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Ownership</ZText></View>
-                          <View><ZText type={'R14'}>{data.ownership}</ZText></View>
-                        </HStack> 
-                        <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Registration State</ZText></View>
-                          <View><ZText type={'R14'}>{data.registrationState}</ZText></View>
-                        </HStack> 
-                        <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Seating Capacity</ZText></View>
-                          <View><ZText type={'R14'}>{data.seatingCapacity}</ZText></View>
-                        </HStack> 
-                        <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Insurance Status</ZText></View>
-                          <View><ZText type={'R14'}>{data.insuranceStatus}</ZText></View>
-                        </HStack> 
-                        <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Registration Year</ZText></View>
-                          <View><ZText type={'R14'}>{data.registrationYear}</ZText></View>
-                        </HStack> 
-  
-                       <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Mileage</ZText></View>
-                          <View><ZText type={'R14'}>{data.mileage}</ZText></View>
-                        </HStack>
-                        <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Kms Driven</ZText></View>
-                          <View><ZText type={'R14'}>{data.kmsDriven}</ZText></View>
-                        </HStack>
-                        <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Engine Displacement</ZText></View>
-                          <View><ZText type={'R14'}>{data.engineDisplacement}</ZText></View>
-                        </HStack>
-                       <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Year Of Manufacture</ZText></View>
-                          <View><ZText type={'R14'}>{data.yearOfManufacture}</ZText></View>
-                        </HStack>
-                        <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Car Engine Power</ZText></View>
-                          <View><ZText type={'R14'}>{data.carEnginePower}</ZText></View>
-                        </HStack>
-                        <Divider className="my-0.5"/>
-                       <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Number Of Airbags</ZText></View>
-                          <View><ZText type={'R14'}>{data.numberOfAirbags}</ZText></View>
-                        </HStack>
-                    </VStack> 
-                </View>
-              </>
-  )
-}
+                        </HStack> */}
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Transmission</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.transmission}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Ownership</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.ownership}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Registration State</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.registrationState}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Seating Capacity</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.seatingCapacity}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Insurance Status</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.insuranceStatus}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Registration Year</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.registrationYear}</ZText>
+            </View>
+          </HStack>
 
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Mileage</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.mileage}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Kms Driven</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.kmsDriven}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Engine Displacement</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.engineDisplacement}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Year Of Manufacture</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.yearOfManufacture}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Car Engine Power</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.carEnginePower}</ZText>
+            </View>
+          </HStack>
+          <Divider className="my-0.5" />
+          <HStack
+            space="md"
+            reversed={false}
+            style={{justifyContent: 'space-between', paddingVertical: 10}}>
+            <View>
+              <ZText type={'R14'}>Number Of Airbags</ZText>
+            </View>
+            <View>
+              <ZText type={'R14'}>{data.numberOfAirbags}</ZText>
+            </View>
+          </HStack>
+        </VStack>
+      </View>
+    </>
+  );
+};
 
-const ItemDetailScreen: React.FC<any> = ({ route, navigation }) => {
-
+const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
   const MediaGalleryRef = useRef(null);
   const {data, status, error, execute} = useApiRequest(fetchPostByID);
-  
-  const callItemDetail = async () => {
-    console.log(route ,"route")
-    await execute(route.params.postType, route.params.postId);
 
+  const callItemDetail = async () => {
+    console.log(route, 'route');
+    await execute(route.params.postType, route.params.postId);
   };
 
   useEffect(() => {
     callItemDetail();
   }, []);
 
-
   return (
     <BottomSheetModalProvider>
-    <View style={styles.listContainer}>
-      <ScrollView >
-        <View style={styles.headerContainer}>
-             <View style={styles.header}>
-                 <View style={styles.IconButton}>
-                    <ArrowLeftIcon onPress={() => navigation.goBack()} />
-                    <ZText type={'R18'} >{data?.title}</ZText>
-                 </View>
-                 {/* <View style={styles.IconButton}>
+      <View style={styles.listContainer}>
+        <ScrollView>
+          <View style={styles.headerContainer}>
+            <View style={styles.header}>
+              <View style={styles.IconButton}>
+                <ArrowLeftIcon onPress={() => navigation.goBack()} />
+                <ZText type={'R18'}>{data?.title}</ZText>
+              </View>
+              {/* <View style={styles.IconButton}>
                     <Share_Icon />
                  </View> */}
-             </View>
-        </View>
-        <View>
-          <HStack space="md" reversed={false} style={{paddingHorizontal: 20}}>
-            {/* Start */}
-            {data !== null && (
-               <View style={styles.cardContainer}>
-                  <MediaGallery ref={MediaGalleryRef} mediaItems={data?.postMedia} paused={false}/>
-                  {route.params.postType === 'Post' ? propertyDetails(data,user) : carDetails(data,user)}
-               </View>    
-            )}
-            {/* End */}
-          </HStack>
-        </View>
-      </ScrollView>
-    </View></BottomSheetModalProvider>
+            </View>
+          </View>
+          <View>
+            <HStack space="md" reversed={false} style={{paddingHorizontal: 20}}>
+              {/* Start */}
+              {data !== null && (
+                <View style={styles.cardContainer}>
+                  <MediaGallery
+                    ref={MediaGalleryRef}
+                    mediaItems={data?.postMedia}
+                    paused={false}
+                  />
+                  {route.params.postType === 'Post'
+                    ? propertyDetails(data, user)
+                    : carDetails(data, user)}
+                </View>
+              )}
+              {/* End */}
+            </HStack>
+          </View>
+        </ScrollView>
+      </View>
+    </BottomSheetModalProvider>
   );
-}
-
+};
 
 const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: '#FFF',
     paddingVertical: 10,
-   
   },
   header: {
-   justifyContent: "space-between",
-   flexDirection: 'row',
-   paddingHorizontal: 20,
-   paddingVertical: 20,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
   listContainer: {
     backgroundColor: '#FFF',
-    flex: 1
+    flex: 1,
   },
-  
+
   footer: {
     justifyContent: 'space-between',
     flexDirection: 'row',
-    height: 80,    
+    height: 80,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   IconButton: {
     flexDirection: 'row',
-    gap: 12
+    gap: 12,
   },
   footerContainer: {
     backgroundColor: '#FFF',
@@ -489,7 +652,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   cardContainer: {
-   width:"100%",
+    width: '100%',
     //borderRadius: 12,
     backgroundColor: '#FFF',
     // margin: 10,
@@ -511,7 +674,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     position: 'absolute',
     top: 8,
-   // left: 8,
+    // left: 8,
     right: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -550,8 +713,6 @@ const styles = StyleSheet.create({
     color: '#000',
     marginTop: 4,
   },
-
 });
-
 
 export default ItemDetailScreen;
