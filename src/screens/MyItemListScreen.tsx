@@ -130,6 +130,7 @@ const ProductItem =  React.memo(
         </View>
       )}
 
+<View style={{marginLeft:20}}>
       <PostActions
         item={item}
         User={User}
@@ -137,7 +138,7 @@ const ProductItem =  React.memo(
         onUpdateLikeCount={newCount => {
           console.log(newCount);
         }}
-      />
+      /></View>
       {/* Car Details */}
       <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>
       <VStack space="md" style={styles.detailsContainer}>
@@ -247,6 +248,7 @@ const MyItemListScreen: React.FC<any> = ({
   isLoading,
   listType,
 }) => {
+  console.log(user);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
@@ -371,12 +373,27 @@ const MyItemListScreen: React.FC<any> = ({
 };
 
 const styles = StyleSheet.create({
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#555',  // Use a subtle color to match your design
+    textAlign: 'center',
+  },
+  loader: {
+    marginVertical: 20,
+  },
   headerContainer: {
     backgroundColor: '#FFF',
     paddingVertical: 10,
   },
   header: {
     justifyContent: 'space-between',
+  
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingVertical: 20,
@@ -449,12 +466,11 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   cardContainer: {
-    width: 375,
+    //width: '100%',
 
     borderRadius: 12,
     backgroundColor: '#FFF',
-    margin: 20,
-    paddingBottom: 10,
+   margin:20,
     shadowColor: 'rgba(0, 0, 0, 0.8)',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 1,
@@ -487,7 +503,8 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     paddingLeft: 20,
-    paddingVertical: 10,
+    paddingBottom: 15,
+     paddingTop: 15,
   },
   price: {
     fontSize: 16,

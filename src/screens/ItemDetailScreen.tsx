@@ -23,9 +23,10 @@ import {Icon, ShareIcon} from '../../components/ui/icon';
 import { Divider } from '@/components/ui/divider';
 import {VStack} from '@/components/ui/vstack';
 import MediaGallery from '../sharedComponents/MediaGallery';
+import PostActions from '../sharedComponents/PostActions';
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 
-
-const propertyDetails = (data: any) => {
+const propertyDetails = (data: any,user:any) => {
   const generateLink = async () => {
   
     console.log(data);
@@ -55,19 +56,25 @@ const propertyDetails = (data: any) => {
    };
   return (
           <>
-                <View style={styles.iconContainer}>
-                  <View style={styles.checkIcon}>
-                    <Card_check_icon />
-                  </View>
-                  <TouchableOpacity style={{}}>
-                    <Heart_icon accessible={true} fontSize={25} />
-                  </TouchableOpacity>
-                </View>
-
+              {data.isBrokerAppVerified && (
+        <View style={styles.iconContainer}>
+          <View style={styles.checkIcon}>
+            <Card_check_icon />
+          </View>
+        </View>
+      )}
+<PostActions
+        item={data}
+        User={user}
+        listTypeData={'RealEstate'}
+        onUpdateLikeCount={newCount => {
+          console.log(newCount);
+        }}
+      />
                 {/* Car Details */}
                 <VStack space="md" style={styles.detailsContainer}>
                   <ZText type={'R16'}>
-                    $ {data?.price}
+                  {'\u20B9'} {data?.price}
                   </ZText>
                   <View style={styles.locationContainer}>
                      {data.location.cityName && (
@@ -84,9 +91,9 @@ const propertyDetails = (data: any) => {
                     {data.title}
                   </ZText>
                 </VStack>
-                <Divider className="my-0.5"/>
+                {/* <Divider className="my-0.5"/> */}
                 <View style={styles.detailsContainer}>
-                    <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
+                    {/* <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
                         <VStack>
                             <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Telephone_Icon} size={'xxl'} /></View>
                             <View style={{paddingVertical: 10}}>
@@ -111,7 +118,7 @@ const propertyDetails = (data: any) => {
                                 <ZText type={'R14'}>{data.buyers} Have Buyer</ZText>
                             </View>
                         </VStack>
-                    </HStack> 
+                    </HStack>  */}
                     <VStack space="md">
                        <Divider className="my-0.5"/>
                         <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
@@ -163,7 +170,7 @@ const propertyDetails = (data: any) => {
   )
 }
 
-const carDetails = (data: any) => {
+const carDetails = (data: any,user:any) => {
   const generateLink = async () => {
   
     // console.log(data);
@@ -194,19 +201,25 @@ const carDetails = (data: any) => {
   return (
           <>
                 {/* Check and Heart Icons */}
-                <View style={styles.iconContainer}>
-                  <View style={styles.checkIcon}>
-                    <Card_check_icon />
-                  </View>
-                  <TouchableOpacity style={{}}>
-                    <Heart_icon accessible={true} fontSize={25} />
-                  </TouchableOpacity>
-                </View>
-
+                {data.isBrokerAppVerified && (
+        <View style={styles.iconContainer}>
+          <View style={styles.checkIcon}>
+            <Card_check_icon />
+          </View>
+        </View>
+      )}
+<PostActions
+        item={data}
+        User={user}
+        listTypeData={'Car'}
+        onUpdateLikeCount={newCount => {
+          console.log(newCount);
+        }}
+      />
                 {/* Car Details */}
                 <VStack space="md" style={styles.detailsContainer}>
                   <ZText type={'R16'}>
-                    $ {data?.price}
+                  {'\u20B9'} {data?.price}
                   </ZText>
                   <View style={styles.locationContainer}>
                      {data.location.cityName && (
@@ -223,9 +236,9 @@ const carDetails = (data: any) => {
                     {data.title}
                   </ZText>
                 </VStack>
-                <Divider className="my-0.5"/>
+                {/* <Divider className="my-0.5"/> */}
                 <View style={styles.detailsContainer}>
-                    <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
+                    {/* <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
                         <VStack>
                             <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Telephone_Icon} size={'xxl'} /></View>
                             <View style={{paddingVertical: 10}}>
@@ -250,7 +263,7 @@ const carDetails = (data: any) => {
                                 <ZText type={'R14'}>{data.buyers} Have Buyer</ZText>
                             </View>
                         </VStack>
-                    </HStack> 
+                    </HStack>  */}
                     <VStack space="md">
                        <Divider className="my-0.5"/>
                         <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
@@ -364,6 +377,7 @@ const ItemDetailScreen: React.FC<any> = ({ route, navigation }) => {
 
 
   return (
+    <BottomSheetModalProvider>
     <View style={styles.listContainer}>
       <ScrollView >
         <View style={styles.headerContainer}>
@@ -378,19 +392,19 @@ const ItemDetailScreen: React.FC<any> = ({ route, navigation }) => {
              </View>
         </View>
         <View>
-          <HStack space="md" reversed={false} style={{paddingHorizontal: 10}}>
+          <HStack space="md" reversed={false} style={{paddingHorizontal: 20}}>
             {/* Start */}
             {data !== null && (
                <View style={styles.cardContainer}>
                   <MediaGallery ref={MediaGalleryRef} mediaItems={data?.postMedia} paused={false}/>
-                  {route.params.postType === 'Post' ? propertyDetails(data) : carDetails(data)}
+                  {route.params.postType === 'Post' ? propertyDetails(data,user) : carDetails(data,user)}
                </View>    
             )}
             {/* End */}
           </HStack>
         </View>
       </ScrollView>
-    </View>
+    </View></BottomSheetModalProvider>
   );
 }
 
@@ -475,11 +489,11 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   cardContainer: {
-    width: 375,
+   width:"100%",
     //borderRadius: 12,
     backgroundColor: '#FFF',
-    margin: 10,
-    paddingBottom: 10,
+    // margin: 10,
+    // paddingBottom: 10,
     //shadowColor: 'rgba(0, 0, 0, 0.8)',
     //shadowOffset: {width: 0, height: 4},
     //shadowOpacity: 1,
@@ -497,7 +511,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     position: 'absolute',
     top: 8,
-    left: 8,
+   // left: 8,
     right: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -159,7 +159,7 @@ if (brokersstatus === 200 && brokersdata?.data?.records?.length > 0) {
   return (
     <View style={localStyles.container}>
       <View style={localStyles.storiesHeaderWrapper}>
-        <ZText type={'R18'} style={{ marginVertical: 5, marginLeft: 10 }} align={undefined} color={undefined} children={undefined}>
+        <ZText type={'R18'} style={{ marginVertical: 5, marginLeft: 10 }} >
           Recommended Brokers
         </ZText>
       </View>
