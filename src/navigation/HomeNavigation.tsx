@@ -38,7 +38,7 @@ import CarPostPreview from '../screens/postImage/previewScreens/CarPostPreview';
 import PostLikeList from '../sharedComponents/PostLikeList';
 import PostCommentLikeList from '../sharedComponents/PostCommentLikeList';
 import PostCommentReplyLikeList from '../sharedComponents/PostCommentReplyLikeList';
-import { ActivityIndicator, Platform } from 'react-native';
+import {ActivityIndicator, Platform} from 'react-native';
 import MyItemListScreen from '../screens/MyItemListScreen';
 import PodcastLikeList from '../sharedComponents/PodcastLikeList';
 import PodcastViewList from '../sharedComponents/PodcastViewList';
@@ -46,7 +46,6 @@ import StoryLikeList from '../sharedComponents/StoryLikeList';
 import StoryViewList from '../sharedComponents/StoryViewList';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-
 
 const ChatPageStackLazy = () => (
   <Suspense fallback={<ActivityIndicator />}>
@@ -75,22 +74,20 @@ const HomeNavigation: React.FC = () => {
   return (
     // <SafeAreaView style={{flex:1}}>
     <OverlayProvider bottomInset={bottom} value={{style: streamChatTheme}}>
-      <Stack.Navigator  screenOptions={globalScreenOptions}>
+      <Stack.Navigator screenOptions={globalScreenOptions}>
         <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
           <Stack.Screen name="Home" component={AppDrawer} />
         </Stack.Group>
         <Stack.Screen
           options={{headerShown: false}}
           name="AppChat"
-          component={
-            ChatPageStackLazy
-            }
+          component={ChatPageStackLazy}
         />
-        {/* <Stack.Screen
+        <Stack.Screen
           options={{headerShown: false}}
           name="VideoReels"
           component={VideoCarousel}
-        /> */}
+        />
         {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         <Stack.Screen name="HomeTab" component={DashboradScreen} />
@@ -171,7 +168,7 @@ const HomeNavigation: React.FC = () => {
           component={CarPostPreview}
           options={{headerShown: false}}
         />
-            <Stack.Screen
+        <Stack.Screen
           name="GenericPostPreview"
           component={GenericPostPreview}
           options={{headerShown: false}}
@@ -186,7 +183,7 @@ const HomeNavigation: React.FC = () => {
           component={ItemListScreen}
           options={{headerShown: false}}
         />
-             <Stack.Screen
+        <Stack.Screen
           name="MyItemListScreen"
           component={MyItemListScreen}
           options={{headerShown: false}}
@@ -196,46 +193,43 @@ const HomeNavigation: React.FC = () => {
           component={ItemDetailScreen}
           options={{headerShown: false}}
         />
- <Stack.Screen
+        <Stack.Screen
           name="PostLikeList"
           component={PostLikeList}
           options={{headerShown: false}}
         />
- <Stack.Screen
+        <Stack.Screen
           name="PodcastLikeList"
           component={PodcastLikeList}
           options={{headerShown: false}}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="PodcastViewList"
           component={PodcastViewList}
           options={{headerShown: false}}
         />
-<Stack.Screen
+        <Stack.Screen
           name="PostCommentLikeList"
           component={PostCommentLikeList}
           options={{headerShown: false}}
         />
 
-
-<Stack.Screen
+        <Stack.Screen
           name="PostCommentReplyLikeList"
           component={PostCommentReplyLikeList}
           options={{headerShown: false}}
         />
- <Stack.Screen
+        <Stack.Screen
           name="StoryLikeList"
           component={StoryLikeList}
           options={{headerShown: false}}
         />
 
-<Stack.Screen
+        <Stack.Screen
           name="StoryViewList"
           component={StoryViewList}
           options={{headerShown: false}}
         />
-
-
       </Stack.Navigator>
     </OverlayProvider>
     // </SafeAreaView>
