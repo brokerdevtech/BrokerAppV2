@@ -1,47 +1,60 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native';
 
-const SelectableFlatList = ({ data,numColumn, onSelectItem,preselectedItem  }) => {
+const SelectableFlatList = ({
+  data,
+  numColumn,
+  onSelectItem,
+  preselectedItem,
+}) => {
   const [selectedItem, setSelectedItem] = useState(null);
+  console.log(data, 'de');
   useEffect(() => {
-   
     if (preselectedItem) {
       setSelectedItem(preselectedItem);
-    }
-    else{
-        setSelectedItem(null);
+    } else {
+      setSelectedItem(null);
     }
   }, [preselectedItem]);
-  const handleItemPress = (item) => {
-   
+  const handleItemPress = item => {
     setSelectedItem(item);
     if (onSelectItem) {
       onSelectItem(item); // Pass the selected item to the parent
     }
   };
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({item}) => {
     const isSelected = item.key === selectedItem?.key;
 
     return (
       <TouchableOpacity
         onPress={() => handleItemPress(item)}
-        style={[styles.card, isSelected ? styles.selectedItem : null]}
-      >
-        <Text style={[styles.cardText, isSelected ? styles.selectedItemText : null]}>
+        style={[styles.card, isSelected ? styles.selectedItem : null]}>
+        <Text
+          style={[
+            styles.cardText,
+            isSelected ? styles.selectedItemText : null,
+          ]}>
           {item.value}
         </Text>
       </TouchableOpacity>
     );
   };
-
+  if (!data || data.length === 0) {
+    // Show a message if data is empty or null
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>Please select a brand first</Text>
+      </View>
+    );
+  }
   return (
     <FlatList
       data={data}
       renderItem={renderItem}
-      keyExtractor={(item) => item.key.toString()} // Ensure unique key for FlatList
+      keyExtractor={item => item.key.toString()} // Ensure unique key for FlatList
       contentContainerStyle={styles.listContainer}
-       numColumns={numColumn} // Set number of columns to 2
+      numColumns={numColumn} // Set number of columns to 2
       columnWrapperStyle={styles.columnWrapper} // Add spacing between columns
       showsVerticalScrollIndicator={false} // Hide the scroll indicator
     />
@@ -62,7 +75,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     marginHorizontal: 10, // Adjust margin for proper spacing
     shadowColor: '#000', // For iOS
-    shadowOffset: { width: 0, height: 2 }, // For iOS
+    shadowOffset: {width: 0, height: 2}, // For iOS
     shadowOpacity: 0.2, // For iOS
     shadowRadius: 2, // For iOS
     elevation: 4, // For Android (shadow)
@@ -82,5 +95,16 @@ const styles = StyleSheet.create({
   },
   columnWrapper: {
     justifyContent: 'space-between', // Ensure even spacing between columns
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#888', // A subtle color for the empty message
+    textAlign: 'center',
   },
 });

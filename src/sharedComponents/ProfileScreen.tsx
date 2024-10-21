@@ -116,29 +116,28 @@ const ProfileScreen: React.FC = ({
   } = useApiRequest(UpdateProfile, setLoading);
   const handleCategoryPress = screen => {
     navigation.navigate(screen.navigationScreen, {
-      listType:screen.listType,
-      categoryId:screen.categoryId,
+      listType: screen.listType,
+      categoryId: screen.categoryId,
       userId: user.userId,
     });
   };
 
-  
   const categories = [
     {
-      name: 'Propety',
+      name: 'Property',
 
       navigationScreen: 'MyItemListScreen',
       postCount: ProfileData?.realEstatePostCount,
-      listType:'RealEstate',
-      categoryId:'1'
+      listType: 'RealEstate',
+      categoryId: '1',
     },
 
     {
       name: 'Cars',
       navigationScreen: 'MyItemListScreen',
       postCount: ProfileData?.carPostCount,
-        listType:'Car',
-      categoryId:'2'
+      listType: 'Car',
+      categoryId: '2',
     },
   ];
   const renderContent = () => {
@@ -233,10 +232,7 @@ const ProfileScreen: React.FC = ({
   const refRBSheet = useRef();
 
   const s3 = useS3();
-  const [routes] = useState([
-    {key: 'Property', title: 'Property'},
-
-  ]);
+  const [routes] = useState([{key: 'Property', title: 'Property'}]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -324,7 +320,6 @@ const ProfileScreen: React.FC = ({
     // console.log(Result, 'pro');
 
     await profileUpdateexecute(Result);
-
   };
   // console.log(profiledata, 'data');
 
@@ -463,7 +458,6 @@ const ProfileScreen: React.FC = ({
       delete Result['officeLocation'];
       delete Result['userPermissions'];
       await profileUpdateexecute(Result);
-    
     } catch (error) {}
   };
   useEffect(() => {
@@ -486,7 +480,7 @@ const ProfileScreen: React.FC = ({
   useEffect(() => {
     if (profileUpdatestatus == 200) {
       setProfileData(profileUpdatedata?.data);
-   
+
       const Userfollower: any = [];
       if (profileUpdatedata.data) {
         Userfollower.push({

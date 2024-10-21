@@ -49,20 +49,23 @@ const PropertyvalidationSchema = Yup.object().shape({
     .max(500000000, 'Number must be less than or equal to 500,000,000'),
   Location: Yup.object().required('Location is required'),
   registrationYear: Yup.number()
-  .typeError('Registration Year must be a number')
-  .min(1900, 'Invalid Registration Year')
-  .max(new Date().getFullYear(), 'Invalid Registration Year')
-  .required('Registration Year is required'),
+    .typeError('Registration Year must be a number')
+    .min(1900, 'Invalid Registration Year')
+    .max(new Date().getFullYear(), 'Invalid Registration Year')
+    .required('Registration Year is required'),
   yearOfManufacture: Yup.number()
-  .typeError('Manufacture Year must be a number')
-  .min(1900, 'Invalid Manufacture Year')
-  .max(new Date().getFullYear(), 'Invalid Manufacture Year')
-  .required('Manufacture Year is required'),
+    .typeError('Manufacture Year must be a number')
+    .min(1900, 'Invalid Manufacture Year')
+    .max(new Date().getFullYear(), 'Invalid Manufacture Year')
+    .required('Manufacture Year is required'),
   isNewCar: Yup.boolean(),
 
   mileage: Yup.number().min(0, 'Mileage cannot be negative'),
   kmsDriven: Yup.number().min(0, 'Kms Driven cannot be negative'),
-  engineDisplacement: Yup.number().min(0, 'Engine Displacement cannot be negative'),
+  engineDisplacement: Yup.number().min(
+    0,
+    'Engine Displacement cannot be negative',
+  ),
   carEnginePower: Yup.number().min(0, 'Car Engine Power cannot be negative'),
 });
 
@@ -76,28 +79,27 @@ const CarForm = ({formikRef}) => {
     propDescription: '',
     price: null,
     Location: undefined,
-    registrationYear:undefined,
-    yearOfManufacture:undefined,
-    isNewCar:true,
-    mileage:undefined,
-    kmsDriven:undefined,
-    engineDisplacement:undefined,
-    carEnginePower:undefined,
+    registrationYear: undefined,
+    yearOfManufacture: undefined,
+    isNewCar: true,
+    mileage: undefined,
+    kmsDriven: undefined,
+    engineDisplacement: undefined,
+    carEnginePower: undefined,
   };
 
   const handleSubmit = values => {
-    
     if (formikRef.current) {
       // formikRef.current.submitForm();
     }
   };
   const years = [];
   for (let year = 2024; year >= 2000; year--) {
-    years.push({label:year.toString(), value:year});
+    years.push({label: year.toString(), value: year});
   }
 
-  const handleYearChange = (year) => {
-    console.log("Selected Year:", year);
+  const handleYearChange = year => {
+    console.log('Selected Year:', year);
   };
   const onFiltersLocalityChange = Localitys => {
     //
@@ -125,10 +127,7 @@ const CarForm = ({formikRef}) => {
           isValid,
         }) => (
           <View style={localStyles.containerView}>
-            <View>
-             
-           
-            </View>
+            <View></View>
             <Box style={localStyles.BoxStyles}>
               <HStack style={localStyles.inputContainer}>
                 {/* <RenderLabel1 labelText={`Title`} /> */}
@@ -196,63 +195,135 @@ const CarForm = ({formikRef}) => {
               )}
             </Box>
             <Box mb="5" style={localStyles.BoxStyles}>
-  <HStack style={localStyles.inputContainer}>
+              <HStack style={localStyles.inputContainer}>
+                <SingleSelectComponent
+                  data={years}
+                  onSelectionChange={value => {
+                    setFieldValue('registrationYear', Number(value));
+                    // handleCountryChange(value);
+                    handleBlur('registrationYear');
+                  }}
+                  displayText={'Select Registration Year'}
+                  title={'Select Registration Year'}
+                />
+              </HStack>
+              {errors.registrationYear && touched.registrationYear && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>
+                    {errors.registrationYear}
+                  </Text>
+                </Box>
+              )}
+            </Box>
 
-  <SingleSelectComponent
-                        data={years}
-                        onSelectionChange={value => {
-                        
-                          setFieldValue('registrationYear', Number(value));
-                          // handleCountryChange(value);
-                          handleBlur('registrationYear');
-                        }}
-                        
-                        displayText={'Select Registration Year'}
-                        title={'Select Registration Year'}
-                      />
- 
+            <Box mb="5" style={localStyles.BoxStyles}>
+              <HStack style={localStyles.inputContainer}>
+                <SingleSelectComponent
+                  data={years}
+                  onSelectionChange={value => {
+                    setFieldValue('yearOfManufacture', Number(value));
+                    // handleCountryChange(value);
+                    handleBlur('yearOfManufacture');
+                  }}
+                  displayText={'Select Manufacture Year'}
+                  title={'Select Manufacture Year'}
+                />
+              </HStack>
+              {errors.yearOfManufacture && touched.yearOfManufacture && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>
+                    {errors.yearOfManufacture}
+                  </Text>
+                </Box>
+              )}
+            </Box>
 
-  </HStack>
-  {errors.registrationYear && touched.registrationYear && (
-    <Box pl="3" mt="2">
-      <Text style={styles.errorText}>{errors.registrationYear}</Text>
-    </Box>
-  )}
-</Box>
+            <Box mb="5" style={localStyles.BoxStyles}>
+              <HStack style={localStyles.inputContainer2}>
+                {/* <RenderLabel1 labelText={`Price`} /> */}
 
+                <AnimatedTextInput
+                  // type="numeric"
+                  // borderWidth="1"
+                  placeholder="Mileage"
+                  value={values.mileage}
+                  keyboardType="numeric"
+                  onChangeText={handleChange('mileage')}
+                  onBlur={handleBlur('mileage')}
+                />
+              </HStack>
+              {errors.mileage && touched.mileage && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>{errors.mileage}</Text>
+                </Box>
+              )}
+            </Box>
+            <Box mb="5" style={localStyles.BoxStyles}>
+              <HStack style={localStyles.inputContainer2}>
+                {/* <RenderLabel1 labelText={`Price`} /> */}
 
+                <AnimatedTextInput
+                  // type="numeric"
+                  // borderWidth="1"
+                  placeholder="Kms Driven"
+                  value={values.kmsDriven}
+                  keyboardType="numeric"
+                  onChangeText={handleChange('kmsDriven')}
+                  onBlur={handleBlur('kmsDriven')}
+                />
+              </HStack>
+              {errors.kmsDriven && touched.kmsDriven && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>{errors.kmsDriven}</Text>
+                </Box>
+              )}
+            </Box>
+            <Box mb="5" style={localStyles.BoxStyles}>
+              <HStack style={localStyles.inputContainer2}>
+                {/* <RenderLabel1 labelText={`Price`} /> */}
 
+                <AnimatedTextInput
+                  // type="numeric"
+                  // borderWidth="1"
+                  placeholder="Engine Displacement"
+                  value={values.engineDisplacement}
+                  keyboardType="numeric"
+                  onChangeText={handleChange('engineDisplacement')}
+                  onBlur={handleBlur('engineDisplacement')}
+                />
+              </HStack>
+              {errors.engineDisplacement && touched.engineDisplacement && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>
+                    {errors.engineDisplacement}
+                  </Text>
+                </Box>
+              )}
+            </Box>
+            <Box mb="5" style={localStyles.BoxStyles}>
+              <HStack style={localStyles.inputContainer2}>
+                {/* <RenderLabel1 labelText={`Price`} /> */}
 
-<Box mb="5" style={localStyles.BoxStyles}>
-  <HStack style={localStyles.inputContainer}>
-
-  <SingleSelectComponent
-                        data={years}
-                        onSelectionChange={value => {
-                         
-                          setFieldValue('yearOfManufacture', Number(value));
-                          // handleCountryChange(value);
-                          handleBlur('yearOfManufacture');
-                        }}
-                       
-                        displayText={'Select Manufacture Year'}
-                        title={'Select Manufacture Year'}
-                      />
- 
-
-  </HStack>
-  {errors.yearOfManufacture && touched.yearOfManufacture && (
-    <Box pl="3" mt="2">
-      <Text style={styles.errorText}>{errors.yearOfManufacture}</Text>
-    </Box>
-  )}
-</Box>
-
-
-<View style={[localStyles.SwitchStyles, {marginTop: 30}]}>
+                <AnimatedTextInput
+                  // type="numeric"
+                  // borderWidth="1"
+                  placeholder="Car EnginePower"
+                  value={values.carEnginePower}
+                  keyboardType="numeric"
+                  onChangeText={handleChange('carEnginePower')}
+                  onBlur={handleBlur('carEnginePower')}
+                />
+              </HStack>
+              {errors.carEnginePower && touched.carEnginePower && (
+                <Box pl="3" mt="2">
+                  <Text style={styles.errorText}>{errors.carEnginePower}</Text>
+                </Box>
+              )}
+            </Box>
+            <View style={[localStyles.SwitchStyles]}>
               <HStack style={localStyles.FromControl}>
                 <ZText color={colors.dark.black} type={'R16'}>
-                Is New Car
+                  Is New Car
                 </ZText>
                 <Switch
                   size="lg"
@@ -274,88 +345,6 @@ const CarForm = ({formikRef}) => {
                 </Box>
               )}
             </View>
-
-            <Box mb="5" style={localStyles.BoxStyles}>
-              <HStack style={localStyles.inputContainer2}>
-                {/* <RenderLabel1 labelText={`Price`} /> */}
-
-                <AnimatedTextInput
-                  // type="numeric"
-                  // borderWidth="1"
-                  placeholder="mileage"
-                  value={values.mileage}
-                  keyboardType="numeric"
-                  onChangeText={handleChange('mileage')}
-                  onBlur={handleBlur('mileage')}
-                />
-              </HStack>
-              {errors.mileage && touched.mileage && (
-                <Box pl="3" mt="2">
-                  <Text style={styles.errorText}>{errors.mileage}</Text>
-                </Box>
-              )}
-            </Box>
-            <Box mb="5" style={localStyles.BoxStyles}>
-              <HStack style={localStyles.inputContainer2}>
-                {/* <RenderLabel1 labelText={`Price`} /> */}
-
-                <AnimatedTextInput
-                  // type="numeric"
-                  // borderWidth="1"
-                  placeholder="kmsDriven"
-                  value={values.kmsDriven}
-                  keyboardType="numeric"
-                  onChangeText={handleChange('kmsDriven')}
-                  onBlur={handleBlur('kmsDriven')}
-                />
-              </HStack>
-              {errors.kmsDriven && touched.kmsDriven && (
-                <Box pl="3" mt="2">
-                  <Text style={styles.errorText}>{errors.kmsDriven}</Text>
-                </Box>
-              )}
-            </Box>
-            <Box mb="5" style={localStyles.BoxStyles}>
-              <HStack style={localStyles.inputContainer2}>
-                {/* <RenderLabel1 labelText={`Price`} /> */}
-
-                <AnimatedTextInput
-                  // type="numeric"
-                  // borderWidth="1"
-                  placeholder="engineDisplacement"
-                  value={values.engineDisplacement}
-                  keyboardType="numeric"
-                  onChangeText={handleChange('engineDisplacement')}
-                  onBlur={handleBlur('engineDisplacement')}
-                />
-              </HStack>
-              {errors.engineDisplacement && touched.engineDisplacement && (
-                <Box pl="3" mt="2">
-                  <Text style={styles.errorText}>{errors.engineDisplacement}</Text>
-                </Box>
-              )}
-            </Box>
-            <Box mb="5" style={localStyles.BoxStyles}>
-              <HStack style={localStyles.inputContainer2}>
-                {/* <RenderLabel1 labelText={`Price`} /> */}
-
-                <AnimatedTextInput
-                  // type="numeric"
-                  // borderWidth="1"
-                  placeholder="carEnginePower"
-                  value={values.carEnginePower}
-                  keyboardType="numeric"
-                  onChangeText={handleChange('carEnginePower')}
-                  onBlur={handleBlur('carEnginePower')}
-                />
-              </HStack>
-              {errors.carEnginePower && touched.carEnginePower && (
-                <Box pl="3" mt="2">
-                  <Text style={styles.errorText}>{errors.carEnginePower}</Text>
-                </Box>
-              )}
-            </Box>
-  
           </View>
         )}
       </Formik>
