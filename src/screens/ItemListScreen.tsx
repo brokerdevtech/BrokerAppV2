@@ -398,7 +398,7 @@ const ItemListScreen: React.FC<any> = ({
     { length: itemHeight, offset: itemHeight * index, index }
   );
   return (
-    <SafeAreaView>
+
     <BottomSheetModalProvider>
  
       {/* <ScrollView style={{ flex: 1 }}>
@@ -488,8 +488,7 @@ const ItemListScreen: React.FC<any> = ({
      
       
       </BottomSheetModalProvider>
-    {/* // </View> */}
-    </SafeAreaView>
+
   );
 };
 
