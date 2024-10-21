@@ -18,6 +18,7 @@ const AppBaseContainer = (WrappedComponent, pageTitle, isHeader = true ,isSearch
   return function BaseContainer(props) {
     const [isPageSkeleton, setisPageSkeleton] = useState(false);
     const [pageTitleState, setpageTitle] = useState(pageTitle);
+    const [searchKeyword, setSearchKeyword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigation = useNavigation();
     const user = useSelector((state: RootState) => state.user.user);
@@ -38,6 +39,10 @@ const AppBaseContainer = (WrappedComponent, pageTitle, isHeader = true ,isSearch
     const reframePageTitle = pageTitle => {
       setpageTitle(pageTitle);
     };
+    const handleSearch = (searchText: string) => {
+      setSearchKeyword(searchText);
+    };
+    
     const showToast = message => {
       if (!toast.isActive(toastId)) {
         const newId = Math.random();
@@ -60,7 +65,7 @@ const AppBaseContainer = (WrappedComponent, pageTitle, isHeader = true ,isSearch
 
     return (
       <ZSafeAreaView>
-        {isHeader && <ZHeader title={pageTitleState} isSearch={isSearch} />}
+        {isHeader && <ZHeader title={pageTitleState} isSearch={isSearch} handleSearch={handleSearch} />}
         {isPageSkeleton && <FullScreenSkeleton></FullScreenSkeleton>}
 
         <WrappedComponent
@@ -76,7 +81,7 @@ const AppBaseContainer = (WrappedComponent, pageTitle, isHeader = true ,isSearch
           color={color}
           route={route}
           toast={toast}
-         
+          searchKeyword={searchKeyword}
           pageTitle={reframePageTitle}
           isLoading={isLoading}></WrappedComponent>
         <LoadingSpinner isVisible={isLoading} />
