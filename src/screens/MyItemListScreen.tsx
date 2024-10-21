@@ -248,7 +248,7 @@ const MyItemListScreen: React.FC<any> = ({
   isLoading,
   listType,
 }) => {
-  console.log(user);
+  //console.log(user);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
