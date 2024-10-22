@@ -9,8 +9,10 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  Linking,Alert,
+  Linking,
+  Alert,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
@@ -59,18 +61,18 @@ import Recommend from '../sharedComponents/RecomendedBrokers';
 import ProductSection from './Dashboard/ProductSection';
 import flex from '@/themes/flex';
 import padding from '@/themes/padding';
-import { FlashList } from '@shopify/flash-list';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {FlashList} from '@shopify/flash-list';
+import {SafeAreaView} from 'react-native-safe-area-context';
+const {width} = Dimensions.get('window');
+const RederListHeader = React.memo(
+  ({categoryId, AppLocation, FilterChipsData, recordCount}) => {
+    console.log(AppLocation.City, 'categoryId');
+    return (
+      <>
+        <UserStories />
 
-const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,recordCount})=>{
-   console.log(AppLocation.City,"categoryId")
-  return (
-    <>
-   
-    <UserStories/>
-    
-    <Recommend categoryId={categoryId}/>
-    <ProductSection
+        <Recommend categoryId={categoryId} />
+        <ProductSection
           heading={'Newly Launched'}
           background={'#FFFFFF'}
           endpoint={`Newin`}
@@ -82,11 +84,13 @@ const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,record
             categoryId: categoryId,
           }}
         />
-         <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips>
-    </>
-
-  )
-})
+        <FilterChips
+          filters={FilterChipsData}
+          recordsCount={recordCount}></FilterChips>
+      </>
+    );
+  },
+);
 // const ListHeader = React.memo(({ FilterChipsData, recordsCount }) => (
 //   <>
 //     <View>
@@ -97,16 +101,14 @@ const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,record
 //   </>
 // ));
 
-const ProductItem =  React.memo(
-    ({ item, listTypeData, User, navigation }) => {
+const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
   const MediaGalleryRef = useRef(null);
 
   const openWhatsApp = useCallback((phoneNumber, message) => {
-  
-  
-    const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
+    const url = `whatsapp://send?text=${encodeURIComponent(
+      message,
+    )}&phone=${phoneNumber}`;
 
-   
     Linking.canOpenURL(url)
       .then(supported => {
         if (supported) {
@@ -116,21 +118,17 @@ const ProductItem =  React.memo(
         }
       })
       .catch(err => console.error('Error opening WhatsApp', err));
-  },[]);
+  }, []);
   const chatProfilePress = useCallback(async () => {
- 
-
     const members = [User.userId.toString(), item.userId.toString()];
-
 
     navigation.navigate('AppChat', {
       defaultScreen: 'ChannelScreen',
       defaultParams: members,
-      defaultchannelSubject:`Hi,i want to connect on ${item.title}`,
+      defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
     });
-
-  },[]);
-  const makeCall = useCallback((phoneNumber) => {
+  }, []);
+  const makeCall = useCallback(phoneNumber => {
     const url = `tel:${phoneNumber}`;
 
     Linking.canOpenURL(url)
@@ -142,9 +140,8 @@ const ProductItem =  React.memo(
         }
       })
       .catch(err => console.error('Error opening dialer', err));
-  },[]);
+  }, []);
   return (
-
     <View style={styles.cardContainer}>
       <MediaGallery
         ref={MediaGalleryRef}
@@ -167,105 +164,109 @@ const ProductItem =  React.memo(
           </View>
         </View>
       )}
-<View style={{marginLeft:20}}>
-      <PostActions
-        item={item}
-        User={User}
-        listTypeData={listTypeData}
-        onUpdateLikeCount={newCount => {
-          console.log(newCount);
-        }}
-      /></View>
+      <View style={{marginLeft: 20}}>
+        <PostActions
+          item={item}
+          User={User}
+          listTypeData={listTypeData}
+          onUpdateLikeCount={newCount => {
+            console.log(newCount);
+          }}
+        />
+      </View>
       {/* Car Details */}
-      <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>
-      <VStack space="md" style={styles.detailsContainer}>
-        <HStack>
-          <Box style={{marginLeft: 4}}>
-            <ZText type={'R16'}>{'\u20B9'} </ZText>
-          </Box>
-          <Box>
-            <ZText type={'R16'}>{item.price}</ZText>
-          </Box>
-        </HStack>
-
-        {item.location?.cityName && (
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('ItemDetailScreen', {
+            postId: item.postId,
+            postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post',
+          })
+        }>
+        <VStack space="md" style={styles.detailsContainer}>
           <HStack>
-            <Box>
-              <Icon as={Location_Icon} size='xl'/>
+            <Box style={{marginLeft: 4}}>
+              <ZText type={'R16'}>{'\u20B9'} </ZText>
             </Box>
-            <Box style={{width:'100%' ,flex:1}}>
+            <Box>
+              <ZText type={'R16'}>{item.price}</ZText>
+            </Box>
+          </HStack>
+
+          {item.location?.cityName && (
+            <HStack>
+              <Box>
+                <Icon as={Location_Icon} size="xl" />
+              </Box>
+              <Box style={{width: '100%', flex: 1}}>
+                <ZText
+                  type={'R16'}
+                  numberOfLines={2} // Limits to 2 lines
+                  ellipsizeMode="tail">
+                  {' '}
+                  {item.location.placeName}
+                </ZText>
+              </Box>
+            </HStack>
+          )}
+
+          <HStack>
+            <HStack style={{width: '100%', flex: 1}}>
+              <Box>
+                <Icon as={description_icon} fill="black" size="xl" />
+              </Box>
               <ZText
                 type={'R16'}
                 numberOfLines={2} // Limits to 2 lines
-                ellipsizeMode="tail"
-              >
+                ellipsizeMode="tail">
                 {' '}
-                {item.location.placeName}
+                {item.title}
               </ZText>
-            </Box>
+            </HStack>
           </HStack>
-        )}
-
-        <HStack>
-          <HStack style={{width:'100%' ,flex:1}}>
-          <Box>
-              <Icon as={description_icon} fill='black' size='xl'/>
-            </Box>
-            <ZText
-              type={'R16'}
-              numberOfLines={2} // Limits to 2 lines
-              ellipsizeMode="tail"
-            > {' '}
-              {item.title}
-            </ZText>
-          </HStack>
-        </HStack>
-      </VStack>
+        </VStack>
       </TouchableOpacity>
       <Divider className="my-0.5" />
 
       <View style={styles.detailsContainer}>
         <HStack
           // space="md"
-          style={{paddingHorizontal: 10,justifyContent: 'space-between'}}
-        >
+          style={{paddingHorizontal: 10, justifyContent: 'space-between'}}>
           <VStack style={{alignItems: 'center'}}>
-          <TouchableOpacity onPress={() => makeCall('+919910199761')}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Telephone_Icon} size={'xxl'} />
-            </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10}}>
-              <ZText type={'R14'}>Call</ZText>
-            </View>
+            <TouchableOpacity onPress={() => makeCall('+919910199761')}>
+              <View style={{alignItems: 'center'}}>
+                <Icon as={Telephone_Icon} size={'xxl'} />
+              </View>
+              <View style={{alignItems: 'center', paddingVertical: 10}}>
+                <ZText type={'R14'}>Call</ZText>
+              </View>
             </TouchableOpacity>
           </VStack>
           <VStack style={{alignItems: 'center'}}>
-          <TouchableOpacity onPress={() =>chatProfilePress()}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Chat_Icon} size={'xxl'} />
-            </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10}}>
-              <ZText type={'R14'}>Chat</ZText>
-            </View>
+            <TouchableOpacity onPress={() => chatProfilePress()}>
+              <View style={{alignItems: 'center'}}>
+                <Icon as={Chat_Icon} size={'xxl'} />
+              </View>
+              <View style={{alignItems: 'center', paddingVertical: 10}}>
+                <ZText type={'R14'}>Chat</ZText>
+              </View>
             </TouchableOpacity>
           </VStack>
           <VStack style={{alignItems: 'center'}}>
-          <TouchableOpacity onPress={() => openWhatsApp('+919910199761', 'test message')}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Whatsapp_Icon} size={'xxl'} />
-            </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10}}>
-
-  <ZText type={'R14'}>WhatsApp</ZText>
-
-            </View>
+            <TouchableOpacity
+              onPress={() => openWhatsApp('+919910199761', 'test message')}>
+              <View style={{alignItems: 'center'}}>
+                <Icon as={Whatsapp_Icon} size={'xxl'} />
+              </View>
+              <View style={{alignItems: 'center', paddingVertical: 10}}>
+                <ZText type={'R14'}>WhatsApp</ZText>
+              </View>
             </TouchableOpacity>
           </VStack>
           <VStack style={{alignItems: 'center'}}>
             <View style={{alignItems: 'center'}}>
               <Icon as={Calender_Icon} size={'xxl'} />
             </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10}}>
+            <View style={{alignItems: 'center', paddingVertical: 10}}>
               <ZText type={'R14'}>Appointment</ZText>
             </View>
           </VStack>
@@ -293,11 +294,11 @@ const ItemListScreen: React.FC<any> = ({
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
-  const brandName = route.params.brandName !== undefined ? route.params.brandName : "";
+  const brandName =
+    route.params.brandName !== undefined ? route.params.brandName : '';
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   // console.log('=============user=============');
   // console.log(user);
-
 
   const {
     data,
@@ -314,24 +315,26 @@ const ItemListScreen: React.FC<any> = ({
   //const {data, status, error, execute} = useApiPagingRequest5(fetchItemList);
   const renderItem = useCallback(
     ({item}) => (
-      <ProductItem item={item} listTypeData={listTypeData} User={user} navigation={navigation} />
+      <ProductItem
+        item={item}
+        listTypeData={listTypeData}
+        User={user}
+        navigation={navigation}
+      />
     ),
     [],
   );
   async function set_FilterChipsData() {
     let FilterChipsData = [];
-      if(searchKeyword !== "") 
-      {
-        FilterChipsData.push({label: 'Search:' + searchKeyword});
-      }
+    if (searchKeyword !== '') {
+      FilterChipsData.push({label: 'Search:' + searchKeyword});
+    }
 
-      if(brandName !== "") 
-      {
-        FilterChipsData.push({label: 'Brand:' + brandName});
-      }
-      
+    if (brandName !== '') {
+      FilterChipsData.push({label: 'Brand:' + brandName});
+    }
 
-      FilterChipsData.push({label: 'Location:' + AppLocation.placeName});
+    FilterChipsData.push({label: 'Location:' + AppLocation.placeName});
     // if(brandName !== "") {
     //   FilterChipsData.push({label: 'Brands Associated :' + brandName});
     // }
@@ -343,17 +346,17 @@ const ItemListScreen: React.FC<any> = ({
     // currentPage_Set(1);
     // hasMore_Set(true);
 
-     execute(listTypeData, {
-      keyWord: searchKeyword !== "" ? searchKeyword : brandName,
+    execute(listTypeData, {
+      keyWord: searchKeyword !== '' ? searchKeyword : brandName,
       cityName: AppLocation.City,
       userId: user.userId,
       placeID: AppLocation.placeID,
       placeName: AppLocation.placeName,
       geoLocationLatitude: AppLocation.geoLocationLatitude,
       geoLocationLongitude: AppLocation.geoLocationLongitude,
-      isSearch:false
+      isSearch: false,
     });
-   
+
     setLoading(false);
   }
 
@@ -375,13 +378,13 @@ const ItemListScreen: React.FC<any> = ({
     if (!isInfiniteLoading) {
       await loadMore(listTypeData, {
         keyWord: '',
-       cityName: AppLocation.City,
+        cityName: AppLocation.City,
         userId: user.userId,
         placeID: AppLocation.placeID,
         placeName: AppLocation.placeName,
         geoLocationLatitude: AppLocation.geoLocationLatitude,
         geoLocationLongitude: AppLocation.geoLocationLongitude,
-        isSearch:false
+        isSearch: false,
       });
     }
   };
@@ -394,101 +397,111 @@ const ItemListScreen: React.FC<any> = ({
   //     <FilterChips filters={FilterChipsData} recordsCount={recordsCount} />
   //   </>
   // ), [categoryId, FilterChipsData, recordCount]);
-  const getItemLayout = (data, index) => (
-    { length: itemHeight, offset: itemHeight * index, index }
-  );
+  const getItemLayout = (data, index) => ({
+    length: itemHeight,
+    offset: itemHeight * index,
+    index,
+  });
   return (
-
     <BottomSheetModalProvider>
- 
       {/* <ScrollView style={{ flex: 1 }}>
         <SafeAreaView> */}
       {/* <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>    */}
-        <View style={{ flex: 1 }}>
-        <View style={{ flex: 1 }}>
-        {data &&
-          <FlatList
-              data={data}
-              getItemLayout={getItemLayout}
-              renderItem={renderItem}
- initialNumToRender={2}
-        maxToRenderPerBatch={4}
-              showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={false}
-             ListHeaderComponent={
-              <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
-             keyExtractor={(item, index) => index.toString()}
-              onEndReachedThreshold={0.6}
-              onEndReached={loadMorepage}
-              contentContainerStyle={{ paddingBottom: 100 }}
-              ListFooterComponent={
-                isInfiniteLoading ? (
-                  <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
-                ) : null
-              }
-              removeClippedSubviews={true}
-              ListEmptyComponent={() => (
-                data === undefined ? (
-                  <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
-                ) : (
-                  <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyText}>No Data Found</Text>
-                  </View>
-                )
-              )}
-            />
-        
-//  <FlashList
-// data={data}
-// renderItem={renderItem}
-// // ListHeaderComponent={
-// //                 <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
-//                keyExtractor={(item, index) => index.toString()}
-//                ListFooterComponent={
-//                                 isInfiniteLoading ? (
-//                                   <LoadingSpinner isVisible={isInfiniteLoading} />
-//                                 ) : null
-//                               }
-//                               ListEmptyComponent={() => (
-//                                 data === undefined ? (
-//                                   <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
-//                                 ) : (
-//                                   <View style={styles.emptyContainer}>
-//                                     <Text style={styles.emptyText}>No Data Found</Text>
-//                                   </View>
-//                                 )
-//                               )}
-// estimatedItemSize={100}
-// onEndReachedThreshold={0.8}              
-// onEndReached={loadMorepage}
-// />  
-            }
+      <View style={{flex: 1}}>
+        <View style={{flex: 1}}>
+          {
+            data && (
+              <FlatList
+                data={data}
+                getItemLayout={getItemLayout}
+                renderItem={renderItem}
+                initialNumToRender={2}
+                maxToRenderPerBatch={4}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
+                ListHeaderComponent={
+                  <RederListHeader
+                    categoryId={categoryId}
+                    AppLocation={AppLocation}
+                    FilterChipsData={FilterChipsData}
+                    recordCount={recordCount}
+                  />
+                }
+                keyExtractor={(item, index) => index.toString()}
+                onEndReachedThreshold={0.6}
+                onEndReached={loadMorepage}
+                contentContainerStyle={{paddingBottom: 100}}
+                ListFooterComponent={
+                  isInfiniteLoading ? (
+                    <ActivityIndicator
+                      size="large"
+                      color="#0000ff"
+                      style={styles.loader}
+                    />
+                  ) : null
+                }
+                removeClippedSubviews={true}
+                ListEmptyComponent={() =>
+                  data === undefined ? (
+                    <ActivityIndicator
+                      size="large"
+                      color="#0000ff"
+                      style={styles.loader}
+                    />
+                  ) : (
+                    <View style={styles.emptyContainer}>
+                      <Text style={styles.emptyText}>No Data Found</Text>
+                    </View>
+                  )
+                }
+              />
+            )
+
+            //  <FlashList
+            // data={data}
+            // renderItem={renderItem}
+            // // ListHeaderComponent={
+            // //                 <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
+            //                keyExtractor={(item, index) => index.toString()}
+            //                ListFooterComponent={
+            //                                 isInfiniteLoading ? (
+            //                                   <LoadingSpinner isVisible={isInfiniteLoading} />
+            //                                 ) : null
+            //                               }
+            //                               ListEmptyComponent={() => (
+            //                                 data === undefined ? (
+            //                                   <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+            //                                 ) : (
+            //                                   <View style={styles.emptyContainer}>
+            //                                     <Text style={styles.emptyText}>No Data Found</Text>
+            //                                   </View>
+            //                                 )
+            //                               )}
+            // estimatedItemSize={100}
+            // onEndReachedThreshold={0.8}
+            // onEndReached={loadMorepage}
+            // />
+          }
         </View>
-        <View style={{marginTop:"auto",height:80 }}>
-        <View style={styles.footer}>
-        <ZText type={'S16'} >Properties</ZText>
-        <View style={styles.IconButton}>
-          <ShortingIcon />
-          <ZText type={'S16'} >Sort</ZText>
-        </View>
-        <View style={styles.IconButton}>
-          <FilterIcon />
-          <ZText type={'S16'} >Filter</ZText>
+        <View style={{marginTop: 'auto', height: 80}}>
+          <View style={styles.footer}>
+            <ZText type={'S16'}>Properties</ZText>
+            <View style={styles.IconButton}>
+              <ShortingIcon />
+              <ZText type={'S16'}>Sort</ZText>
+            </View>
+            <View style={styles.IconButton}>
+              <FilterIcon />
+              <ZText type={'S16'}>Filter</ZText>
+            </View>
+          </View>
         </View>
       </View>
-        </View>
 
-        </View>
-  
-
-{/* </SafeAreaView>
+      {/* </SafeAreaView>
      
         </ScrollView> */}
-    
-     
-      
-      </BottomSheetModalProvider>
-
+    </BottomSheetModalProvider>
   );
 };
 
@@ -501,7 +514,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#555',  // Use a subtle color to match your design
+    color: '#555', // Use a subtle color to match your design
     textAlign: 'center',
   },
   loader: {
@@ -513,7 +526,7 @@ const styles = StyleSheet.create({
   },
   header: {
     justifyContent: 'space-between',
-  
+
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingVertical: 20,
@@ -586,16 +599,16 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   cardContainer: {
-    //width: '100%',
-
+    width: width - 40,
+    marginHorizontal: 20,
     borderRadius: 12,
     backgroundColor: '#FFF',
-   margin:20,
     shadowColor: 'rgba(0, 0, 0, 0.8)',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 1,
     shadowRadius: 20,
     elevation: 4,
+    marginBottom: 20,
   },
   carImage: {
     width: 375,
@@ -624,7 +637,7 @@ const styles = StyleSheet.create({
   detailsContainer: {
     paddingLeft: 20,
     paddingBottom: 15,
-     paddingTop: 15,
+    paddingTop: 15,
   },
   price: {
     fontSize: 16,
@@ -648,5 +661,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppBaseContainer(ItemListScreen, '', true,true);
+export default AppBaseContainer(ItemListScreen, '', true, true);
 //export default ItemListScreen;
