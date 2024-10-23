@@ -78,8 +78,6 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       setLoading(true);
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      
- 
 
       const fcmToken = await getfcmToken();
 
@@ -102,7 +100,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       );
     } catch (error) {
       setLoading(false);
-    
+
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {
@@ -124,11 +122,13 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     execute: SocialLoginexecute,
   } = useApiRequest(SocialLogin);
   const handleLogin = async values => {
+    console.log(values, 'values');
     const {email, password} = values;
     setLoading(true);
     await execute(email, password);
     setLoading(false);
     if (error) {
+      console.log(status);
       if (!toast.isActive(toastId)) {
         const newId = Math.random();
         setToastId(newId);
@@ -140,7 +140,9 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
             const uniqueToastId = 'toast-' + id;
             return (
               <Toast nativeID={uniqueToastId} action="muted" variant="solid">
-                <ToastDescription>{error}</ToastDescription>
+                <ToastDescription>
+                  {'Please check Username or Password'}
+                </ToastDescription>
               </Toast>
             );
           },
@@ -189,7 +191,6 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     }
   };
   const afterhandleSocialLogin = async () => {
-
     if (SocialLogindata) {
       const storeUserresult = await storeUser(
         JSON.stringify(SocialLogindata.data),
@@ -232,7 +233,6 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   };
   useEffect(() => {
     if (SocialLogindata) {
-     
       afterhandleSocialLogin();
       // Proceed with storing tokens and user data
     }
@@ -240,7 +240,6 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   }, [SocialLogindata]);
   useEffect(() => {
     if (data) {
-    
       afterhandleLogin();
       // Proceed with storing tokens and user data
     }
@@ -310,7 +309,8 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
             )}
 
             {/* Forgot Password */}
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ForgotPassword')}>
               <Text style={styles.forgotPassword}>Forgot Password?</Text>
             </TouchableOpacity>
 

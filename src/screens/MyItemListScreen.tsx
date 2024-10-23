@@ -9,7 +9,9 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  Linking,Alert,
+  Linking,
+  Alert,
+  Dimensions,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
@@ -57,18 +59,16 @@ import UserStories from '../components/story/UserStories';
 import Recommend from '../sharedComponents/RecomendedBrokers';
 import ProductSection from './Dashboard/ProductSection';
 
+const {width} = Dimensions.get('window');
 
-
-const ProductItem =  React.memo(
-    ({ item, listTypeData, User, navigation }) => {
+const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
   const MediaGalleryRef = useRef(null);
- 
-  const openWhatsApp = useCallback((phoneNumber, message) => {
- 
-  
-    const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
 
-   
+  const openWhatsApp = useCallback((phoneNumber, message) => {
+    const url = `whatsapp://send?text=${encodeURIComponent(
+      message,
+    )}&phone=${phoneNumber}`;
+
     Linking.canOpenURL(url)
       .then(supported => {
         if (supported) {
@@ -78,21 +78,17 @@ const ProductItem =  React.memo(
         }
       })
       .catch(err => console.error('Error opening WhatsApp', err));
-  },[]);
+  }, []);
   const chatProfilePress = useCallback(async () => {
- 
-
     const members = [User.userId.toString(), item.userId.toString()];
-
 
     navigation.navigate('AppChat', {
       defaultScreen: 'ChannelScreen',
       defaultParams: members,
-      defaultchannelSubject:`Hi,i want to connect on ${item.title}`,
+      defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
     });
-
-  },[]);
-  const makeCall = useCallback((phoneNumber) => {
+  }, []);
+  const makeCall = useCallback(phoneNumber => {
     const url = `tel:${phoneNumber}`;
 
     Linking.canOpenURL(url)
@@ -104,9 +100,8 @@ const ProductItem =  React.memo(
         }
       })
       .catch(err => console.error('Error opening dialer', err));
-  },[]);
+  }, []);
   return (
-
     <View style={styles.cardContainer}>
       <MediaGallery
         ref={MediaGalleryRef}
@@ -130,95 +125,98 @@ const ProductItem =  React.memo(
         </View>
       )}
 
-<View style={{marginLeft:20}}>
-      <PostActions
-        item={item}
-        User={User}
-        listTypeData={listTypeData}
-        onUpdateLikeCount={newCount => {
-          console.log(newCount);
-        }}
-      /></View>
+      <View style={{marginLeft: 20}}>
+        <PostActions
+          item={item}
+          User={User}
+          listTypeData={listTypeData}
+          onUpdateLikeCount={newCount => {
+            console.log(newCount);
+          }}
+        />
+      </View>
       {/* Car Details */}
-      <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>
-      <VStack space="md" style={styles.detailsContainer}>
-        <HStack>
-          <Box style={{marginLeft: 4}}>
-            <ZText type={'R16'}>{'\u20B9'} </ZText>
-          </Box>
-          <Box>
-            <ZText type={'R16'}>{item.price}</ZText>
-          </Box>
-        </HStack>
-
-        {item.location?.cityName && (
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('ItemDetailScreen', {
+            postId: item.postId,
+            postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post',
+          })
+        }>
+        <VStack space="md" style={styles.detailsContainer}>
           <HStack>
-            <Box>
-              <Icon as={Location_Icon} size='xl'/>
+            <Box style={{marginLeft: 4}}>
+              <ZText type={'R16'}>{'\u20B9'} </ZText>
             </Box>
+            <Box>
+              <ZText type={'R16'}>{item.price}</ZText>
+            </Box>
+          </HStack>
+
+          {item.location?.cityName && (
+            <HStack>
+              <Box>
+                <Icon as={Location_Icon} size="xl" />
+              </Box>
+              <Box>
+                <ZText
+                  type={'R16'}
+                  numberOfLines={1} // Limits to 2 lines
+                  ellipsizeMode="tail">
+                  {' '}
+                  {item.location.placeName}
+                </ZText>
+              </Box>
+            </HStack>
+          )}
+
+          <HStack>
             <Box>
               <ZText
                 type={'R16'}
                 numberOfLines={1} // Limits to 2 lines
-                ellipsizeMode="tail"
-              >
-                {' '}
-                {item.location.placeName}
+                ellipsizeMode="tail">
+                {item.title}
               </ZText>
             </Box>
           </HStack>
-        )}
-
-        <HStack>
-          <Box>
-            <ZText
-              type={'R16'}
-              numberOfLines={1} // Limits to 2 lines
-              ellipsizeMode="tail"
-            >
-              {item.title}
-            </ZText>
-          </Box>
-        </HStack>
-      </VStack>
+        </VStack>
       </TouchableOpacity>
       <Divider className="my-0.5" />
 
       <View style={styles.detailsContainer}>
         <HStack
           space="md"
-          style={{paddingHorizontal: 10, justifyContent: 'space-between'}}
-        >
+          style={{paddingHorizontal: 10, justifyContent: 'space-between'}}>
           <VStack>
-          <TouchableOpacity onPress={() => makeCall('+919910199761')}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Telephone_Icon} size={'xxl'} />
-            </View>
-            <View style={{paddingVertical: 10}}>
-              <ZText type={'R14'}>Call</ZText>
-            </View>
+            <TouchableOpacity onPress={() => makeCall('+919910199761')}>
+              <View style={{alignItems: 'center'}}>
+                <Icon as={Telephone_Icon} size={'xxl'} />
+              </View>
+              <View style={{paddingVertical: 10}}>
+                <ZText type={'R14'}>Call</ZText>
+              </View>
             </TouchableOpacity>
           </VStack>
           <VStack>
-          <TouchableOpacity onPress={() =>chatProfilePress()}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Chat_Icon} size={'xxl'} />
-            </View>
-            <View style={{paddingVertical: 10}}>
-              <ZText type={'R14'}>Chat</ZText>
-            </View>
+            <TouchableOpacity onPress={() => chatProfilePress()}>
+              <View style={{alignItems: 'center'}}>
+                <Icon as={Chat_Icon} size={'xxl'} />
+              </View>
+              <View style={{paddingVertical: 10}}>
+                <ZText type={'R14'}>Chat</ZText>
+              </View>
             </TouchableOpacity>
           </VStack>
           <VStack>
-          <TouchableOpacity onPress={() => openWhatsApp('+919910199761', 'test message')}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Whatsapp_Icon} size={'xxl'} />
-            </View>
-            <View style={{paddingVertical: 10}}>
-
-  <ZText type={'R14'}>WhatsApp</ZText>
-
-            </View>
+            <TouchableOpacity
+              onPress={() => openWhatsApp('+919910199761', 'test message')}>
+              <View style={{alignItems: 'center'}}>
+                <Icon as={Whatsapp_Icon} size={'xxl'} />
+              </View>
+              <View style={{paddingVertical: 10}}>
+                <ZText type={'R14'}>WhatsApp</ZText>
+              </View>
             </TouchableOpacity>
           </VStack>
           <VStack>
@@ -255,8 +253,6 @@ const MyItemListScreen: React.FC<any> = ({
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
   const [PageuserId, setPageuserId] = useState(route.params.userId);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
-  
-
 
   const {
     data,
@@ -273,7 +269,12 @@ const MyItemListScreen: React.FC<any> = ({
   //const {data, status, error, execute} = useApiPagingRequest5(fetchItemList);
   const renderItem = useCallback(
     ({item}) => (
-      <ProductItem item={item} listTypeData={listTypeData} User={user} navigation={navigation} />
+      <ProductItem
+        item={item}
+        listTypeData={listTypeData}
+        User={user}
+        navigation={navigation}
+      />
     ),
     [],
   );
@@ -289,11 +290,10 @@ const MyItemListScreen: React.FC<any> = ({
     currentPage_Set(1);
     hasMore_Set(true);
 
-    await execute(listTypeData,PageuserId ).then(result => {
-      
+    await execute(listTypeData, PageuserId).then(result => {
       setLoading(false);
     });
-  
+
     setLoading(false);
   }
 
@@ -313,7 +313,7 @@ const MyItemListScreen: React.FC<any> = ({
 
   const loadMorepage = async () => {
     if (!isInfiniteLoading) {
-      await loadMore(listTypeData,PageuserId);
+      await loadMore(listTypeData, PageuserId);
     }
   };
   // const rederListHeader = useCallback((categoryId, FilterChipsData, recordsCount) => (
@@ -325,25 +325,23 @@ const MyItemListScreen: React.FC<any> = ({
   //     <FilterChips filters={FilterChipsData} recordsCount={recordsCount} />
   //   </>
   // ), [categoryId, FilterChipsData, recordCount]);
-  const getItemLayout = (data, index) => (
-    { length: itemHeight, offset: itemHeight * index, index }
-  );
+  const getItemLayout = (data, index) => ({
+    length: itemHeight,
+    offset: itemHeight * index,
+    index,
+  });
   return (
     <>
-    <BottomSheetModalProvider>
- 
-      <View style={{ flex: 1 }}>
-     
-         {data &&
-          <FlatList
+      <BottomSheetModalProvider>
+        <View style={{flex: 1}}>
+          {data && (
+            <FlatList
               data={data}
               getItemLayout={getItemLayout}
               renderItem={renderItem}
-
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-          
-             keyExtractor={(item, index) => index.toString()}
+              keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.8}
               onEndReached={loadMorepage}
               ListFooterComponent={
@@ -351,11 +349,11 @@ const MyItemListScreen: React.FC<any> = ({
                   <LoadingSpinner isVisible={isInfiniteLoading} />
                 ) : null
               }
-        
-            />}
+            />
+          )}
+        </View>
+      </BottomSheetModalProvider>
 
-        </View></BottomSheetModalProvider>
-    
       {/* <View style={styles.footer}>
         <ZText type={'S16'} >Properties</ZText>
         <View style={styles.IconButton}>
@@ -367,8 +365,8 @@ const MyItemListScreen: React.FC<any> = ({
           <ZText type={'S16'} >Filter</ZText>
         </View>
       </View> */}
-    {/* // </View> */}
-   </>
+      {/* // </View> */}
+    </>
   );
 };
 
@@ -381,7 +379,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#555',  // Use a subtle color to match your design
+    color: '#555', // Use a subtle color to match your design
     textAlign: 'center',
   },
   loader: {
@@ -393,7 +391,7 @@ const styles = StyleSheet.create({
   },
   header: {
     justifyContent: 'space-between',
-  
+
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingVertical: 20,
@@ -466,16 +464,16 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   cardContainer: {
-    //width: '100%',
-
+    width: width - 40,
+    marginHorizontal: 20,
     borderRadius: 12,
     backgroundColor: '#FFF',
-   margin:20,
     shadowColor: 'rgba(0, 0, 0, 0.8)',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 1,
     shadowRadius: 20,
     elevation: 4,
+    marginBottom: 20,
   },
   carImage: {
     width: 375,
@@ -504,7 +502,7 @@ const styles = StyleSheet.create({
   detailsContainer: {
     paddingLeft: 20,
     paddingBottom: 15,
-     paddingTop: 15,
+    paddingTop: 15,
   },
   price: {
     fontSize: 16,
@@ -528,5 +526,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppBaseContainer(MyItemListScreen, '', true,true);
+export default AppBaseContainer(MyItemListScreen, '', true, true);
 //export default ItemListScreen;

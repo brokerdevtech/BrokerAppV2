@@ -5,7 +5,8 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  View,Text
+  View,
+  Text,
 } from 'react-native';
 import {HStack} from '@/components/ui/hstack';
 import {VStack} from '@/components/ui/vstack';
@@ -42,8 +43,8 @@ const ProductSection = (props: ProductSectionProps) => {
   const callPodcastList = async () => {
     // console.log("props.request");
     // console.log(props.request);
-   execute(props.endpoint, props.request);
-    //console.log(props.heading, 'data :-', data);
+    execute(props.endpoint, props.request);
+    console.log(props.heading, 'data :-', data);
 
     //console.log('status :-', status);
     //console.log('error :-', error);
@@ -78,78 +79,100 @@ const ProductSection = (props: ProductSectionProps) => {
 
         {/* Car Details */}
         <View style={styles.detailsContainer}>
-          
-        <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', {postId: item.postId, postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>
-          <ZText type={'R16'} style={styles.price}>
-          {'\u20B9'} {item.price}
-          </ZText>
-          <View style={styles.locationContainer}>
-            {item.city && (
-              <>
-                <Icon as={Map_pin} />
-                <ZText type={'R16'} style={styles.locationText}>
-                  {item.city}
-                </ZText>
-              </>
-            )}
-          </View>
-          <ZText type={'R16'} style={styles.carBrand}>
-            {item.title}
-          </ZText>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('ItemDetailScreen', {
+                postId: item.postId,
+                postType: item.categoryId == 2 ? 'Car/Post' : 'Post',
+              })
+            }>
+            <ZText type={'R16'} style={styles.price}>
+              {'\u20B9'} {item.price}
+            </ZText>
+            <View style={styles.locationContainer}>
+              {item.city && (
+                <>
+                  <Icon as={Map_pin} />
+                  <ZText type={'R16'} style={styles.locationText}>
+                    {item.city}
+                  </ZText>
+                </>
+              )}
+            </View>
+            <ZText type={'R16'} style={styles.carBrand}>
+              {item.title}
+            </ZText>
           </TouchableOpacity>
         </View>
       </View>
     );
   };
-  
 
-  
   return (
     <>
-    {(data == null) ? (
-      <RectangularCardSkeleton type='NewIN' />
-    ) : (
-      <View style={{ backgroundColor: props.background, paddingVertical: 10,flex: 1, }}>
-        <HStack space="md" reversed={false} style={styles.heading}>
-          <ZText type={'R18'}>{props.heading}</ZText>
-          {props.isShowAll && (
-            <TouchableOpacity
-              onPress={() => navigation.navigate('ItemListScreen', {
-                listType: props.heading === 'New In Car' ? 'Car' : 'RealEstate',
-                categoryId:props.heading === 'New In Car' ? 2 : 1
-              })}
-            >
-              <ZText type={'R14'} style={styles.link}>See All</ZText>
-            </TouchableOpacity>
-          )}
-        </HStack>
-        <HStack space="md" reversed={false} style={{ paddingHorizontal: 10, flexDirection: 'row',
-    flex: 2,
-    justifyContent: 'space-between',}}>
-          <FlatList
-            data={data}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={renderProductItems}
-            contentContainerStyle={{ paddingVertical: 20 }}
-            initialNumToRender={3}
-            showsHorizontalScrollIndicator={true}
-            horizontal
-            ListEmptyComponent={() => (
-              data === undefined ? (
-                <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
-              ) : (
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>No Data Found </Text>
-                </View>
-              )
+      {data == null ? (
+        <RectangularCardSkeleton type="NewIN" />
+      ) : (
+        <View
+          style={{
+            backgroundColor: props.background,
+            paddingVertical: 10,
+            flex: 1,
+          }}>
+          <HStack space="md" reversed={false} style={styles.heading}>
+            <ZText type={'R18'}>{props.heading}</ZText>
+            {props.isShowAll && (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('ItemListScreen', {
+                    listType:
+                      props.heading === 'New In Car' ? 'Car' : 'RealEstate',
+                    categoryId: props.heading === 'New In Car' ? 2 : 1,
+                  })
+                }>
+                <ZText type={'R14'} style={styles.link}>
+                  See All
+                </ZText>
+              </TouchableOpacity>
             )}
-           // onEndReachedThreshold={0.8}
-            // Uncomment the following line if you want to add a separator between items
-            // ItemSeparatorComponent={() => <View style={styles.separator} />}
-          />
-        </HStack>
-      </View>
-    )}
+          </HStack>
+          <HStack
+            space="md"
+            reversed={false}
+            style={{
+              paddingHorizontal: 10,
+              flexDirection: 'row',
+              flex: 2,
+              justifyContent: 'space-between',
+            }}>
+            <FlatList
+              data={data}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={renderProductItems}
+              contentContainerStyle={{paddingVertical: 20}}
+              initialNumToRender={3}
+              showsHorizontalScrollIndicator={true}
+              horizontal
+              ListEmptyComponent={() =>
+                data === undefined ? (
+                  <ActivityIndicator
+                    size="large"
+                    color="#0000ff"
+                    style={styles.loader}
+                  />
+                ) : (
+                  <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>No Data Found </Text>
+                  </View>
+                )
+              }
+              // onEndReachedThreshold={0.8}
+              // Uncomment the following line if you want to add a separator between items
+              // ItemSeparatorComponent={() => <View style={styles.separator} />}
+            />
+          </HStack>
+        </View>
+      )}
     </>
   );
 };
@@ -161,11 +184,11 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     width: '100%',
 
-    display:'flex',
+    display: 'flex',
   },
   emptyText: {
     fontSize: 16,
-    color: '#555',  // Use a subtle color to match your design
+    color: '#555', // Use a subtle color to match your design
     textAlign: 'center',
   },
   loader: {
