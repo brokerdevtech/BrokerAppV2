@@ -33,6 +33,7 @@ import ProductSection from './Dashboard/ProductSection';
 import MarqueeBanner from '../sharedComponents/profile/MarqueeBanner';
 import {fetchDashboardData} from '../../BrokerAppCore/services/new/dashboardService';
 import UserStories from '../components/story/UserStories';
+import { colors } from '../themes';
 
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -104,9 +105,9 @@ export default function DashboradScreen() {
           }}>
           <View>
             <ZText
-              type="r14"
+              type="B14"
               style={{
-                color: 'white',
+                color: colors.light.white,
                 textShadowColor: 'rgba(0, 0, 0, 0.1)',
                 textShadowOffset: {width: 0, height: 2},
                 textShadowRadius: 4,
