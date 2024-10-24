@@ -61,6 +61,8 @@ import flex from '@/themes/flex';
 import padding from '@/themes/padding';
 import { FlashList } from '@shopify/flash-list';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors } from '../themes';
+import { Color } from '@/styles/GlobalStyles';
 
 const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,recordCount})=>{
    console.log(AppLocation.City,"categoryId")
@@ -178,13 +180,13 @@ const ProductItem =  React.memo(
       /></View>
       {/* Car Details */}
       <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>
-      <VStack space="md" style={styles.detailsContainer}>
+      <VStack space="xs" style={styles.detailsContainer}>
         <HStack>
           <Box style={{marginLeft: 4}}>
-            <ZText type={'R16'}>{'\u20B9'} </ZText>
+            <ZText type={'M16'} style={{color:colors.light.appred}}>{'\u20B9'} </ZText>
           </Box>
           <Box>
-            <ZText type={'R16'}>{item.price}</ZText>
+            <ZText type={'M16'} style={{color:colors.light.appred}}>{item.price}</ZText>
           </Box>
         </HStack>
 
@@ -226,53 +228,39 @@ const ProductItem =  React.memo(
       
       </VStack>
       </TouchableOpacity>
-      <Divider className="my-0.5" />
+      {/* <Divider  className="my-0.5" /> */}
 
-      <View style={styles.detailsContainer}>
+      <View style={styles.detailsContainerBottom}>
         <HStack
           // space="md"
-          style={{paddingHorizontal: 10,justifyContent: 'space-between'}}
+          
         >
-          <VStack style={{alignItems: 'center'}}>
-          <TouchableOpacity onPress={() => makeCall('+919910199761')}>
+          <HStack style={{alignItems: 'center', width: '50%',    justifyContent: 'center'}}>
+          <TouchableOpacity style={styles.callbtn} onPress={() => makeCall('+919910199761')}>
             <View style={{alignItems: 'center'}}>
-              <Icon as={Telephone_Icon} size={'xxl'} />
+              <Icon as={Telephone_Icon} color={colors.light.appred} size={'xxl'} />
             </View>
             <View style={{ alignItems: 'center',paddingVertical: 10}}>
-              <ZText type={'R14'}>Call</ZText>
+              <ZText type={'M14'} >Call</ZText>
             </View>
             </TouchableOpacity>
-          </VStack>
-          <VStack style={{alignItems: 'center'}}>
-          <TouchableOpacity onPress={() =>chatProfilePress()}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Chat_Icon} size={'xxl'} />
+            
+          </HStack>
+          <HStack style={{alignItems: 'center',width: '50%',    justifyContent: 'center'}}>
+          <TouchableOpacity
+          style={styles.Chatbtn}
+          
+          
+          onPress={() =>chatProfilePress()}>
+            <View style={{alignItems: 'center',marginRight:10}}>
+              <Icon as={Chat_Icon}  color={'#0F5DC4'} size={'xxl'}  />
             </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10}}>
-              <ZText type={'R14'}>Chat</ZText>
-            </View>
-            </TouchableOpacity>
-          </VStack>
-          <VStack style={{alignItems: 'center'}}>
-          <TouchableOpacity onPress={() => openWhatsApp('+919910199761', 'test message')}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Whatsapp_Icon} size={'xxl'} />
-            </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10}}>
-
-  <ZText type={'R14'}>WhatsApp</ZText>
-
+            <View style={{ alignItems: 'center',paddingVertical: 10,}}>
+              <ZText type={'M14'}>Chat</ZText>
             </View>
             </TouchableOpacity>
-          </VStack>
-          <VStack style={{alignItems: 'center'}}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Calender_Icon} size={'xxl'} />
-            </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10}}>
-              <ZText type={'R14'}>Appointment</ZText>
-            </View>
-          </VStack>
+          </HStack>
+      
         </HStack>
       </View>
     </View>
@@ -498,11 +486,36 @@ const ItemListScreen: React.FC<any> = ({
 };
 
 const styles = StyleSheet.create({
+  callbtn:{display:'flex',
+    flexDirection:'row',
+    alignItems:'center',
+     backgroundColor:"#fef4f4",
+    width: '90%',
+    marginLeft:10,
+    paddingVertical: 5, // Vertical padding
+    paddingHorizontal: 5, // Horizontal padding
+    borderRadius: 8, // Rounded corners
+    
+    justifyContent: 'center'},
+    Chatbtn:
+      {display:'flex',flexDirection:'row',alignItems:'center', backgroundColor:"#F2F7FE",
+        width: '90%',
+        
+        paddingVertical: 5, // Vertical padding
+        paddingHorizontal: 5, // Horizontal padding
+        borderRadius: 8, // Rounded corners
+  
+   marginRight:10,
+        justifyContent: 'center'
+        
+                   },
+    
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 20,
+ 
   },
   emptyText: {
     fontSize: 16,
@@ -631,12 +644,27 @@ display:'flex',
   },
   detailsContainer: {
     paddingLeft: 20,
-    paddingBottom: 15,
-     paddingTop: 15,
+    paddingBottom: 10,
+     paddingTop: 10,
      width:'100%',
      paddingRight: 20,
 
     },
+    detailsContainerBottom: {
+    //  paddingLeft: 20,
+    borderRadius: 12,
+    paddingTop:5,
+    paddingBottom:10,
+       width:'100%',
+     //  paddingRight: 20,
+    //  borderColor:colors.light.appred,
+    //  borderBottomWidth:1,
+    //  borderBottomLeftRadius: 12,
+    //  borderBottomRightRadius: 12,
+    //  borderLeftWidth:1,
+    //  borderRightWidth:1,
+  
+      },
   price: {
     fontSize: 16,
     fontWeight: '600',
