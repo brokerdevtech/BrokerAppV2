@@ -562,27 +562,40 @@ const PropertyPostPreview: React.FC = ({
                       {formValue.propDescription}
                     </ZTextMore>
                   </VStack>
-                  <Divider className="my-0.5" />
-                  <KeyValueRow
-                    label="Amenities"
-                    values={filter.Amenities.records}
-                    valueKey="propertyAmenity"
-                    screentype="preview"
-                  />
-                  <Divider className="my-0.5" />
-                  <KeyValueRow
-                    label="Near By Facilities"
-                    values={filter.NearbyFacilities.records}
-                    valueKey="nearbyFacility"
-                    screentype="preview"
-                  />
-                  <Divider className="my-0.5" />
-                  <KeyValueRow
-                    label="Property Type"
-                    values={filter.PropertyType.records}
-                    valueKey="propertyType"
-                    screentype="preview"
-                  />
+                  {filter.Amenities.records.length > 0 && (
+                    <>
+                      <Divider className="my-0.5" />
+                      <KeyValueRow
+                        label="Amenities"
+                        values={filter.Amenities.records}
+                        valueKey="propertyAmenity"
+                        screentype="preview"
+                      />
+                    </>
+                  )}
+                  {filter.NearbyFacilities.records.length > 0 && (
+                    <>
+                      <Divider className="my-0.5" />
+                      <KeyValueRow
+                        label="Near By Facilities"
+                        values={filter.NearbyFacilities.records}
+                        valueKey="nearbyFacility"
+                        screentype="preview"
+                      />
+                    </>
+                  )}
+                  {filter.PropertyType.records.length > 0 && (
+                    <>
+                      <Divider className="my-0.5" />
+                      <KeyValueRow
+                        label="Property Type"
+                        values={filter.PropertyType.records}
+                        valueKey="propertyType"
+                        screentype="preview"
+                      />
+                    </>
+                  )}
+
                   {localitie && (
                     <VStack space="md" style={{paddingVertical: 10}}>
                       <Divider className="my-0.5" />
