@@ -86,7 +86,18 @@ import Close_light_icon from './close_lisght.svg';
 import CommentWhite from './icons/commentWhite.svg';
 import TrashWhite from './icons/trashWhite.svg';
 import description_icon from './description.svg'
-export {CommentWhite,TrashWhite,description_icon,
+
+
+import balconyType from './propertyIcon/balconyType.svg'
+import bathroomType from './propertyIcon/bathroomType.svg'
+import bedroomType from './propertyIcon/bedroomType.svg'
+import propertySize from './propertyIcon/propertySize.svg'
+export {
+  balconyType,
+  bathroomType,
+  bedroomType,
+  propertySize,
+  CommentWhite,TrashWhite,description_icon,
  Like ,Send,
   Follower_Icon,
   filter_icon,

@@ -735,7 +735,7 @@ const localStyles = StyleSheet.create({
   commentFooter: {
     flexDirection: 'row',
     gap: 10,
-    borderColor: 'red',
+    borderColor: '#E00000',
 
     alignItems: 'center',
     justifyContent: 'space-between',

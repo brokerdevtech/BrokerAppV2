@@ -29,7 +29,7 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.primary, // Color when form is valid
   },
   errorText: {
-    color: 'red',
+    color: '#E00000',
   },
   avatarContainer: {
     width: 120,

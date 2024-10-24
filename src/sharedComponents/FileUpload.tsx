@@ -194,7 +194,7 @@ const FileUpload = ({
                     as={CloseIcon}
                     // size={moderateScale(30)}
                     onPress={clearFile}
-                    color={'red'}
+                    color={'#E00000'}
                   />
                 </Box>
               )}

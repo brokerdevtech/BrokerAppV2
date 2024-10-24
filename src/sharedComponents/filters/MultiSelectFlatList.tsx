@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: 16,
-    color: 'red',
+    color: '#E00000',
   },
   selectedItem: {
     backgroundColor: '#4CAF50',
