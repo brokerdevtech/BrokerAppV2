@@ -119,7 +119,7 @@ export default function DashboradScreen() {
       </TouchableOpacity>
     );
   });
-
+  console.log(marqueeText, 'marqueeText');
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView style={styles.scrollView}>
@@ -131,9 +131,11 @@ export default function DashboradScreen() {
             {/* </View> */}
             {marqueeText?.length > 0 && (
               <MarqueeBanner
-                marqueeTextList={marqueeText.map(
-                  (item: any) => item.marqueueText,
-                )}
+                marqueeTextList={marqueeText.map((item: any) => ({
+                  marqueeText: item.marqueueText,
+                  postId: item.postId,
+                  categoryId: item.categoryId,
+                }))}
               />
             )}
           </View>

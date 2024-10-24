@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React, {useEffect} from 'react';
 import {
   ActivityIndicator,
@@ -45,7 +46,7 @@ const ProductSection = (props: ProductSectionProps) => {
     // console.log("props.request");
     // console.log(props.request);
     execute(props.endpoint, props.request);
-    console.log(props.heading, 'data :-', data);
+    // console.log(props.heading, 'data :-', data);
 
     //console.log('status :-', status);
     //console.log('error :-', error);
@@ -163,7 +164,7 @@ const ProductSection = (props: ProductSectionProps) => {
                   />
                 ) : (
                   <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyText}>No Data Found </Text>
+                    <Text style={styles.emptyText}>No data found </Text>
                   </View>
                 )
               }

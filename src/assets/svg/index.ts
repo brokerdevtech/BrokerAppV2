@@ -85,20 +85,24 @@ import Close_light_icon from './close_lisght.svg';
 
 import CommentWhite from './icons/commentWhite.svg';
 import TrashWhite from './icons/trashWhite.svg';
-import description_icon from './description.svg'
+import description_icon from './description.svg';
 
-
-import balconyType from './propertyIcon/balconyType.svg'
-import bathroomType from './propertyIcon/bathroomType.svg'
-import bedroomType from './propertyIcon/bedroomType.svg'
-import propertySize from './propertyIcon/propertySize.svg'
+import balconyType from './propertyIcon/balconyType.svg';
+import bathroomType from './propertyIcon/bathroomType.svg';
+import bedroomType from './propertyIcon/bedroomType.svg';
+import propertySize from './propertyIcon/propertySize.svg';
+import ComingSoon from './ComingSoon.svg';
 export {
   balconyType,
+  ComingSoon,
   bathroomType,
   bedroomType,
   propertySize,
-  CommentWhite,TrashWhite,description_icon,
- Like ,Send,
+  CommentWhite,
+  TrashWhite,
+  description_icon,
+  Like,
+  Send,
   Follower_Icon,
   filter_icon,
   Document_text,
@@ -177,5 +181,5 @@ export {
   Share_Icon,
   unchecked,
   share_PIcon,
-  bookmark_icon
+  bookmark_icon,
 };

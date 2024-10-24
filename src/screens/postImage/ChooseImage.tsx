@@ -149,6 +149,9 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
         {
           text: 'Cancel',
           style: 'cancel',
+          onPress: () => {
+            navigation.goBack();
+          },
         },
         {
           text: 'Open Settings',
@@ -815,7 +818,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
         style={{marginRight: 15}}
         onPress={handleNextStepClick}
         testID={`next${thumbnail.id}`}>
-        <ZText numberOfLines={1} color={'#000'} type={'R16'}>
+        <ZText numberOfLines={1} color={Color.primary} type={'R16'}>
           {'Next'}
         </ZText>
       </TouchableOpacity>
@@ -827,115 +830,126 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       {loading ? (
         <Text>Loading...</Text>
       ) : galleryEmpty ? (
-        <Text>Your gallery is empty</Text>
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <Image
+            source={require('../../assets/images/empty.png')}
+            style={{height: 300, width: 300}}
+          />
+          <ZText type={'R18'}>Your gallery is empty</ZText>
+        </View>
       ) : (
-        <>
-          <View>
-            <ZHeader
-              title={`New Post`}
-              rightIcon={<RightIcon />}
-              isHideBack={true}
-              isLeftIcon={<LeftIcon />}
-            />
-
+        thumbnail.length > 0 && (
+          <>
             <View>
+              <ZHeader
+                title={`New Post`}
+                rightIcon={<RightIcon />}
+                isHideBack={true}
+                isLeftIcon={<LeftIcon />}
+              />
+
+              <View>
+                <FlatList
+                  ref={flatListRef}
+                  data={thumbnail}
+                  keyExtractor={item => item.id}
+                  renderItem={renderItem}
+                  snapToInterval={windowWidth}
+                  decelerationRate={0}
+                  bounces={false}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  scrollEventThrottle={16}
+                  onScroll={event => {
+                    contentOffset.value = event.nativeEvent.contentOffset.x;
+                  }}
+                />
+              </View>
+              <View style={styles.container}>
+                <View style={styles.GalleryHeaderContainer}>
+                  <ZText
+                    numberOfLines={1}
+                    color={'#BC4A4F'}
+                    type={'R18'}
+                    style={styles.GalleryHeader}>
+                    Gallery Images
+                  </ZText>
+
+                  <TouchableOpacity
+                    onPress={() => setIsMultiSelect(!isMultiSelect)}
+                    style={styles.multiSelectButton}>
+                    {isMultiSelect ? (
+                      <Multiple_Fill
+                        accessible={true}
+                        accessibilityLabel="MultipleSelected"
+                      />
+                    ) : (
+                      <Multiple
+                        accessible={true}
+                        accessibilityLabel="Multiple"
+                      />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              </View>
+
               <FlatList
-                ref={flatListRef}
-                data={thumbnail}
-                keyExtractor={item => item.id}
-                renderItem={renderItem}
-                snapToInterval={windowWidth}
-                decelerationRate={0}
-                bounces={false}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                scrollEventThrottle={16}
-                onScroll={event => {
-                  contentOffset.value = event.nativeEvent.contentOffset.x;
-                }}
+                data={photos}
+                renderItem={renderImageItem}
+                keyExtractor={(item, index) => index.toString()}
+                horizontal={false}
+                numColumns={4}
+                onEndReached={loadMore}
+                onEndReachedThreshold={0.2}
               />
             </View>
-            <View style={styles.container}>
-              <View style={styles.GalleryHeaderContainer}>
+            {/* <Box> */}
+            <View style={styles.footer}>
+              <TouchableOpacity
+                onPress={() => setPage('Post')}
+                style={styles.footerSection}>
                 <ZText
                   numberOfLines={1}
-                  color={'#BC4A4F'}
-                  type={'R18'}
-                  style={styles.GalleryHeader}>
-                  Gallery Images
+                  style={[
+                    page === 'Post'
+                      ? styles.pickedFooterTitle
+                      : styles.footerTitle,
+                  ]}
+                  type={'R16'}>
+                  {`Post`}
                 </ZText>
-
-                <TouchableOpacity
-                  onPress={() => setIsMultiSelect(!isMultiSelect)}
-                  style={styles.multiSelectButton}>
-                  {isMultiSelect ? (
-                    <Multiple_Fill
-                      accessible={true}
-                      accessibilityLabel="MultipleSelected"
-                    />
-                  ) : (
-                    <Multiple accessible={true} accessibilityLabel="Multiple" />
-                  )}
-                </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handlePressSelectVideoButton()}
+                style={styles.footerSection}>
+                <ZText
+                  numberOfLines={1}
+                  style={[
+                    page === 'Reel'
+                      ? styles.pickedFooterTitle
+                      : styles.footerTitle,
+                  ]}
+                  type={'R16'}>
+                  {`Reel`}
+                </ZText>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handlePressSelectStoryButton()}>
+                <ZText
+                  numberOfLines={1}
+                  style={[
+                    page === 'Story'
+                      ? styles.pickedFooterTitle
+                      : styles.footerTitle,
+                  ]}
+                  type={'R16'}>
+                  {`Story`}
+                </ZText>
+              </TouchableOpacity>
             </View>
-
-            <FlatList
-              data={photos}
-              renderItem={renderImageItem}
-              keyExtractor={(item, index) => index.toString()}
-              horizontal={false}
-              numColumns={4}
-              onEndReached={loadMore}
-              onEndReachedThreshold={0.2}
-            />
-          </View>
-          {/* <Box> */}
-          <View style={styles.footer}>
-            <TouchableOpacity
-              onPress={() => setPage('Post')}
-              style={styles.footerSection}>
-              <ZText
-                numberOfLines={1}
-                style={[
-                  page === 'Post'
-                    ? styles.pickedFooterTitle
-                    : styles.footerTitle,
-                ]}
-                type={'R16'}>
-                {`Post`}
-              </ZText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => handlePressSelectVideoButton()}
-              style={styles.footerSection}>
-              <ZText
-                numberOfLines={1}
-                style={[
-                  page === 'Reel'
-                    ? styles.pickedFooterTitle
-                    : styles.footerTitle,
-                ]}
-                type={'R16'}>
-                {`Reel`}
-              </ZText>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handlePressSelectStoryButton()}>
-              <ZText
-                numberOfLines={1}
-                style={[
-                  page === 'Story'
-                    ? styles.pickedFooterTitle
-                    : styles.footerTitle,
-                ]}
-                type={'R16'}>
-                {`Story`}
-              </ZText>
-            </TouchableOpacity>
-          </View>
-          {/* </Box> */}
-          <LoadingOverlay isVisible={isLoadingOverlay} />
-        </>
+            {/* </Box> */}
+            <LoadingOverlay isVisible={isLoadingOverlay} />
+          </>
+        )
       )}
     </>
   );

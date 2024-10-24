@@ -1,6 +1,12 @@
-import type { Ref } from 'react';
-import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import type { TextProps } from 'react-native';
+import type {Ref} from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
+import type {TextProps} from 'react-native';
 import {
   Animated,
   Easing,
@@ -14,7 +20,7 @@ import {
 } from 'react-native';
 import ZText from './ZText';
 
-const { UIManager } = NativeModules;
+const {UIManager} = NativeModules;
 
 export interface MarqueeTextProps extends TextProps {
   /**
@@ -95,13 +101,18 @@ const createAnimation = (
         ),
       ]);
     }
-    return Animated.loop(Animated.sequence([baseAnimation, Animated.delay(1000)]));
+    return Animated.loop(
+      Animated.sequence([baseAnimation, Animated.delay(1000)]),
+    );
   }
 
   return baseAnimation;
 };
 
-const MarqueeText = (props: MarqueeTextProps, ref: Ref<MarqueeTextHandles>): JSX.Element => {
+const MarqueeText = (
+  props: MarqueeTextProps,
+  ref: Ref<MarqueeTextHandles>,
+): JSX.Element => {
   const {
     style,
     marqueeOnStart = true,
@@ -158,19 +169,25 @@ const MarqueeText = (props: MarqueeTextProps, ref: Ref<MarqueeTextHandles>): JSX
       return;
     }
 
-    const baseDuration = PixelRatio.getPixelSizeForLayoutSize(marqueeTextWidth.current) / config.current.speed;
-    const { consecutive: isConsecutive } = config.current;
+    const baseDuration =
+      PixelRatio.getPixelSizeForLayoutSize(marqueeTextWidth.current) /
+      config.current.speed;
+    const {consecutive: isConsecutive} = config.current;
     animation.current = createAnimation(
       animatedValue.current,
       {
         ...config.current,
         toValue: isConsecutive ? -marqueeTextWidth.current : -distance,
-        duration: isConsecutive ? baseDuration * (marqueeTextWidth.current / distance) : baseDuration,
+        duration: isConsecutive
+          ? baseDuration * (marqueeTextWidth.current / distance)
+          : baseDuration,
       },
       isConsecutive
         ? {
             resetToValue: containerWidth.current,
-            duration: baseDuration * ((containerWidth.current + marqueeTextWidth.current) / distance),
+            duration:
+              baseDuration *
+              ((containerWidth.current + marqueeTextWidth.current) / distance),
           }
         : undefined,
     );
@@ -209,9 +226,12 @@ const MarqueeText = (props: MarqueeTextProps, ref: Ref<MarqueeTextHandles>): JSX
 
       const measureWidth = (component: ScrollView | Text): Promise<number> =>
         new Promise(resolve => {
-          UIManager.measure(findNodeHandle(component), (_x: number, _y: number, w: number) => {
-            return resolve(w);
-          });
+          UIManager.measure(
+            findNodeHandle(component),
+            (_x: number, _y: number, w: number) => {
+              return resolve(w);
+            },
+          );
         });
 
       const [wrapperWidth, textWidth] = await Promise.all([
@@ -231,12 +251,16 @@ const MarqueeText = (props: MarqueeTextProps, ref: Ref<MarqueeTextHandles>): JSX
     containerWidth.current = null;
     marqueeTextWidth.current = null;
   };
-  const { width, height } = StyleSheet.flatten(style || {});
-  const calWidth = 600
+  const {width, height} = StyleSheet.flatten(style || {});
+  const calWidth = 600;
   return (
-    <View style={[styles.container, { width, height }]}>
-      <ZText type={'R16'} numberOfLines={1} {...restProps} style={[style, { opacity: isAnimating ? 0 : 1}]}>
-         {children}
+    <View style={[styles.container, {width, height}]}>
+      <ZText
+        type={'R16'}
+        numberOfLines={1}
+        {...restProps}
+        style={[style, {opacity: isAnimating ? 0 : 1}]}>
+        {children}
       </ZText>
 
       <ScrollView
@@ -253,7 +277,7 @@ const MarqueeText = (props: MarqueeTextProps, ref: Ref<MarqueeTextHandles>): JSX
           style={[
             style,
             {
-              transform: [{ translateX: animatedValue.current }],
+              transform: [{translateX: animatedValue.current}],
               opacity: isAnimating ? 1 : 0,
               width: '100%',
             },

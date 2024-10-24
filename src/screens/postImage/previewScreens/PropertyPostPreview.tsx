@@ -3,7 +3,7 @@
 /* eslint-disable react-native/no-inline-styles */
 // src/screens/HomeScreen.tsx
 
-import {styles} from '../../../themes';
+import {colors, styles} from '../../../themes';
 import {useS3} from '../../../Context/S3Context';
 import {useState} from 'react';
 import {
@@ -44,12 +44,20 @@ import {
   postsImagesBucketPath,
   postsVideosBucketPath,
 } from '../../../config/constants';
-import {Back} from '../../../assets/svg';
+import {Back, Location_Icon} from '../../../assets/svg';
 import AppBaseContainer from '../../../hoc/AppBaseContainer_old';
 import {useApiRequest} from '../../../hooks/useApiRequest';
 import {sendPropPostData} from '../../../../BrokerAppCore/services/new/postServices';
 import {Toast, ToastDescription} from '../../../../components/ui/toast';
 import LocationMap from '../../../sharedComponents/LocationMap';
+import {VStack} from '../../../../components/ui/vstack';
+import {HStack} from '../../../../components/ui/hstack';
+import IconValueDisplay from '../../../sharedComponents/IconValueDisplay';
+import {Icon} from '../../../../components/ui/icon';
+import {Divider} from '../../../../components/ui/divider';
+import ZTextMore from '../../../sharedComponents/ZTextMore';
+import KeyValueDisplay from '../../../sharedComponents/KeyValueDisplay';
+import KeyValueRow from '../../../sharedComponents/KeyValueRow';
 
 const PropertyPostPreview: React.FC = ({
   toast,
@@ -114,12 +122,18 @@ const PropertyPostPreview: React.FC = ({
   const LeftIcon = () => {
     return (
       <View style={styles.rowCenter}>
-        <TouchableOpacity
-          style={styles.pr10}
-          onPress={() => {
-            navigation.goBack();
-          }}>
-          <Back accessible={true} accessibilityLabel="Back" />
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <View
+            style={{
+              // ...styles.appTitleMain,
+              // color: '#007acc',
+              padding: 8,
+              borderWidth: 1,
+              borderColor: '#E5E5E5',
+              borderRadius: 40,
+            }}>
+            <Back accessible={true} accessibilityLabel="Back" />
+          </View>
         </TouchableOpacity>
       </View>
     );
@@ -133,8 +147,8 @@ const PropertyPostPreview: React.FC = ({
           onPress={() => {
             savePost(formValue, filter, imagesArray);
           }}>
-          <ZText numberOfLines={1} color={'#BC4A4F'} type={'b16'}>
-            {`Save`}
+          <ZText numberOfLines={1} color={Color.primary} type={'R16'}>
+            {'Save'}
           </ZText>
         </TouchableOpacity>
       </View>
@@ -400,7 +414,7 @@ const PropertyPostPreview: React.FC = ({
       </Box>
     );
   };
-
+  console.log(formValue, 'jjj');
   return (
     <ZSafeAreaView>
       <ZHeader
@@ -416,7 +430,7 @@ const PropertyPostPreview: React.FC = ({
           bounces={false}
           showsVerticalScrollIndicator={false}
           style={localStyles.root}>
-          <View>
+          <View style={{paddingHorizontal: 20}}>
             <View>
               {Isvideo == false && (
                 <>
@@ -433,6 +447,7 @@ const PropertyPostPreview: React.FC = ({
                       setActiveIndex(index);
                     }}
                     contentContainerStyle={localStyles.listContainer}
+                    x
                     // contentContainerStyle={
                     //   imagesArray.length > 1 && localStyles.listContainer
                     // }
@@ -460,78 +475,138 @@ const PropertyPostPreview: React.FC = ({
               )}
             </View>
             <View style={localStyles.bodyContainer}>
-              <Box>
-                <View style={localStyles.ROW}>
-                  <View style={localStyles.COL}>
-                    <ZText type={'b18'}>{formValue.title}</ZText>
-                  </View>
-                </View>
-                <View style={localStyles.ROW1}>
-                  <View style={localStyles.COL_LEFT}>
-                    <ZText type={'s16'}>Price</ZText>
-                  </View>
-                  <View style={localStyles.COL_RIGHT}>
-                    <ZText type={'b18'}>
-                      {formatNumberToIndianSystem(formValue.price)}
-                    </ZText>
-                  </View>
-                </View>
-                <View
-                  style={[
-                    localStyles.ROW2,
-                    {borderBottomWidth: 1, borderColor: Color.gray1},
-                  ]}>
-                  <View style={localStyles.COL_LEFT}>
-                    <ZText type={'s16'}>Property Size</ZText>
-                  </View>
-                  <View style={localStyles.COL_RIGHT}>
-                    <ZText type={'b18'}>{formValue.propertySize}</ZText>
-                  </View>
-                </View>
-                <ItemROW ITEM={filter} NAME={'Project'}></ItemROW>
-                <ItemROW ITEM={filter} NAME={'Developer'}></ItemROW>
-                <ItemROW ITEM={filter} NAME={'Bedroom'}></ItemROW>
-                <ItemROW ITEM={filter} NAME={'Balcony'}></ItemROW>
-                <ItemROW ITEM={filter} NAME={'Bathroom'}></ItemROW>
-                <ItemROW ITEM={filter} NAME={'ConstructionStatus'}></ItemROW>
-                <ItemROW ITEM={filter} NAME={'PropertyAge'}></ItemROW>
+              <VStack space="xs" style={localStyles.detailsContainetop}>
+                <ZText type={'M16'} color={colors.light.appred}>
+                  {'\u20B9'} {formatNumberToIndianSystem(formValue.price)}
+                </ZText>
 
-                <ItemROW ITEM={filter} NAME={'PropertyStatus'}></ItemROW>
-                <ItemROW ITEM={filter} NAME={'PropertyType'}></ItemROW>
-                <ItemROW
-                  ITEM={filter}
-                  NAME={'TransactionType'}
-                  isLast={true}></ItemROW>
-              </Box>
-              <Box>
-                <MultiItemROW ITEM={filter} NAME={'Amenities'}></MultiItemROW>
-                <MultiItemROW
-                  ITEM={filter}
-                  NAME={'NearbyFacilities'}></MultiItemROW>
-              </Box>
+                <HStack>
+                  <IconValueDisplay
+                    IconKey="bedroomType"
+                    value={filter?.Bedroom?.records[0]?.value}
+                  />
+                  <IconValueDisplay
+                    IconKey="bathroomType"
+                    value={filter?.Bathroom?.records[0]?.value}
+                  />
+                  <IconValueDisplay
+                    IconKey="balconyType"
+                    value={filter?.Balcony?.records[0]?.value}
+                  />
+                  <IconValueDisplay
+                    IconKey="propertySize"
+                    value={formValue.propertySize}
+                  />
+                </HStack>
+                <View style={localStyles.locationContainer}>
+                  {localitie.City && (
+                    <>
+                      <Icon as={Location_Icon} />
+                      <ZText type={'R16'}>{localitie.placeName}</ZText>
+                    </>
+                  )}
+                </View>
+              </VStack>
 
-              <Box>
-                <View style={localStyles.borderContainer}>
-                  <View style={[localStyles.cardfullIcon, {marginLeft: 20}]}>
-                    <ZText type={'s16'} style={{marginBottom: 10}}>
-                      Description
+              <Divider className="my-0.5" />
+              <View style={localStyles.detailsContainer}>
+                <VStack space="xs">
+                  <ZTextMore type={'B16'} numberOfLines={1}>
+                    {formValue.title}
+                  </ZTextMore>
+
+                  <ZText
+                    type={'B16'}
+                    numberOfLines={1}
+                    style={{paddingVertical: 5}}>
+                    {'Details'}{' '}
+                  </ZText>
+                  <KeyValueDisplay
+                    label="Project"
+                    value={filter?.Project?.records[0]?.value}
+                  />
+                  <KeyValueDisplay
+                    label="Developed By"
+                    value={filter?.Developer?.records[0]?.value}
+                  />
+                  <KeyValueDisplay
+                    label="Construction Status"
+                    value={filter?.ConstructionStatus?.records[0]?.value}
+                  />
+
+                  <KeyValueDisplay
+                    label="Property Status"
+                    value={filter?.PropertyStatus?.records[0]?.value}
+                  />
+                  <KeyValueDisplay
+                    label="Property Age"
+                    value={filter?.PropertyAge?.records[0]?.value}
+                  />
+
+                  <KeyValueDisplay
+                    label="Property Status"
+                    value={filter?.PropertyStatus?.records[0]?.value}
+                  />
+                  <KeyValueDisplay
+                    label="Transaction Type"
+                    value={filter?.TransactionType?.records[0]?.value}
+                  />
+                  <VStack
+                    space="xs"
+                    reversed={false}
+                    style={{paddingVertical: 10}}>
+                    <ZText type={'R14'} numberOfLines={1}>
+                      {'Description'}
                     </ZText>
-                    <ZText style={{width: '100%'}} type={'r16'}>
+                    <ZTextMore type={'B16'} numberOfLines={2}>
                       {formValue.propDescription}
-                    </ZText>
-                  </View>
-                </View>
-              </Box>
-              <Box>
-                <View style={localStyles.borderContainer}>
-                  <View style={[localStyles.cardfullIcon, {marginLeft: 20}]}>
-                    <ZText type={'s16'} style={{marginBottom: 10}}>
-                      Location
-                    </ZText>
-                    <LocationMap locationData={localitie} />
-                  </View>
-                </View>
-              </Box>
+                    </ZTextMore>
+                  </VStack>
+                  {filter.Amenities.records.length > 0 && (
+                    <>
+                      <Divider className="my-0.5" />
+                      <KeyValueRow
+                        label="Amenities"
+                        values={filter.Amenities.records}
+                        valueKey="propertyAmenity"
+                        screentype="preview"
+                      />
+                    </>
+                  )}
+                  {filter.NearbyFacilities.records.length > 0 && (
+                    <>
+                      <Divider className="my-0.5" />
+                      <KeyValueRow
+                        label="Near By Facilities"
+                        values={filter.NearbyFacilities.records}
+                        valueKey="nearbyFacility"
+                        screentype="preview"
+                      />
+                    </>
+                  )}
+                  {filter.PropertyType.records.length > 0 && (
+                    <>
+                      <Divider className="my-0.5" />
+                      <KeyValueRow
+                        label="Property Type"
+                        values={filter.PropertyType.records}
+                        valueKey="propertyType"
+                        screentype="preview"
+                      />
+                    </>
+                  )}
+
+                  {localitie && (
+                    <VStack space="md" style={{paddingVertical: 10}}>
+                      <Divider className="my-0.5" />
+                      <View>
+                        <ZText type={'B16'}>Location</ZText>
+                      </View>
+                      <LocationMap locationData={localitie} />
+                    </VStack>
+                  )}
+                </VStack>
+              </View>
             </View>
           </View>
         </ScrollView>
@@ -644,7 +719,7 @@ const localStyles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   card: {
-    width: devicewidth, // Card takes up full width of the screen
+    // width: devicewidth, // Card takes up full width of the screen
     justifyContent: 'center',
     alignItems: 'center',
     //backgroundColor:'red'
@@ -662,6 +737,26 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background to highlight the loader
+  },
+  detailsContainetop: {
+    // paddingLeft: 20,
+    paddingVertical: 10,
+    // paddingHorizontal: 20,
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  detailsContainer: {
+    // paddingLeft: 20,
+    paddingVertical: 10,
+  },
+
+  locationText: {
+    fontSize: 12,
+    color: '#7A7A7A',
+    marginLeft: 4,
   },
 });
 export default AppBaseContainer(PropertyPostPreview, ' ', false);
