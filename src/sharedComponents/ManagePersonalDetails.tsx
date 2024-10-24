@@ -523,7 +523,7 @@ const localStyles = StyleSheet.create({
     ...styles.mb20,
   },
   errorText: {
-    color: 'red',
+    color: '#E00000',
   },
   label: {
     textTransform: 'capitalize',

@@ -36,6 +36,7 @@ export const commonColor = {
   Base: '#F8F8F8',
   white: '#FFFFFF',
   black: '#333333',
+  appred:'#E00000',
   errorColor: '#F54135',
   grayScale1: '#F5F5F5',
   grayScale3: '#E0E0E0',

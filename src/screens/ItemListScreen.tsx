@@ -144,7 +144,7 @@ const ProductItem =  React.memo(
       .catch(err => console.error('Error opening dialer', err));
   },[]);
   return (
-
+<View style={styles.WrapcardContainer}>
     <View style={styles.cardContainer}>
       <MediaGallery
         ref={MediaGalleryRef}
@@ -195,8 +195,9 @@ const ProductItem =  React.memo(
             </Box>
             <Box style={{width:'100%' ,flex:1}}>
               <ZText
+              
                 type={'R16'}
-                numberOfLines={2} // Limits to 2 lines
+                numberOfLines={1} // Limits to 2 lines
                 ellipsizeMode="tail"
               >
                 {' '}
@@ -206,20 +207,23 @@ const ProductItem =  React.memo(
           </HStack>
         )}
 
-        <HStack>
+    
           <HStack style={{width:'100%' ,flex:1}}>
           <Box>
               <Icon as={description_icon} fill='black' size='xl'/>
             </Box>
+            <Box style={{width:'100%' ,flex:1}}>
             <ZText
+          
               type={'R16'}
-              numberOfLines={2} // Limits to 2 lines
+              numberOfLines={1} // Limits to 2 lines
               ellipsizeMode="tail"
             > {' '}
               {item.title}
             </ZText>
+            </Box>
           </HStack>
-        </HStack>
+      
       </VStack>
       </TouchableOpacity>
       <Divider className="my-0.5" />
@@ -271,6 +275,7 @@ const ProductItem =  React.memo(
           </VStack>
         </HStack>
       </View>
+    </View>
     </View>
   );
 });
@@ -420,7 +425,7 @@ const ItemListScreen: React.FC<any> = ({
              keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.6}
               onEndReached={loadMorepage}
-              contentContainerStyle={{ paddingBottom: 100 }}
+              contentContainerStyle={{ paddingBottom: 100 ,gap:20}}
               ListFooterComponent={
                 isInfiniteLoading ? (
                   <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
@@ -585,12 +590,15 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
+  WrapcardContainer:{
+    paddingHorizontal:20,
+  },
   cardContainer: {
-    //width: '100%',
-
+    width: '100%',
+display:'flex',
     borderRadius: 12,
     backgroundColor: '#FFF',
-   margin:20,
+ //  margin:20,
     shadowColor: 'rgba(0, 0, 0, 0.8)',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 1,
@@ -606,7 +614,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     position: 'absolute',
     top: 8,
-    left: 340,
+   
     right: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -625,7 +633,10 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingBottom: 15,
      paddingTop: 15,
-  },
+     width:'100%',
+     paddingRight: 20,
+
+    },
   price: {
     fontSize: 16,
     fontWeight: '600',

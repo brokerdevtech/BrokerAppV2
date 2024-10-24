@@ -194,7 +194,7 @@ const ProfileKyc: React.FC = ({
         Profiledata.addressProofBlob != '' ||
         Profiledata.reraRegistrationBlob != '') && (
         <Box>
-          <ZText type={'M14'} color={'red'}>
+          <ZText type={'M14'} color={'#E00000'}>
             If you want to upload your PAN number, address proof, or RERA
             registration again, please contact the admin.
           </ZText>

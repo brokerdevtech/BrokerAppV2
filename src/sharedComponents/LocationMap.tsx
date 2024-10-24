@@ -41,6 +41,7 @@ const LocationMap = ({ locationData }) => {
 
   return (
     <View style={styles.container} onLayout={handleMapReady}>
+        <View style={styles.mapContainer}>
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -60,6 +61,7 @@ const LocationMap = ({ locationData }) => {
           description={`${locationData.City}, ${locationData.State}, ${locationData.Country}`}
         />
       </MapView>
+      </View>
     </View>
   );
 };
@@ -67,12 +69,19 @@ const LocationMap = ({ locationData }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    borderRadius: 8, 
+  },
+  mapContainer: {
+    flex: 1,
+    borderRadius: 15, // Apply rounded corners here
+    overflow: 'hidden', // Ensure content is clipped to rounded corners
   },
   map: {
     flex: 1,
     justifyContent:'center',
     height:300,
-    width:width-40
+    width:width-40,
+    borderRadius: 8, 
   },
 });
 

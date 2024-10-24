@@ -60,179 +60,186 @@ import ProductSection from './Dashboard/ProductSection';
 
 
 const ProductItem =  React.memo(
-    ({ item, listTypeData, User, navigation }) => {
-  const MediaGalleryRef = useRef(null);
+  ({ item, listTypeData, User, navigation }) => {
+const MediaGalleryRef = useRef(null);
+
+const openWhatsApp = useCallback((phoneNumber, message) => {
+
+
+  const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
+
  
-  const openWhatsApp = useCallback((phoneNumber, message) => {
- 
-  
-    const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
-
-   
-    Linking.canOpenURL(url)
-      .then(supported => {
-        if (supported) {
-          Linking.openURL(url);
-        } else {
-          Alert.alert('Error', 'WhatsApp is not installed on this device');
-        }
-      })
-      .catch(err => console.error('Error opening WhatsApp', err));
-  },[]);
-  const chatProfilePress = useCallback(async () => {
- 
-
-    const members = [User.userId.toString(), item.userId.toString()];
+  Linking.canOpenURL(url)
+    .then(supported => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        Alert.alert('Error', 'WhatsApp is not installed on this device');
+      }
+    })
+    .catch(err => console.error('Error opening WhatsApp', err));
+},[]);
+const chatProfilePress = useCallback(async () => {
 
 
-    navigation.navigate('AppChat', {
-      defaultScreen: 'ChannelScreen',
-      defaultParams: members,
-      defaultchannelSubject:`Hi,i want to connect on ${item.title}`,
-    });
+  const members = [User.userId.toString(), item.userId.toString()];
 
-  },[]);
-  const makeCall = useCallback((phoneNumber) => {
-    const url = `tel:${phoneNumber}`;
 
-    Linking.canOpenURL(url)
-      .then(supported => {
-        if (supported) {
-          Linking.openURL(url);
-        } else {
-          Alert.alert('Error', 'Your device does not support phone calls');
-        }
-      })
-      .catch(err => console.error('Error opening dialer', err));
-  },[]);
-  return (
+  navigation.navigate('AppChat', {
+    defaultScreen: 'ChannelScreen',
+    defaultParams: members,
+    defaultchannelSubject:`Hi,i want to connect on ${item.title}`,
+  });
 
-    <View style={styles.cardContainer}>
-      <MediaGallery
-        ref={MediaGalleryRef}
-        mediaItems={item.postMedias}
-        paused={false}
-      />
+},[]);
+const makeCall = useCallback((phoneNumber) => {
+  const url = `tel:${phoneNumber}`;
 
-      {/* <Image
-        source={{
-          uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
-        }}
-        style={styles.carImage}
-      /> */}
+  Linking.canOpenURL(url)
+    .then(supported => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        Alert.alert('Error', 'Your device does not support phone calls');
+      }
+    })
+    .catch(err => console.error('Error opening dialer', err));
+},[]);
+return (
+<View style={styles.WrapcardContainer}>
+  <View style={styles.cardContainer}>
+    <MediaGallery
+      ref={MediaGalleryRef}
+      mediaItems={item.postMedias}
+      paused={false}
+    />
 
-      {/* Check and Heart Icons */}
-      {item.isBrokerAppVerified && (
-        <View style={styles.iconContainer}>
-          <View style={styles.checkIcon}>
-            <Card_check_icon />
-          </View>
+    {/* <Image
+      source={{
+        uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
+      }}
+      style={styles.carImage}
+    /> */}
+
+    {/* Check and Heart Icons */}
+    {item.isBrokerAppVerified && (
+      <View style={styles.iconContainer}>
+        <View style={styles.checkIcon}>
+          <Card_check_icon />
         </View>
-      )}
-
+      </View>
+    )}
 <View style={{marginLeft:20}}>
-      <PostActions
-        item={item}
-        User={User}
-        listTypeData={listTypeData}
-        onUpdateLikeCount={newCount => {
-          console.log(newCount);
-        }}
-      /></View>
-      {/* Car Details */}
-      <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>
-      <VStack space="md" style={styles.detailsContainer}>
-        <HStack>
-          <Box style={{marginLeft: 4}}>
-            <ZText type={'R16'}>{'\u20B9'} </ZText>
-          </Box>
-          <Box>
-            <ZText type={'R16'}>{item.price}</ZText>
-          </Box>
-        </HStack>
+    <PostActions
+      item={item}
+      User={User}
+      listTypeData={listTypeData}
+      onUpdateLikeCount={newCount => {
+        console.log(newCount);
+      }}
+    /></View>
+    {/* Car Details */}
+    <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>
+    <VStack space="md" style={styles.detailsContainer}>
+      <HStack>
+        <Box style={{marginLeft: 4}}>
+          <ZText type={'R16'}>{'\u20B9'} </ZText>
+        </Box>
+        <Box>
+          <ZText type={'R16'}>{item.price}</ZText>
+        </Box>
+      </HStack>
 
-        {item.location?.cityName && (
-          <HStack>
-            <Box>
-              <Icon as={Location_Icon} size='xl'/>
-            </Box>
-            <Box>
-              <ZText
-                type={'R16'}
-                numberOfLines={1} // Limits to 2 lines
-                ellipsizeMode="tail"
-              >
-                {' '}
-                {item.location.placeName}
-              </ZText>
-            </Box>
-          </HStack>
-        )}
-
+      {item.location?.cityName && (
         <HStack>
           <Box>
+            <Icon as={Location_Icon} size='xl'/>
+          </Box>
+          <Box style={{width:'100%' ,flex:1}}>
             <ZText
+            
               type={'R16'}
               numberOfLines={1} // Limits to 2 lines
               ellipsizeMode="tail"
             >
-              {item.title}
+              {' '}
+              {item.location.placeName}
             </ZText>
           </Box>
         </HStack>
-      </VStack>
-      </TouchableOpacity>
-      <Divider className="my-0.5" />
+      )}
 
-      <View style={styles.detailsContainer}>
-        <HStack
-          space="md"
-          style={{paddingHorizontal: 10, justifyContent: 'space-between'}}
-        >
-          <VStack>
-          <TouchableOpacity onPress={() => makeCall('+919910199761')}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Telephone_Icon} size={'xxl'} />
-            </View>
-            <View style={{paddingVertical: 10}}>
-              <ZText type={'R14'}>Call</ZText>
-            </View>
-            </TouchableOpacity>
-          </VStack>
-          <VStack>
-          <TouchableOpacity onPress={() =>chatProfilePress()}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Chat_Icon} size={'xxl'} />
-            </View>
-            <View style={{paddingVertical: 10}}>
-              <ZText type={'R14'}>Chat</ZText>
-            </View>
-            </TouchableOpacity>
-          </VStack>
-          <VStack>
-          <TouchableOpacity onPress={() => openWhatsApp('+919910199761', 'test message')}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Whatsapp_Icon} size={'xxl'} />
-            </View>
-            <View style={{paddingVertical: 10}}>
-
-  <ZText type={'R14'}>WhatsApp</ZText>
-
-            </View>
-            </TouchableOpacity>
-          </VStack>
-          <VStack>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Calender_Icon} size={'xxl'} />
-            </View>
-            <View style={{paddingVertical: 10}}>
-              <ZText type={'R14'}>Appointment</ZText>
-            </View>
-          </VStack>
+  
+        <HStack style={{width:'100%' ,flex:1}}>
+        <Box>
+            <Icon as={description_icon} fill='black' size='xl'/>
+          </Box>
+          <Box style={{width:'100%' ,flex:1}}>
+          <ZText
+        
+            type={'R16'}
+            numberOfLines={1} // Limits to 2 lines
+            ellipsizeMode="tail"
+          > {' '}
+            {item.title}
+          </ZText>
+          </Box>
         </HStack>
-      </View>
+    
+    </VStack>
+    </TouchableOpacity>
+    <Divider className="my-0.5" />
+
+    <View style={styles.detailsContainer}>
+      <HStack
+        // space="md"
+        style={{paddingHorizontal: 10,justifyContent: 'space-between'}}
+      >
+        <VStack style={{alignItems: 'center'}}>
+        <TouchableOpacity onPress={() => makeCall('+919910199761')}>
+          <View style={{alignItems: 'center'}}>
+            <Icon as={Telephone_Icon} size={'xxl'} />
+          </View>
+          <View style={{ alignItems: 'center',paddingVertical: 10}}>
+            <ZText type={'R14'}>Call</ZText>
+          </View>
+          </TouchableOpacity>
+        </VStack>
+        <VStack style={{alignItems: 'center'}}>
+        <TouchableOpacity onPress={() =>chatProfilePress()}>
+          <View style={{alignItems: 'center'}}>
+            <Icon as={Chat_Icon} size={'xxl'} />
+          </View>
+          <View style={{ alignItems: 'center',paddingVertical: 10}}>
+            <ZText type={'R14'}>Chat</ZText>
+          </View>
+          </TouchableOpacity>
+        </VStack>
+        <VStack style={{alignItems: 'center'}}>
+        <TouchableOpacity onPress={() => openWhatsApp('+919910199761', 'test message')}>
+          <View style={{alignItems: 'center'}}>
+            <Icon as={Whatsapp_Icon} size={'xxl'} />
+          </View>
+          <View style={{ alignItems: 'center',paddingVertical: 10}}>
+
+<ZText type={'R14'}>WhatsApp</ZText>
+
+          </View>
+          </TouchableOpacity>
+        </VStack>
+        <VStack style={{alignItems: 'center'}}>
+          <View style={{alignItems: 'center'}}>
+            <Icon as={Calender_Icon} size={'xxl'} />
+          </View>
+          <View style={{ alignItems: 'center',paddingVertical: 10}}>
+            <ZText type={'R14'}>Appointment</ZText>
+          </View>
+        </VStack>
+      </HStack>
     </View>
-  );
+  </View>
+  </View>
+);
 });
 
 const MyItemListScreen: React.FC<any> = ({
@@ -465,12 +472,15 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
+  WrapcardContainer:{
+    paddingHorizontal:20,
+  },
   cardContainer: {
-    //width: '100%',
-
+    width: '100%',
+display:'flex',
     borderRadius: 12,
     backgroundColor: '#FFF',
-   margin:20,
+ //  margin:20,
     shadowColor: 'rgba(0, 0, 0, 0.8)',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 1,
@@ -486,7 +496,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     position: 'absolute',
     top: 8,
-    left: 340,
+   
     right: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -505,7 +515,10 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingBottom: 15,
      paddingTop: 15,
-  },
+     width:'100%',
+     paddingRight: 20,
+
+    },
   price: {
     fontSize: 16,
     fontWeight: '600',

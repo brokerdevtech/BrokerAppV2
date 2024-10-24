@@ -31,7 +31,7 @@ import {
   Whatsapp_Icon,
   Share_Icon,
 } from '../assets/svg';
-import {imagesBucketcloudfrontPath} from '../config/constants';
+import {imagesBucketcloudfrontPath, moderateScale} from '../config/constants';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {fetchPostByID} from '@/BrokerAppCore/services/new/dashboardService';
 import {Icon, ShareIcon} from '../../components/ui/icon';
@@ -40,10 +40,35 @@ import {VStack} from '@/components/ui/vstack';
 import MediaGallery from '../sharedComponents/MediaGallery';
 import PostActions from '../sharedComponents/PostActions';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import KeyValueDisplay from '../sharedComponents/KeyValueDisplay';
+import KeyValueRow from '../sharedComponents/KeyValueRow';
+import IconValueDisplay from '../sharedComponents/IconValueDisplay';
+import ZTextMore from '../sharedComponents/ZTextMore';
+import LocationMap from '../sharedComponents/LocationMap';
+import ZAvatarInitials from '../sharedComponents/ZAvatarInitials';
+import { useNavigation } from '@react-navigation/native';
+import { colors } from '../themes';
 
-const propertyDetails = (data: any, user: any) => {
+const propertyDetails = (data: any, user: any,navigation:any) => {
+  console.log("propertyDetails",data);
+
+
+  const onPressUser = (userId,userName,userImage) => {
+    if (user.userId === userId) {
+      navigation.navigate('ProfileScreen');
+    } else {
+      navigation.navigate('ProfileDetail', {
+        userName: userName,
+        userImage: userImage,
+        userId: userId,
+        loggedInUserId: user.userId,
+        connectionId: '',
+      });
+    }
+  };
+
   const generateLink = async () => {
-    console.log(data);
+    console.log(JSON.stringify(data));
     try {
       const response = await fetch(
         `https://tinyurl.com/api-create.php?url=${encodeURIComponent(
@@ -83,10 +108,19 @@ const propertyDetails = (data: any, user: any) => {
         }}
       />
       {/* Car Details */}
-      <VStack space="md" style={styles.detailsContainer}>
-        <ZText type={'R16'}>
+      <VStack space="xs" style={styles.detailsContainetop}>
+        <ZText type={'M16'} color={ colors.light.appred}>
           {'\u20B9'} {data?.price}
         </ZText>
+
+<HStack>
+<IconValueDisplay IconKey="bedroomType" value={data.bedroomType} ></IconValueDisplay>
+<IconValueDisplay IconKey="bathroomType" value={data.bathroomType} ></IconValueDisplay>
+<IconValueDisplay IconKey="balconyType" value={data.balconyType} ></IconValueDisplay>
+<IconValueDisplay IconKey="propertySize" value={data.propertySize} ></IconValueDisplay>
+</HStack>
+
+
         <View style={styles.locationContainer}>
           {data.location.cityName && (
             <>
@@ -95,140 +129,109 @@ const propertyDetails = (data: any, user: any) => {
             </>
           )}
         </View>
-
-        <ZText type={'R16'}>{data.title}</ZText>
+      
+     
       </VStack>
+      <Divider className="my-0.5" />
       {/* <Divider className="my-0.5"/> */}
       <View style={styles.detailsContainer}>
-        {/* <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
-                        <VStack>
-                            <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Telephone_Icon} size={'xxl'} /></View>
-                            <View style={{paddingVertical: 10}}>
-                                <ZText type={'R14'}>{data.userLiked} Like </ZText>
-                            </View>
-                        </VStack>
-                        <VStack>
-                            <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Chat_Icon} size={'xxl'} /></View>
-                            <View style={{paddingVertical: 10}}>
-                                <ZText type={'R14'}>{data.comments} Comment</ZText>
-                            </View>
-                        </VStack>
-                        <VStack>
-                            <TouchableOpacity style={{alignItems: 'center', alignContent: 'center'}} onPress={sharePost}><Icon as={Share_Icon} size={'xxl'} /></TouchableOpacity>
-                            <View style={{paddingVertical: 10}}>
-                                <ZText type={'R14'}>Share</ZText>
-                            </View>
-                        </VStack>
-                        <VStack>
-                            <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Calender_Icon}  size={'xxl'} /></View>
-                            <View style={{paddingVertical: 10}}>
-                                <ZText type={'R14'}>{data.buyers} Have Buyer</ZText>
-                            </View>
-                        </VStack>
-                    </HStack>  */}
-        <VStack space="md">
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Project</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.projectName}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Developed By</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.developerName}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Construction Status</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.constructionStatus}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Bedroom</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.bedroomType}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Balcony</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.balconyType}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Amenities</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>
-                {data.postPropertyAmenities
-                  .map((item: PropertyAmenities) => item.propertyAmenity)
-                  .join(',')}
-              </ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Property Status</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.propertyStatus}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <VStack space="md">
-            <View>
-              <ZText type={'R18'}>Nearby Facilities</ZText>
-            </View>
-            <HStack></HStack>
-          </VStack>
+      
+        <VStack space="xs">
+        <ZTextMore type={'B16'}  numberOfLines={1} >{data.title}</ZTextMore>
+ 
+        <ZText type={'B16'}  numberOfLines={1} style={{ paddingVertical: 5 }}>{'Details'} </ZText>
+        <KeyValueDisplay label="Project" value={data.projectName}></KeyValueDisplay>
+        <KeyValueDisplay label="Developed By" value={data.developerName}></KeyValueDisplay>
+        <KeyValueDisplay label="Construction Status" value={data.constructionStatus}></KeyValueDisplay>
+    
+        <KeyValueDisplay label="Property Status" value={data.propertyStatus}></KeyValueDisplay>
+        <KeyValueDisplay label="Property Age" value={data.propertyAge}></KeyValueDisplay>
+    
+        <KeyValueDisplay label="Property Status" value={data.propertyStatus}></KeyValueDisplay>
+        <KeyValueDisplay label="Transaction Type" value={data.transactionType}></KeyValueDisplay>
+        <VStack space="xs" reversed={false} style={{ paddingVertical: 10 }}>
+        <ZText type={'R14'}  numberOfLines={1}>{'Description'}</ZText>
+        <ZTextMore type={'B16'}  numberOfLines={2}>{data.propDescription}</ZTextMore>
+        </VStack>
+        <Divider className="my-0.5" />
+        <KeyValueRow
+  label="Amenities"
+  values={data.postPropertyAmenities}
+  valueKey="propertyAmenity"></KeyValueRow>
+  <Divider className="my-0.5" />
+       <KeyValueRow
+  label="Near By Facilities"
+  values={data.postNearbyFacilities}
+  valueKey="nearbyFacility"></KeyValueRow>
+  <Divider className="my-0.5" />
+       <KeyValueRow
+  label="Property Type"
+  values={data.postPropertyTypes}
+  valueKey="propertyType"></KeyValueRow>
+{data.location &&
+<VStack space="md" style={{paddingVertical: 10}} >
+                       <Divider className="my-0.5"  />
+                       <View>
+                             <ZText type={'B16'}>Location</ZText>
+                          </View>
+                       <LocationMap locationData={data.location} />
+                  </VStack>
+}
+                  <VStack space="md" style={{paddingVertical: 10}}>
+                       <Divider className="my-0.5"  />
+                       <View>
+                             <ZText type={'B16'}> Listed By</ZText>
+                          </View>
+                          <HStack>
+                          <ZAvatarInitials
+                        onPress={() =>
+                          onPressUser(
+                            
+                            data.userId,
+                            data.postedBy,
+                            data.profileImage
+                        
+                          )
+                        }
+                        // item={postData}
+                        sourceUrl={data.profileImage}
+                        iconSize="md"
+                        styles={styles.profileImage}
+                        name={data.postedBy}></ZAvatarInitials>
+                        <View style={{marginLeft:15,justifyContent:'center'}}>
+                             <ZText type={'B16'}>{data.postedBy}</ZText>
+                          </View>
+                          </HStack>
+                  </VStack>
+
+      {/* <KeyValueRow
+  label="Nearby Facilities"
+  values={data.postNearbyFacilities}
+  valueKey="propertyAmenity"></KeyValueRow> */}
+    
+          
+         
         </VStack>
       </View>
     </>
   );
 };
 
-const carDetails = (data: any, user: any) => {
+const carDetails = (data: any, user: any,navigation:any) => {
+  const onPressUser = (userId,userName,userImage) => {
+    if (user.userId === userId) {
+      navigation.navigate('ProfileScreen');
+    } else {
+      navigation.navigate('ProfileDetail', {
+        userName: userName,
+        userImage: userImage,
+        userId: userId,
+        loggedInUserId: user.userId,
+        connectionId: '',
+      });
+    }
+  };
+
   const generateLink = async () => {
     // console.log(data);
     try {
@@ -272,247 +275,69 @@ const carDetails = (data: any, user: any) => {
       />
       {/* Car Details */}
       <VStack space="md" style={styles.detailsContainer}>
-        <ZText type={'R16'}>
+      <ZText type={'M16'} color={"#E00000"}>
           {'\u20B9'} {data?.price}
         </ZText>
-        <View style={styles.locationContainer}>
-          {data.location.cityName && (
-            <>
-              <Icon as={Location_Icon} />
-              <ZText type={'R16'}>{data?.location.placeName}</ZText>
-            </>
-          )}
-        </View>
+       
 
-        <ZText type={'R16'}>{data.title}</ZText>
+        <ZTextMore type={'B16'}  numberOfLines={1} >{data.title}</ZTextMore>
       </VStack>
-      {/* <Divider className="my-0.5"/> */}
+      <Divider className="my-0.5"/>
       <View style={styles.detailsContainer}>
-        {/* <HStack space="md" reversed={false} style={{paddingHorizontal: 10, justifyContent: 'space-between' }}>
-                        <VStack>
-                            <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Telephone_Icon} size={'xxl'} /></View>
-                            <View style={{paddingVertical: 10}}>
-                                <ZText type={'R14'}>{data.userLiked} Like </ZText>
-                            </View>
-                        </VStack>
-                        <VStack>
-                            <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Chat_Icon} size={'xxl'} /></View>
-                            <View style={{paddingVertical: 10}}>
-                                <ZText type={'R14'}>{data.comments} Comment</ZText>
-                            </View>
-                        </VStack>
-                        <VStack>
-                            <TouchableOpacity onPress={sharePost} style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Share_Icon} size={'xxl'} /></TouchableOpacity>
-                            <View style={{paddingVertical: 10}}>
-                                <ZText type={'R14'}>Share</ZText>
-                            </View>
-                        </VStack>
-                        <VStack>
-                            <View style={{alignItems: 'center', alignContent: 'center'}}><Icon as={Calender_Icon}  size={'xxl'} /></View>
-                            <View style={{paddingVertical: 10}}>
-                                <ZText type={'R14'}>{data.buyers} Have Buyer</ZText>
-                            </View>
-                        </VStack>
-                    </HStack>  */}
-        <VStack space="md">
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Brand Name</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.brand}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Model Name</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.model}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Fuel Type</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.fuelType}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Color</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.color}</ZText>
-            </View>
-          </HStack>
-          {/* <Divider className="my-0.5" /> */}
-          {/* <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>Balcony</ZText></View>
-                          <View><ZText type={'R14'}>{data.balconyType}</ZText></View>
-                        </HStack> */}
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Transmission</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.transmission}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Ownership</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.ownership}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Registration State</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.registrationState}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Seating Capacity</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.seatingCapacity}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Insurance Status</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.insuranceStatus}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Registration Year</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.registrationYear}</ZText>
-            </View>
-          </HStack>
+      
+        <VStack space="xs">
 
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Mileage</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.mileage}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Kms Driven</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.kmsDriven}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Engine Displacement</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.engineDisplacement}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Year Of Manufacture</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.yearOfManufacture}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Car Engine Power</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.carEnginePower}</ZText>
-            </View>
-          </HStack>
-          <Divider className="my-0.5" />
-          <HStack
-            space="md"
-            reversed={false}
-            style={{justifyContent: 'space-between', paddingVertical: 10}}>
-            <View>
-              <ZText type={'R14'}>Number Of Airbags</ZText>
-            </View>
-            <View>
-              <ZText type={'R14'}>{data.numberOfAirbags}</ZText>
-            </View>
-          </HStack>
+        <ZText type={'B16'}  numberOfLines={1} style={{ paddingVertical: 5 }}>{'Details'} </ZText>
+        <KeyValueDisplay label="Brand Name" value={data.brand}></KeyValueDisplay>
+        <KeyValueDisplay label="Model Name" value={data.model}></KeyValueDisplay>
+        <KeyValueDisplay label="Fuel Type" value={data.fuelType}></KeyValueDisplay>
+        <KeyValueDisplay label="Color" value={data.color}></KeyValueDisplay>
+        <KeyValueDisplay label="Transmission" value={data.Transmission}></KeyValueDisplay>
+        <KeyValueDisplay label="Ownership" value={data.ownership}></KeyValueDisplay>
+        <KeyValueDisplay label="Registration State" value={data.registrationState}></KeyValueDisplay>
+        <KeyValueDisplay label="Seating Capacity" value={data.seatingCapacity}></KeyValueDisplay>
+        <KeyValueDisplay label="Registration Year" value={data.registrationYear}></KeyValueDisplay>
+        <KeyValueDisplay label="Mileage" value={data.mileage}></KeyValueDisplay>
+        <KeyValueDisplay label="Kms Driven" value={data.kmsDriven}></KeyValueDisplay>
+        <KeyValueDisplay label="Engine Displacement" value={data.engineDisplacement}></KeyValueDisplay>
+        <KeyValueDisplay label="Year Of Manufacture" value={data.yearOfManufacture}></KeyValueDisplay>
+        <KeyValueDisplay label="Car Engine Power" value={data.carEnginePower}></KeyValueDisplay>
+        <KeyValueDisplay label="Number Of Airbags" value={data.numberOfAirbags}></KeyValueDisplay>
+        {data.location &&
+<VStack space="md" style={{paddingVertical: 10}} >
+                       <Divider className="my-0.5"  />
+                       <View>
+                             <ZText type={'B16'}>Location</ZText>
+                          </View>
+                       <LocationMap locationData={data.location} />
+                  </VStack>
+}
+                  <VStack space="md" style={{paddingVertical: 10}}>
+                       <Divider className="my-0.5"  />
+                       <View>
+                             <ZText type={'B16'}> Listed By</ZText>
+                          </View>
+                          <HStack>
+                          <ZAvatarInitials
+                        onPress={() =>
+                          onPressUser(
+                            
+                            data.userId,
+                            data.postedBy,
+                            data.profileImage
+                        
+                          )
+                        }
+                        // item={postData}
+                        sourceUrl={data.profileImage}
+                        iconSize="md"
+                        styles={styles.profileImage}
+                        name={data.postedBy}></ZAvatarInitials>
+                        <View style={{marginLeft:15,justifyContent:'center'}}>
+                             <ZText type={'B16'}>{data.postedBy}</ZText>
+                          </View>
+                          </HStack>
+                  </VStack>
         </VStack>
       </View>
     </>
@@ -523,6 +348,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
   const MediaGalleryRef = useRef(null);
+ 
   const {data, status, error, execute} = useApiRequest(fetchPostByID);
 
   const callItemDetail = async () => {
@@ -560,8 +386,8 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
                     paused={false}
                   />
                   {route.params.postType === 'Post'
-                    ? propertyDetails(data, user)
-                    : carDetails(data, user)}
+                    ? propertyDetails(data, user,navigation)
+                    : carDetails(data, user,navigation)}
                 </View>
               )}
               {/* End */}
@@ -574,6 +400,12 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  profileImage: {
+    width: moderateScale(48),
+    height: moderateScale(48),
+    borderRadius: moderateScale(24),
+   marginRight:15
+  },
   headerContainer: {
     backgroundColor: '#FFF',
     paddingVertical: 10,
@@ -588,7 +420,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     flex: 1,
   },
-
+LeftCol:{
+  width:"50%"
+},
+RightCol:{
+  width:"50%"
+},
   footer: {
     justifyContent: 'space-between',
     flexDirection: 'row',
@@ -691,7 +528,11 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     // paddingLeft: 20,
-    paddingVertical: 20,
+    paddingVertical: 10,
+  },
+  detailsContainetop: {
+    // paddingLeft: 20,
+    paddingVertical: 10,
   },
   price: {
     fontSize: 16,
