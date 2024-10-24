@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable no-unreachable */
-import {Platform, StyleSheet, TouchableOpacity, View,Text} from 'react-native';
+import {Platform, StyleSheet, TouchableOpacity, View, Text} from 'react-native';
 import ZText from '../sharedComponents/ZText';
 import {useNavigation} from '@react-navigation/native';
 import {styles} from '../themes';
@@ -51,7 +51,11 @@ const HomePageStack = () => {
     </Stack.Navigator>
   );
 };
-const PlaceholderScreen = () => <View><Text>Coming Soon</Text></View>;
+const PlaceholderScreen = () => (
+  <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+    <ZText type={'R16'}>Coming Soon</ZText>
+  </View>
+);
 const AppTab: React.FC = () => {
   const navigation = useNavigation();
   const userP = useSelector((state: RootState) => state.user.user);
@@ -79,7 +83,6 @@ const AppTab: React.FC = () => {
     //  onOpen();
 
     navigation.navigate('ChooseImage');
-
   };
 
   return (
@@ -87,7 +90,7 @@ const AppTab: React.FC = () => {
       style={{
         flex: 1,
         backgroundColor: 'white',
-        height:50,
+        height: 50,
       }}>
       <Tab.Navigator
         initialRouteName="AppTabHome"
@@ -227,7 +230,7 @@ const AppTab: React.FC = () => {
               />
             ),
           }}
-          component={AllSkeletonComponent}
+          component={PlaceholderScreen}
           // component={MyNetworkScreen}
         />
       </Tab.Navigator>

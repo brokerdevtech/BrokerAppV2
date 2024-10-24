@@ -69,6 +69,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
   );
   const [isLoadingOverlay, setLoadingOverlay] = useState(false);
   const [thumbnail, setThumbnail] = useState([]);
+  const [galleryEmpty, setGalleryEmpty] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [endCursor, setEndCursor] = useState('');
   const [hasNextPage, setHasNextPage] = useState(true);
@@ -125,18 +126,25 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
           PermissionsAndroid.RESULTS.GRANTED
       ) {
         fetchPhotos();
+      } else if (
+        granted[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] ===
+        PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
+      ) {
+        promptForManualPermissionSetting();
       } else {
-        // handlePermissionDeniedAlert();
+        handlePermissionDeniedAlert();
       }
     } catch (err) {
+      console.error('Permission error:', err);
     } finally {
       setLoading(false);
     }
   };
+
   const promptForManualPermissionSetting = () => {
     Alert.alert(
       'Permission Required',
-      'This app requires storage permission to function properly. Please enable it in the app settings.',
+      'This app requires access to your photos to function properly. Please enable it in the app settings.',
       [
         {
           text: 'Cancel',
@@ -149,30 +157,46 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       ],
     );
   };
-  const requestWRITE_EXTERNAL_STORAGE = async () => {
-    try {
-      const permissions = [
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        // Add more permissions as needed
-      ];
 
-      const granted = await PermissionsAndroid.requestMultiple(permissions, {
-        title: 'Permission to access images',
-        message:
-          'Your app needs permission to access your images in order to display them in the gallery.',
-      });
-
-      if (
-        granted[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] ===
-        PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
-      ) {
-        promptForManualPermissionSetting();
-      }
-    } catch (err) {
-    } finally {
-      setLoading(false);
-    }
+  const handlePermissionDeniedAlert = () => {
+    Alert.alert(
+      'Permission Denied',
+      'You need to grant permission to access your photos in order to use the gallery feature.',
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            navigation.goBack();
+            setLoading(false);
+          },
+        },
+      ],
+    );
   };
+  // const requestWRITE_EXTERNAL_STORAGE = async () => {
+  //   try {
+  //     const permissions = [
+  //       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  //       // Add more permissions as needed
+  //     ];
+
+  //     const granted = await PermissionsAndroid.requestMultiple(permissions, {
+  //       title: 'Permission to access images',
+  //       message:
+  //         'Your app needs permission to access your images in order to display them in the gallery.',
+  //     });
+
+  //     if (
+  //       granted[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] ===
+  //       PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
+  //     ) {
+  //       promptForManualPermissionSetting();
+  //     }
+  //   } catch (err) {
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const requestReadMediaImagesPermissionVersion = async () => {
     try {
@@ -216,66 +240,106 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
     }
   }, [page]);
   const fetchPhotos = async () => {
-    // Define query options for CameraRoll.getPhotos()
-    const fetchParams = {
-      first: 20, // Number of photos to fetch
-      assetType: 'Photos',
-      include: ['filename', 'fileExtension'],
-    };
+    try {
+      // Show loading indicator
+      setLoading(true);
+      const fetchParams = {
+        first: 20, // Number of photos to fetch
+        assetType: 'Photos',
+        include: ['filename', 'fileExtension'],
+      };
 
-    const data = await CameraRoll.getPhotos(fetchParams);
-    if (data.page_info.has_next_page) {
-      setEndCursor(data?.page_info?.end_cursor?.toString());
-      setHasNextPage(true);
-    } else {
-      setEndCursor(null);
-      setHasNextPage(false);
+      // Fetch photos using CameraRoll
+      const data = await CameraRoll.getPhotos(fetchParams);
+
+      if (data.edges.length === 0) {
+        setGalleryEmpty(true); // No photos found
+        setLoading(false);
+        return;
+      }
+
+      // If photos exist, process them
+      if (data.page_info.has_next_page) {
+        setEndCursor(data?.page_info?.end_cursor?.toString());
+        setHasNextPage(true);
+      } else {
+        setEndCursor(null);
+        setHasNextPage(false);
+      }
+
+      setPhotos(data.edges); // Store photos
+
+      const assets = data.edges.map(item => item.node.image);
+
+      if (assets.length > 0) {
+        const photoData1 = {
+          uri: assets[0].uri,
+          type: assets[0].extension,
+          name: assets[0].filename,
+          count: 1,
+        };
+        let photobj = [...thumbnail];
+        photobj.push({...photoData1});
+        setThumbnail(photobj);
+      }
+
+      setGalleryEmpty(false); // Gallery is not empty
+      toast.closeAll(); // Close any active toasts
+    } catch (error) {
+      console.error('Error fetching photos:', error);
+      setGalleryEmpty(true);
+    } finally {
+      // Hide loading indicator
+      setLoading(false);
     }
-    // console.log(JSON.stringify(data), 'photos');
-    setPhotos(data.edges);
-
-    const assets = data.edges.map(item => item.node.image);
-
-    const photoData1 = {
-      uri: assets[0].uri,
-      type: assets[0].extension,
-      name: assets[0].filename,
-      count: 1,
-    };
-    let photobj = [];
-    photobj = [...thumbnail];
-    //
-    photobj.push({...photoData1});
-
-    setThumbnail(photobj);
-    setLoading(false);
-    toast.closeAll();
   };
 
   const fetchPhotosnext = async (after: any) => {
-    //
-    // Define query options for CameraRoll.getPhotos()
-    const fetchParams = {
-      first: 20, // Number of photos to fetch
-      assetType: 'Photos',
-      include: ['filename', 'fileExtension'],
-      after: after, // Type of assets (Photos or Videos)
-    };
+    try {
+      // Show loading indicator
+      setLoading(true);
 
-    const data = await CameraRoll.getPhotos(fetchParams);
-    if (data.page_info.has_next_page) {
-      setEndCursor(data?.page_info?.end_cursor?.toString());
-      setHasNextPage(true);
-    } else {
-      setEndCursor(null);
-      setHasNextPage(false);
-    }
-    if (after) {
-      setPhotos([...photos, ...data.edges]);
-    } else {
-      setPhotos(data.edges);
+      const fetchParams = {
+        first: 20, // Number of photos to fetch
+        assetType: 'Photos',
+        include: ['filename', 'fileExtension'],
+        after: after, // Fetch next page after the cursor
+      };
+
+      const data = await CameraRoll.getPhotos(fetchParams);
+
+      // Check if the fetched data is empty
+      if (data.edges.length === 0) {
+        setGalleryEmpty(true); // No more photos
+        setLoading(false);
+        return;
+      }
+
+      if (data.page_info.has_next_page) {
+        setEndCursor(data?.page_info?.end_cursor?.toString());
+        setHasNextPage(true);
+      } else {
+        setEndCursor(null);
+        setHasNextPage(false);
+      }
+
+      // Append photos if loading next page, or set a new batch if first load
+      if (after) {
+        setPhotos(prevPhotos => [...prevPhotos, ...data.edges]);
+      } else {
+        setPhotos(data.edges);
+      }
+
+      setGalleryEmpty(false); // Gallery is not empty
+    } catch (error) {
+      console.error('Error fetching next photos:', error);
+      setGalleryEmpty(true); // If an error occurs, assume no photos
+    } finally {
+      // Hide loading indicator
+      setLoading(false);
     }
   };
+
   const loadMore = () => {
     //
     if (hasNextPage) {
@@ -284,7 +348,6 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
   };
 
   const onChooseImage = photo => {
-  
     if (isMultiSelect) {
       const isAlreadySelected = thumbnail.some(
         item => item.uri === photo.node.image.uri,
@@ -390,7 +453,6 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
 
       await Storyexecute(AddStoryobj);
       setLoadingOverlay(false);
- ;
       // console.log( ,"===========");
 
       navigation.navigate('Home');
@@ -713,23 +775,23 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       </ImageBackground>
     </TouchableOpacity>
   );
-  const handleCameraIconPress = () => {
-    launchCamera({mediaType: 'photo'}, response => {
-      if (response.didCancel) {
-        //
-      } else if (response.error) {
-        console.error('Camera error:', response.error);
-      } else if (response.uri) {
-        // Check if the URI is not null
-        const photoData = {
-          uri: response.uri,
-          name: response.fileName || 'photo.jpg',
-          type: response.type || 'image/jpeg',
-        };
-        setThumbnail(prevThumbnail => [...prevThumbnail, {...photoData}]);
-      }
-    });
-  };
+  // const handleCameraIconPress = () => {
+  //   launchCamera({mediaType: 'photo'}, response => {
+  //     if (response.didCancel) {
+  //       //
+  //     } else if (response.error) {
+  //       console.error('Camera error:', response.error);
+  //     } else if (response.uri) {
+  //       // Check if the URI is not null
+  //       const photoData = {
+  //         uri: response.uri,
+  //         name: response.fileName || 'photo.jpg',
+  //         type: response.type || 'image/jpeg',
+  //       };
+  //       setThumbnail(prevThumbnail => [...prevThumbnail, {...photoData}]);
+  //     }
+  //   });
+  // };
   const LeftIcon = () => {
     return (
       <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -762,7 +824,11 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
 
   return (
     <>
-      {thumbnail.length > 0 && (
+      {loading ? (
+        <Text>Loading...</Text>
+      ) : galleryEmpty ? (
+        <Text>Your gallery is empty</Text>
+      ) : (
         <>
           <View>
             <ZHeader

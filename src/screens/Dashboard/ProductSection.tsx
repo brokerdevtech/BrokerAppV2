@@ -71,10 +71,10 @@ const ProductSection = (props: ProductSectionProps) => {
             {/* <Icon as={card_check_icon} /> */}
             <Card_check_icon />
           </View>
-          <TouchableOpacity style={{}}>
-            {/* <heart_icon /> */}
-            <Heart_icon accessible={true} fontSize={25} />
-          </TouchableOpacity>
+          {/* <TouchableOpacity style={{}}> */}
+          {/* <heart_icon /> */}
+          {/* <Heart_icon accessible={true} fontSize={25} />
+          </TouchableOpacity> */}
         </View>
 
         {/* Car Details */}

@@ -47,17 +47,24 @@ const BrandSection = (props: BrandSectionProps) => {
   }, [props]);
 
   const renderProductItems = ({item, index}) => {
-     /// console.log('item =====>', item)
+    console.log('item =====>', item);
     return (
       <View style={styles.cardContainer}>
-       <TouchableOpacity onPress={() => navigation.navigate('ItemListScreen', { listType: 'RealEstate' , categoryId: 1, brandName: item.searchText ?? ''})}>
-        <Image
-          source={{
-            uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
-          }}
-          style={styles.carImage}
-        />
-       </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('ItemListScreen', {
+              listType: 'RealEstate',
+              categoryId: 1,
+              brandName: item.searchText ?? '',
+            })
+          }>
+          <Image
+            source={{
+              uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
+            }}
+            style={styles.carImage}
+          />
+        </TouchableOpacity>
       </View>
     );
   };
