@@ -28,6 +28,7 @@ import {
   postsImagesBucketPath,
 } from '../../config/constants';
 import RectangularCardSkeleton from '../../sharedComponents/Skeleton/RectangularCardSkeleton';
+import { colors } from '../../themes';
 
 interface ProductSectionProps {
   heading: string;
@@ -56,7 +57,7 @@ const ProductSection = (props: ProductSectionProps) => {
   }, [props]);
 
   const renderProductItems = ({item, index}) => {
-    // console.log(item.postMedias[0].mediaBlobId, 'media');
+    console.log(item, 'media');
     return (
       <View style={styles.cardContainer}>
         <Image
@@ -91,16 +92,16 @@ const ProductSection = (props: ProductSectionProps) => {
               {'\u20B9'} {item.price}
             </ZText>
             <View style={styles.locationContainer}>
-              {item.city && (
+              {item.placeName && (
                 <>
-                  <Icon as={Map_pin} />
-                  <ZText type={'R16'} style={styles.locationText}>
-                    {item.city}
+                  <Icon as={Map_pin} size='xs' />
+                  <ZText type={'R14'} numberOfLines={1} style={styles.locationText}>
+                    {item.placeName}
                   </ZText>
                 </>
               )}
             </View>
-            <ZText type={'R16'} style={styles.carBrand}>
+            <ZText type={'R14'}   numberOfLines={1}  style={styles.carBrand}>
               {item.title}
             </ZText>
           </TouchableOpacity>
@@ -285,10 +286,13 @@ const styles = StyleSheet.create({
   detailsContainer: {
     paddingHorizontal: 10,
     paddingTop: 10,
+    paddingBottom:10,
+    color: 'black',
   },
   price: {
     fontSize: 16,
     fontWeight: '600',
+    color: colors.light.appred,
   },
   locationContainer: {
     flexDirection: 'row',
@@ -297,13 +301,13 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 12,
-    color: '#7A7A7A',
+    color: '#263238',
     marginLeft: 4,
   },
   carBrand: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#000',
+    color: '#263238',
     marginTop: 4,
     marginBottom: 4,
   },
