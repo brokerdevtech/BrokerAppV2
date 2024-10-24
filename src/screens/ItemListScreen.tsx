@@ -231,7 +231,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
         <HStack
           // space="md"
           style={{paddingHorizontal: 10, justifyContent: 'space-between'}}>
-          <VStack style={{alignItems: 'center'}}>
+          <HStack style={{alignItems: 'center'}}>
             <TouchableOpacity onPress={() => makeCall('+919910199761')}>
               <View style={{alignItems: 'center'}}>
                 <Icon as={Telephone_Icon} size={'xxl'} />
@@ -240,8 +240,8 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
                 <ZText type={'R14'}>Call</ZText>
               </View>
             </TouchableOpacity>
-          </VStack>
-          <VStack style={{alignItems: 'center'}}>
+          </HStack>
+          <HStack style={{alignItems: 'center'}}>
             <TouchableOpacity onPress={() => chatProfilePress()}>
               <View style={{alignItems: 'center'}}>
                 <Icon as={Chat_Icon} size={'xxl'} />
@@ -250,26 +250,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
                 <ZText type={'R14'}>Chat</ZText>
               </View>
             </TouchableOpacity>
-          </VStack>
-          <VStack style={{alignItems: 'center'}}>
-            <TouchableOpacity
-              onPress={() => openWhatsApp('+919910199761', 'test message')}>
-              <View style={{alignItems: 'center'}}>
-                <Icon as={Whatsapp_Icon} size={'xxl'} />
-              </View>
-              <View style={{alignItems: 'center', paddingVertical: 10}}>
-                <ZText type={'R14'}>WhatsApp</ZText>
-              </View>
-            </TouchableOpacity>
-          </VStack>
-          <VStack style={{alignItems: 'center'}}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Calender_Icon} size={'xxl'} />
-            </View>
-            <View style={{alignItems: 'center', paddingVertical: 10}}>
-              <ZText type={'R14'}>Appointment</ZText>
-            </View>
-          </VStack>
+          </HStack>
         </HStack>
       </View>
     </View>

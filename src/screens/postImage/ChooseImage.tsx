@@ -125,18 +125,25 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
           PermissionsAndroid.RESULTS.GRANTED
       ) {
         fetchPhotos();
+      } else if (
+        granted[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] ===
+        PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
+      ) {
+        promptForManualPermissionSetting();
       } else {
-        // handlePermissionDeniedAlert();
+        handlePermissionDeniedAlert();
       }
     } catch (err) {
+      console.error('Permission error:', err);
     } finally {
       setLoading(false);
     }
   };
+
   const promptForManualPermissionSetting = () => {
     Alert.alert(
       'Permission Required',
-      'This app requires storage permission to function properly. Please enable it in the app settings.',
+      'This app requires access to your photos to function properly. Please enable it in the app settings.',
       [
         {
           text: 'Cancel',
@@ -149,30 +156,46 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       ],
     );
   };
-  const requestWRITE_EXTERNAL_STORAGE = async () => {
-    try {
-      const permissions = [
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        // Add more permissions as needed
-      ];
 
-      const granted = await PermissionsAndroid.requestMultiple(permissions, {
-        title: 'Permission to access images',
-        message:
-          'Your app needs permission to access your images in order to display them in the gallery.',
-      });
-
-      if (
-        granted[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] ===
-        PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
-      ) {
-        promptForManualPermissionSetting();
-      }
-    } catch (err) {
-    } finally {
-      setLoading(false);
-    }
+  const handlePermissionDeniedAlert = () => {
+    Alert.alert(
+      'Permission Denied',
+      'You need to grant permission to access your photos in order to use the gallery feature.',
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            navigation.goBack();
+            setLoading(false);
+          },
+        },
+      ],
+    );
   };
+  // const requestWRITE_EXTERNAL_STORAGE = async () => {
+  //   try {
+  //     const permissions = [
+  //       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  //       // Add more permissions as needed
+  //     ];
+
+  //     const granted = await PermissionsAndroid.requestMultiple(permissions, {
+  //       title: 'Permission to access images',
+  //       message:
+  //         'Your app needs permission to access your images in order to display them in the gallery.',
+  //     });
+
+  //     if (
+  //       granted[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] ===
+  //       PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
+  //     ) {
+  //       promptForManualPermissionSetting();
+  //     }
+  //   } catch (err) {
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const requestReadMediaImagesPermissionVersion = async () => {
     try {
@@ -284,7 +307,6 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
   };
 
   const onChooseImage = photo => {
-  
     if (isMultiSelect) {
       const isAlreadySelected = thumbnail.some(
         item => item.uri === photo.node.image.uri,
@@ -390,7 +412,6 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
 
       await Storyexecute(AddStoryobj);
       setLoadingOverlay(false);
- ;
       // console.log( ,"===========");
 
       navigation.navigate('Home');
