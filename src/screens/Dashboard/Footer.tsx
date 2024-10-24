@@ -32,60 +32,67 @@ const Footer = () => {
          <View style={styles.productFooterContainer}>
             <View style={styles.productContainer}>
                <HStack style={styles.productRowContainer}>
+               {data[0].brokerCount>0 &&
                   <VStack style={styles.productColContainer}>
                      <View style={{ paddingBottom: 10 }}>
                         <HomeIcon />
                      </View>
                      <ZText type={'R16'}>{data[0].categoryName}</ZText>
                      <ZText type={'S16'}>{data[0].brokerCount}</ZText>
-                  </VStack>
+                  </VStack>}
+                  {data[1].brokerCount>0 &&
                   <VStack style={styles.productColContainer}>
                      <View style={{ paddingBottom: 10 }}>
                         <CarIcon />
                      </View>
                      <ZText type={'R16'}>{data[1].categoryName}</ZText>
                      <ZText type={'S16'}>{data[1].brokerCount}</ZText>
-                  </VStack>
+                  </VStack>}
                </HStack>
             </View>
-            <Divider className="my-0.5"/>
+            {data[2].brokerCount>0 && data[3].brokerCount>0 &&
             <View style={styles.productContainer}>
                <HStack style={styles.productRowContainer}>
+               {data[2].brokerCount>0 &&
                   <VStack style={styles.productColContainer}>
                      <View style={{ paddingBottom: 10 }}>
                         <LoanIcon />
                      </View>
                      <ZText type={'R16'}>{data[2].categoryName}</ZText>
                      <ZText type={'S16'}>{data[2].brokerCount}</ZText>
-                  </VStack>
+                  </VStack>}
+                  {data[3].brokerCount>0 &&
                   <VStack style={styles.productColContainer}>
                      <View style={{ paddingBottom: 10 }}>
                         <HomeIcon />
                      </View>
                      <ZText type={'R16'}>{data[3].categoryName}</ZText>
                      <ZText type={'S16'}>{data[3].brokerCount}</ZText>
-                  </VStack>
+                  </VStack>}
                </HStack>
             </View>
-            <Divider className="my-0.5"/>
+}
+{data[4].brokerCount>0 && data[5].brokerCount>0 &&
             <View style={styles.productContainer}>
+          
                <HStack style={styles.productRowContainer}>
-                  <VStack style={styles.productColContainer}>
+                 {data[4].brokerCount>0 &&    <VStack style={styles.productColContainer}>
                      <View style={{ paddingBottom: 10 }}>
                         <HomeIcon />
                      </View>
                      <ZText type={'R16'}>{data[4].categoryName}</ZText>
                      <ZText type={'S16'}>{data[4].brokerCount}</ZText>
-                  </VStack>
+                  </VStack>}
+                  {data[5].brokerCount>0 &&
                   <VStack style={styles.productColContainer}>
                      <View style={{ paddingBottom: 10 }}>
                         <CarIcon />
                      </View>
                      <ZText type={'R16'}>{data[5].categoryName}</ZText>
                      <ZText type={'S16'}>{data[5].brokerCount}</ZText>
-                  </VStack>
+                  </VStack>}
                </HStack>
-            </View>
+            </View>}
        </View>)}
        <View style={styles.appFooterContainer}>
           <View style={styles.appContainer}>
