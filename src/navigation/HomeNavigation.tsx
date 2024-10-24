@@ -44,6 +44,7 @@ import PodcastLikeList from '../sharedComponents/PodcastLikeList';
 import PodcastViewList from '../sharedComponents/PodcastViewList';
 import StoryLikeList from '../sharedComponents/StoryLikeList';
 import StoryViewList from '../sharedComponents/StoryViewList';
+import BrokerList from '../sharedComponents/BrokerList';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -149,6 +150,12 @@ const HomeNavigation: React.FC = () => {
           name="PostWizard"
           component={PostWizardScreen}
         />
+          <Stack.Screen
+          options={{headerShown: false}}
+          name="BrokerList"
+          component={BrokerList}
+        />
+        
         <Stack.Screen
           name="FilterTags"
           options={{headerShown: false}}

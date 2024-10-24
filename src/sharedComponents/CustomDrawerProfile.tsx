@@ -139,6 +139,14 @@ const CustomDrawerContent = props => {
           leftIcon={Follower_Icon}
           rightIcon={ChevronRightIcon}
         />
+          <CustomDrawerItem
+          label="Search Brokers"
+          onPress={() => {
+            navigation.navigate('BrokerList');
+          }}
+          leftIcon={Follower_Icon}
+          rightIcon={ChevronRightIcon}
+        />
         <CustomDrawerItem
           label="My Network"
           onPress={() => {
