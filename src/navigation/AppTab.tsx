@@ -1,7 +1,14 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable no-unreachable */
-import {Platform, StyleSheet, TouchableOpacity, View, Text} from 'react-native';
+import {
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Text,
+  Image,
+} from 'react-native';
 import ZText from '../sharedComponents/ZText';
 import {useNavigation} from '@react-navigation/native';
 import {styles} from '../themes';
@@ -26,6 +33,7 @@ import {
   Reel_tab_icon,
   Calender_tab_icon,
   Plus_Icon,
+  ComingSoon,
 } from '../assets/svg';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import TouchableOpacityWithPermissionCheck from '../sharedComponents/TouchableOpacityWithPermissionCheck';
@@ -53,7 +61,14 @@ const HomePageStack = () => {
 };
 const PlaceholderScreen = () => (
   <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-    <ZText type={'R16'}>Coming Soon</ZText>
+    <Image
+      source={require('../assets/images/ComingSoon.png')}
+      style={{height: 150, width: 150, marginBottom: 20}}
+    />
+    <ZText type={'S20'} style={{marginBottom: 20}}>
+      Coming Soon
+    </ZText>
+    <ZText type={'R14'}>Are you Ready to get something new from us ?</ZText>
   </View>
 );
 const AppTab: React.FC = () => {

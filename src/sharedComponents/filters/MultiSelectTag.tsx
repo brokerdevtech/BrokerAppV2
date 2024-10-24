@@ -285,20 +285,15 @@ const localstyles = StyleSheet.create({
     marginBottom: 10,
   },
   tagsWrap: {
-    // borderWidth: 1,
-    // borderColor: '#1D7BBF',
-    ...styles.ph10,
-    ...styles.pt10,
-    ...styles.pb10,
-    ...styles.flexRow,
-    borderRadius: 5,
-    margin: 5,
-    height: 40,
-    backgroundColor: '#F3F3F3',
-    borderColor: Color.primary,
-    alignItems: 'center',
-    borderWidth: 1,
-    color: Color.primary,
+    padding: 10,
+    borderRadius: 8, // Rounded corners
+    borderWidth: 2,
+    borderColor: '#E8E8E8',
+    // borderColor: '#E8E8E8',
+    marginRight: 5,
+    marginBottom: 5,
+    alignItems: 'center', // Centers the text horizontally
+    justifyContent: 'center',
   },
   tag: {
     backgroundColor: 'gray',
@@ -310,8 +305,7 @@ const localstyles = StyleSheet.create({
     elevation: 2,
   },
   selectedTag: {
-    backgroundColor: Color.primary,
-    color: 'white',
+    color: '#E00000',
     borderColor: Color.primary,
   },
   unselectedTagText: {
@@ -319,7 +313,7 @@ const localstyles = StyleSheet.create({
     color: Color.primary,
     borderColor: Color.primary,
   },
-  selectedTagText: {color: '#fff'},
+  selectedTagText: {color: '#E00000'},
   tagText: {
     color: '#007dc5',
   },

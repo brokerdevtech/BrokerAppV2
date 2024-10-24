@@ -32,6 +32,7 @@ import {getFilterTags} from '../../../BrokerAppCore/services/filterTags';
 import PropertyForm from './Form/PropertyForm';
 import GenericForm from './Form/GenericForm';
 import CarForm from './Form/CarFrom';
+import {Color} from '../../styles/GlobalStyles';
 
 const genericvalidationSchema = Yup.object().shape({
   title: Yup.string().required('Title is required'),
@@ -189,7 +190,7 @@ const PostWizardScreen: React.FC = ({
         onPress={() => {
           navigateToNextScreen();
         }}>
-        <ZText numberOfLines={1} color={'#000'} type={'R16'}>
+        <ZText numberOfLines={1} color={Color.primary} type={'R16'}>
           {'Next'}
         </ZText>
       </TouchableOpacity>

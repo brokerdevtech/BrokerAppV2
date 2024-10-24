@@ -21,8 +21,8 @@ export const useApiRequest = <T, P extends any[]>(
 
     try {
       const response = await apiFunction(...params);
-      console.log('========broker');
-      console.log(JSON.stringify(response));
+      // console.log('========broker');
+      // console.log(JSON.stringify(response));
       if (setLoading) {
         setLoading(false);
       }
@@ -48,6 +48,6 @@ export const useApiRequest = <T, P extends any[]>(
       }
     }
   };
-  console.log(status, 'request');
+  // console.log(status, 'request');
   return {data, status, error, execute};
 };

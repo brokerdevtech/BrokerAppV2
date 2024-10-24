@@ -44,13 +44,18 @@ import ZHeader from '../../../sharedComponents/ZHeader';
 import Video from 'react-native-video';
 import AppBaseContainer from '../../../hoc/AppBaseContainer_old';
 import {useApiRequest} from '../../../hooks/useApiRequest';
-import {sendCarPostData, sendGenericPostData} from '../../../../BrokerAppCore/services/new/postServices';
+import {
+  sendCarPostData,
+  sendGenericPostData,
+} from '../../../../BrokerAppCore/services/new/postServices';
 import {Toast, ToastDescription} from '../../../../components/ui/toast';
-import { HStack } from '../../../../components/ui/hstack';
-import { Icon } from '../../../../components/ui/icon';
-import { VStack } from '../../../../components/ui/vstack';
-import { Divider } from '../../../../components/ui/divider';
+import {HStack} from '../../../../components/ui/hstack';
+import {Icon} from '../../../../components/ui/icon';
+import {VStack} from '../../../../components/ui/vstack';
+import {Divider} from '../../../../components/ui/divider';
 import LocationMap from '../../../sharedComponents/LocationMap';
+import KeyValueDisplay from '../../../sharedComponents/KeyValueDisplay';
+import ZTextMore from '../../../sharedComponents/ZTextMore';
 
 const CarPostPreview: React.FC = ({
   toast,
@@ -79,25 +84,21 @@ const CarPostPreview: React.FC = ({
     execute: Genericexecute,
   } = useApiRequest(sendCarPostData);
 
-
   useEffect(() => {
     // This useEffect runs when CarFilters data changes
     const flatData = Object.keys(filter).map(type => ({
       key: type,
-      value: filter[type].map(item => item.value).join(", ")
+      value: filter[type].map(item => item.value).join(', '),
     }));
 
-   
-setdisplayfilter(flatData);
+    setdisplayfilter(flatData);
   }, [filter]);
 
- 
   useEffect(() => {
     // This useEffect runs when CarFilters data changes
 
-if(Genericstatus==200)
-{
- navigation.navigate('Home');
+    if (Genericstatus == 200) {
+      navigation.navigate('Home');
       if (!toast.isActive(toastId)) {
         const newId = Math.random();
         setToastId(newId);
@@ -115,9 +116,8 @@ if(Genericstatus==200)
           },
         });
       }
-}
+    }
   }, [Genericstatus]);
-
 
   const Pagination = ({index, length}) => {
     return (
@@ -155,12 +155,18 @@ if(Genericstatus==200)
   const LeftIcon = () => {
     return (
       <View style={styles.rowCenter}>
-        <TouchableOpacity
-          style={styles.pr10}
-          onPress={() => {
-            navigation.goBack();
-          }}>
-          <Back accessible={true} accessibilityLabel="Back" />
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <View
+            style={{
+              // ...styles.appTitleMain,
+
+              padding: 8,
+              borderWidth: 1,
+              borderColor: '#E5E5E5',
+              borderRadius: 40,
+            }}>
+            <Back accessible={true} accessibilityLabel="Back" />
+          </View>
         </TouchableOpacity>
       </View>
     );
@@ -174,7 +180,7 @@ if(Genericstatus==200)
           onPress={() => {
             savePost(formValue, filter, imagesArray);
           }}>
-          <ZText numberOfLines={1} color={'#BC4A4F'} type={'b16'}>
+          <ZText numberOfLines={1} color={'#BC4A4F'} type={'R16'}>
             {`Save`}
           </ZText>
         </TouchableOpacity>
@@ -206,9 +212,9 @@ if(Genericstatus==200)
             Platform.OS === 'ios' && !image.Edit
               ? image.uri
               : image.destinationPathuri;
-       
+
           const responseBlob = await uriToBlob(image.destinationPath);
-       
+
           const fileExtension = getFileExtensionFromMimeType(
             responseBlob?._data.type,
           );
@@ -225,7 +231,7 @@ if(Genericstatus==200)
         }
 
         const results = await Promise.all(uploadPromises);
-    
+
         uploadedImageUrls = results.map((result, index) => {
           if (result) {
             return {mediaBlobId: result.Key};
@@ -234,7 +240,7 @@ if(Genericstatus==200)
             return null;
           }
         });
-  
+
         for (const item of imagesArray) {
           if (item.Edit) {
             await deleteImage(item.destinationPath);
@@ -270,9 +276,8 @@ if(Genericstatus==200)
       }
 
       const successfulUploads = uploadedImageUrls.filter(url => url !== null);
-     
+
       if (successfulUploads.length > 0) {
-     
         await requestAPI(successfulUploads, FormValue, Formtags);
       } else {
         setLoading(false);
@@ -291,7 +296,7 @@ if(Genericstatus==200)
 
     try {
       setLoading(true);
-   
+
       let tags = [];
       let localitie = route.params?.localities;
 
@@ -313,61 +318,74 @@ if(Genericstatus==200)
         price: FormValue.price,
         yearOfManufacture: FormValue.yearOfManufacture,
         registrationYear: FormValue.registrationYear,
-        isNewCar:FormValue.isNewCar,
+        isNewCar: FormValue.isNewCar,
         discount: 0,
-       mileage: FormValue.mileage,
-       kmsDriven:FormValue.kmsDriven,
-      engineDisplacement: FormValue.engineDisplacement,
-      carEnginePower:FormValue.carEnginePower,
-      numberOfAirbags:0,
-   postMedia: mediaData,
+        mileage: FormValue.mileage,
+        kmsDriven: FormValue.kmsDriven,
+        engineDisplacement: FormValue.engineDisplacement,
+        carEnginePower: FormValue.carEnginePower,
+        numberOfAirbags: 0,
+        postMedia: mediaData,
       };
       if (filter.hasOwnProperty('Brand') && Array.isArray(filter.Brand)) {
-        requestOption.brandId=filter["Brand"][0].key
-        requestOption.brandVal=filter["Brand"][0].value
+        requestOption.brandId = filter['Brand'][0].key;
+        requestOption.brandVal = filter['Brand'][0].value;
       }
       if (filter.hasOwnProperty('Model') && Array.isArray(filter.Model)) {
-        requestOption.modelId=filter["Model"][0].key
-        requestOption.modelName=filter["Model"][0].value
+        requestOption.modelId = filter['Model'][0].key;
+        requestOption.modelName = filter['Model'][0].value;
       }
       if (filter.hasOwnProperty('FuelType') && Array.isArray(filter.FuelType)) {
-        requestOption.fuelTypeId=filter["FuelType"][0].key
-        requestOption.fuelType=filter["FuelType"][0].value
+        requestOption.fuelTypeId = filter['FuelType'][0].key;
+        requestOption.fuelType = filter['FuelType'][0].value;
       }
       if (filter.hasOwnProperty('Color') && Array.isArray(filter.Color)) {
-        requestOption.colorId=filter["Color"][0].key
-        requestOption.colorVal=filter["Color"][0].value
+        requestOption.colorId = filter['Color'][0].key;
+        requestOption.colorVal = filter['Color'][0].value;
       }
       if (filter.hasOwnProperty('BodyType') && Array.isArray(filter.BodyType)) {
-        requestOption.bodyTypeId=filter["BodyType"][0].key
-        requestOption.bodyTypeVal=filter["BodyType"][0].value
+        requestOption.bodyTypeId = filter['BodyType'][0].key;
+        requestOption.bodyTypeVal = filter['BodyType'][0].value;
       }
 
-      if (filter.hasOwnProperty('Transmission') && Array.isArray(filter.Transmission)) {
-        requestOption.transmissionId=filter["Transmission"][0].key
-        requestOption.transmissionVal=filter["Transmission"][0].value
+      if (
+        filter.hasOwnProperty('Transmission') &&
+        Array.isArray(filter.Transmission)
+      ) {
+        requestOption.transmissionId = filter['Transmission'][0].key;
+        requestOption.transmissionVal = filter['Transmission'][0].value;
       }
 
-      if (filter.hasOwnProperty('Ownership') && Array.isArray(filter.Transmission)) {
-        requestOption.ownershipCountId=filter["Ownership"][0].key
-        requestOption.ownershipCountVal=filter["Ownership"][0].value
+      if (
+        filter.hasOwnProperty('Ownership') &&
+        Array.isArray(filter.Transmission)
+      ) {
+        requestOption.ownershipCountId = filter['Ownership'][0].key;
+        requestOption.ownershipCountVal = filter['Ownership'][0].value;
       }
-      if (filter.hasOwnProperty('SeatingCapacity') && Array.isArray(filter.SeatingCapacity)) {
-        requestOption.seatingCapacityId=filter["Ownership"][0].key
-        requestOption.seatingCapacity=filter["Ownership"][0].value
+      if (
+        filter.hasOwnProperty('SeatingCapacity') &&
+        Array.isArray(filter.SeatingCapacity)
+      ) {
+        requestOption.seatingCapacityId = filter['Ownership'][0].key;
+        requestOption.seatingCapacity = filter['Ownership'][0].value;
       }
-      if (filter.hasOwnProperty('RegistrationState') && Array.isArray(filter.RegistrationState)) {
-        requestOption.registrationStateId=filter["RegistrationState"][0].key
-        requestOption.registrationState=filter["RegistrationState"][0].value
+      if (
+        filter.hasOwnProperty('RegistrationState') &&
+        Array.isArray(filter.RegistrationState)
+      ) {
+        requestOption.registrationStateId = filter['RegistrationState'][0].key;
+        requestOption.registrationState = filter['RegistrationState'][0].value;
       }
 
-      if (filter.hasOwnProperty('InsuranceStatus') && Array.isArray(filter.InsuranceStatus)) {
-        requestOption.insuranceStatusId=filter["InsuranceStatus"][0].key
-        requestOption.insuranceStatus=filter["InsuranceStatus"][0].value
+      if (
+        filter.hasOwnProperty('InsuranceStatus') &&
+        Array.isArray(filter.InsuranceStatus)
+      ) {
+        requestOption.insuranceStatusId = filter['InsuranceStatus'][0].key;
+        requestOption.insuranceStatus = filter['InsuranceStatus'][0].value;
       }
 
-     
- 
       await Genericexecute(requestOption);
 
       // navigation.navigate('Home');
@@ -408,7 +426,7 @@ if(Genericstatus==200)
       )}
     </View>
   );
-
+  console.log(JSON.stringify(displayfilter));
   return (
     <ZSafeAreaView>
       <ZHeader
@@ -424,7 +442,7 @@ if(Genericstatus==200)
           bounces={false}
           showsVerticalScrollIndicator={false}
           style={localStyles.root}>
-          <View>
+          <View style={{paddingHorizontal: 20}}>
             <View>
               {Isvideo == false && (
                 <>
@@ -467,147 +485,75 @@ if(Genericstatus==200)
                 />
               )}
             </View>
-            <View style={localStyles.bodyContainer}>
-              <Box style={{paddingHorizontal: 20, paddingVertical: 20}}>
-                <View style={localStyles.ROW}>
-                  <View style={localStyles.COL}>
-                    <ZText type={'R16'}>{'\u20B9'} {' '} {formValue.price}</ZText>
-                  </View>
-                  
-                </View>
-                <View style={localStyles.ROW}>
-                
-                <HStack>
-  <Box>
-  <Icon as={Location_Icon} />
-  </Box>
-  <Box>
-  <ZText type={'R16'} numberOfLines={1}  // Limits to 2 lines
-  ellipsizeMode="tail"> {' '}
-                {formValue.Location.placeName}
+            <VStack space="md" style={localStyles.detailsContainer}>
+              <ZText type={'M16'} color={'#E00000'}>
+                {'\u20B9'} {formValue?.price}
               </ZText>
 
-  </Box>
-</HStack>
-
-                  
-                </View>
-                <View style={localStyles.ROW}>
-                  <View style={localStyles.COL}>
-                    <ZText type={'R16'}>{formValue.title}</ZText>
-                  </View>
-                  
-                </View>
-              </Box>
-
-              <VStack space="md"  style={{paddingHorizontal: 20,paddingBottom:10}}>
-              {displayfilter.map((item, index) => (
-                  <>
-                  <Divider className="my-0.5"/>
-                        <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>{item.key}</ZText></View>
-                          <View><ZText type={'R14'}>{item.value}</ZText></View>
-                        </HStack></>
-                        
-              ))}
-                        
-                        </VStack>
-
-                        <VStack space="md"  style={{paddingHorizontal: 20,paddingBottom:10}}>
-            
-                  <Divider className="my-0.5"/>
-                        <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                          <View><ZText type={'R14'}>kms Driven</ZText></View>
-                          <View><ZText type={'R14'}>{formValue.kmsDriven}</ZText></View>
-                        </HStack>
-                        
-           
-                        
-                        </VStack>
-
-                        <VStack space="md"  style={{paddingHorizontal: 20,paddingBottom:10}}>
-            
-            <Divider className="my-0.5"/>
-                  <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                    <View><ZText type={'R14'}>mileage</ZText></View>
-                    <View><ZText type={'R14'}>{formValue.mileage}</ZText></View>
-                  </HStack>
-                  
-     
-                  
+              <ZTextMore type={'B16'} numberOfLines={1}>
+                {formValue.title}
+              </ZTextMore>
+            </VStack>
+            <Divider className="my-0.5" />
+            <View style={localStyles.detailsContainer}>
+              <VStack space="xs">
+                <ZText
+                  type={'B16'}
+                  numberOfLines={1}
+                  style={{paddingVertical: 5}}>
+                  {'Details'}{' '}
+                </ZText>
+                {displayfilter.map((item, index) => (
+                  <KeyValueDisplay label={item.key} value={item.value} />
+                ))}
+                <KeyValueDisplay
+                  label="Registration Year"
+                  value={formValue.registrationYear}
+                />
+                <KeyValueDisplay label="Mileage" value={formValue.mileage} />
+                <KeyValueDisplay
+                  label="Kms Driven"
+                  value={formValue.kmsDriven}
+                />
+                <KeyValueDisplay
+                  label="Engine Displacement"
+                  value={formValue.engineDisplacement}
+                />
+                <KeyValueDisplay
+                  label="Year Of Manufacture"
+                  value={formValue.yearOfManufacture}
+                />
+                <KeyValueDisplay
+                  label="Car Engine Power"
+                  value={formValue.carEnginePower}
+                />
+                {/* <KeyValueDisplay
+            label="Number Of Airbags"
+            value={data.numberOfAirbags}
+          /> */}
+                <Divider className="my-0.5" />
+                <VStack
+                  space="xs"
+                  reversed={false}
+                  style={{paddingVertical: 10}}>
+                  <ZText type={'R14'} numberOfLines={1}>
+                    {'Description'}
+                  </ZText>
+                  <ZTextMore type={'B16'} numberOfLines={2}>
+                    {formValue.propDescription}
+                  </ZTextMore>
+                </VStack>
+                {formValue.Location && (
+                  <VStack space="md" style={{paddingVertical: 10}}>
+                    <Divider className="my-0.5" />
+                    <View>
+                      <ZText type={'B16'}>Location</ZText>
+                    </View>
+                    <LocationMap locationData={formValue.Location} />
                   </VStack>
-                  <VStack space="md"  style={{paddingHorizontal: 20,paddingBottom:10}}>
-            
-            <Divider className="my-0.5"/>
-                  <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                    <View><ZText type={'R14'}>Registration Year</ZText></View>
-                    <View><ZText type={'R14'}>{formValue.registrationYear}</ZText></View>
-                  </HStack>
-                  
-     
-                  
-                  </VStack>
-                  <VStack space="md"  style={{paddingHorizontal: 20,paddingBottom:10}}>
-            
-            <Divider className="my-0.5"/>
-                  <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                    <View><ZText type={'R14'}>Year Of Manufacture</ZText></View>
-                    <View><ZText type={'R14'}>{formValue.yearOfManufacture}</ZText></View>
-                  </HStack>
-                  
-     
-                  
-                  </VStack>
-
-
-                  <VStack space="md"  style={{paddingHorizontal: 20,paddingBottom:10}}>
-            
-            <Divider className="my-0.5"/>
-                  <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                    <View><ZText type={'R14'}>Engine Power</ZText></View>
-                    <View><ZText type={'R14'}>{formValue.carEnginePower}</ZText></View>
-                  </HStack>
-                  
-     
-                  
-                  </VStack>
-
-                  <VStack space="md"  style={{paddingHorizontal: 20,paddingBottom:10}}>
-            
-            <Divider className="my-0.5"/>
-                  <HStack space="md" reversed={false} style={{justifyContent: 'space-between',  paddingVertical: 10}}>
-                    <View><ZText type={'R14'}>Engine Displacement</ZText></View>
-                    <View><ZText type={'R14'}>{formValue.engineDisplacement}</ZText></View>
-                  </HStack>
-                  
-     
-                  
-                  </VStack>
-                  <VStack space="md" style={{paddingBottom:10}}>
-                  <Divider className="my-0.5"  />
-                  </VStack>
-                       <VStack space="md" style={{paddingHorizontal: 20,paddingBottom:10}}>
-                     
-                          <View>
-                             <ZText type={'R18'}>Description</ZText>
-                          </View>
-                          <View>
-                             <ZText type={'R16'} numberOfLines={4}  // Limits to 2 lines
-  ellipsizeMode="tail">{formValue.propDescription}</ZText>
-                          </View>
-                       </VStack>
-
-
-                       <VStack space="md" style={{paddingHorizontal: 20,paddingBottom:10}}>
-                       <Divider className="my-0.5"  />
-                       <View>
-                             <ZText type={'R18'}>Location</ZText>
-                          </View>
-                       <LocationMap locationData={formValue.Location} />
-                  </VStack>
-
+                )}
+              </VStack>
             </View>
-         
           </View>
         </ScrollView>
         {loading && (
@@ -718,11 +664,15 @@ const localStyles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   card: {
-    width: devicewidth, // Card takes up full width of the screen
+    // width: devicewidth, // Card takes up full width of the screen
     justifyContent: 'center',
     alignItems: 'center',
     //backgroundColor:'red'
     // Add additional styling for the card here
+  },
+  detailsContainetop: {
+    // paddingLeft: 20,
+    paddingVertical: 10,
   },
   image: {
     width: devicewidth - 40, // Slightly less than full width for card padding effect
@@ -736,6 +686,10 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background to highlight the loader
+  },
+  detailsContainer: {
+    // paddingLeft: 20,
+    paddingVertical: 10,
   },
 });
 export default AppBaseContainer(CarPostPreview, ' ', false);

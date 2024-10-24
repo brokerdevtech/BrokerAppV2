@@ -47,7 +47,7 @@ const BrandSection = (props: BrandSectionProps) => {
   }, [props]);
 
   const renderProductItems = ({item, index}) => {
-    console.log('item =====>', item);
+    // console.log('item =====>', item);
     return (
       <View style={styles.cardContainer}>
         <TouchableOpacity

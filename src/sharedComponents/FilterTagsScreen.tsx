@@ -34,6 +34,7 @@ import {
   getCascadedFilters,
   getFilterTags,
 } from '../../BrokerAppCore/services/new/filterTags';
+import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 
 const devicewidth = Dimensions.get('window').width;
 let Selectedfiltersobj = {tags: []};
@@ -48,14 +49,14 @@ const FilterTagsScreen: React.FC = ({
   color,
   route,
   pageTitle,
-  toast,
 }) => {
   // let filters = {tags:[]};
   // filters.tags =[];
 
   const dispatch = useDispatch();
   const [Postfilter, setPostfilter] = useState({});
-
+  const toast = useToast();
+  const [toastId, setToastId] = React.useState(0);
   // const [filters, setfilters] = useState({tags:[]});
   const [ApifilterTags, setApiFilterTags] = useState([]);
   const [filterTags, setFilterTags] = useState([]);
@@ -348,9 +349,9 @@ const FilterTagsScreen: React.FC = ({
       'PostSearch',
     );
   };
-  const resetAllFilters = () => {
-    setResetChild(true);
-  };
+  // const resetAllFilters = () => {
+  //   setResetChild(true);
+  // };
   const CheckMandatoryFilters = () => {
     let obj: any = Postfilter;
     let mandatoryFilters: any = [];
@@ -366,21 +367,26 @@ const FilterTagsScreen: React.FC = ({
     }
 
     if (mandatoryFilters.length > 0) {
-      const ToastDetails = {
-        title: 'Filter are Mandatory',
-        variant: 'subtle',
-        description: mandatoryFilters.join(', '),
-      };
-      const id = 'test-toast';
-      if (!toast.isActive(id)) {
+      if (!toast.isActive(toastId)) {
+        const newId = Math.random();
+        setToastId(newId);
         toast.show({
-          id,
-          placement: 'top',
-          render: () => {
-            // return <ToastAlert {...ToastDetails}></ToastAlert>;
+          id: newId,
+          placement: 'bottom',
+          duration: 3000,
+          render: ({id}) => {
+            const uniqueToastId = 'toast-' + id;
+            return (
+              <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                <ToastDescription>
+                  {'Please check mandatory filters'}
+                </ToastDescription>
+              </Toast>
+            );
           },
         });
       }
+
       return false;
     } else {
       return true;
@@ -480,7 +486,7 @@ const FilterTagsScreen: React.FC = ({
         onPress={() => {
           navigateToNextScreen();
         }}>
-        <ZText numberOfLines={1} color={'#BC4A4F'} type={'b16'}>
+        <ZText numberOfLines={1} color={'#BC4A4F'} type={'R16'}>
           {'Next'}
         </ZText>
       </TouchableOpacity>

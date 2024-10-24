@@ -46,14 +46,13 @@ import IconValueDisplay from '../sharedComponents/IconValueDisplay';
 import ZTextMore from '../sharedComponents/ZTextMore';
 import LocationMap from '../sharedComponents/LocationMap';
 import ZAvatarInitials from '../sharedComponents/ZAvatarInitials';
-import { useNavigation } from '@react-navigation/native';
-import { colors } from '../themes';
+import {useNavigation} from '@react-navigation/native';
+import {colors} from '../themes';
 
-const propertyDetails = (data: any, user: any,navigation:any) => {
-  console.log("propertyDetails",data);
+const propertyDetails = (data: any, user: any, navigation: any) => {
+  console.log('propertyDetails', data);
 
-
-  const onPressUser = (userId,userName,userImage) => {
+  const onPressUser = (userId, userName, userImage) => {
     if (user.userId === userId) {
       navigation.navigate('ProfileScreen');
     } else {
@@ -109,17 +108,16 @@ const propertyDetails = (data: any, user: any,navigation:any) => {
       />
       {/* Car Details */}
       <VStack space="xs" style={styles.detailsContainetop}>
-        <ZText type={'M16'} color={ colors.light.appred}>
+        <ZText type={'M16'} color={colors.light.appred}>
           {'\u20B9'} {data?.price}
         </ZText>
 
-<HStack>
-<IconValueDisplay IconKey="bedroomType" value={data.bedroomType} ></IconValueDisplay>
-<IconValueDisplay IconKey="bathroomType" value={data.bathroomType} ></IconValueDisplay>
-<IconValueDisplay IconKey="balconyType" value={data.balconyType} ></IconValueDisplay>
-<IconValueDisplay IconKey="propertySize" value={data.propertySize} ></IconValueDisplay>
-</HStack>
-
+        <HStack>
+          <IconValueDisplay IconKey="bedroomType" value={data.bedroomType} />
+          <IconValueDisplay IconKey="bathroomType" value={data.bathroomType} />
+          <IconValueDisplay IconKey="balconyType" value={data.balconyType} />
+          <IconValueDisplay IconKey="propertySize" value={data.propertySize} />
+        </HStack>
 
         <View style={styles.locationContainer}>
           {data.location.cityName && (
@@ -129,96 +127,108 @@ const propertyDetails = (data: any, user: any,navigation:any) => {
             </>
           )}
         </View>
-      
-     
       </VStack>
       <Divider className="my-0.5" />
       {/* <Divider className="my-0.5"/> */}
       <View style={styles.detailsContainer}>
-      
         <VStack space="xs">
-        <ZTextMore type={'B16'}  numberOfLines={1} >{data.title}</ZTextMore>
- 
-        <ZText type={'B16'}  numberOfLines={1} style={{ paddingVertical: 5 }}>{'Details'} </ZText>
-        <KeyValueDisplay label="Project" value={data.projectName}></KeyValueDisplay>
-        <KeyValueDisplay label="Developed By" value={data.developerName}></KeyValueDisplay>
-        <KeyValueDisplay label="Construction Status" value={data.constructionStatus}></KeyValueDisplay>
-    
-        <KeyValueDisplay label="Property Status" value={data.propertyStatus}></KeyValueDisplay>
-        <KeyValueDisplay label="Property Age" value={data.propertyAge}></KeyValueDisplay>
-    
-        <KeyValueDisplay label="Property Status" value={data.propertyStatus}></KeyValueDisplay>
-        <KeyValueDisplay label="Transaction Type" value={data.transactionType}></KeyValueDisplay>
-        <VStack space="xs" reversed={false} style={{ paddingVertical: 10 }}>
-        <ZText type={'R14'}  numberOfLines={1}>{'Description'}</ZText>
-        <ZTextMore type={'B16'}  numberOfLines={2}>{data.propDescription}</ZTextMore>
-        </VStack>
-        <Divider className="my-0.5" />
-        <KeyValueRow
-  label="Amenities"
-  values={data.postPropertyAmenities}
-  valueKey="propertyAmenity"></KeyValueRow>
-  <Divider className="my-0.5" />
-       <KeyValueRow
-  label="Near By Facilities"
-  values={data.postNearbyFacilities}
-  valueKey="nearbyFacility"></KeyValueRow>
-  <Divider className="my-0.5" />
-       <KeyValueRow
-  label="Property Type"
-  values={data.postPropertyTypes}
-  valueKey="propertyType"></KeyValueRow>
-{data.location &&
-<VStack space="md" style={{paddingVertical: 10}} >
-                       <Divider className="my-0.5"  />
-                       <View>
-                             <ZText type={'B16'}>Location</ZText>
-                          </View>
-                       <LocationMap locationData={data.location} />
-                  </VStack>
-}
-                  <VStack space="md" style={{paddingVertical: 10}}>
-                       <Divider className="my-0.5"  />
-                       <View>
-                             <ZText type={'B16'}> Listed By</ZText>
-                          </View>
-                          <HStack>
-                          <ZAvatarInitials
-                        onPress={() =>
-                          onPressUser(
-                            
-                            data.userId,
-                            data.postedBy,
-                            data.profileImage
-                        
-                          )
-                        }
-                        // item={postData}
-                        sourceUrl={data.profileImage}
-                        iconSize="md"
-                        styles={styles.profileImage}
-                        name={data.postedBy}></ZAvatarInitials>
-                        <View style={{marginLeft:15,justifyContent:'center'}}>
-                             <ZText type={'B16'}>{data.postedBy}</ZText>
-                          </View>
-                          </HStack>
-                  </VStack>
+          <ZTextMore type={'B16'} numberOfLines={1}>
+            {data.title}
+          </ZTextMore>
 
-      {/* <KeyValueRow
+          <ZText type={'B16'} numberOfLines={1} style={{paddingVertical: 5}}>
+            {'Details'}{' '}
+          </ZText>
+          <KeyValueDisplay label="Project" value={data.projectName} />
+          <KeyValueDisplay label="Developed By" value={data.developerName} />
+          <KeyValueDisplay
+            label="Construction Status"
+            value={data.constructionStatus}
+          />
+
+          <KeyValueDisplay
+            label="Property Status"
+            value={data.propertyStatus}
+          />
+          <KeyValueDisplay label="Property Age" value={data.propertyAge} />
+
+          <KeyValueDisplay
+            label="Property Status"
+            value={data.propertyStatus}
+          />
+          <KeyValueDisplay
+            label="Transaction Type"
+            value={data.transactionType}
+          />
+          <VStack space="xs" reversed={false} style={{paddingVertical: 10}}>
+            <ZText type={'R14'} numberOfLines={1}>
+              {'Description'}
+            </ZText>
+            <ZTextMore type={'B16'} numberOfLines={2}>
+              {data.propDescription}
+            </ZTextMore>
+          </VStack>
+          <Divider className="my-0.5" />
+          <KeyValueRow
+            label="Amenities"
+            values={data.postPropertyAmenities}
+            valueKey="propertyAmenity"
+          />
+          <Divider className="my-0.5" />
+          <KeyValueRow
+            label="Near By Facilities"
+            values={data.postNearbyFacilities}
+            valueKey="nearbyFacility"
+          />
+          <Divider className="my-0.5" />
+          <KeyValueRow
+            label="Property Type"
+            values={data.postPropertyTypes}
+            valueKey="propertyType"
+          />
+          {data.location && (
+            <VStack space="md" style={{paddingVertical: 10}}>
+              <Divider className="my-0.5" />
+              <View>
+                <ZText type={'B16'}>Location</ZText>
+              </View>
+              <LocationMap locationData={data.location} />
+            </VStack>
+          )}
+          <VStack space="md" style={{paddingVertical: 10}}>
+            <Divider className="my-0.5" />
+            <View>
+              <ZText type={'B16'}> Listed By</ZText>
+            </View>
+            <HStack>
+              <ZAvatarInitials
+                onPress={() =>
+                  onPressUser(data.userId, data.postedBy, data.profileImage)
+                }
+                // item={postData}
+                sourceUrl={data.profileImage}
+                iconSize="md"
+                styles={styles.profileImage}
+                name={data.postedBy}
+              />
+              <View style={{marginLeft: 15, justifyContent: 'center'}}>
+                <ZText type={'B16'}>{data.postedBy}</ZText>
+              </View>
+            </HStack>
+          </VStack>
+
+          {/* <KeyValueRow
   label="Nearby Facilities"
   values={data.postNearbyFacilities}
   valueKey="propertyAmenity"></KeyValueRow> */}
-    
-          
-         
         </VStack>
       </View>
     </>
   );
 };
 
-const carDetails = (data: any, user: any,navigation:any) => {
-  const onPressUser = (userId,userName,userImage) => {
+const carDetails = (data: any, user: any, navigation: any) => {
+  const onPressUser = (userId, userName, userImage) => {
     if (user.userId === userId) {
       navigation.navigate('ProfileScreen');
     } else {
@@ -275,69 +285,86 @@ const carDetails = (data: any, user: any,navigation:any) => {
       />
       {/* Car Details */}
       <VStack space="md" style={styles.detailsContainer}>
-      <ZText type={'M16'} color={"#E00000"}>
+        <ZText type={'M16'} color={'#E00000'}>
           {'\u20B9'} {data?.price}
         </ZText>
-       
 
-        <ZTextMore type={'B16'}  numberOfLines={1} >{data.title}</ZTextMore>
+        <ZTextMore type={'B16'} numberOfLines={1}>
+          {data.title}
+        </ZTextMore>
       </VStack>
-      <Divider className="my-0.5"/>
+      <Divider className="my-0.5" />
       <View style={styles.detailsContainer}>
-      
         <VStack space="xs">
-
-        <ZText type={'B16'}  numberOfLines={1} style={{ paddingVertical: 5 }}>{'Details'} </ZText>
-        <KeyValueDisplay label="Brand Name" value={data.brand}></KeyValueDisplay>
-        <KeyValueDisplay label="Model Name" value={data.model}></KeyValueDisplay>
-        <KeyValueDisplay label="Fuel Type" value={data.fuelType}></KeyValueDisplay>
-        <KeyValueDisplay label="Color" value={data.color}></KeyValueDisplay>
-        <KeyValueDisplay label="Transmission" value={data.Transmission}></KeyValueDisplay>
-        <KeyValueDisplay label="Ownership" value={data.ownership}></KeyValueDisplay>
-        <KeyValueDisplay label="Registration State" value={data.registrationState}></KeyValueDisplay>
-        <KeyValueDisplay label="Seating Capacity" value={data.seatingCapacity}></KeyValueDisplay>
-        <KeyValueDisplay label="Registration Year" value={data.registrationYear}></KeyValueDisplay>
-        <KeyValueDisplay label="Mileage" value={data.mileage}></KeyValueDisplay>
-        <KeyValueDisplay label="Kms Driven" value={data.kmsDriven}></KeyValueDisplay>
-        <KeyValueDisplay label="Engine Displacement" value={data.engineDisplacement}></KeyValueDisplay>
-        <KeyValueDisplay label="Year Of Manufacture" value={data.yearOfManufacture}></KeyValueDisplay>
-        <KeyValueDisplay label="Car Engine Power" value={data.carEnginePower}></KeyValueDisplay>
-        <KeyValueDisplay label="Number Of Airbags" value={data.numberOfAirbags}></KeyValueDisplay>
-        {data.location &&
-<VStack space="md" style={{paddingVertical: 10}} >
-                       <Divider className="my-0.5"  />
-                       <View>
-                             <ZText type={'B16'}>Location</ZText>
-                          </View>
-                       <LocationMap locationData={data.location} />
-                  </VStack>
-}
-                  <VStack space="md" style={{paddingVertical: 10}}>
-                       <Divider className="my-0.5"  />
-                       <View>
-                             <ZText type={'B16'}> Listed By</ZText>
-                          </View>
-                          <HStack>
-                          <ZAvatarInitials
-                        onPress={() =>
-                          onPressUser(
-                            
-                            data.userId,
-                            data.postedBy,
-                            data.profileImage
-                        
-                          )
-                        }
-                        // item={postData}
-                        sourceUrl={data.profileImage}
-                        iconSize="md"
-                        styles={styles.profileImage}
-                        name={data.postedBy}></ZAvatarInitials>
-                        <View style={{marginLeft:15,justifyContent:'center'}}>
-                             <ZText type={'B16'}>{data.postedBy}</ZText>
-                          </View>
-                          </HStack>
-                  </VStack>
+          <ZText type={'B16'} numberOfLines={1} style={{paddingVertical: 5}}>
+            {'Details'}{' '}
+          </ZText>
+          <KeyValueDisplay label="Brand Name" value={data.brand} />
+          <KeyValueDisplay label="Model Name" value={data.model} />
+          <KeyValueDisplay label="Fuel Type" value={data.fuelType} />
+          <KeyValueDisplay label="Color" value={data.color} />
+          <KeyValueDisplay label="Transmission" value={data.Transmission} />
+          <KeyValueDisplay label="Ownership" value={data.ownership} />
+          <KeyValueDisplay
+            label="Registration State"
+            value={data.registrationState}
+          />
+          <KeyValueDisplay
+            label="Seating Capacity"
+            value={data.seatingCapacity}
+          />
+          <KeyValueDisplay
+            label="Registration Year"
+            value={data.registrationYear}
+          />
+          <KeyValueDisplay label="Mileage" value={data.mileage} />
+          <KeyValueDisplay label="Kms Driven" value={data.kmsDriven} />
+          <KeyValueDisplay
+            label="Engine Displacement"
+            value={data.engineDisplacement}
+          />
+          <KeyValueDisplay
+            label="Year Of Manufacture"
+            value={data.yearOfManufacture}
+          />
+          <KeyValueDisplay
+            label="Car Engine Power"
+            value={data.carEnginePower}
+          />
+          <KeyValueDisplay
+            label="Number Of Airbags"
+            value={data.numberOfAirbags}
+          />
+          {data.location && (
+            <VStack space="md" style={{paddingVertical: 10}}>
+              <Divider className="my-0.5" />
+              <View>
+                <ZText type={'B16'}>Location</ZText>
+              </View>
+              <LocationMap locationData={data.location} />
+            </VStack>
+          )}
+          <VStack space="md" style={{paddingVertical: 10}}>
+            <Divider className="my-0.5" />
+            <View>
+              <ZText type={'B16'}> Listed By</ZText>
+            </View>
+            <HStack>
+              <ZAvatarInitials
+                onPress={() =>
+                  onPressUser(data.userId, data.postedBy, data.profileImage)
+                }
+                // item={postData}
+                sourceUrl={data.profileImage}
+                iconSize="md"
+                styles={styles.profileImage}
+                name={data.postedBy}
+              />
+              <View style={{marginLeft: 15, justifyContent: 'center'}}>
+                <ZText type={'B16'}>{data.postedBy}</ZText>
+              </View>
+            </HStack>
+          </VStack>
         </VStack>
       </View>
     </>
@@ -348,7 +375,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
   const MediaGalleryRef = useRef(null);
- 
+
   const {data, status, error, execute} = useApiRequest(fetchPostByID);
 
   const callItemDetail = async () => {
@@ -387,8 +414,8 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
                     paused={false}
                   />
                   {route.params.postType === 'Post'
-                    ? propertyDetails(data, user,navigation)
-                    : carDetails(data, user,navigation)}
+                    ? propertyDetails(data, user, navigation)
+                    : carDetails(data, user, navigation)}
                 </View>
               )}
               {/* End */}
@@ -405,7 +432,7 @@ const styles = StyleSheet.create({
     width: moderateScale(48),
     height: moderateScale(48),
     borderRadius: moderateScale(24),
-   marginRight:15
+    marginRight: 15,
   },
   headerContainer: {
     backgroundColor: '#FFF',
@@ -421,12 +448,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     flex: 1,
   },
-LeftCol:{
-  width:"50%"
-},
-RightCol:{
-  width:"50%"
-},
+  LeftCol: {
+    width: '50%',
+  },
+  RightCol: {
+    width: '50%',
+  },
   footer: {
     justifyContent: 'space-between',
     flexDirection: 'row',

@@ -163,7 +163,7 @@ const EditImagesScreen = ({route, navigation}: any) => {
   const RightIcon = () => {
     return (
       <TouchableOpacity style={{marginRight: 15}} onPress={handleNextStepClick}>
-        <ZText numberOfLines={1} color={'#000'} type={'R16'}>
+        <ZText numberOfLines={1} color={Color.primary} type={'R16'}>
           {'Next'}
         </ZText>
       </TouchableOpacity>
