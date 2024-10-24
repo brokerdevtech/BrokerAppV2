@@ -352,14 +352,15 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
   const {data, status, error, execute} = useApiRequest(fetchPostByID);
 
   const callItemDetail = async () => {
-    console.log(route, 'route');
+    // console.log(route, route.params.postType, 'route');
+
     await execute(route.params.postType, route.params.postId);
   };
 
   useEffect(() => {
     callItemDetail();
   }, []);
-
+  console.log(data, 'detaisl');
   return (
     <BottomSheetModalProvider>
       <View style={styles.listContainer}>

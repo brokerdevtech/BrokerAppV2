@@ -97,6 +97,7 @@ const HomeNavigation: React.FC = () => {
           component={ChooseImage}
           options={{headerShown: false}}
         />
+
         <Stack.Screen
           options={{headerShown: false}}
           name="ProfileDetail"

@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Platform,
   Text,
+  Dimensions,
 } from 'react-native';
 import {Back} from '../../assets/svg';
 
@@ -26,6 +27,7 @@ import {Button} from '../../../components/ui/button';
 
 import AppBaseContainer from '../../hoc/AppBaseContainer_old';
 import {Color} from '../../styles/GlobalStyles';
+const {width, height} = Dimensions.get('window');
 const EditImagesScreen = ({route, navigation}: any) => {
   const [selectedThumbnails, setselectedThumbnails] = useState(
     route.params.selectedThumbnails,
@@ -208,8 +210,8 @@ const locaStyles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    width: Platform.OS == 'ios' ? 400 : 380,
-    height: 650,
+    width: width * 0.9, // 90% of screen width
+    height: height * 0.8,
     margin: 15,
 
     borderRadius: 40,

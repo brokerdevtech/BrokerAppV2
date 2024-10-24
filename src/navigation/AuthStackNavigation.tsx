@@ -3,6 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import LoginScreen from '../screens/Auth/LoginScreen';
 import RegisterScreen from '../screens/Auth/RegisterScreen';
+import ForgotPasswordScreen from '../screens/Auth/ForgotPasswordScreen';
 
 const Stack = createStackNavigator();
 
@@ -34,6 +35,14 @@ const AuthStackNavigation: React.FC<StackNavigationProps> = ({
         {props => (
           <RegisterScreen loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
         )}
+      </Stack.Screen>
+      <Stack.Screen
+        name="ForgotPassword"
+        options={{
+          headerTitle: '',
+          headerShown: false,
+        }}>
+        {props => <ForgotPasswordScreen />}
       </Stack.Screen>
     </Stack.Navigator>
   );

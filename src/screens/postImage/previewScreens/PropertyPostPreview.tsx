@@ -49,6 +49,7 @@ import AppBaseContainer from '../../../hoc/AppBaseContainer_old';
 import {useApiRequest} from '../../../hooks/useApiRequest';
 import {sendPropPostData} from '../../../../BrokerAppCore/services/new/postServices';
 import {Toast, ToastDescription} from '../../../../components/ui/toast';
+import LocationMap from '../../../sharedComponents/LocationMap';
 
 const PropertyPostPreview: React.FC = ({
   toast,
@@ -70,6 +71,7 @@ const PropertyPostPreview: React.FC = ({
   const [loading, setLoading] = useState(false);
   const [toastId, setToastId] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
+  let localitie = route.params?.localities;
   const {
     data: Propdata,
     status: Propstatus,
@@ -148,7 +150,7 @@ const PropertyPostPreview: React.FC = ({
       // Handle the error scenario
     }
   };
-
+  // console.log(localitie, 'Formvalues');
   const savePost = async (FormValue, Formtags, imagesArray) => {
     try {
       const uploadPromises = [];
@@ -274,8 +276,6 @@ const PropertyPostPreview: React.FC = ({
         ],
       });
     }
-
-    let localitie = route.params?.localities;
 
     const requestOption = {
       userId: user.userId,
@@ -528,7 +528,7 @@ const PropertyPostPreview: React.FC = ({
                     <ZText type={'s16'} style={{marginBottom: 10}}>
                       Location
                     </ZText>
-                    <ZText type={'r16'}>{localities.name}</ZText>
+                    <LocationMap locationData={localitie} />
                   </View>
                 </View>
               </Box>
