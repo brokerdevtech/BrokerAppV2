@@ -55,7 +55,7 @@ const PostActions = ({ item, User, listTypeData, onUpdateLikeCount }) => {
     (state: RootState) => state.user.user.userPermissions,
   );
 
-console.log(listTypeData);
+
 // TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}
   const generateLink = async () => {
    let postType = listTypeData === 'RealEstate' ? 'Post' : 'Car/Post';

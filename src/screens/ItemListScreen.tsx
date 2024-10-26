@@ -63,9 +63,14 @@ import { FlashList } from '@shopify/flash-list';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '../themes';
 import { Color } from '@/styles/GlobalStyles';
+import ZHeaderFliter from '../sharedComponents/ZHeaderFliter';
+import FilterBottomSheet from '../sharedComponents/FilterBottomSheet';
+import { getFilterTags } from '../../BrokerAppCore/services/filterTags';
+import { concat } from 'lodash';
+
 
 const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,recordCount})=>{
-   console.log(AppLocation.City,"categoryId")
+
   return (
     <>
    
@@ -84,7 +89,7 @@ const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,record
             categoryId: categoryId,
           }}
         />
-         <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips>
+         {/* <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips> */}
     </>
 
   )
@@ -280,18 +285,137 @@ const ItemListScreen: React.FC<any> = ({
   pageTitle,
   isLoading,
   listType,
-  searchKeyword,
+
 }) => {
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
+  const [listApiobj, setlistApiobj] = useState({});
+  const [ApppageTitle, setApppageTitle] = useState('');
+  const [searchKeyword, setsearchKeyword] = useState('');
+  const [Itemslocalities, setItemslocalities] = useState(null);
+  const [PopUPFilter, setPopUPFilter] = useState(null);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
   const brandName = route.params.brandName !== undefined ? route.params.brandName : "";
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   // console.log('=============user=============');
   // console.log(user);
+  const FilterSheetRef = useRef(null);
+  const closeModal = useCallback(item => {
+    console.log("============== closeModal==================")
+    console.log(item);
+if(item!={})
+  { 
+    setPopUPFilter(item);
+        setLoading(true);
+ pageSize_Set(5);
+    currentPage_Set(1);
+    hasMore_Set(true);
+  let tags=  getFilterTags(item);
+
+callPodcastList(tags);
+  }  
+}, [searchKeyword]);
+
+  const getTags=(name,Item)=>{
+
+    return {
+      name: name,
+      values: Item.map(item => {
+        return {
+          key: String(item.key),
+          value: item.value
+        };
+      })
+    };
+  }
+
+  const getFilterTags =(input)=>{
+
+ // Initialize an array to hold the transformed results
+ const transformedArray = [];
+
+ // Loop over each key in the input object
+ for (const key in input) {
+   if (input.hasOwnProperty(key)) {
+     let values;
+
+     // Use a switch-case to handle different keys
+     switch (key) {
+       case "Location":
+    
+         break;
+         
+         case "Budget":
+    
+         break;
+         case "Area":
+      
+         break;
 
 
+       // Add more cases as needed
+       default:
+         // Default case if key doesn't match any predefined cases
+         values =getTags(key,input[key])
+         break;
+     }
+if(values)
+     transformedArray.push(values);
+   }
+ }
+
+
+ let obj:any ={
+  keyWord: searchKeyword,
+  cityName: AppLocation.City,
+  userId: user.userId,
+  placeID: AppLocation.placeID,
+  placeName: AppLocation.placeName,
+  geoLocationLatitude: AppLocation.geoLocationLatitude,
+  geoLocationLongitude: AppLocation.geoLocationLongitude,
+  isSearch:false,
+  "filters": { "tags":transformedArray}
+}
+
+if(input.hasOwnProperty("Location"))
+{
+  console.log(input["Location"]);
+
+  obj.cityName=input["Location"][0].place.City
+  obj.placeID=input["Location"][0].place.placeID
+  obj.placeName=input["Location"][0].place.placeName
+  obj.geoLocationLatitude=input["Location"][0].place.geoLocationLongitude
+  obj.geoLocationLongitude=input["Location"][0].place.geoLocationLongitude
+
+}
+if(input.hasOwnProperty("Budget"))
+  {
+    obj.minPrice=input["Budget"].minValue
+    obj.maxPrice=input["Budget"].maxValue
+  
+  }
+  if(input.hasOwnProperty("Area"))
+    {
+      obj.propertySizeMin=input["Area"].minValue
+      obj.propertySizeMax=input["Area"].maxValue
+    
+    }
+console.log("sssssssss");
+console.log(obj);
+
+setlistApiobj(obj);
+ 
+ return obj;
+
+    
+
+    
+}
+
+  const userPermissions = useSelector(
+    (state: RootState) => state.user.user.userPermissions,
+  );
   const {
     data,
     status,
@@ -311,42 +435,101 @@ const ItemListScreen: React.FC<any> = ({
     ),
     [],
   );
-  async function set_FilterChipsData() {
+  async function set_FilterChipsData(obj) {
     let FilterChipsData = [];
-      if(searchKeyword !== "") 
+console.log('set_FilterChipsData',obj);
+      if(obj.keyWord !== "") 
       {
-        FilterChipsData.push({label: 'Search:' + searchKeyword});
+        FilterChipsData.push({label: 'Search:' + obj.keyWord });
       }
+      if(obj.cityName !== "") 
+        {
+          FilterChipsData.push({label: 'Location:' + obj.cityName});
+        }
+        if(obj.minPrice!= undefined && obj.minPrice !== "") 
+          {
+            FilterChipsData.push({label: 'Min:' + obj.minPrice});
+          }
+          if(obj.maxPrice!= undefined && obj.maxPrice !== "") 
+            {
+              FilterChipsData.push({label: 'Max:' + obj.maxPrice});
+            }
+// console.log(obj.propertySizeMin);
+// console.log("obj.propertySizeMin");
+            if(obj.propertySizeMin!= undefined && obj.propertySizeMin !== "") 
+              {
+                FilterChipsData.push({label: 'Size Min:' + obj.propertySizeMin});
+              }
+              if(obj.propertySizeMax!= undefined && obj.propertySizeMax !== "") 
+                {
+                  FilterChipsData.push({label: 'Size Max:' + obj.propertySizeMax});
+                }
 
-      if(brandName !== "") 
-      {
-        FilterChipsData.push({label: 'Brand:' + brandName});
-      }
+
+        if (obj.filters && obj.filters.tags && Array.isArray(obj.filters.tags)) {
+          obj.filters.tags.forEach(tag => {
+            if (Array.isArray(tag.values)) {
+              const labelValues = tag.values.map(val => `${tag.name}: ${val.value}`).join(', ');
+              FilterChipsData.push({label: labelValues});
+            }
+          });
+        }
+
+    //   if(brandName !== "") 
+    //   {
+    //     FilterChipsData.push({label: 'Brand:' + brandName});
+    //   }
       
 
-      FilterChipsData.push({label: 'Location:' + AppLocation.placeName});
-    // if(brandName !== "") {
-    //   FilterChipsData.push({label: 'Brands Associated :' + brandName});
-    // }
+    //   FilterChipsData.push({label: 'Location:' + AppLocation.placeName});
+    // // if(brandName !== "") {
+    // //   FilterChipsData.push({label: 'Brands Associated :' + brandName});
+    // // }
     setFilterChipsData(FilterChipsData);
   }
+  // async function set_FilterChipsData(Keyword:any='') {
+  //   let FilterChipsData = [];
+  //   console.log('searchKeyword',Keyword);
+  //     if(Keyword !== "") 
+  //     {
+  //       FilterChipsData.push({label: 'Search:' + Keyword});
+  //     }
 
-  async function callPodcastList() {
+  //     if(brandName !== "") 
+  //     {
+  //       FilterChipsData.push({label: 'Brand:' + brandName});
+  //     }
+      
+
+  //     FilterChipsData.push({label: 'Location:' + AppLocation.placeName});
+  //   // if(brandName !== "") {
+  //   //   FilterChipsData.push({label: 'Brands Associated :' + brandName});
+  //   // }
+  //   setFilterChipsData(FilterChipsData);
+  // }
+
+  async function callPodcastList(APiobj) {
     // pageSize_Set(5);
     // currentPage_Set(1);
     // hasMore_Set(true);
+    set_FilterChipsData(APiobj);
+//     console.log("=APiobj");
+// console.log(APiobj);
+// console.log(user);
 
-     execute(listTypeData, {
-      keyWord: searchKeyword !== "" ? searchKeyword : brandName,
-      cityName: AppLocation.City,
-      userId: user.userId,
-      placeID: AppLocation.placeID,
-      placeName: AppLocation.placeName,
-      geoLocationLatitude: AppLocation.geoLocationLatitude,
-      geoLocationLongitude: AppLocation.geoLocationLongitude,
-      isSearch:false
-    });
-   
+
+    //  execute(listTypeData, {
+    //   keyWord: searchKeyword !== "" ? searchKeyword : brandName,
+    //   cityName: AppLocation.City,
+    //   userId: user.userId,
+    //   placeID: AppLocation.placeID,
+    //   placeName: AppLocation.placeName,
+    //   geoLocationLatitude: AppLocation.geoLocationLatitude,
+    //   geoLocationLongitude: AppLocation.geoLocationLongitude,
+    //   isSearch:false
+    // });
+    
+    execute(listTypeData, APiobj);
     setLoading(false);
   }
 
@@ -354,28 +537,56 @@ const ItemListScreen: React.FC<any> = ({
     setLoading(true);
     if (listTypeData == 'RealEstate') {
       pageTitle('Property');
+      setApppageTitle('Property');
     }
     if (listTypeData == 'Car') {
       pageTitle('Car');
+      setApppageTitle('Car');
     }
+  setItemslocalities(AppLocation);
+ 
 
-    set_FilterChipsData();
-    callPodcastList();
+let obj ={
+  keyWord: searchKeyword,
+  cityName: AppLocation.City,
+  userId: user.userId,
+  placeID: AppLocation.placeID,
+  placeName: AppLocation.placeName,
+  geoLocationLatitude: AppLocation.geoLocationLatitude,
+  geoLocationLongitude: AppLocation.geoLocationLongitude,
+  isSearch:false
+}
+setlistApiobj(obj);
+
+
+
+const locationData = [
+  {
+    place: {
+      ...AppLocation,
+    
+    },
+  },
+];
+
+// Uncomment if you need to set additional selected filters
+const updatedPopUPFilter = {
+  
+  Location: locationData,
+
+};
+setPopUPFilter(updatedPopUPFilter);
+
+
+
+//set_FilterChipsData(obj);
+    callPodcastList(obj);
   }, []);
   const [itemHeight, setItemHeight] = useState(560);
 
   const loadMorepage = async () => {
     if (!isInfiniteLoading) {
-      await loadMore(listTypeData, {
-        keyWord: '',
-       cityName: AppLocation.City,
-        userId: user.userId,
-        placeID: AppLocation.placeID,
-        placeName: AppLocation.placeName,
-        geoLocationLatitude: AppLocation.geoLocationLatitude,
-        geoLocationLongitude: AppLocation.geoLocationLongitude,
-        isSearch:false
-      });
+      await loadMore(listTypeData, listApiobj);
     }
   };
   // const rederListHeader = useCallback((categoryId, FilterChipsData, recordsCount) => (
@@ -390,10 +601,44 @@ const ItemListScreen: React.FC<any> = ({
   const getItemLayout = (data, index) => (
     { length: itemHeight, offset: itemHeight * index, index }
   );
+  const apphandleSearch = async (searchText: string) => {
+    console.log("apphandleSearch");
+    console.log(searchText);
+    pageSize_Set(5);
+    currentPage_Set(1);
+    hasMore_Set(true);
+  await  setsearchKeyword(searchText);
+  let obj ={
+    
+    ...listApiobj,
+    keyWord: searchText,
+  }
+  console.log("apphandleSearch");
+    console.log(obj);
+  setlistApiobj(obj);
+    
+    callPodcastList(obj);
+  };
+  const  OnPressfilters=()=>{
+
+
+    FilterSheetRef.current?.open();
+  }
+
+
+
   return (
 
     <BottomSheetModalProvider>
- 
+  <ZHeaderFliter
+        title={ApppageTitle}
+        isSearch={true}
+        handleSearch={apphandleSearch}
+        AppFliter={<FilterChips filters={FilterChipsData} recordsCount={recordCount}
+        OnPressfilters={OnPressfilters}
+       
+        ></FilterChips>}
+      />
       {/* <ScrollView style={{ flex: 1 }}>
         <SafeAreaView> */}
       {/* <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>    */}
@@ -457,7 +702,7 @@ const ItemListScreen: React.FC<any> = ({
 // />  
             }
         </View>
-        <View style={{marginTop:"auto",height:80 }}>
+        {/* <View style={{marginTop:"auto",height:80 }}>
         <View style={styles.footer}>
         <ZText type={'S16'} >Properties</ZText>
         <View style={styles.IconButton}>
@@ -469,11 +714,20 @@ const ItemListScreen: React.FC<any> = ({
           <ZText type={'S16'} >Filter</ZText>
         </View>
       </View>
-        </View>
+        </View> */}
 
         </View>
   
+        <FilterBottomSheet
 
+ref={FilterSheetRef}
+
+PopUPFilter={PopUPFilter}
+User={user}
+listTypeData={listTypeData}
+userPermissions={userPermissions}
+onClose={closeModal}
+/>
 {/* </SafeAreaView>
      
         </ScrollView> */}
@@ -687,5 +941,5 @@ display:'flex',
   },
 });
 
-export default AppBaseContainer(ItemListScreen, '', true,true);
+export default AppBaseContainer(ItemListScreen, '', false,true);
 //export default ItemListScreen;

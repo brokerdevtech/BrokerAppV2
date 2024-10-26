@@ -57,7 +57,7 @@ const ProductSection = (props: ProductSectionProps) => {
   }, [props]);
 
   const renderProductItems = ({item, index}) => {
-    console.log(item, 'media');
+    // console.log(item, 'media');
     return (
       <View style={styles.cardContainer}>
         <Image

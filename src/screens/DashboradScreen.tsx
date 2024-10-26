@@ -119,7 +119,7 @@ export default function DashboradScreen() {
       </TouchableOpacity>
     );
   });
-  console.log(marqueeText, 'marqueeText');
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView style={styles.scrollView}>

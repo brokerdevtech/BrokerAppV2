@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 
-const MultiSelectFlatList = ({ data, onSelectItem }) => {
+const MultiSelectFlatList = ({ data, onSelectItem,numColumn,preselectedItem,
+  emptyessage='Please select a brand first' }) => {
   const [selectedItems, setSelectedItems] = useState([]); // Track multiple selected items
-
+  useEffect(() => {
+    if (preselectedItem) {
+      setSelectedItems(preselectedItem);
+    } else {
+      setSelectedItems([]);
+    }
+  }, [preselectedItem]);
   const handleItemPress = (item) => {
     // Check if the item is already selected
     if (selectedItems.some(selected => selected.key === item.key)) {
@@ -57,11 +64,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 20,
+    padding: 10,
     marginVertical: 10,
     marginHorizontal: 10, // Adjust margin for proper spacing
     shadowColor: '#000', // For iOS
-    shadowOffset: { width: 0, height: 2 }, // For iOS
+    shadowOffset: {width: 0, height: 2}, // For iOS
     shadowOpacity: 0.2, // For iOS
     shadowRadius: 2, // For iOS
     elevation: 4, // For Android (shadow)

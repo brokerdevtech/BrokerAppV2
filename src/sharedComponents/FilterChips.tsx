@@ -5,9 +5,10 @@ import { filter_icon } from '../assets/svg';
 import ZText from './ZText';
 import padding from '@/themes/padding';
 import { SkeletonText } from '../../components/ui/skeleton';
+import { colors } from '../themes';
 
 
-const FilterChips = ({ filters ,recordsCount}) => {
+const FilterChips = ({ filters ,recordsCount ,OnPressfilters}) => {
  
   return (
     <>
@@ -21,28 +22,35 @@ const FilterChips = ({ filters ,recordsCount}) => {
     <View style={styles.Outercontainer}>
     <View style={styles.container}>
       {/* Fixed "Filters" Chip */}
+      <TouchableOpacity onPress={OnPressfilters}>
       <View style={styles.fixedChip}>
-      <Icon as={filter_icon}  style={{marginRight:5}}/>
+      <Icon as={filter_icon} color={colors.light.appred}  style={{marginRight:5}}/>
         <Text style={styles.text}>Filters</Text>
  
       </View>
-
+      </TouchableOpacity>
+      {/* <View style={styles.fixedChip}>
+   
+      <ZText  type="M16">Total {recordsCount} 
+    </ZText> 
+ 
+      </View> */}
       {/* Scrollable Chips */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {filters.map((filter, index) => (
           <View key={index} style={styles.chip}>
             <Text style={styles.text}>{filter.label}</Text>
-            <TouchableOpacity style={styles.closeButton}>
+            {/* <TouchableOpacity style={styles.closeButton}>
               <Text style={styles.closeText}>×</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         ))}
       </ScrollView>
     </View>
-    <View style={styles.textcontainer}>
+    {/* <View style={styles.textcontainer}>
 <ZText  type="M16" style={{paddingLeft:10}}>Total {recordsCount} 
     </ZText> 
-    </View>
+    </View> */}
 </View>)}</>
   );
 
@@ -50,14 +58,16 @@ const FilterChips = ({ filters ,recordsCount}) => {
 
 const styles = StyleSheet.create({
   Outercontainer:{
-    backgroundColor:'#F7F8FA',
+    backgroundColor:'white',
+    borderBottomColor:colors.light.gray,
+    borderBottomWidth:1,
   },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor:'#F7F8FA',
+    backgroundColor:'white',
   },
   textcontainer: {
     flexDirection: 'row',

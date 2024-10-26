@@ -6,6 +6,7 @@ const SelectableFlatList = ({
   numColumn,
   onSelectItem,
   preselectedItem,
+  emptyessage='Please select a brand first'
 }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   console.log(data, 'de');
@@ -44,7 +45,7 @@ const SelectableFlatList = ({
     // Show a message if data is empty or null
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>Please select a brand first</Text>
+        <Text style={styles.emptyText}>{emptyessage}</Text>
       </View>
     );
   }
