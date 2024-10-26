@@ -53,8 +53,8 @@ const BrandSection = (props: BrandSectionProps) => {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('ItemListScreen', {
-              listType: 'RealEstate',
-              categoryId: 1,
+              listType: item.hasOwnProperty('fuelType') ? 'Car' : 'RealEstate',
+              categoryId: item.hasOwnProperty('fuelType') ? 2 : 1,
               brandName: item.searchText ?? '',
             })
           }>
@@ -64,6 +64,11 @@ const BrandSection = (props: BrandSectionProps) => {
             }}
             style={styles.carImage}
           />
+          <View style={styles.detailsContainer}>            
+            <ZText type={'R14'}   numberOfLines={1}  style={styles.carBrand}>
+              {item.title}
+            </ZText>
+        </View>
         </TouchableOpacity>
       </View>
     );
