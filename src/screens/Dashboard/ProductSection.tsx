@@ -28,7 +28,7 @@ import {
   postsImagesBucketPath,
 } from '../../config/constants';
 import RectangularCardSkeleton from '../../sharedComponents/Skeleton/RectangularCardSkeleton';
-import { colors } from '../../themes';
+import {colors} from '../../themes';
 
 interface ProductSectionProps {
   heading: string;
@@ -94,14 +94,17 @@ const ProductSection = (props: ProductSectionProps) => {
             <View style={styles.locationContainer}>
               {item.placeName && (
                 <>
-                  <Icon as={Map_pin} size='xs' />
-                  <ZText type={'R14'} numberOfLines={1} style={styles.locationText}>
+                  <Icon as={Map_pin} size="xs" />
+                  <ZText
+                    type={'R14'}
+                    numberOfLines={1}
+                    style={styles.locationText}>
                     {item.placeName}
                   </ZText>
                 </>
               )}
             </View>
-            <ZText type={'R14'}   numberOfLines={1}  style={styles.carBrand}>
+            <ZText type={'R14'} numberOfLines={1} style={styles.carBrand}>
               {item.title}
             </ZText>
           </TouchableOpacity>
@@ -286,7 +289,7 @@ const styles = StyleSheet.create({
   detailsContainer: {
     paddingHorizontal: 10,
     paddingTop: 10,
-    paddingBottom:10,
+    paddingBottom: 10,
     color: 'black',
   },
   price: {

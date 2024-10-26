@@ -33,7 +33,8 @@ import ProductSection from './Dashboard/ProductSection';
 import MarqueeBanner from '../sharedComponents/profile/MarqueeBanner';
 import {fetchDashboardData} from '../../BrokerAppCore/services/new/dashboardService';
 import UserStories from '../components/story/UserStories';
-import { colors } from '../themes';
+import {colors} from '../themes';
+import MarqueeScreen from '../sharedComponents/profile/Marquee';
 
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -129,7 +130,7 @@ export default function DashboradScreen() {
             {/* <View style={{paddingHorizontal:15}}> */}
             <UserStories />
             {/* </View> */}
-            {marqueeText?.length > 0 && (
+            {/* {marqueeText?.length > 0 && (
               <MarqueeBanner
                 marqueeTextList={marqueeText.map((item: any) => ({
                   marqueeText: item.marqueueText,
@@ -137,6 +138,9 @@ export default function DashboradScreen() {
                   categoryId: item.categoryId,
                 }))}
               />
+            )} */}
+            {marqueeText?.length > 0 && (
+              <MarqueeScreen marqueeTextList={marqueeText} />
             )}
           </View>
           <Grid className="gap-3 p-4" _extra={{className: 'grid-cols-9'}}>
