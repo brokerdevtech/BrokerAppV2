@@ -173,18 +173,17 @@ const MarqueeText = (
       PixelRatio.getPixelSizeForLayoutSize(marqueeTextWidth.current) /
       config.current.speed;
     const {consecutive: isConsecutive} = config.current;
+
     animation.current = createAnimation(
       animatedValue.current,
       {
         ...config.current,
-        toValue: isConsecutive ? -marqueeTextWidth.current : -distance,
-        duration: isConsecutive
-          ? baseDuration * (marqueeTextWidth.current / distance)
-          : baseDuration,
+        toValue: isConsecutive ? containerWidth.current : distance,
+        duration: baseDuration,
       },
       isConsecutive
         ? {
-            resetToValue: containerWidth.current,
+            resetToValue: -marqueeTextWidth.current,
             duration:
               baseDuration *
               ((containerWidth.current + marqueeTextWidth.current) / distance),
@@ -246,13 +245,12 @@ const MarqueeText = (
     }
   };
 
-  // Null distance is the special value to allow recalculation
   const invalidateMetrics = () => {
     containerWidth.current = null;
     marqueeTextWidth.current = null;
   };
+
   const {width, height} = StyleSheet.flatten(style || {});
-  const calWidth = 600;
   return (
     <View style={[styles.container, {width, height}]}>
       <ZText
@@ -279,7 +277,6 @@ const MarqueeText = (
             {
               transform: [{translateX: animatedValue.current}],
               opacity: isAnimating ? 1 : 0,
-              width: '100%',
             },
           ]}>
           {children}
