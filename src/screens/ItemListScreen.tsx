@@ -70,7 +70,15 @@ import FilterBottomSheet from '../sharedComponents/FilterBottomSheet';
 import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
 import {concat} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
-
+const SkeletonPlaceholder = () => {
+  return (
+    <HStack space={10} style={styles.skeletonContainer}>
+      {Array.from({length: 6}).map((_, index) => (
+        <ListingCardSkeleton size={60} />
+      ))}
+    </HStack>
+  );
+};
 const RederListHeader = React.memo(
   ({categoryId, AppLocation, FilterChipsData, recordCount}) => {
     return (
@@ -625,13 +633,14 @@ const ItemListScreen: React.FC<any> = ({
           />
         }
       />
+
       {/* <ScrollView style={{ flex: 1 }}>
         <SafeAreaView> */}
       {/* <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>    */}
       <View style={{flex: 1}}>
         <View style={{flex: 1}}>
           {data === null ? (
-            <ListingCardSkeleton />
+            <SkeletonPlaceholder />
           ) : (
             <FlatList
               data={data}

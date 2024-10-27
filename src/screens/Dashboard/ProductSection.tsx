@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
 import React, {useEffect} from 'react';
 import {
@@ -29,6 +30,7 @@ import {
 } from '../../config/constants';
 import RectangularCardSkeleton from '../../sharedComponents/Skeleton/RectangularCardSkeleton';
 import {colors} from '../../themes';
+import ProductSectionSkeleton from '../../sharedComponents/Skeleton/ProductSectionSkeleton';
 
 interface ProductSectionProps {
   heading: string;
@@ -116,7 +118,10 @@ const ProductSection = (props: ProductSectionProps) => {
   return (
     <>
       {data == null ? (
-        <RectangularCardSkeleton type="NewIN" />
+        <ProductSectionSkeleton
+          heading={props.heading}
+          isShowAll={props.isShowAll}
+        />
       ) : (
         <View
           style={{
