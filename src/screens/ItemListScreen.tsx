@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable no-trailing-spaces */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useCallback, useEffect, useRef, useState} from 'react';
@@ -9,7 +10,8 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  Linking,Alert,
+  Linking,
+  Alert,
   ActivityIndicator,
 } from 'react-native';
 import {useSelector} from 'react-redux';
@@ -59,28 +61,27 @@ import Recommend from '../sharedComponents/RecomendedBrokers';
 import ProductSection from './Dashboard/ProductSection';
 import flex from '@/themes/flex';
 import padding from '@/themes/padding';
-import { FlashList } from '@shopify/flash-list';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from '../themes';
-import { Color } from '@/styles/GlobalStyles';
+import {FlashList} from '@shopify/flash-list';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {colors} from '../themes';
+import {Color} from '@/styles/GlobalStyles';
 import ZHeaderFliter from '../sharedComponents/ZHeaderFliter';
 import FilterBottomSheet from '../sharedComponents/FilterBottomSheet';
-import { getFilterTags } from '../../BrokerAppCore/services/filterTags';
-import { concat } from 'lodash';
+import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
+import {concat} from 'lodash';
+import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
 
+const RederListHeader = React.memo(
+  ({categoryId, AppLocation, FilterChipsData, recordCount}) => {
+    return (
+      <>
+        <UserStories />
 
-const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,recordCount})=>{
-
-  return (
-    <>
-   
-    <UserStories/>
-    
-    <Recommend categoryId={categoryId}/>
-    <ProductSection
+        <Recommend categoryId={categoryId} />
+        <ProductSection
           heading={'Newly Launched'}
           background={'#FFFFFF'}
-          endpoint={`Newin`}
+          endpoint={'Newin'}
           isShowAll={false}
           request={{
             pageNo: 1,
@@ -89,11 +90,11 @@ const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,record
             categoryId: categoryId,
           }}
         />
-         {/* <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips> */}
-    </>
-
-  )
-})
+        {/* <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips> */}
+      </>
+    );
+  },
+);
 // const ListHeader = React.memo(({ FilterChipsData, recordsCount }) => (
 //   <>
 //     <View>
@@ -104,16 +105,14 @@ const RederListHeader=React.memo(({categoryId,AppLocation,FilterChipsData,record
 //   </>
 // ));
 
-const ProductItem =  React.memo(
-    ({ item, listTypeData, User, navigation }) => {
+const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
   const MediaGalleryRef = useRef(null);
 
   const openWhatsApp = useCallback((phoneNumber, message) => {
-  
-  
-    const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
+    const url = `whatsapp://send?text=${encodeURIComponent(
+      message,
+    )}&phone=${phoneNumber}`;
 
-   
     Linking.canOpenURL(url)
       .then(supported => {
         if (supported) {
@@ -123,21 +122,17 @@ const ProductItem =  React.memo(
         }
       })
       .catch(err => console.error('Error opening WhatsApp', err));
-  },[]);
+  }, []);
   const chatProfilePress = useCallback(async () => {
- 
-
     const members = [User.userId.toString(), item.userId.toString()];
-
 
     navigation.navigate('AppChat', {
       defaultScreen: 'ChannelScreen',
       defaultParams: members,
-      defaultchannelSubject:`Hi,i want to connect on ${item.title}`,
+      defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
     });
-
-  },[]);
-  const makeCall = useCallback((phoneNumber) => {
+  }, []);
+  const makeCall = useCallback(phoneNumber => {
     const url = `tel:${phoneNumber}`;
 
     Linking.canOpenURL(url)
@@ -149,126 +144,143 @@ const ProductItem =  React.memo(
         }
       })
       .catch(err => console.error('Error opening dialer', err));
-  },[]);
+  }, []);
   return (
-<View style={styles.WrapcardContainer}>
-    <View style={styles.cardContainer}>
-      <MediaGallery
-        ref={MediaGalleryRef}
-        mediaItems={item.postMedias}
-        paused={false}
-      />
+    <View style={styles.WrapcardContainer}>
+      <View style={styles.cardContainer}>
+        <MediaGallery
+          ref={MediaGalleryRef}
+          mediaItems={item.postMedias}
+          paused={false}
+        />
 
-      {/* <Image
+        {/* <Image
         source={{
           uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
         }}
         style={styles.carImage}
       /> */}
 
-      {/* Check and Heart Icons */}
-      {item.isBrokerAppVerified && (
-        <View style={styles.iconContainer}>
-          <View style={styles.checkIcon}>
-            <Card_check_icon />
+        {/* Check and Heart Icons */}
+        {item.isBrokerAppVerified && (
+          <View style={styles.iconContainer}>
+            <View style={styles.checkIcon}>
+              <Card_check_icon />
+            </View>
           </View>
-        </View>
-      )}
-<View style={{marginLeft:20}}>
-      <PostActions
-        item={item}
-        User={User}
-        listTypeData={listTypeData}
-        onUpdateLikeCount={newCount => {
-          console.log(newCount);
-        }}
-      /></View>
-      {/* Car Details */}
-      <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>
-      <VStack space="xs" style={styles.detailsContainer}>
-        <HStack>
-          <Box style={{marginLeft: 4}}>
-            <ZText type={'M16'} style={{color:colors.light.appred}}>{'\u20B9'} </ZText>
-          </Box>
-          <Box>
-            <ZText type={'M16'} style={{color:colors.light.appred}}>{item.price}</ZText>
-          </Box>
-        </HStack>
-
-        {item.location?.cityName && (
-          <HStack>
-            <Box>
-              <Icon as={Location_Icon} size='xl'/>
-            </Box>
-            <Box style={{width:'100%' ,flex:1}}>
-              <ZText
-              
-                type={'R16'}
-                numberOfLines={1} // Limits to 2 lines
-                ellipsizeMode="tail"
-              >
-                {' '}
-                {item.location.placeName}
-              </ZText>
-            </Box>
-          </HStack>
         )}
+        <View style={{marginLeft: 20}}>
+          <PostActions
+            item={item}
+            User={User}
+            listTypeData={listTypeData}
+            onUpdateLikeCount={newCount => {
+              console.log(newCount);
+            }}
+          />
+        </View>
+        {/* Car Details */}
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('ItemDetailScreen', {
+              postId: item.postId,
+              postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post',
+            })
+          }>
+          <VStack space="xs" style={styles.detailsContainer}>
+            <HStack>
+              <Box style={{marginLeft: 4}}>
+                <ZText type={'M16'} style={{color: colors.light.appred}}>
+                  {'\u20B9'}{' '}
+                </ZText>
+              </Box>
+              <Box>
+                <ZText type={'M16'} style={{color: colors.light.appred}}>
+                  {item.price}
+                </ZText>
+              </Box>
+            </HStack>
 
-    
-          <HStack style={{width:'100%' ,flex:1}}>
-          <Box>
-              <Icon as={description_icon} fill='black' size='xl'/>
-            </Box>
-            <Box style={{width:'100%' ,flex:1}}>
-            <ZText
-          
-              type={'R16'}
-              numberOfLines={1} // Limits to 2 lines
-              ellipsizeMode="tail"
-            > {' '}
-              {item.title}
-            </ZText>
-            </Box>
-          </HStack>
-      
-      </VStack>
-      </TouchableOpacity>
-      {/* <Divider  className="my-0.5" /> */}
+            {item.location?.cityName && (
+              <HStack>
+                <Box>
+                  <Icon as={Location_Icon} size="xl" />
+                </Box>
+                <Box style={{width: '100%', flex: 1}}>
+                  <ZText
+                    type={'R16'}
+                    numberOfLines={1} // Limits to 2 lines
+                    ellipsizeMode="tail">
+                    {' '}
+                    {item.location.placeName}
+                  </ZText>
+                </Box>
+              </HStack>
+            )}
 
-      <View style={styles.detailsContainerBottom}>
-        <HStack
+            <HStack style={{width: '100%', flex: 1}}>
+              <Box>
+                <Icon as={description_icon} fill="black" size="xl" />
+              </Box>
+              <Box style={{width: '100%', flex: 1}}>
+                <ZText
+                  type={'R16'}
+                  numberOfLines={1} // Limits to 2 lines
+                  ellipsizeMode="tail">
+                  {' '}
+                  {item.title}
+                </ZText>
+              </Box>
+            </HStack>
+          </VStack>
+        </TouchableOpacity>
+        {/* <Divider  className="my-0.5" /> */}
+
+        <View style={styles.detailsContainerBottom}>
+          <HStack
           // space="md"
-          
-        >
-          <HStack style={{alignItems: 'center', width: '50%',    justifyContent: 'center'}}>
-          <TouchableOpacity style={styles.callbtn} onPress={() => makeCall('+919910199761')}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Telephone_Icon} color={colors.light.appred} size={'xxl'} />
-            </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10}}>
-              <ZText type={'M14'} >Call</ZText>
-            </View>
-            </TouchableOpacity>
-            
+          >
+            <HStack
+              style={{
+                alignItems: 'center',
+                width: '50%',
+                justifyContent: 'center',
+              }}>
+              <TouchableOpacity
+                style={styles.callbtn}
+                onPress={() => makeCall('+919910199761')}>
+                <View style={{alignItems: 'center'}}>
+                  <Icon
+                    as={Telephone_Icon}
+                    color={colors.light.appred}
+                    size={'xxl'}
+                  />
+                </View>
+                <View style={{alignItems: 'center', paddingVertical: 10}}>
+                  <ZText type={'M14'}>Call</ZText>
+                </View>
+              </TouchableOpacity>
+            </HStack>
+            <HStack
+              style={{
+                alignItems: 'center',
+                width: '50%',
+                justifyContent: 'center',
+              }}>
+              <TouchableOpacity
+                style={styles.Chatbtn}
+                onPress={() => chatProfilePress()}>
+                <View style={{alignItems: 'center', marginRight: 10}}>
+                  <Icon as={Chat_Icon} color={'#0F5DC4'} size={'xxl'} />
+                </View>
+                <View style={{alignItems: 'center', paddingVertical: 10}}>
+                  <ZText type={'M14'}>Chat</ZText>
+                </View>
+              </TouchableOpacity>
+            </HStack>
           </HStack>
-          <HStack style={{alignItems: 'center',width: '50%',    justifyContent: 'center'}}>
-          <TouchableOpacity
-          style={styles.Chatbtn}
-          
-          
-          onPress={() =>chatProfilePress()}>
-            <View style={{alignItems: 'center',marginRight:10}}>
-              <Icon as={Chat_Icon}  color={'#0F5DC4'} size={'xxl'}  />
-            </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10,}}>
-              <ZText type={'M14'}>Chat</ZText>
-            </View>
-            </TouchableOpacity>
-          </HStack>
-      
-        </HStack>
+        </View>
       </View>
-    </View>
     </View>
   );
 });
@@ -285,7 +297,6 @@ const ItemListScreen: React.FC<any> = ({
   pageTitle,
   isLoading,
   listType,
-
 }) => {
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [FilterChipsData, setFilterChipsData] = useState([]);
@@ -296,122 +307,109 @@ const ItemListScreen: React.FC<any> = ({
   const [Itemslocalities, setItemslocalities] = useState(null);
   const [PopUPFilter, setPopUPFilter] = useState(null);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
-  const brandName = route.params.brandName !== undefined ? route.params.brandName : "";
+  const brandName =
+    route.params.brandName !== undefined ? route.params.brandName : '';
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   // console.log('=============user=============');
   // console.log(user);
   const FilterSheetRef = useRef(null);
-  const closeModal = useCallback(item => {
-    console.log("============== closeModal==================")
-    console.log(item);
-if(item!={})
-  { 
-    setPopUPFilter(item);
+  const closeModal = useCallback(
+    item => {
+      console.log('============== closeModal==================');
+      console.log(item);
+      if (item != {}) {
+        setPopUPFilter(item);
         setLoading(true);
- pageSize_Set(5);
-    currentPage_Set(1);
-    hasMore_Set(true);
-  let tags=  getFilterTags(item);
+        pageSize_Set(5);
+        currentPage_Set(1);
+        hasMore_Set(true);
+        let tags = getFilterTags(item);
 
-callPodcastList(tags);
-  }  
-}, [searchKeyword]);
+        callPodcastList(tags);
+      }
+    },
+    [searchKeyword],
+  );
 
-  const getTags=(name,Item)=>{
-
+  const getTags = (name, Item) => {
     return {
       name: name,
       values: Item.map(item => {
         return {
           key: String(item.key),
-          value: item.value
+          value: item.value,
         };
-      })
+      }),
     };
-  }
+  };
 
-  const getFilterTags =(input)=>{
+  const getFilterTags = input => {
+    // Initialize an array to hold the transformed results
+    const transformedArray = [];
 
- // Initialize an array to hold the transformed results
- const transformedArray = [];
+    // Loop over each key in the input object
+    for (const key in input) {
+      if (input.hasOwnProperty(key)) {
+        let values;
 
- // Loop over each key in the input object
- for (const key in input) {
-   if (input.hasOwnProperty(key)) {
-     let values;
+        // Use a switch-case to handle different keys
+        switch (key) {
+          case 'Location':
+            break;
 
-     // Use a switch-case to handle different keys
-     switch (key) {
-       case "Location":
-    
-         break;
-         
-         case "Budget":
-    
-         break;
-         case "Area":
-      
-         break;
+          case 'Budget':
+            break;
+          case 'Area':
+            break;
 
-
-       // Add more cases as needed
-       default:
-         // Default case if key doesn't match any predefined cases
-         values =getTags(key,input[key])
-         break;
-     }
-if(values)
-     transformedArray.push(values);
-   }
- }
-
-
- let obj:any ={
-  keyWord: searchKeyword,
-  cityName: AppLocation.City,
-  userId: user.userId,
-  placeID: AppLocation.placeID,
-  placeName: AppLocation.placeName,
-  geoLocationLatitude: AppLocation.geoLocationLatitude,
-  geoLocationLongitude: AppLocation.geoLocationLongitude,
-  isSearch:false,
-  "filters": { "tags":transformedArray}
-}
-
-if(input.hasOwnProperty("Location"))
-{
-  console.log(input["Location"]);
-
-  obj.cityName=input["Location"][0].place.City
-  obj.placeID=input["Location"][0].place.placeID
-  obj.placeName=input["Location"][0].place.placeName
-  obj.geoLocationLatitude=input["Location"][0].place.geoLocationLongitude
-  obj.geoLocationLongitude=input["Location"][0].place.geoLocationLongitude
-
-}
-if(input.hasOwnProperty("Budget"))
-  {
-    obj.minPrice=input["Budget"].minValue
-    obj.maxPrice=input["Budget"].maxValue
-  
-  }
-  if(input.hasOwnProperty("Area"))
-    {
-      obj.propertySizeMin=input["Area"].minValue
-      obj.propertySizeMax=input["Area"].maxValue
-    
+          // Add more cases as needed
+          default:
+            // Default case if key doesn't match any predefined cases
+            values = getTags(key, input[key]);
+            break;
+        }
+        if (values) {
+          transformedArray.push(values);
+        }
+      }
     }
-console.log("sssssssss");
-console.log(obj);
 
-setlistApiobj(obj);
- 
- return obj;
+    let obj: any = {
+      keyWord: searchKeyword,
+      cityName: AppLocation.City,
+      userId: user.userId,
+      placeID: AppLocation.placeID,
+      placeName: AppLocation.placeName,
+      geoLocationLatitude: AppLocation.geoLocationLatitude,
+      geoLocationLongitude: AppLocation.geoLocationLongitude,
+      isSearch: false,
+      filters: {tags: transformedArray},
+    };
 
-    
+    if (input.hasOwnProperty('Location')) {
+      console.log(input.Location);
 
-    
-}
+      obj.cityName = input.Location[0].place.City;
+      obj.placeID = input.Location[0].place.placeID;
+      obj.placeName = input.Location[0].place.placeName;
+      obj.geoLocationLatitude = input.Location[0].place.geoLocationLongitude;
+      obj.geoLocationLongitude = input.Location[0].place.geoLocationLongitude;
+    }
+    if (input.hasOwnProperty('Budget')) {
+      obj.minPrice = input.Budget.minValue;
+      obj.maxPrice = input.Budget.maxValue;
+    }
+    if (input.hasOwnProperty('Area')) {
+      obj.propertySizeMin = input.Area.minValue;
+      obj.propertySizeMax = input.Area.maxValue;
+    }
+    console.log('sssssssss');
+    console.log(obj);
+
+    setlistApiobj(obj);
+
+    return obj;
+  };
 
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
@@ -431,55 +429,54 @@ setlistApiobj(obj);
   //const {data, status, error, execute} = useApiPagingRequest5(fetchItemList);
   const renderItem = useCallback(
     ({item}) => (
-      <ProductItem item={item} listTypeData={listTypeData} User={user} navigation={navigation} />
+      <ProductItem
+        item={item}
+        listTypeData={listTypeData}
+        User={user}
+        navigation={navigation}
+      />
     ),
     [],
   );
   async function set_FilterChipsData(obj) {
     let FilterChipsData = [];
-console.log('set_FilterChipsData',obj);
-      if(obj.keyWord !== "") 
-      {
-        FilterChipsData.push({label: 'Search:' + obj.keyWord });
-      }
-      if(obj.cityName !== "") 
-        {
-          FilterChipsData.push({label: 'Location:' + obj.cityName});
+    console.log('set_FilterChipsData', obj);
+    if (obj.keyWord !== '') {
+      FilterChipsData.push({label: 'Search:' + obj.keyWord});
+    }
+    if (obj.cityName !== '') {
+      FilterChipsData.push({label: 'Location:' + obj.cityName});
+    }
+    if (obj.minPrice != undefined && obj.minPrice !== '') {
+      FilterChipsData.push({label: 'Min:' + obj.minPrice});
+    }
+    if (obj.maxPrice != undefined && obj.maxPrice !== '') {
+      FilterChipsData.push({label: 'Max:' + obj.maxPrice});
+    }
+    // console.log(obj.propertySizeMin);
+    // console.log("obj.propertySizeMin");
+    if (obj.propertySizeMin != undefined && obj.propertySizeMin !== '') {
+      FilterChipsData.push({label: 'Size Min:' + obj.propertySizeMin});
+    }
+    if (obj.propertySizeMax != undefined && obj.propertySizeMax !== '') {
+      FilterChipsData.push({label: 'Size Max:' + obj.propertySizeMax});
+    }
+
+    if (obj.filters && obj.filters.tags && Array.isArray(obj.filters.tags)) {
+      obj.filters.tags.forEach(tag => {
+        if (Array.isArray(tag.values)) {
+          const labelValues = tag.values
+            .map(val => `${tag.name}: ${val.value}`)
+            .join(', ');
+          FilterChipsData.push({label: labelValues});
         }
-        if(obj.minPrice!= undefined && obj.minPrice !== "") 
-          {
-            FilterChipsData.push({label: 'Min:' + obj.minPrice});
-          }
-          if(obj.maxPrice!= undefined && obj.maxPrice !== "") 
-            {
-              FilterChipsData.push({label: 'Max:' + obj.maxPrice});
-            }
-// console.log(obj.propertySizeMin);
-// console.log("obj.propertySizeMin");
-            if(obj.propertySizeMin!= undefined && obj.propertySizeMin !== "") 
-              {
-                FilterChipsData.push({label: 'Size Min:' + obj.propertySizeMin});
-              }
-              if(obj.propertySizeMax!= undefined && obj.propertySizeMax !== "") 
-                {
-                  FilterChipsData.push({label: 'Size Max:' + obj.propertySizeMax});
-                }
+      });
+    }
 
-
-        if (obj.filters && obj.filters.tags && Array.isArray(obj.filters.tags)) {
-          obj.filters.tags.forEach(tag => {
-            if (Array.isArray(tag.values)) {
-              const labelValues = tag.values.map(val => `${tag.name}: ${val.value}`).join(', ');
-              FilterChipsData.push({label: labelValues});
-            }
-          });
-        }
-
-    //   if(brandName !== "") 
+    //   if(brandName !== "")
     //   {
     //     FilterChipsData.push({label: 'Brand:' + brandName});
     //   }
-      
 
     //   FilterChipsData.push({label: 'Location:' + AppLocation.placeName});
     // // if(brandName !== "") {
@@ -490,16 +487,15 @@ console.log('set_FilterChipsData',obj);
   // async function set_FilterChipsData(Keyword:any='') {
   //   let FilterChipsData = [];
   //   console.log('searchKeyword',Keyword);
-  //     if(Keyword !== "") 
+  //     if(Keyword !== "")
   //     {
   //       FilterChipsData.push({label: 'Search:' + Keyword});
   //     }
 
-  //     if(brandName !== "") 
+  //     if(brandName !== "")
   //     {
   //       FilterChipsData.push({label: 'Brand:' + brandName});
   //     }
-      
 
   //     FilterChipsData.push({label: 'Location:' + AppLocation.placeName});
   //   // if(brandName !== "") {
@@ -513,10 +509,9 @@ console.log('set_FilterChipsData',obj);
     // currentPage_Set(1);
     // hasMore_Set(true);
     set_FilterChipsData(APiobj);
-//     console.log("=APiobj");
-// console.log(APiobj);
-// console.log(user);
-
+    //     console.log("=APiobj");
+    // console.log(APiobj);
+    // console.log(user);
 
     //  execute(listTypeData, {
     //   keyWord: searchKeyword !== "" ? searchKeyword : brandName,
@@ -528,7 +523,7 @@ console.log('set_FilterChipsData',obj);
     //   geoLocationLongitude: AppLocation.geoLocationLongitude,
     //   isSearch:false
     // });
-    
+
     execute(listTypeData, APiobj);
     setLoading(false);
   }
@@ -543,43 +538,35 @@ console.log('set_FilterChipsData',obj);
       pageTitle('Car');
       setApppageTitle('Car');
     }
-  setItemslocalities(AppLocation);
- 
+    setItemslocalities(AppLocation);
 
-let obj ={
-  keyWord: searchKeyword,
-  cityName: AppLocation.City,
-  userId: user.userId,
-  placeID: AppLocation.placeID,
-  placeName: AppLocation.placeName,
-  geoLocationLatitude: AppLocation.geoLocationLatitude,
-  geoLocationLongitude: AppLocation.geoLocationLongitude,
-  isSearch:false
-}
-setlistApiobj(obj);
+    let obj = {
+      keyWord: searchKeyword,
+      cityName: AppLocation.City,
+      userId: user.userId,
+      placeID: AppLocation.placeID,
+      placeName: AppLocation.placeName,
+      geoLocationLatitude: AppLocation.geoLocationLatitude,
+      geoLocationLongitude: AppLocation.geoLocationLongitude,
+      isSearch: false,
+    };
+    setlistApiobj(obj);
 
+    const locationData = [
+      {
+        place: {
+          ...AppLocation,
+        },
+      },
+    ];
 
+    // Uncomment if you need to set additional selected filters
+    const updatedPopUPFilter = {
+      Location: locationData,
+    };
+    setPopUPFilter(updatedPopUPFilter);
 
-const locationData = [
-  {
-    place: {
-      ...AppLocation,
-    
-    },
-  },
-];
-
-// Uncomment if you need to set additional selected filters
-const updatedPopUPFilter = {
-  
-  Location: locationData,
-
-};
-setPopUPFilter(updatedPopUPFilter);
-
-
-
-//set_FilterChipsData(obj);
+    //set_FilterChipsData(obj);
     callPodcastList(obj);
   }, []);
   const [itemHeight, setItemHeight] = useState(560);
@@ -598,109 +585,99 @@ setPopUPFilter(updatedPopUPFilter);
   //     <FilterChips filters={FilterChipsData} recordsCount={recordsCount} />
   //   </>
   // ), [categoryId, FilterChipsData, recordCount]);
-  const getItemLayout = (data, index) => (
-    { length: itemHeight, offset: itemHeight * index, index }
-  );
+  const getItemLayout = (data, index) => ({
+    length: itemHeight,
+    offset: itemHeight * index,
+    index,
+  });
   const apphandleSearch = async (searchText: string) => {
-    console.log("apphandleSearch");
+    console.log('apphandleSearch');
     console.log(searchText);
     pageSize_Set(5);
     currentPage_Set(1);
     hasMore_Set(true);
-  await  setsearchKeyword(searchText);
-  let obj ={
-    
-    ...listApiobj,
-    keyWord: searchText,
-  }
-  console.log("apphandleSearch");
+    await setsearchKeyword(searchText);
+    let obj = {
+      ...listApiobj,
+      keyWord: searchText,
+    };
+    console.log('apphandleSearch');
     console.log(obj);
-  setlistApiobj(obj);
-    
+    setlistApiobj(obj);
+
     callPodcastList(obj);
   };
-  const  OnPressfilters=()=>{
-
-
+  const OnPressfilters = () => {
     FilterSheetRef.current?.open();
-  }
-
-
-
+  };
+  console.log(data);
   return (
-
     <BottomSheetModalProvider>
-  <ZHeaderFliter
+      <ZHeaderFliter
         title={ApppageTitle}
         isSearch={true}
         handleSearch={apphandleSearch}
-        AppFliter={<FilterChips filters={FilterChipsData} recordsCount={recordCount}
-        OnPressfilters={OnPressfilters}
-       
-        ></FilterChips>}
+        AppFliter={
+          <FilterChips
+            filters={FilterChipsData}
+            recordsCount={recordCount}
+            OnPressfilters={OnPressfilters}
+          />
+        }
       />
       {/* <ScrollView style={{ flex: 1 }}>
         <SafeAreaView> */}
       {/* <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>    */}
-        <View style={{ flex: 1 }}>
-        <View style={{ flex: 1 }}>
-        {data &&
-          <FlatList
+      <View style={{flex: 1}}>
+        <View style={{flex: 1}}>
+          {data === null ? (
+            <ListingCardSkeleton />
+          ) : (
+            <FlatList
               data={data}
               getItemLayout={getItemLayout}
               renderItem={renderItem}
- initialNumToRender={2}
-        maxToRenderPerBatch={4}
+              initialNumToRender={2}
+              maxToRenderPerBatch={4}
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-             ListHeaderComponent={
-              <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
-             keyExtractor={(item, index) => index.toString()}
+              ListHeaderComponent={
+                <RederListHeader
+                  categoryId={categoryId}
+                  AppLocation={AppLocation}
+                  FilterChipsData={FilterChipsData}
+                  recordCount={recordCount}
+                />
+              }
+              keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.6}
               onEndReached={loadMorepage}
-              contentContainerStyle={{ paddingBottom: 100 ,gap:20}}
+              contentContainerStyle={{paddingBottom: 100, gap: 20}}
               ListFooterComponent={
                 isInfiniteLoading ? (
-                  <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+                  <ActivityIndicator
+                    size="large"
+                    color="#0000ff"
+                    style={styles.loader}
+                  />
                 ) : null
               }
               removeClippedSubviews={true}
-              ListEmptyComponent={() => (
+              ListEmptyComponent={() =>
                 data === undefined ? (
-                  <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+                  <ActivityIndicator
+                    size="large"
+                    color="#0000ff"
+                    style={styles.loader}
+                  />
                 ) : (
                   <View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>No Data Found</Text>
                   </View>
                 )
-              )}
+              }
             />
-        
-//  <FlashList
-// data={data}
-// renderItem={renderItem}
-// // ListHeaderComponent={
-// //                 <RederListHeader categoryId={categoryId} AppLocation={AppLocation} FilterChipsData={FilterChipsData} recordCount={recordCount}/>}
-//                keyExtractor={(item, index) => index.toString()}
-//                ListFooterComponent={
-//                                 isInfiniteLoading ? (
-//                                   <LoadingSpinner isVisible={isInfiniteLoading} />
-//                                 ) : null
-//                               }
-//                               ListEmptyComponent={() => (
-//                                 data === undefined ? (
-//                                   <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
-//                                 ) : (
-//                                   <View style={styles.emptyContainer}>
-//                                     <Text style={styles.emptyText}>No Data Found</Text>
-//                                   </View>
-//                                 )
-//                               )}
-// estimatedItemSize={100}
-// onEndReachedThreshold={0.8}              
-// onEndReached={loadMorepage}
-// />  
-            }
+          )}
         </View>
         {/* <View style={{marginTop:"auto",height:80 }}>
         <View style={styles.footer}>
@@ -715,65 +692,61 @@ setPopUPFilter(updatedPopUPFilter);
         </View>
       </View>
         </View> */}
+      </View>
 
-        </View>
-  
-        <FilterBottomSheet
-
-ref={FilterSheetRef}
-
-PopUPFilter={PopUPFilter}
-User={user}
-listTypeData={listTypeData}
-userPermissions={userPermissions}
-onClose={closeModal}
-/>
-{/* </SafeAreaView>
+      <FilterBottomSheet
+        ref={FilterSheetRef}
+        PopUPFilter={PopUPFilter}
+        User={user}
+        listTypeData={listTypeData}
+        userPermissions={userPermissions}
+        onClose={closeModal}
+      />
+      {/* </SafeAreaView>
      
         </ScrollView> */}
-    
-     
-      
-      </BottomSheetModalProvider>
-
+    </BottomSheetModalProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  callbtn:{display:'flex',
-    flexDirection:'row',
-    alignItems:'center',
-     backgroundColor:"#fef4f4",
+  callbtn: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fef4f4',
     width: '90%',
-    marginLeft:10,
+    marginLeft: 10,
     paddingVertical: 5, // Vertical padding
     paddingHorizontal: 5, // Horizontal padding
     borderRadius: 8, // Rounded corners
-    
-    justifyContent: 'center'},
-    Chatbtn:
-      {display:'flex',flexDirection:'row',alignItems:'center', backgroundColor:"#F2F7FE",
-        width: '90%',
-        
-        paddingVertical: 5, // Vertical padding
-        paddingHorizontal: 5, // Horizontal padding
-        borderRadius: 8, // Rounded corners
-  
-   marginRight:10,
-        justifyContent: 'center'
-        
-                   },
-    
+
+    justifyContent: 'center',
+  },
+  Chatbtn: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F2F7FE',
+    width: '90%',
+
+    paddingVertical: 5, // Vertical padding
+    paddingHorizontal: 5, // Horizontal padding
+    borderRadius: 8, // Rounded corners
+
+    marginRight: 10,
+    justifyContent: 'center',
+  },
+
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 20,
- 
   },
   emptyText: {
     fontSize: 16,
-    color: '#555',  // Use a subtle color to match your design
+    color: '#555', // Use a subtle color to match your design
     textAlign: 'center',
   },
   loader: {
@@ -785,7 +758,7 @@ const styles = StyleSheet.create({
   },
   header: {
     justifyContent: 'space-between',
-  
+
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingVertical: 20,
@@ -857,15 +830,15 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
-  WrapcardContainer:{
-    paddingHorizontal:20,
+  WrapcardContainer: {
+    paddingHorizontal: 20,
   },
   cardContainer: {
     width: '100%',
-display:'flex',
+    display: 'flex',
     borderRadius: 12,
     backgroundColor: '#FFF',
- //  margin:20,
+    //  margin:20,
     shadowColor: 'rgba(0, 0, 0, 0.8)',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 1,
@@ -881,7 +854,7 @@ display:'flex',
   iconContainer: {
     position: 'absolute',
     top: 8,
-   
+
     right: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -899,26 +872,24 @@ display:'flex',
   detailsContainer: {
     paddingLeft: 20,
     paddingBottom: 10,
-     paddingTop: 10,
-     width:'100%',
-     paddingRight: 20,
-
-    },
-    detailsContainerBottom: {
+    paddingTop: 10,
+    width: '100%',
+    paddingRight: 20,
+  },
+  detailsContainerBottom: {
     //  paddingLeft: 20,
     borderRadius: 12,
-    paddingTop:5,
-    paddingBottom:10,
-       width:'100%',
-     //  paddingRight: 20,
+    paddingTop: 5,
+    paddingBottom: 10,
+    width: '100%',
+    //  paddingRight: 20,
     //  borderColor:colors.light.appred,
     //  borderBottomWidth:1,
     //  borderBottomLeftRadius: 12,
     //  borderBottomRightRadius: 12,
     //  borderLeftWidth:1,
     //  borderRightWidth:1,
-  
-      },
+  },
   price: {
     fontSize: 16,
     fontWeight: '600',
@@ -941,5 +912,5 @@ display:'flex',
   },
 });
 
-export default AppBaseContainer(ItemListScreen, '', false,true);
+export default AppBaseContainer(ItemListScreen, '', false, true);
 //export default ItemListScreen;

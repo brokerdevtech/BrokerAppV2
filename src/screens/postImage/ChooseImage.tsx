@@ -900,6 +900,8 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
                 horizontal={false}
                 numColumns={4}
                 onEndReached={loadMore}
+                initialScrollIndex={0} // Keeps the initial scroll position
+                ref={flatListRef}
                 onEndReachedThreshold={0.2}
               />
             </View>

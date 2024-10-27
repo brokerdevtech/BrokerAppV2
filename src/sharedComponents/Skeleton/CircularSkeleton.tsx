@@ -1,29 +1,42 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import { HStack } from '../../../components/ui/hstack'
-import { Skeleton, SkeletonText } from '../../../components/ui/skeleton'
-import { Box } from '../../../components/ui/box'
-import { VStack } from '../../../components/ui/vstack'
-import { styles } from '../../themes'
+import React, {useEffect, useRef} from 'react';
+import {Animated, StyleSheet, View} from 'react-native';
 
-export default function CircularSkeleton() {
+const CircularSkeleton = ({size = 60}) => {
+  const opacity = useRef(new Animated.Value(0.3)).current;
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0.3,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [opacity]);
+
   return (
-   <></>
-//     <HStack space={"xl"} style={{ padding:10}}>
-//  {Array.from({ length: 6 }).map((_, index) => (
-//      <HStack key={index} className="gap-2 align-middle">
-//        <Skeleton 
-     
-//          variant="circular" 
-     
-//          style={{ height: 40, width: 40 }} 
+    <Animated.View
+      style={[
+        styles.skeleton,
+        {width: size, height: size, borderRadius: size / 2, opacity},
+      ]}
+    />
+  );
+};
 
-//        />
+const styles = StyleSheet.create({
+  skeleton: {
+    backgroundColor: '#e0e0e0',
+  },
+});
 
-//      </HStack>
-//    ))}
-
-//  </HStack>
-
-  )
-}
+export default CircularSkeleton;

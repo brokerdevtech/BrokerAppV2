@@ -7,7 +7,7 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
-  Modal
+  Modal,
 } from 'react-native';
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 import {
@@ -25,6 +25,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   Icon,
+  SearchIcon,
 } from '../../components/ui/icon';
 import ZText from './ZText';
 import {Color} from '../styles/GlobalStyles';
@@ -49,13 +50,12 @@ import {clearTokens} from '../utils/utilTokens';
 import {useApiRequest} from '../hooks/useApiRequest';
 import ZAvatarInitials from './ZAvatarInitials';
 
-
 const CustomDrawerItem = ({label, onPress, leftIcon, rightIcon}) => {
   return (
     <TouchableOpacity
       style={[styles.drawerItem, styles.bottomBorder]}
       onPress={onPress}>
-      {leftIcon && <Icon as={leftIcon} size={20} style={styles.leftIcon} />}
+      {leftIcon && <Icon as={leftIcon} style={styles.leftIcon} />}
 
       <ZText type={'R18'} style={styles.drawerLabel}>
         {label}
@@ -139,12 +139,12 @@ const CustomDrawerContent = props => {
           leftIcon={Follower_Icon}
           rightIcon={ChevronRightIcon}
         />
-          <CustomDrawerItem
+        <CustomDrawerItem
           label="Search Brokers"
           onPress={() => {
             navigation.navigate('BrokerList');
           }}
-          leftIcon={Follower_Icon}
+          leftIcon={SearchIcon}
           rightIcon={ChevronRightIcon}
         />
         <CustomDrawerItem
