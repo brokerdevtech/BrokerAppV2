@@ -304,7 +304,8 @@ setColorMode(state.isConnected);
   
     // Subscribe to network state changes
     const unsubscribe = NetInfo.addEventListener(state => {
-      setIsConnected(state.isConnected);
+      setIsConnected(state.isConnected  && state.isInternetReachable);
+      
     });
   
     // Set splash visibility

@@ -70,6 +70,7 @@ import FilterBottomSheet from '../sharedComponents/FilterBottomSheet';
 import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
 import {concat} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
+import { isImmutableDefault } from '@reduxjs/toolkit';
 
 const RederListHeader = React.memo(
   ({categoryId, AppLocation, FilterChipsData, recordCount}) => {
@@ -361,7 +362,12 @@ const ItemListScreen: React.FC<any> = ({
             break;
           case 'Area':
             break;
-
+            case 'RegistrationYear':
+              break;
+              case 'ManufactureYear':
+                break;
+                case 'KmsDriven':
+                  break;
           // Add more cases as needed
           default:
             // Default case if key doesn't match any predefined cases
@@ -395,16 +401,29 @@ const ItemListScreen: React.FC<any> = ({
       obj.geoLocationLatitude = input.Location[0].place.geoLocationLongitude;
       obj.geoLocationLongitude = input.Location[0].place.geoLocationLongitude;
     }
-    if (input.hasOwnProperty('Budget')) {
+    if (input.hasOwnProperty('Budget') && input.Budget.isDefault==false) {
       obj.minPrice = input.Budget.minValue;
       obj.maxPrice = input.Budget.maxValue;
     }
-    if (input.hasOwnProperty('Area')) {
+    if (input.hasOwnProperty('Area') && input.Area.isDefault==false) {
       obj.propertySizeMin = input.Area.minValue;
       obj.propertySizeMax = input.Area.maxValue;
     }
-    console.log('sssssssss');
-    console.log(obj);
+
+    if (input.hasOwnProperty('ManufactureYear')) {
+      // console.log(input.RegistrationYear);
+      // console.log("RegistrationYear");
+       obj.makeYear = String(input.ManufactureYear[0].value);
+      // obj.propertySizeMax = input.Area.maxValue;
+    }
+    if (input.hasOwnProperty('KmsDriven')) {
+      // console.log(input.RegistrationYear);
+      // console.log("RegistrationYear");
+       obj.kilometerDriven = String(input.KmsDriven[0].key);
+      // obj.propertySizeMax = input.Area.maxValue;
+    }
+    // console.log('sssssssss');
+    // console.log(obj);
 
     setlistApiobj(obj);
 
@@ -440,7 +459,7 @@ const ItemListScreen: React.FC<any> = ({
   );
   async function set_FilterChipsData(obj) {
     let FilterChipsData = [];
-    console.log('set_FilterChipsData', obj);
+    // console.log('set_FilterChipsData', obj);
     if (obj.keyWord !== '') {
       FilterChipsData.push({label: 'Search:' + obj.keyWord});
     }
@@ -462,6 +481,12 @@ const ItemListScreen: React.FC<any> = ({
       FilterChipsData.push({label: 'Size Max:' + obj.propertySizeMax});
     }
 
+    if (obj.makeYear != undefined && obj.makeYear !== '') {
+      FilterChipsData.push({label: 'Manufacture Year:' + obj.makeYear});
+    }
+    if (obj.kilometerDriven != undefined && obj.kilometerDriven !== '') {
+      FilterChipsData.push({label: 'Km:' + obj.kilometerDriven+' or less'});
+    }
     if (obj.filters && obj.filters.tags && Array.isArray(obj.filters.tags)) {
       obj.filters.tags.forEach(tag => {
         if (Array.isArray(tag.values)) {
@@ -559,12 +584,26 @@ const ItemListScreen: React.FC<any> = ({
         },
       },
     ];
-
+    if (listTypeData == 'Car') {
     // Uncomment if you need to set additional selected filters
     const updatedPopUPFilter = {
       Location: locationData,
+      Budget: {minValue: 20000, maxValue: 500000000 ,isDefault:true},
+     
     };
     setPopUPFilter(updatedPopUPFilter);
+  }
+
+
+  if (listTypeData == 'RealEstate') {
+    // Uncomment if you need to set additional selected filters
+    const updatedPopUPFilter = {
+      Location: locationData,
+      Budget: {minValue: 20000, maxValue: 500000000 ,isDefault:true},
+      Area: {minValue: 0, maxValue: 5000,isDefault:true},
+    };
+    setPopUPFilter(updatedPopUPFilter);
+  }
 
     //set_FilterChipsData(obj);
     callPodcastList(obj);
@@ -591,8 +630,8 @@ const ItemListScreen: React.FC<any> = ({
     index,
   });
   const apphandleSearch = async (searchText: string) => {
-    console.log('apphandleSearch');
-    console.log(searchText);
+    // console.log('apphandleSearch');
+    // console.log(searchText);
     pageSize_Set(5);
     currentPage_Set(1);
     hasMore_Set(true);
@@ -601,8 +640,8 @@ const ItemListScreen: React.FC<any> = ({
       ...listApiobj,
       keyWord: searchText,
     };
-    console.log('apphandleSearch');
-    console.log(obj);
+    // console.log('apphandleSearch');
+    // console.log(obj);
     setlistApiobj(obj);
 
     callPodcastList(obj);
@@ -610,7 +649,7 @@ const ItemListScreen: React.FC<any> = ({
   const OnPressfilters = () => {
     FilterSheetRef.current?.open();
   };
-  console.log(data);
+  // console.log(data);
   return (
     <BottomSheetModalProvider>
       <ZHeaderFliter

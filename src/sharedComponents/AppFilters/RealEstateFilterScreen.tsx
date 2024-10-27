@@ -199,9 +199,9 @@ const RealEstateFilterScreen: React.FC = ({
             //   // Uncomment if you need to set additional selected filters
             const updatedSelectedFilters = {
               ...selectedFilters,
-              Location: PopUPFilter.Location,
-              Budget: {minValue: 20000, maxValue: 500000000},
-              Area: {minValue: 0, maxValue: 5000},
+              // Location: PopUPFilter.Location,
+              // Budget: {minValue: 20000, maxValue: 500000000},
+              // Area: {minValue: 0, maxValue: 5000},
               ...PopUPFilter,
             };
 
@@ -444,7 +444,7 @@ const RealEstateFilterScreen: React.FC = ({
     const updatedSelectedFilters = {
       ...selectedFilters,
 
-      Budget: {minValue: range.min, maxValue: range.max},
+      Budget: {minValue: range.min, maxValue: range.max,isDefault:false},
     };
     setSelectedFilters(updatedSelectedFilters);
   };
@@ -454,7 +454,7 @@ const RealEstateFilterScreen: React.FC = ({
     const updatedSelectedFilters = {
       ...selectedFilters,
 
-      Area: {minValue: range.min, maxValue: range.max},
+      Area: {minValue: range.min, maxValue: range.max,isDefault:false},
     };
     setSelectedFilters(updatedSelectedFilters);
   };
