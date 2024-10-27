@@ -1,3 +1,4 @@
+import {Color} from '../../styles/GlobalStyles';
 import React, {useEffect, useState} from 'react';
 import {View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native';
 
@@ -6,7 +7,7 @@ const SelectableFlatList = ({
   numColumn,
   onSelectItem,
   preselectedItem,
-  emptyessage='Please select a brand first'
+  emptyessage = 'Please select a brand first',
 }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   console.log(data, 'de');
@@ -72,6 +73,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     borderRadius: 10,
+    borderColor: Color.borderColor,
+    borderWidth: 2,
     padding: 10,
     marginVertical: 10,
     marginHorizontal: 10, // Adjust margin for proper spacing
@@ -79,7 +82,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2}, // For iOS
     shadowOpacity: 0.2, // For iOS
     shadowRadius: 2, // For iOS
-    elevation: 4, // For Android (shadow)
+    elevation: 2, // For Android (shadow)
     alignItems: 'center', // Center the text inside the card
     justifyContent: 'center',
   },
@@ -88,8 +91,9 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   selectedItem: {
-    backgroundColor: '#4CAF50',
-    elevation: 8, // Make selected item pop out more
+    backgroundColor: Color.primary,
+    elevation: 4,
+    // Make selected item pop out more
   },
   selectedItemText: {
     color: '#fff',

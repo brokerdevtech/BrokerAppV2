@@ -1,8 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import {Color} from '../../styles/GlobalStyles';
+import React, {useEffect, useState} from 'react';
+import {View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native';
 
-const MultiSelectFlatList = ({ data, onSelectItem,numColumn,preselectedItem,
-  emptyessage='Please select a brand first' }) => {
+const MultiSelectFlatList = ({
+  data,
+  onSelectItem,
+  numColumn,
+  preselectedItem,
+  emptyessage = 'Please select a brand first',
+}) => {
   const [selectedItems, setSelectedItems] = useState([]); // Track multiple selected items
   useEffect(() => {
     if (preselectedItem) {
@@ -11,11 +17,13 @@ const MultiSelectFlatList = ({ data, onSelectItem,numColumn,preselectedItem,
       setSelectedItems([]);
     }
   }, [preselectedItem]);
-  const handleItemPress = (item) => {
+  const handleItemPress = item => {
     // Check if the item is already selected
     if (selectedItems.some(selected => selected.key === item.key)) {
       // If selected, remove it from the selected items
-      const newSelectedItems = selectedItems.filter(selected => selected.key !== item.key);
+      const newSelectedItems = selectedItems.filter(
+        selected => selected.key !== item.key,
+      );
       setSelectedItems(newSelectedItems);
       onSelectItem(newSelectedItems); // Pass updated selected items to the parent
     } else {
@@ -26,15 +34,20 @@ const MultiSelectFlatList = ({ data, onSelectItem,numColumn,preselectedItem,
     }
   };
 
-  const renderItem = ({ item }) => {
-    const isSelected = selectedItems.some(selected => selected.key === item.key);
+  const renderItem = ({item}) => {
+    const isSelected = selectedItems.some(
+      selected => selected.key === item.key,
+    );
 
     return (
       <TouchableOpacity
         onPress={() => handleItemPress(item)}
-        style={[styles.card, isSelected ? styles.selectedItem : null]}
-      >
-        <Text style={[styles.cardText, isSelected ? styles.selectedItemText : null]}>
+        style={[styles.card, isSelected ? styles.selectedItem : null]}>
+        <Text
+          style={[
+            styles.cardText,
+            isSelected ? styles.selectedItemText : null,
+          ]}>
           {item.value}
         </Text>
       </TouchableOpacity>
@@ -45,7 +58,7 @@ const MultiSelectFlatList = ({ data, onSelectItem,numColumn,preselectedItem,
     <FlatList
       data={data}
       renderItem={renderItem}
-      keyExtractor={(item) => item.key.toString()} // Ensure unique key for FlatList
+      keyExtractor={item => item.key.toString()} // Ensure unique key for FlatList
       contentContainerStyle={styles.listContainer}
       numColumns={2} // Set number of columns to 2
       columnWrapperStyle={styles.columnWrapper} // Add spacing between columns
@@ -71,17 +84,19 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2}, // For iOS
     shadowOpacity: 0.2, // For iOS
     shadowRadius: 2, // For iOS
-    elevation: 4, // For Android (shadow)
+    elevation: 2, // For Android (shadow)
     alignItems: 'center', // Center the text inside the card
     justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: Color.borderColor,
   },
   cardText: {
     fontSize: 16,
     color: '#E00000',
   },
   selectedItem: {
-    backgroundColor: '#4CAF50',
-    elevation: 8, // Make selected item pop out more
+    backgroundColor: Color.primary,
+    elevation: 4, // Make selected item pop out more
   },
   selectedItemText: {
     color: '#fff',

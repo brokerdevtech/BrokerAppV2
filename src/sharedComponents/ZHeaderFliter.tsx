@@ -1,6 +1,7 @@
+/* eslint-disable react-native/no-inline-styles */
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Back, SearchFill} from '../assets/svg';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {styles} from '../themes';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import ZText from './ZText';
@@ -10,9 +11,14 @@ import {moderateScale} from '../config/constants';
 
 import {Text} from 'react-native';
 
-import ArrowLeftIcon from '../assets/svg/icons/arrow-left.svg' 
-import { Icon, SearchIcon } from '../../components/ui/icon';
-import { Input, InputField, InputIcon, InputSlot } from '../../components/ui/input';
+import ArrowLeftIcon from '../assets/svg/icons/arrow-left.svg';
+import {Icon, SearchIcon} from '../../components/ui/icon';
+import {
+  Input,
+  InputField,
+  InputIcon,
+  InputSlot,
+} from '../../components/ui/input';
 function ZHeaderFliter(props) {
   const {
     title,
@@ -29,18 +35,19 @@ function ZHeaderFliter(props) {
   } = props;
   const navigation = useNavigation();
   const colors = useSelector((state: RootState) => state.theme.theme);
-  const [showSearchBox,setShowSearchBox]=useState(false);
-  const [searchText,setSearchText]=useState("");
-
+  const [showSearchBox, setShowSearchBox] = useState(false);
+  const [searchText, setSearchText] = useState('');
 
   const searchInput = (e: any, mode: string) => {
-    if(e.nativeEvent.key == "Enter"){
-      handleSearch(searchText)
+    if (e.nativeEvent.key == 'ENTER') {
+      handleSearch(searchText);
+      setShowSearchBox(false);
     }
-    if(mode === 'ICON') {
-      handleSearch(searchText)
+    if (mode === 'ICON') {
+      handleSearch(searchText);
+      setShowSearchBox(false);
     }
-  }
+  };
   const goBack = () => {
     if (navigation.canGoBack()) {
       navigation.goBack();
@@ -56,73 +63,75 @@ function ZHeaderFliter(props) {
       // Replace 'Home' with the name of your home screen
     }
   };
-  return (<>
-    <View style={[localStyles.container, !!isHideBack && styles.pr10]}>
-      <View
-        style={[
-          styles.rowStart,
-          styles.flex,
-          // (!!isLeftIcon || !!rightIcon) && styles.justifyBetween,
-        ]}>
-        {!isHideBack && (
-          <TouchableOpacity
-           
-            onPress={onPressBack || goBack}>
-            <View
-          style={{
-            // ...styles.appTitleMain,
-            // color: '#007acc',
-            padding: 8,
-            borderWidth: 1,
-            borderColor: '#E5E5E5',
-            borderRadius: 40,
-          }}>
-                  <ArrowLeftIcon />
-              {/* <Back accessible={true} accessibilityLabel="Back" /> */}
+  return (
+    <>
+      <View style={[localStyles.container, !!isHideBack && styles.pr10]}>
+        <View
+          style={[
+            styles.rowStart,
+            styles.flex,
+            // (!!isLeftIcon || !!rightIcon) && styles.justifyBetween,
+          ]}>
+          {!isHideBack && (
+            <TouchableOpacity onPress={onPressBack || goBack}>
+              <View
+                style={{
+                  // ...styles.appTitleMain,
+                  // color: '#007acc',
+                  padding: 8,
+                  borderWidth: 1,
+                  borderColor: '#E5E5E5',
+                  borderRadius: 40,
+                }}>
+                <ArrowLeftIcon />
+                {/* <Back accessible={true} accessibilityLabel="Back" /> */}
               </View>
+            </TouchableOpacity>
+          )}
+          {!!isLeftIcon && isLeftIcon}
+          {showSearchBox ? (
+            <Input style={[localStyles.input, {flex: 1}]}>
+              <InputField
+                type="text"
+                autoFocus
+                placeholder="Search"
+                onChangeText={searchKeyword => setSearchText(searchKeyword)}
+                defaultValue={searchText}
+                onKeyPress={event => searchInput(event, 'INPUT')}
+                onSubmitEditing={() => setShowSearchBox(showBox => !showBox)}
+              />
+              <InputSlot
+                style={{paddingRight: 10}}
+                onTouchStart={event => searchInput(event, 'ICON')}>
+                <InputIcon as={SearchIcon} stroke="#000" />
+              </InputSlot>
+            </Input>
+          ) : (
+            <ZText
+              numberOfLines={1}
+              style={[styles.pr10, styles.ml20, localStyles.titleText]}
+              type={'R18'}>
+              {title}
+            </ZText>
+          )}
+        </View>
+        {isSearch && !showSearchBox && (
+          <TouchableOpacity
+            onPress={() => setShowSearchBox(showBox => !showBox)}>
+            <Icon as={SearchIcon} size="xl" />
           </TouchableOpacity>
         )}
-        {!!isLeftIcon && isLeftIcon}
-        {showSearchBox ? (
-          <Input style={[localStyles.input, {flex: 1}]}>
-            <InputField
-              type='text'
-              placeholder="Search"
-              onChangeText={searchKeyword => setSearchText(searchKeyword)}
-              defaultValue={searchText}
-              onKeyPress={(event) => searchInput(event, 'INPUT')}
-            />
-            <InputSlot style={{paddingRight: 10}} onTouchStart={(event) => searchInput(event, 'ICON')}>
-              <InputIcon as={SearchIcon} stroke="#000"  />
-            </InputSlot>
-          </Input>
-        ) : (
-          <ZText
-            numberOfLines={1}
-            style={[styles.pr10, styles.ml20, localStyles.titleText]}
-            type={'R18'}>
-            {title}
-          </ZText>
-        )}
+        {!!rightIcon && rightIcon}
+        <Text
+          onPress={onNextPress}
+          numberOfLines={1}
+          style={{color: 'blue', fontSize: 18, fontWeight: 700}}
+          type={'B20'}>
+          {goNext}
+        </Text>
       </View>
-      {isSearch && !showSearchBox &&    <TouchableOpacity
-           
-           onPress={()=>setShowSearchBox((showBox)=>!showBox)}>
-       
-              <Icon as={SearchIcon} size='xl'/>
-
-       
-         </TouchableOpacity>}
-      {!!rightIcon && rightIcon}
-      <Text
-        onPress={onNextPress}
-        numberOfLines={1}
-        style={{color: 'blue', fontSize: 18, fontWeight: 700}}
-        type={'B20'}>
-        {goNext}
-      </Text>
-    </View>
-    {AppFliter}</>
+      {AppFliter}
+    </>
   );
 }
 
@@ -149,6 +158,6 @@ const localStyles = StyleSheet.create({
     // marginBottom: 20,
     backgroundColor: '#f9f9f9',
     height: 43,
-    marginLeft:10
+    marginLeft: 10,
   },
 });

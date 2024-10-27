@@ -386,36 +386,36 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
     await execute(route.params.postType, route.params.postId);
   };
   const chatProfilePress = useCallback(async () => {
- console.log(data);
- console.log("chatProfilePress");
- if(user.userId.toString()==data.userId.toString())
- {
-  Alert.alert('Error', 'You cannot chat with yourself.');
- }
- else{
-    const members = [user.userId.toString(), data.userId.toString()];
+    console.log(data);
+    console.log('chatProfilePress');
+    if (user.userId.toString() == data.userId.toString()) {
+      Alert.alert('Error', 'You cannot chat with yourself.');
+    } else {
+      const members = [user.userId.toString(), data.userId.toString()];
 
+      navigation.navigate('AppChat', {
+        defaultScreen: 'ChannelScreen',
+        defaultParams: members,
+        defaultchannelSubject: `Hi,i want to connect on ${data.title}`,
+      });
+    }
+  }, [data]);
+  const makeCall = useCallback(
+    phoneNumber => {
+      const url = `tel:${phoneNumber}`;
 
-    navigation.navigate('AppChat', {
-      defaultScreen: 'ChannelScreen',
-      defaultParams: members,
-      defaultchannelSubject:`Hi,i want to connect on ${data.title}`,
-    });
-  }
-  },[data]);
-  const makeCall = useCallback((phoneNumber) => {
-    const url = `tel:${phoneNumber}`;
-
-    Linking.canOpenURL(url)
-      .then(supported => {
-        if (supported) {
-          Linking.openURL(url);
-        } else {
-          Alert.alert('Error', 'Your device does not support phone calls');
-        }
-      })
-      .catch(err => console.error('Error opening dialer', err));
-  },[data]);
+      Linking.canOpenURL(url)
+        .then(supported => {
+          if (supported) {
+            Linking.openURL(url);
+          } else {
+            Alert.alert('Error', 'Your device does not support phone calls');
+          }
+        })
+        .catch(err => console.error('Error opening dialer', err));
+    },
+    [data],
+  );
   useEffect(() => {
     callItemDetail();
   }, []);
@@ -427,7 +427,17 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
           <View style={styles.headerContainer}>
             <View style={styles.header}>
               <View style={styles.IconButton}>
-                <ArrowLeftIcon onPress={() => navigation.goBack()} />
+                <View
+                  style={{
+                    // ...styles.appTitleMain,
+                    // color: '#007acc',
+                    padding: 8,
+                    borderWidth: 1,
+                    borderColor: '#E5E5E5',
+                    borderRadius: 40,
+                  }}>
+                  <ArrowLeftIcon onPress={() => navigation.goBack()} />
+                </View>
                 <ZText type={'R18'}>{data?.title}</ZText>
               </View>
               {/* <View style={styles.IconButton}>
@@ -455,37 +465,48 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
           </View>
         </ScrollView>
         <View style={styles.footer}>
-        <HStack
+          <HStack
           // space="md"
-          
-        >
-          <HStack style={{alignItems: 'center', width: '50%',    justifyContent: 'center'}}>
-          <TouchableOpacity style={styles.callbtn} onPress={() => makeCall('+919910199761')}>
-            <View style={{alignItems: 'center'}}>
-              <Icon as={Telephone_Icon} color={colors.light.appred} size={'xxl'} />
-            </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10}}>
-              <ZText type={'M14'} >Call</ZText>
-            </View>
-            </TouchableOpacity>
-            
+          >
+            <HStack
+              style={{
+                alignItems: 'center',
+                width: '50%',
+                justifyContent: 'center',
+              }}>
+              <TouchableOpacity
+                style={styles.callbtn}
+                onPress={() => makeCall('+919910199761')}>
+                <View style={{alignItems: 'center'}}>
+                  <Icon
+                    as={Telephone_Icon}
+                    color={colors.light.appred}
+                    size={'xxl'}
+                  />
+                </View>
+                <View style={{alignItems: 'center', paddingVertical: 10}}>
+                  <ZText type={'M14'}>Call</ZText>
+                </View>
+              </TouchableOpacity>
+            </HStack>
+            <HStack
+              style={{
+                alignItems: 'center',
+                width: '50%',
+                justifyContent: 'center',
+              }}>
+              <TouchableOpacity
+                style={styles.Chatbtn}
+                onPress={() => chatProfilePress()}>
+                <View style={{alignItems: 'center', marginRight: 10}}>
+                  <Icon as={Chat_Icon} color={'#0F5DC4'} size={'xxl'} />
+                </View>
+                <View style={{alignItems: 'center', paddingVertical: 10}}>
+                  <ZText type={'M14'}>Chat</ZText>
+                </View>
+              </TouchableOpacity>
+            </HStack>
           </HStack>
-          <HStack style={{alignItems: 'center',width: '50%',    justifyContent: 'center'}}>
-          <TouchableOpacity
-          style={styles.Chatbtn}
-          
-          
-          onPress={() =>chatProfilePress()}>
-            <View style={{alignItems: 'center',marginRight:10}}>
-              <Icon as={Chat_Icon}  color={'#0F5DC4'} size={'xxl'}  />
-            </View>
-            <View style={{ alignItems: 'center',paddingVertical: 10,}}>
-              <ZText type={'M14'}>Chat</ZText>
-            </View>
-            </TouchableOpacity>
-          </HStack>
-      
-        </HStack>
         </View>
       </View>
     </BottomSheetModalProvider>
@@ -493,39 +514,43 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  callbtn:{display:'flex',
-    flexDirection:'row',
-    alignItems:'center',
-     backgroundColor:"#fef4f4",
+  callbtn: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fef4f4',
     width: '90%',
-    marginLeft:10,
+    marginLeft: 10,
     paddingVertical: 5, // Vertical padding
     paddingHorizontal: 5, // Horizontal padding
     borderRadius: 8, // Rounded corners
-    
-    justifyContent: 'center'},
-    Chatbtn:
-      {display:'flex',flexDirection:'row',alignItems:'center', backgroundColor:"#F2F7FE",
-        width: '90%',
-        
-        paddingVertical: 5, // Vertical padding
-        paddingHorizontal: 5, // Horizontal padding
-        borderRadius: 8, // Rounded corners
-  
-   marginRight:10,
-        justifyContent: 'center'
-        
-                   },
+
+    justifyContent: 'center',
+  },
+  Chatbtn: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F2F7FE',
+    width: '90%',
+
+    paddingVertical: 5, // Vertical padding
+    paddingHorizontal: 5, // Horizontal padding
+    borderRadius: 8, // Rounded corners
+
+    marginRight: 10,
+    justifyContent: 'center',
+  },
   footer: {
     flexDirection: 'row',
     //justifyContent: 'space-around',
     alignItems: 'center',
-   // paddingVertical: 15,
+    // paddingVertical: 15,
     backgroundColor: '#FFF',
     borderTopWidth: 1,
     borderColor: '#e0e0e0',
   },
- 
+
   profileImage: {
     width: moderateScale(48),
     height: moderateScale(48),
@@ -563,6 +588,8 @@ const styles = StyleSheet.create({
   IconButton: {
     flexDirection: 'row',
     gap: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   footerContainer: {
     backgroundColor: '#FFF',

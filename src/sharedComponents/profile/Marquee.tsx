@@ -85,7 +85,7 @@ const ChildrenScroller = ({
   return <Cloner count={count} renderChild={renderChild} />;
 };
 
-const Marquee = ({duration = 7000, reverse = false, children, style}) => {
+const Marquee = ({duration = 40000, reverse = true, children, style}) => {
   const [parentWidth, setParentWidth] = React.useState(0);
   const [childrenWidth, setChildrenWidth] = React.useState(0);
 
@@ -121,7 +121,7 @@ const marqueeStyles = StyleSheet.create({
 function MarqueeScreen(marqueeTextList: any) {
   const navigation = useNavigation();
   const [reverse, setReverse] = useState(false);
-  console.log(marqueeTextList, 'm,mm');
+
   const handlePress = (postId, categoryId) => {
     navigation.navigate('ItemDetailScreen', {
       postId: postId,
@@ -131,7 +131,7 @@ function MarqueeScreen(marqueeTextList: any) {
   return (
     <View style={styles.container}>
       <View style={styles.safeArea}>
-        <Marquee reverse={reverse} style={styles.marqueeContainer}>
+        <Marquee reverse={true} style={styles.marqueeContainer}>
           <View style={styles.marqueeContent}>
             {marqueeTextList.marqueeTextList.map(item => (
               <TouchableOpacity

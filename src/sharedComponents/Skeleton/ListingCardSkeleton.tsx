@@ -1,44 +1,135 @@
-/* eslint-disable react-native/no-inline-styles */
-import { View, Text } from 'react-native';
-import React from 'react';
-import { VStack } from '../../../components/ui/vstack';
-import { Box } from '../../../components/ui/box';
-import { Skeleton, SkeletonText } from '../../../components/ui/skeleton';
-import { HStack } from '../../../components/ui/hstack';
+import React, {useEffect, useRef} from 'react';
+import {View, StyleSheet, Animated} from 'react-native';
 
-export default function ListingCardSkeleton() {
+const SkeletonLoader = ({style, width, height, borderRadius}) => {
+  const opacity = useRef(new Animated.Value(0.3)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0.3,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+  }, [opacity]);
+
   return (
-    <></>
-//     <VStack style={{ marginTop:10,paddingHorizontal:10}}>
-
-//        <Box className="w-[400px] gap-4 rounded-xl bg-background-100" style={{ height:434,
-      
-//         width:375,
-//        }}>
-        
-//        <Skeleton variant="sharp"  className='rounded-xl'  style={{height:234}}/>
-//        <HStack >
-//        {Array.from({ length: 3 }).map((_, index) => (
-  
-//        <Skeleton variant="sharp"  className='rounded-md'  style={{width:40 ,height:30 ,marginLeft:20}}/>
-       
-//          ))}
-//          </HStack>
-//        <SkeletonText
-//             _lines={3}
-//             gap={2}
-//             style={{ width:100, height: 24 ,marginLeft:20}}
-//           />
-
-// <HStack >
-//        {Array.from({ length: 4 }).map((_, index) => (
-  
-//        <Skeleton variant="sharp"  className='rounded-md'  style={{width:50 ,height:30 ,marginLeft:30}}/>
-       
-//          ))}
-//          </HStack>
-//      </Box>
-
-//     </VStack>
+    <Animated.View
+      style={[
+        styles.skeleton,
+        style,
+        {opacity, width, height, borderRadius: borderRadius || 0},
+      ]}
+    />
   );
-}
+};
+
+const ListingCardSkeleton = () => {
+  return (
+    <View style={styles.cardContainer}>
+      {/* Image placeholder */}
+      <SkeletonLoader style={styles.imageSkeleton} borderRadius={10} />
+
+      {/* Verified and Action Buttons */}
+      <View style={styles.row}>
+        <SkeletonLoader width={24} height={24} borderRadius={12} />
+        <SkeletonLoader
+          style={styles.actionSkeleton}
+          width={'80%'}
+          height={16}
+          borderRadius={8}
+        />
+      </View>
+
+      {/* Price placeholder */}
+      <SkeletonLoader style={styles.priceSkeleton} width={'60%'} height={20} />
+
+      {/* Location placeholder */}
+      <View style={styles.row}>
+        <SkeletonLoader width={16} height={16} borderRadius={8} />
+        <SkeletonLoader
+          style={styles.textSkeleton}
+          width={'90%'}
+          height={16}
+          borderRadius={4}
+        />
+      </View>
+
+      {/* Title placeholder */}
+      <View style={styles.row}>
+        <SkeletonLoader width={16} height={16} borderRadius={8} />
+        <SkeletonLoader
+          style={styles.textSkeleton}
+          width={'90%'}
+          height={16}
+          borderRadius={4}
+        />
+      </View>
+
+      {/* Bottom Action Buttons */}
+      <View style={styles.row}>
+        <SkeletonLoader
+          style={styles.buttonSkeleton}
+          width={'45%'}
+          height={40}
+          borderRadius={8}
+        />
+        <SkeletonLoader
+          style={styles.buttonSkeleton}
+          width={'45%'}
+          height={40}
+          borderRadius={8}
+        />
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  cardContainer: {
+    padding: 16,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    marginVertical: 8,
+  },
+  skeleton: {
+    backgroundColor: '#e0e0e0',
+  },
+  imageSkeleton: {
+    width: '100%',
+    height: 180,
+    marginBottom: 12,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 8,
+  },
+  actionSkeleton: {
+    marginLeft: 16,
+    height: 16,
+  },
+  priceSkeleton: {
+    width: '60%',
+    height: 20,
+    marginBottom: 12,
+  },
+  textSkeleton: {
+    marginLeft: 10,
+    height: 16,
+  },
+  buttonSkeleton: {
+    height: 40,
+    marginVertical: 12,
+  },
+});
+
+export default ListingCardSkeleton;

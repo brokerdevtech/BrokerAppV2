@@ -20,8 +20,8 @@ import {
   getFollowingList,
   getUserList,
 } from '../../BrokerAppCore/services/new/profileServices';
-import { useApiPagingRequest } from '../hooks/useApiPagingRequest';
-import { useApiPagingWithtotalRequest } from '../hooks/useApiPagingWithtotalRequest';
+import {useApiPagingRequest} from '../hooks/useApiPagingRequest';
+import {useApiPagingWithtotalRequest} from '../hooks/useApiPagingWithtotalRequest';
 
 const DEBOUNCE_DELAY = 300;
 const staticData = [
@@ -50,7 +50,6 @@ const BrokerList: React.FC = ({
   const [ListType, setlistType] = useState(route.params?.type);
   const [paramsuserId, setparamsuserId] = useState(route.params?.userId);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
-
 
   const [searchText, setSearch] = useState('');
   const [userLists, setuserLists] = useState();
@@ -99,40 +98,28 @@ const BrokerList: React.FC = ({
   };
   const getList = async () => {
     try {
-
       currentPage_Set(1);
       hasMore_Set(true);
-   console.log(user);
-        await execute(user.userId, searchText);
-    
+      console.log(user);
+      await execute(user.userId, searchText);
+
       pageTitle(`Brokers`);
     } catch (error) {}
   };
 
-
-
-
   useEffect(() => {
     // Bind data to the state when the data fetch is successful
-//console.log(followerdata);
+    //console.log(followerdata);
 
-setuserLists(data);
-     // console.log(followerdata);
-   
+    setuserLists(data);
+    // console.log(followerdata);
   }, [data]);
 
-
   const loadMorefaltlist = async () => {
-    if(!isInfiniteLoading)
-  {  
-
-    await loadMore(user.userId, searchText);
-
-  }
+    if (!isInfiniteLoading) {
+      await loadMore(user.userId, searchText);
+    }
   };
-
- 
-
 
   return (
     <ZSafeAreaView>
@@ -153,7 +140,7 @@ setuserLists(data);
           _onFocus={onHighlightInput}
           onBlur={onUnHighlightInput}
         />
-     <View style={{ flex: 1 }}>
+        <View style={{flex: 1}}>
           <FlatList
             data={userLists}
             showsVerticalScrollIndicator={false}
@@ -225,4 +212,4 @@ const localStyles = StyleSheet.create({
     ...styles.ph15,
   },
 });
-export default AppBaseContainer(BrokerList, '', true);
+export default AppBaseContainer(BrokerList, 'Search Brokers', true);

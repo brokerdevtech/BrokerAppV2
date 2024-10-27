@@ -27,15 +27,18 @@ import {getDashboardStory} from '../../../BrokerAppCore/services/Story';
 import {VStack} from '../../../components/ui/vstack';
 import CircularSkeleton from '../../sharedComponents/Skeleton/CircularSkeleton';
 
-// const StoriesSkeleton = () => {
-//   return (
-//     <HStack space={2} style={globalStyles.p5}>
-//       {Array.from({length: 8}).map((_, index) => (
-//         <Skeleton key={index} variant="rounded" />
-//       ))}
-//     </HStack>
-//   );
-// };
+const SkeletonPlaceholder = () => {
+  return (
+    <HStack space={10} style={localStyles.skeletonContainer}>
+      {Array.from({length: 6}).map((_, index) => (
+        <View key={index} style={localStyles.skeletonItem}>
+          <CircularSkeleton size={60} />
+          <View style={localStyles.skeletonText} />
+        </View>
+      ))}
+    </HStack>
+  );
+};
 
 const UserStories = React.memo(({}) => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -127,8 +130,6 @@ const UserStories = React.memo(({}) => {
     }, []),
   );
 
-
-
   const onPressStory = item => {
     // navigation.navigate(StackNav.StoryView, {
     //   userImage: item,
@@ -165,13 +166,13 @@ const UserStories = React.memo(({}) => {
     </View>
   );
   return (
-    <VStack style={{ paddingHorizontal: 20  , backgroundColor:'white',}}>
+    <VStack style={{paddingHorizontal: 20, backgroundColor: 'white'}}>
       {/* <ZText type="b22" style={{...globalStyles.mt8}}>
         Stories
       </ZText> */}
       <HStack>
-        {StoryData === null ? (
-          <CircularSkeleton />
+        {StoryData === null || loading ? (
+          <SkeletonPlaceholder />
         ) : (
           <FlatList
             data={StoryData}
@@ -249,6 +250,22 @@ const localStyles = StyleSheet.create({
   itemImage: {
     height: 80,
     width: 80,
+  },
+  skeletonContainer: {
+    padding: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  skeletonItem: {
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  skeletonText: {
+    width: 50,
+    height: 10,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 4,
+    marginTop: 8,
   },
   // ... other styles
 });
