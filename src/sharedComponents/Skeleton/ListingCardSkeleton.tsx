@@ -36,20 +36,15 @@ const ListingCardSkeleton = () => {
   return (
     <View style={styles.cardContainer}>
       {/* Image placeholder */}
-      <SkeletonLoader style={styles.imageSkeleton} borderRadius={10} />
-
-      {/* Verified and Action Buttons */}
-      <View style={styles.row}>
-        <SkeletonLoader width={24} height={24} borderRadius={12} />
-        <SkeletonLoader
-          style={styles.actionSkeleton}
-          width={'80%'}
-          height={16}
-          borderRadius={8}
-        />
-      </View>
+      <SkeletonLoader
+        width={'100%'}
+        height={180}
+        style={styles.imageSkeleton}
+        borderRadius={10}
+      />
 
       {/* Price placeholder */}
+      <SkeletonLoader style={styles.priceSkeleton} width={'60%'} height={20} />
       <SkeletonLoader style={styles.priceSkeleton} width={'60%'} height={20} />
 
       {/* Location placeholder */}
@@ -129,6 +124,7 @@ const styles = StyleSheet.create({
   buttonSkeleton: {
     height: 40,
     marginVertical: 12,
+    marginLeft: 10,
   },
 });
 
