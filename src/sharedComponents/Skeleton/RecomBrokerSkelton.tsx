@@ -1,7 +1,7 @@
 import React, {useRef, useEffect} from 'react';
 import {View, StyleSheet, Animated, FlatList} from 'react-native';
 import {HStack} from '@/components/ui/hstack';
-import ZText from '../../sharedComponents/ZText';
+import ZText from '../ZText';
 import {colors} from '../../themes';
 
 const SkeletonLoader = ({style, width, height, borderRadius}) => {
@@ -35,24 +35,11 @@ const SkeletonLoader = ({style, width, height, borderRadius}) => {
   );
 };
 
-const ProductSectionSkeleton = ({heading, isShowAll}) => {
+const RecommendedBrokersSkeleton = ({}) => {
   const placeholderData = Array(5).fill({});
-  console.log(heading, isShowAll, 'peof');
+
   return (
     <View style={styles.skeletonContainer}>
-      {/* Header */}
-      <HStack space="md" style={styles.heading}>
-        <ZText type={'R18'}>{heading}</ZText>
-        {isShowAll && (
-          <SkeletonLoader
-            style={styles.seeAllSkeleton}
-            width={60}
-            height={20}
-            borderRadius={10}
-          />
-        )}
-      </HStack>
-
       {/* Horizontal List */}
       <FlatList
         data={placeholderData}
@@ -64,35 +51,24 @@ const ProductSectionSkeleton = ({heading, isShowAll}) => {
           <View style={styles.cardContainer}>
             {/* Image Placeholder */}
             <SkeletonLoader
-              width={132}
-              height={100}
+              width={60}
+              height={60}
               style={styles.imageSkeleton}
-              borderRadius={12}
+              borderRadius={50}
             />
-
-            {/* Price Placeholder */}
             <SkeletonLoader
               style={styles.priceSkeleton}
               width={'60%'}
+              height={10}
+            />
+            {/* Price Placeholder */}
+            <SkeletonLoader
+              style={styles.priceSkeleton}
+              width={'80%'}
               height={20}
             />
 
             {/* Location Placeholder */}
-            <View style={styles.locationContainer}>
-              <SkeletonLoader width={16} height={16} borderRadius={8} />
-              <SkeletonLoader
-                style={styles.locationTextSkeleton}
-                width={'80%'}
-                height={16}
-              />
-            </View>
-
-            {/* Title Placeholder */}
-            <SkeletonLoader
-              style={styles.titleSkeleton}
-              width={'80%'}
-              height={18}
-            />
           </View>
         )}
       />
@@ -117,17 +93,22 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   cardContainer: {
-    width: 132,
-    borderRadius: 12,
-    backgroundColor: '#FFF',
-    marginHorizontal: 8,
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 4,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 10,
+    width: 120,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+    position: 'relative',
+    alignItems: 'center',
+    marginRight: 5,
   },
   imageSkeleton: {
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
+    // borderTopLeftRadius: 12,
+    // borderTopRightRadius: 12,
   },
   iconContainer: {
     flexDirection: 'row',
@@ -155,4 +136,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProductSectionSkeleton;
+export default RecommendedBrokersSkeleton;

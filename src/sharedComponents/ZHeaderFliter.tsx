@@ -48,6 +48,11 @@ function ZHeaderFliter(props) {
       setShowSearchBox(false);
     }
   };
+  const searchSubmit = (e: any, mode: string) => {
+    console.log(searchText);
+    handleSearch(searchText);
+    setShowSearchBox(false);
+  };
   const goBack = () => {
     if (navigation.canGoBack()) {
       navigation.goBack();
@@ -98,7 +103,7 @@ function ZHeaderFliter(props) {
                 onChangeText={searchKeyword => setSearchText(searchKeyword)}
                 defaultValue={searchText}
                 onKeyPress={event => searchInput(event, 'INPUT')}
-                onSubmitEditing={() => setShowSearchBox(showBox => !showBox)}
+                onSubmitEditing={event => searchSubmit(event, 'INPUT')}
               />
               <InputSlot
                 style={{paddingRight: 10}}
