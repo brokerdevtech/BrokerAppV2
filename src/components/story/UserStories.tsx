@@ -23,9 +23,12 @@ import {moderateScale, PermissionKey} from '../../config/constants';
 import {HStack} from '../../../components/ui/hstack';
 import {Skeleton} from '../../../components/ui/skeleton';
 import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
-import {getDashboardStory} from '../../../BrokerAppCore/services/Story';
+
 import {VStack} from '../../../components/ui/vstack';
 import CircularSkeleton from '../../sharedComponents/Skeleton/CircularSkeleton';
+import {getDashboardStory} from '../../../BrokerAppCore/services/new/story';
+import {useApiRequest} from '../../hooks/useApiRequest';
+import {useApiPagingRequest} from '../../hooks/useApiPagingRequest';
 
 const SkeletonPlaceholder = () => {
   return (
@@ -40,10 +43,10 @@ const SkeletonPlaceholder = () => {
   );
 };
 
-const UserStories = React.memo(({}) => {
+const UserStories = React.memo(() => {
   const user = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
-
+  const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
@@ -59,112 +62,80 @@ const UserStories = React.memo(({}) => {
   const [hasMoreData, setHasMoreData] = useState(true);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const fetchMoreData = async () => {
-    if (loading || !hasMoreData || !permissionGrantedDashBoard) return; // Check if already loading or no more data
-
-    setLoading(true); // Set loading state
+  const {
+    data: Storiesdata,
+    status: Storiesstatus,
+    error: Storieserror,
+    execute: Storiesexecute,
+    loadMore: StoriesLoadMore,
+    pageSize_Set: StoriespageSize_Set,
+    currentPage_Set: StoriescurrentPage_Set,
+    hasMore_Set: StorieshasMore_Set,
+  } = useApiPagingRequest(getDashboardStory, setInfiniteLoading);
+  const getList = async () => {
     try {
-      //
-      // Fetch next page of data
-      const nextPage = page + 1;
-      const result = await getDashboardStory(user.userId, nextPage, 5);
-
-      if (result.data.storyList.length > 0) {
-        setStoryData(prevData => [...prevData, ...result.data.storyList]);
-        setPage(nextPage);
-      } else {
-        setHasMoreData(false); // Set flag when no more data is available
-      }
-      setLoading(false);
+      StoriescurrentPage_Set(1);
+      StorieshasMore_Set(true);
+      Storiesexecute(user.userId);
     } catch (error) {
-      console.error('Error fetching more data:', error);
-    } finally {
-      setLoading(false); // Reset loading state
+      console.log(error);
     }
   };
-  const getStory = async () => {
-    if (!permissionGrantedDashBoard) {
-      setStoryData([]);
-      setLoading(false);
-      return;
-    }
-    try {
-      const result = await getDashboardStory(user.userId, 1, 5);
-      //
-      if (result.data) {
-        setStoryData(result?.data?.storyList);
 
-        //  setLoading(false);
-      } else {
-        //  setLoading(false);
-        setStoryData([]);
-      }
-    } catch (error) {
-      setStoryData([]);
-      console.error('Error fetching data:', error);
-    }
-  };
   useFocusEffect(
     React.useCallback(() => {
-      const fetchData = async () => {
-        // toggleSkeletonOn();
-
-        setHasMoreData(true);
-
-        setPage(1);
-        setLoading(true);
-
-        try {
-          // Await for the getPosts function to complete
-
-          await getStory();
-        } catch (error) {
-          console.error('Error fetching posts:', error);
-          // Handle the error appropriately
-        }
-
-        // After fetching data, set loading to false
-        setLoading(false);
-      };
-      fetchData();
+      getList();
     }, []),
   );
 
+  useEffect(() => {
+    if (Storiesstatus === 200) {
+      setStoryData(Storiesdata.data.storyList);
+    }
+  }, [Storiesstatus, Storiesdata]);
+
+  const loadMore = async () => {
+    if (!isInfiniteLoading) {
+      await StoriesLoadMore(user.userId);
+    }
+  };
+
   const onPressStory = item => {
-    // navigation.navigate(StackNav.StoryView, {
-    //   userImage: item,
-    // });
     if (item.userId == user.userId && !permissionGrantedmyStory) {
       Alert.alert("You don't have permission to view Story");
     } else {
       navigation.navigate('StoryView', {userImage: item});
     }
   };
-  const renderItem = ({item}) => (
-    <Pressable
-      style={localStyles.itemContainer}
-      onPress={() => onPressStory(item)}>
-      <View style={localStyles.avatarWrapper}>
-        <View style={localStyles.itemInnerContainer}>
-          <ZAvatarInitials
-            item={item}
-            onPress={() => onPressStory(item)}
-            sourceUrl={item.profileImage}
-            iconSize="md"
-            name={item.postedBy}
-          />
+  const renderItem = useCallback(
+    ({item}) => (
+      <Pressable
+        style={localStyles.itemContainer}
+        onPress={() => onPressStory(item)}>
+        <View style={localStyles.avatarWrapper}>
+          <View style={localStyles.itemInnerContainer}>
+            <ZAvatarInitials
+              item={item}
+              onPress={() => onPressStory(item)}
+              sourceUrl={item.profileImage}
+              iconSize="md"
+              name={item.postedBy}
+            />
+          </View>
         </View>
-      </View>
-      <ZText type={'r16'} style={localStyles.itemUsername}>
-        {item.postedBy}
-      </ZText>
-    </Pressable>
+        <ZText type={'r16'} style={localStyles.itemUsername}>
+          {item.postedBy}
+        </ZText>
+      </Pressable>
+    ),
+    [],
   );
   const EmptyListComponent = () => (
     <View style={localStyles.emptyContainer}>
       <Text style={localStyles.emptyText}>No Stories available</Text>
     </View>
   );
+  console.log(StoryData, 'dat');
   return (
     <VStack style={{paddingHorizontal: 20, backgroundColor: 'white'}}>
       {/* <ZText type="b22" style={{...globalStyles.mt8}}>
@@ -194,8 +165,9 @@ const UserStories = React.memo(({}) => {
               )
             }
             showsHorizontalScrollIndicator={false}
+            removeClippedSubviews={true}
             contentContainerStyle={localStyles.mainContainer}
-            onEndReached={fetchMoreData}
+            onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             ListFooterComponent={
               loading ? (

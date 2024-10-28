@@ -85,9 +85,20 @@ const ChildrenScroller = ({
   return <Cloner count={count} renderChild={renderChild} />;
 };
 
-const Marquee = ({duration = 40000, reverse = true, children, style}) => {
+const Marquee = ({
+  baseSpeed = 200,
+  maxSpeed = 10000,
+  reverse = true,
+  children,
+  style,
+}) => {
   const [parentWidth, setParentWidth] = React.useState(0);
   const [childrenWidth, setChildrenWidth] = React.useState(0);
+
+  const duration =
+    childrenWidth > 0
+      ? Math.min(maxSpeed, Math.max(baseSpeed, childrenWidth * 40))
+      : 0;
 
   return (
     <View
