@@ -17,7 +17,7 @@ const SelectableFlatList = ({
     } else {
       setSelectedItem(null);
     }
-  }, [preselectedItem]);
+  }, [preselectedItem,numColumn]);
   const handleItemPress = item => {
     setSelectedItem(item);
     if (onSelectItem) {
@@ -60,6 +60,8 @@ const SelectableFlatList = ({
       columnWrapperStyle={numColumn > 1 ? styles.columnWrapper : null}
    //   columnWrapperStyle={styles.columnWrapper} // Add spacing between columns
       showsVerticalScrollIndicator={false} // Hide the scroll indicator
+      extraData={numColumn}
+      key={numColumn}
     />
   );
 };

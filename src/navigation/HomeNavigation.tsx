@@ -45,6 +45,7 @@ import PodcastViewList from '../sharedComponents/PodcastViewList';
 import StoryLikeList from '../sharedComponents/StoryLikeList';
 import StoryViewList from '../sharedComponents/StoryViewList';
 import BrokerList from '../sharedComponents/BrokerList';
+import ItemFilterListScreen from '../screens/ItemFilterListScreen';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -189,6 +190,12 @@ const HomeNavigation: React.FC = () => {
         <Stack.Screen
           name="ItemListScreen"
           component={ItemListScreen}
+          options={{headerShown: false}}
+        />
+
+<Stack.Screen
+          name="ItemFilterListScreen"
+          component={ItemFilterListScreen}
           options={{headerShown: false}}
         />
         <Stack.Screen

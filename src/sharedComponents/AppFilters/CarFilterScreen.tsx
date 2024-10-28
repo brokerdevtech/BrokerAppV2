@@ -93,7 +93,7 @@ const CarFilterScreen: React.FC = ({
 
   const [filtersState, setfiltersState] = useState([]);
   const user = useSelector(state => state.user.user);
-
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const {
     data: Filters,
     status: Filtersstatus,
@@ -725,7 +725,33 @@ const CarFilterScreen: React.FC = ({
       </View>
     );
   };
+  const handleClear = () => {
+    const locationData = [
+      {
+        place: {
+          ...AppLocation,
+        },
+      },
+    ];
+    setfilterlocalities(locationData);
+    const updatedSelectedFilters = {
+     
+       Location: locationData,
+       Budget: {minValue: 20000, maxValue: 500000000 ,isDefault:true},
+    
+    
+    };
+    setfilterlocalities(locationData);
+    console.log(
+      '=================updatedSelectedFilters==========================',
+    );
 
+    console.log(updatedSelectedFilters);
+    setSelectedFilters(updatedSelectedFilters);
+
+    onApply(updatedSelectedFilters);
+
+  };
   const RightIcon = () => (
     <TouchableOpacity onPress={handleApplyFilters}>
       <ZText numberOfLines={1} color={Color.primary} type={'M16'}>
@@ -734,7 +760,7 @@ const CarFilterScreen: React.FC = ({
     </TouchableOpacity>
   );
   const LeftIcon = () => (
-    <TouchableOpacity onPress={() => console.log('clear')}>
+    <TouchableOpacity onPress={handleClear}>
       <ZText numberOfLines={1} type={'M16'}>
         Reset All
       </ZText>
