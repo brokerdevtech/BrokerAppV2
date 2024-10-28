@@ -9,6 +9,7 @@ import {
   FlatList,
   TouchableOpacity,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
@@ -36,7 +37,7 @@ import UserStories from '../components/story/UserStories';
 import {colors} from '../themes';
 import MarqueeScreen from '../sharedComponents/profile/Marquee';
 
-export default function DashboradScreen() {
+export default function DashboradScreen({isGuest = false}) {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
 
@@ -120,9 +121,27 @@ export default function DashboradScreen() {
       </TouchableOpacity>
     );
   });
-  console.log(marqueeText, 'marqueeText');
+  const handleGuestOverlayClick = () => {
+    Alert.alert('Restricted Access', 'Please log in to access this feature.');
+  };
+  // console.log(user, 'marqueeText');
   return (
     <SafeAreaView style={{flex: 1}}>
+      {isGuest && (
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0)',
+            zIndex: 1,
+          }}
+          onPress={handleGuestOverlayClick}
+          activeOpacity={1} // Prevents other components from receiving touches
+        />
+      )}
       <ScrollView style={styles.scrollView}>
         <View>
           <View style={styles.subHeaderSection}>

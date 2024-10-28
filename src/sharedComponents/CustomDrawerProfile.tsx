@@ -121,8 +121,9 @@ const CustomDrawerContent = props => {
       <View style={styles.drawerItemsContainer}>
         <TouchableOpacity style={[styles.drawerItem, styles.bottomBorder]}>
           <ZText type={'S16'} style={styles.drawerLabel}>
-            300{' '}
+            {user?.profileViews}
             <ZText type={'R16'} style={styles.viewProfileText}>
+              {' '}
               Profile Viewers
             </ZText>
           </ZText>
@@ -196,39 +197,42 @@ const CustomDrawerContent = props => {
         <AlertDialogBackdrop />
         <AlertDialogContent>
           <AlertDialogHeader>
-            <ZText
-              type={'S18'}
-              style={{marginBottom: 20}}
-              // className="text-typography-950 font-semibold"
-            >
+            <ZText type="S18" style={{marginBottom: 20, textAlign: 'center'}}>
               Are you sure you want to logout?
             </ZText>
           </AlertDialogHeader>
-          <AlertDialogBody className="mt-3 mb-4">
-            <ZText type={'R16'} style={{marginBottom: 20}} size="sm">
+          <AlertDialogBody className="mt-3 mb-4 ">
+            <ZText type="R16" style={{marginBottom: 20, textAlign: 'center'}}>
               Please confirm if you want to proceed.
             </ZText>
           </AlertDialogBody>
-          <AlertDialogFooter style={{justifyContent: 'center'}}>
+          <AlertDialogFooter
+            style={{justifyContent: 'center', alignItems: 'center'}}>
             <Button
               variant="outline"
               action="secondary"
               style={{borderColor: Color.primary}}
               onPress={handleClose}
               size="md">
-              <ZText type={'R16'} color={Color.primary}>
+              <ZText
+                type="R16"
+                color={Color.primary}
+                style={{textAlign: 'center'}}>
                 Cancel
               </ZText>
             </Button>
             <Button
               size="md"
-              style={{backgroundColor: Color.primary}}
+              style={{backgroundColor: Color.primary, marginLeft: 10}}
               onPress={LogoutProceed}>
-              <ButtonText>Logout</ButtonText>
+              <ZText type="R16" style={{color: 'white', textAlign: 'center'}}>
+                Logout
+              </ZText>
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
       {isloading && (
         <Modal transparent={true} animationType="fade">
           <View style={styles.loaderContainer}>
