@@ -17,7 +17,7 @@ const SelectableFlatList = ({
     } else {
       setSelectedItem(null);
     }
-  }, [preselectedItem]);
+  }, [preselectedItem,numColumn]);
   const handleItemPress = item => {
     setSelectedItem(item);
     if (onSelectItem) {
@@ -57,8 +57,11 @@ const SelectableFlatList = ({
       keyExtractor={item => item.key.toString()} // Ensure unique key for FlatList
       contentContainerStyle={styles.listContainer}
       numColumns={numColumn} // Set number of columns to 2
-      columnWrapperStyle={styles.columnWrapper} // Add spacing between columns
+      columnWrapperStyle={numColumn > 1 ? styles.columnWrapper : null}
+   //   columnWrapperStyle={styles.columnWrapper} // Add spacing between columns
       showsVerticalScrollIndicator={false} // Hide the scroll indicator
+      extraData={numColumn}
+      key={numColumn}
     />
   );
 };

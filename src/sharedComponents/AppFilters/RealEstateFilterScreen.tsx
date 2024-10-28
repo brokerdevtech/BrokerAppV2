@@ -46,6 +46,7 @@ import {VStack} from '../../../components/ui/vstack';
 import LocalityTag from '../LocalityTag';
 import MultiSelectFlatList from '../filters/MultiSelectFlatList';
 import RangeSlider from '../filters/RangeSlider';
+import { RootState } from '../../../BrokerAppCore/redux/store/reducers';
 const MENU_ITEMS = [
   {id: '1', name: 'Location', displayName: 'Location'},
   {id: '2', name: 'Budget', displayName: 'Budget'},
@@ -87,7 +88,7 @@ const RealEstateFilterScreen: React.FC = ({
   const [Isvideo, setIsvideo] = useState<any>(route.params?.Isvideo);
   const [formValue, setformValue] = useState<any>(route.params?.formValue);
   const [filterlocalities, setfilterlocalities] = useState<any>();
-
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const [selectedItem, setSelectedItem] = useState(null);
 
   const [selectedFilters, setSelectedFilters] = useState({});
@@ -195,13 +196,22 @@ const RealEstateFilterScreen: React.FC = ({
             //       },
             //     },
             //   ];
+            console.log(
+              '=================selectedFilters==========================',
+            );
 
+            console.log(
+              selectedFilters,
+            );
+            console.log(
+              PopUPFilter,
+            );
             //   // Uncomment if you need to set additional selected filters
             const updatedSelectedFilters = {
               ...selectedFilters,
-              Location: PopUPFilter.Location,
-              Budget: {minValue: 20000, maxValue: 500000000},
-              Area: {minValue: 0, maxValue: 5000},
+              // Location: PopUPFilter.Location,
+              // Budget: {minValue: 20000, maxValue: 500000000},
+              // Area: {minValue: 0, maxValue: 5000},
               ...PopUPFilter,
             };
 
@@ -269,7 +279,31 @@ const RealEstateFilterScreen: React.FC = ({
     // Proceed with your API call or other logic here
   };
   const handleClear = () => {
-    console.log('clear');
+    const locationData = [
+      {
+        place: {
+          ...AppLocation,
+        },
+      },
+    ];
+    setfilterlocalities(locationData);
+    const updatedSelectedFilters = {
+     
+       Location: locationData,
+      Budget: {minValue: 20000, maxValue: 500000000,isDefault:true},
+      Area: {minValue: 0, maxValue: 5000,isDefault:true},
+    
+    };
+    setfilterlocalities(locationData);
+    console.log(
+      '=================updatedSelectedFilters==========================',
+    );
+
+    console.log(updatedSelectedFilters);
+    setSelectedFilters(updatedSelectedFilters);
+
+    onApply(updatedSelectedFilters);
+
   };
   const onFiltersLocalityChange = async Localitys => {
     console.log('onFiltersLocalityChange', Localitys);
@@ -444,7 +478,7 @@ const RealEstateFilterScreen: React.FC = ({
     const updatedSelectedFilters = {
       ...selectedFilters,
 
-      Budget: {minValue: range.min, maxValue: range.max},
+      Budget: {minValue: range.min, maxValue: range.max,isDefault:false},
     };
     setSelectedFilters(updatedSelectedFilters);
   };
@@ -454,7 +488,7 @@ const RealEstateFilterScreen: React.FC = ({
     const updatedSelectedFilters = {
       ...selectedFilters,
 
-      Area: {minValue: range.min, maxValue: range.max},
+      Area: {minValue: range.min, maxValue: range.max,isDefault:false},
     };
     setSelectedFilters(updatedSelectedFilters);
   };
@@ -704,7 +738,7 @@ const RealEstateFilterScreen: React.FC = ({
   };
 
   const RightIcon = () => (
-    <TouchableOpacity onPress={handleApplyFilters}>
+    <TouchableOpacity onPress={handleApplyFilters} style={{marginRight:10}}>
       <ZText numberOfLines={1} color={Color.primary} type={'M16'}>
         {'Apply'}
       </ZText>

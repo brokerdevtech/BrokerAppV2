@@ -68,7 +68,7 @@ import {Color} from '@/styles/GlobalStyles';
 import ZHeaderFliter from '../sharedComponents/ZHeaderFliter';
 import FilterBottomSheet from '../sharedComponents/FilterBottomSheet';
 import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
-import {concat} from 'lodash';
+import {concat, filter} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
 const SkeletonPlaceholder = () => {
   return (
@@ -87,7 +87,7 @@ const RederListHeader = React.memo(
 
         <Recommend categoryId={categoryId} />
         <ProductSection
-          heading={'Newly Launch'}
+          heading={'Newly Launched'}
           background={'#FFFFFF'}
           endpoint={'Newin'}
           isShowAll={false}
@@ -293,7 +293,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
   );
 });
 
-const ItemListScreen: React.FC<any> = ({
+const ItemFilterListScreen: React.FC<any> = ({
   isPageSkeleton,
   toggleSkeletonoff,
   toggleSkeletonOn,
@@ -309,12 +309,14 @@ const ItemListScreen: React.FC<any> = ({
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
-  const [listApiobj, setlistApiobj] = useState({});
+  const [listApiobj, setlistApiobj] = useState(route.params.listApiobj);
+  const [FiltersOBJ, setFiltersOBJ] = useState(route.params.Filters);
   const [ApppageTitle, setApppageTitle] = useState('');
-  const [searchKeyword, setsearchKeyword] = useState('');
+  const [searchKeyword, setsearchKeyword] = useState(route.params.searchText?route.params.searchText:'');
   const [Itemslocalities, setItemslocalities] = useState(null);
   const [PopUPFilter, setPopUPFilter] = useState(null);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
+
   const brandName =
     route.params.brandName !== undefined ? route.params.brandName : '';
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -325,27 +327,18 @@ const ItemListScreen: React.FC<any> = ({
     item => {
       console.log('============== closeModal==================');
       console.log(item);
-      console.log('============== closeModal==================');
-      if (Object.keys(item).length > 0) {
+      if (Object.keys(item).length > 0)  {
+        setPopUPFilter(item);
+        setLoading(true);
+        pageSize_Set(5);
+        currentPage_Set(1);
+        hasMore_Set(true);
+        let tags = getFilterTags(item);
 
-        console.log('============== one==================');
-        
-        console.log(Object.keys(item).length);
-        // setPopUPFilter(item);
-        // setLoading(true);
-        // pageSize_Set(5);
-        // currentPage_Set(1);
-        // hasMore_Set(true);
-         let tags = getFilterTags(item);
+        callPodcastList(tags);
 
-        // callPodcastList(tags);
 
-        navigation.navigate('ItemFilterListScreen', {
-          listType: listTypeData,
-          categoryId: categoryId,
-          Filters:item,
-          listApiobj:tags
-        })
+
 
       }
     },
@@ -576,57 +569,23 @@ const ItemListScreen: React.FC<any> = ({
   useEffect(() => {
     setLoading(true);
     if (listTypeData == 'RealEstate') {
-      pageTitle('Property');
-      setApppageTitle('Property');
+      pageTitle('Property List');
+      setApppageTitle('Property List');
     }
     if (listTypeData == 'Car') {
-      pageTitle('Car');
-      setApppageTitle('Car');
+      pageTitle('Car List');
+      setApppageTitle('Car List');
     }
     setItemslocalities(AppLocation);
-
-    let obj = {
-      keyWord: searchKeyword,
-      cityName: AppLocation.City,
-      userId: user.userId,
-      placeID: AppLocation.placeID,
-      placeName: AppLocation.placeName,
-      geoLocationLatitude: AppLocation.geoLocationLatitude,
-      geoLocationLongitude: AppLocation.geoLocationLongitude,
-      isSearch: false,
-    };
-    setlistApiobj(obj);
-
-    const locationData = [
-      {
-        place: {
-          ...AppLocation,
-        },
-      },
-    ];
-    if (listTypeData == 'Car') {
-    // Uncomment if you need to set additional selected filters
-    const updatedPopUPFilter = {
-      Location: locationData,
-      Budget: {minValue: 20000, maxValue: 500000000 ,isDefault:true},
-     
-    };
-    setPopUPFilter(updatedPopUPFilter);
-  }
-
-
-  if (listTypeData == 'RealEstate') {
-    // Uncomment if you need to set additional selected filters
-    const updatedPopUPFilter = {
-      Location: locationData,
-      Budget: {minValue: 20000, maxValue: 500000000 ,isDefault:true},
-      Area: {minValue: 0, maxValue: 5000,isDefault:true},
-    };
-    setPopUPFilter(updatedPopUPFilter);
-  }
+    console.log("=============FiltersOBJ");
+   
+console.log(FiltersOBJ);
+console.log("=============listApiobj");
+console.log(listApiobj);
+    setPopUPFilter(FiltersOBJ);
 
     //set_FilterChipsData(obj);
-    callPodcastList(obj);
+    callPodcastList(listApiobj);
   }, []);
   const [itemHeight, setItemHeight] = useState(560);
 
@@ -652,36 +611,19 @@ const ItemListScreen: React.FC<any> = ({
   const apphandleSearch = async (searchText: string) => {
     // console.log('apphandleSearch');
     // console.log(searchText);
-
+    pageSize_Set(5);
+    currentPage_Set(1);
+    hasMore_Set(true);
+    await setsearchKeyword(searchText);
     let obj = {
       ...listApiobj,
       keyWord: searchText,
     };
+    // console.log('apphandleSearch');
+    // console.log(obj);
+    setlistApiobj(obj);
 
-
-    navigation.navigate('ItemFilterListScreen', {
-      listType: listTypeData,
-      categoryId: categoryId,
-      Filters:PopUPFilter,
-      listApiobj:obj,
-      searchText:searchText
-    })
-
-
-
-    // pageSize_Set(5);
-    // currentPage_Set(1);
-    // hasMore_Set(true);
-    // await setsearchKeyword(searchText);
-    // let obj = {
-    //   ...listApiobj,
-    //   keyWord: searchText,
-    // };
-    // // console.log('apphandleSearch');
-    // // console.log(obj);
-    // setlistApiobj(obj);
-
-    // callPodcastList(obj);
+    callPodcastList(obj);
   };
   const OnPressfilters = () => {
     FilterSheetRef.current?.open();
@@ -718,14 +660,14 @@ const ItemListScreen: React.FC<any> = ({
               maxToRenderPerBatch={4}
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-              ListHeaderComponent={
-                <RederListHeader
-                  categoryId={categoryId}
-                  AppLocation={AppLocation}
-                  FilterChipsData={FilterChipsData}
-                  recordCount={recordCount}
-                />
-              }
+              // ListHeaderComponent={
+              //   <RederListHeader
+              //     categoryId={categoryId}
+              //     AppLocation={AppLocation}
+              //     FilterChipsData={FilterChipsData}
+              //     recordCount={recordCount}
+              //   />
+              // }
               keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.6}
               onEndReached={loadMorepage}
@@ -989,5 +931,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppBaseContainer(ItemListScreen, '', false, true);
+export default AppBaseContainer(ItemFilterListScreen, '', false, true);
 //export default ItemListScreen;

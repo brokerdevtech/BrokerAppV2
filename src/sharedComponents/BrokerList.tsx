@@ -125,7 +125,7 @@ const BrokerList: React.FC = ({
     <ZSafeAreaView>
       <View style={localStyles.rootContainer}>
         <ZInput
-          placeHolder={String.search}
+         placeHolder={'Search first/last name'}
           _value={searchText}
           keyBoardType={'default'}
           autoCapitalize={'none'}

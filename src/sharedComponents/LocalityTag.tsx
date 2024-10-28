@@ -29,7 +29,7 @@ const LocalityTag: React.FC<LocalityTagProps> = ({
   useEffect(() => {
     setLocalities([]);
     setLocalities(selectedLocation);
-  }, [resetSignal]);
+  }, [resetSignal,selectedLocation]);
   const handleModalOpen = () => {
     setModalVisible(true);
   };

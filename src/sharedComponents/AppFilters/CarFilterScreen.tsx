@@ -93,7 +93,7 @@ const CarFilterScreen: React.FC = ({
 
   const [filtersState, setfiltersState] = useState([]);
   const user = useSelector(state => state.user.user);
-
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const {
     data: Filters,
     status: Filtersstatus,
@@ -128,6 +128,24 @@ const CarFilterScreen: React.FC = ({
             item => item.name !== 'PropertySizeUnit',
           );
 
+
+          const years = [];
+          for (let year = 2024; year >= 2000; year--) {
+            years.push({key: year.toString(), value: year});
+          }
+
+          const kms = [
+            { key: '10000', value: '10,000 kms or less' },
+            { key: '30000', value: '30,000 kms or less' },
+            { key: '50000', value: '50,000 kms or less' },
+            { key: '75000', value: '75,000 kms or less' },
+            { key: '100000', value: '1,00,000 kms or less' },
+            { key: '125000', value: '1,25,000 kms or less' },
+            { key: '150000', value: '1,50,000 kms or less' },
+            { key: '175000', value: '1,75,000 kms or less' },
+            { key: '200000', value: '2,00,000 kms or less' }
+          ];
+          
           // Define filters without 'PostedSince'
           const filtersWithoutPostedSince = [
             {
@@ -151,6 +169,39 @@ const CarFilterScreen: React.FC = ({
               records: [],
               Value: {minValue: 20000, maxValue: 500000000},
             },
+            {
+              name: 'RegistrationYear',
+              displayName: 'Registration Year',
+              type: 'RegistrationYear',
+              filterOrder: 1,
+              isMultiSelect: false,
+              isMandatory: false,
+              dependsOn: '',
+              records: years,
+            
+            },
+            {
+              name: 'ManufactureYear',
+              displayName: 'Manufacture Year',
+              type: 'ManufactureYear',
+              filterOrder: 1,
+              isMultiSelect: false,
+              isMandatory: false,
+              dependsOn: '',
+              records: years,
+             
+            },
+            {
+              name: 'KmsDriven',
+              displayName: 'Kms Driven',
+              type: 'KmsDriven',
+              filterOrder: 1,
+              isMultiSelect: false,
+              isMandatory: false,
+              dependsOn: '',
+              records: kms,
+             
+            },
             ...filteredItems,
           ];
 
@@ -169,9 +220,6 @@ const CarFilterScreen: React.FC = ({
 
             const updatedSelectedFilters = {
               ...selectedFilters,
-              Location: PopUPFilter.Location,
-              Budget: {minValue: 20000, maxValue: 500000000},
-
               ...PopUPFilter,
             };
 
@@ -459,6 +507,54 @@ const CarFilterScreen: React.FC = ({
         );
       }
 
+      if (selectedItem.name == 'RegistrationYear') {
+        let items = selectedFilters[selectedItem.name]
+          ? selectedFilters[selectedItem.name][0]
+          : null;
+
+        ComponentToRender = (
+          <SelectableFlatList
+            data={selectedItem.records}
+            numColumn="2"
+            onSelectItem={SelectItem}
+            preselectedItem={items}
+            emptyessage="Please select a Location"
+          />
+        );
+      }
+      if (selectedItem.name == 'ManufactureYear') {
+        let items = selectedFilters[selectedItem.name]
+          ? selectedFilters[selectedItem.name][0]
+          : null;
+
+        ComponentToRender = (
+          <SelectableFlatList
+            data={selectedItem.records}
+            numColumn="2"
+            onSelectItem={SelectItem}
+            preselectedItem={items}
+            emptyessage="Please select a Location"
+          />
+        );
+      }
+    
+      if (selectedItem.name == 'KmsDriven') {
+        let items = selectedFilters[selectedItem.name]
+          ? selectedFilters[selectedItem.name][0]
+          : null;
+
+        ComponentToRender = (
+          <SelectableFlatList
+            data={selectedItem.records}
+            numColumn="1"
+            onSelectItem={SelectItem}
+            preselectedItem={items}
+            emptyessage="Please select a Location"
+          />
+        );
+      }
+
+
       if (selectedItem.name == 'Brand') {
         let items = selectedFilters[selectedItem.name]
           ? selectedFilters[selectedItem.name][0]
@@ -629,7 +725,33 @@ const CarFilterScreen: React.FC = ({
       </View>
     );
   };
+  const handleClear = () => {
+    const locationData = [
+      {
+        place: {
+          ...AppLocation,
+        },
+      },
+    ];
+    setfilterlocalities(locationData);
+    const updatedSelectedFilters = {
+     
+       Location: locationData,
+       Budget: {minValue: 20000, maxValue: 500000000 ,isDefault:true},
+    
+    
+    };
+    setfilterlocalities(locationData);
+    console.log(
+      '=================updatedSelectedFilters==========================',
+    );
 
+    console.log(updatedSelectedFilters);
+    setSelectedFilters(updatedSelectedFilters);
+
+    onApply(updatedSelectedFilters);
+
+  };
   const RightIcon = () => (
     <TouchableOpacity onPress={handleApplyFilters}>
       <ZText numberOfLines={1} color={Color.primary} type={'M16'}>
@@ -638,7 +760,7 @@ const CarFilterScreen: React.FC = ({
     </TouchableOpacity>
   );
   const LeftIcon = () => (
-    <TouchableOpacity onPress={() => console.log('clear')}>
+    <TouchableOpacity onPress={handleClear}>
       <ZText numberOfLines={1} type={'M16'}>
         Reset All
       </ZText>
