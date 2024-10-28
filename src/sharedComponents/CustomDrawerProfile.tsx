@@ -121,8 +121,9 @@ const CustomDrawerContent = props => {
       <View style={styles.drawerItemsContainer}>
         <TouchableOpacity style={[styles.drawerItem, styles.bottomBorder]}>
           <ZText type={'S16'} style={styles.drawerLabel}>
-            300{' '}
+            {user?.profileViews}
             <ZText type={'R16'} style={styles.viewProfileText}>
+              {' '}
               Profile Viewers
             </ZText>
           </ZText>
