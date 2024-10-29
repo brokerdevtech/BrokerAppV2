@@ -42,7 +42,7 @@ import {
   AlertDialogHeader,
 } from '../../components/ui/alert-dialog';
 import {Heading} from '../../components/ui/heading';
-import {Button, ButtonText} from '../../components/ui/button';
+import {Button} from '../../components/ui/button';
 import {logoutUser} from '../../BrokerAppCore/redux/store/user/userSlice';
 import {Logout} from '../../BrokerAppCore/services/new/authService';
 import AsyncStorage from '@react-native-async-storage/async-storage';

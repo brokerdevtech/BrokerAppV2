@@ -31,19 +31,35 @@ import {
 import RectangularCardSkeleton from '../../sharedComponents/Skeleton/RectangularCardSkeleton';
 import {colors} from '../../themes';
 import ProductSectionSkeleton from '../../sharedComponents/Skeleton/ProductSectionSkeleton';
+import {
+  AlertDialog,
+  AlertDialogBackdrop,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+} from '../../../components/ui/alert-dialog';
+import {Button} from '../../../components/ui/button';
+import {Color} from '../../styles/GlobalStyles';
 
 interface ProductSectionProps {
   heading: string;
   background: string;
   endpoint: string;
   isShowAll: boolean;
+  isGuest: boolean;
   request: ListDashboardPostRequest;
 }
 
 const ProductSection = (props: ProductSectionProps) => {
   const {data, status, error, execute} = useApiRequest(fetchDashboardData);
   const navigation = useNavigation();
-
+  const [showAlertDialog, setShowAlertDialog] = React.useState(false);
+  const handleClose = () => setShowAlertDialog(false);
+  const onPressSignUp = () => {
+    //  onOpen();
+    setShowAlertDialog(false);
+    navigation.navigate('Register');
+  };
   const callPodcastList = async () => {
     // console.log("props.request");
     // console.log(props.request);
@@ -60,6 +76,16 @@ const ProductSection = (props: ProductSectionProps) => {
 
   const renderProductItems = ({item, index}) => {
     // console.log(item, 'media');
+    const handlePress = () => {
+      if (props.isGuest) {
+        setShowAlertDialog(true); // Show alert dialog if user is a guest
+      } else {
+        navigation.navigate('ItemDetailScreen', {
+          postId: item.postId,
+          postType: item.categoryId == 2 ? 'Car/Post' : 'Post',
+        });
+      }
+    };
     return (
       <View style={styles.cardContainer}>
         <Image
@@ -83,13 +109,7 @@ const ProductSection = (props: ProductSectionProps) => {
 
         {/* Car Details */}
         <View style={styles.detailsContainer}>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('ItemDetailScreen', {
-                postId: item.postId,
-                postType: item.categoryId == 2 ? 'Car/Post' : 'Post',
-              })
-            }>
+          <TouchableOpacity onPress={handlePress}>
             <ZText type={'R16'} style={styles.price}>
               {'\u20B9'} {item.price}
             </ZText>
@@ -181,6 +201,49 @@ const ProductSection = (props: ProductSectionProps) => {
               // ItemSeparatorComponent={() => <View style={styles.separator} />}
             />
           </HStack>
+          <AlertDialog isOpen={showAlertDialog} onClose={handleClose} size="md">
+            <AlertDialogBackdrop />
+            <AlertDialogContent>
+              <AlertDialogBody className="mt-3 mb-4 ">
+                <ZText
+                  type="S18"
+                  style={{marginBottom: 20, textAlign: 'center'}}>
+                  Want to see More ?
+                </ZText>
+                <ZText
+                  type="R16"
+                  style={{marginBottom: 20, textAlign: 'center'}}>
+                  Hurry up create an account with us now.
+                </ZText>
+              </AlertDialogBody>
+              <AlertDialogFooter
+                style={{justifyContent: 'center', alignItems: 'center'}}>
+                <Button
+                  variant="outline"
+                  action="secondary"
+                  style={{borderColor: Color.primary}}
+                  onPress={handleClose}
+                  size="md">
+                  <ZText
+                    type="R16"
+                    color={Color.primary}
+                    style={{textAlign: 'center'}}>
+                    Cancel
+                  </ZText>
+                </Button>
+                <Button
+                  size="md"
+                  onPress={onPressSignUp}
+                  style={{backgroundColor: Color.primary, marginLeft: 10}}>
+                  <ZText
+                    type="R16"
+                    style={{color: 'white', textAlign: 'center'}}>
+                    Sign Up
+                  </ZText>
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </View>
       )}
     </>
