@@ -149,9 +149,9 @@ const PostCommentReplyList = ({commentId, listType = '',module}) => {
   };
 
     const loadMorepage = async () => {
-        console.log('loadMorepage');
+    
         if(!isInfiniteLoading)
-      {  console.log('loadMorepage');
+      {  
 
           await loadMore( listType,module,user.userId,commentId
         );

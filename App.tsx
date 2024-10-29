@@ -8,11 +8,13 @@
 import React, {useEffect, useRef, useState} from 'react';
 import './global.css';
 import Geolocation from 'react-native-geolocation-service';
-import {StreamChat} from 'stream-chat';
+
 //import "./global.css";
 import type {PropsWithChildren} from 'react';
 import {
+  Alert,
   Animated,
+  AppState,
   Button,
   Easing,
   PermissionsAndroid,
@@ -29,7 +31,7 @@ import store from './BrokerAppCore/redux/store';
 import MainNavigation from './src/navigation/MainNavigation';
 import {GluestackUIProvider} from '@/components/ui/gluestack-ui-provider';
 import PermissionService from './src/utils/PermissionService';
-import {PERMISSIONS, request} from 'react-native-permissions';
+import {openSettings, PERMISSIONS, request} from 'react-native-permissions';
 import {
   getAddressFromCoordinates,
   getAddressFromCoordinatesNew,
@@ -43,7 +45,8 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {setAppLocation} from './BrokerAppCore/redux/store/AppLocation/appLocation';
 import {S3Provider} from './src/Context/S3Context';
 import NetInfo from "@react-native-community/netinfo";
-import RNRestart from 'react-native-restart';
+
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -88,10 +91,11 @@ function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [loggedIn, setLoggedIn] = useState(false);
   const [isSplashVisible, setIsSplashVisible] = useState(true);
-
+  const [appState, setAppState] = useState(AppState.currentState);
   // Create animated values
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
+  const alertShown = useRef(false);
   const [colorMode, setColorMode] = React.useState<'dark' | 'light'>(
     defaultTheme,
   );
@@ -192,11 +196,13 @@ setColorMode(state.isConnected);
     });
   };
   const getUserLocation = async (granted: any) => {
+   
     if (Platform.OS === 'android') {
       if (
         granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] ===
         PermissionsAndroid.RESULTS.GRANTED
       ) {
+      
         let relustGeolocation: any = await getCurrentPositionAsync();
 
         const {latitude, longitude} = relustGeolocation.coords;
@@ -222,30 +228,210 @@ setColorMode(state.isConnected);
       store.dispatch(setAppLocation(resultAddress));
     }
   };
+  const handleAppStateChange = async (nextAppState) => {
+
+    if (appState.match(/inactive|background/) && nextAppState === 'active') {
+      // Check permission status when the app comes back to the foreground
+    
+      if(alertShown.current==false)
+      { 
+     let granted = await checkPermission();
+    
+     let UserLocation = await getUserLocation(granted);
+    }
+    }
+    setAppState(nextAppState);
+  };
+  // const checkPermission = async () => {
+  //   if (Platform.OS === 'android') {
+  //     try {
+  //       const granted = await PermissionsAndroid.requestMultiple([
+  //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+  //         PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+  //       ]);
+  //       return granted;
+  //     } catch (err) {
+  //       console.warn(err);
+  //     }
+  //   } else if (Platform.OS === 'ios') {
+  //     try {
+  //       const locationPermission = await request(
+  //         PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+  //       );
+  //       return locationPermission;
+  //     } catch (err) {
+  //       console.warn(err);
+  //     }
+  //   }
+  // };
+  // const checkPermission = async () => {
+  //   if (Platform.OS === 'android') {
+  //     try {
+  //       const permissions = [
+  //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+  //         PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+  //       ];
+        
+  //       const granted = await PermissionsAndroid.check(permissions[0]) && await PermissionsAndroid.check(permissions[1]);
+  //       console.log("===============granted")
+  //       console.log(granted)
+  //       if (!granted) {
+  //         const result = await PermissionsAndroid.requestMultiple(permissions);
+  //         return result;
+  //       }
+  //       return granted;
+  //     } catch (err) {
+  //       console.warn(err);
+  //     }
+  //   } else if (Platform.OS === 'ios') {
+  //     try {
+  //       const locationPermissionStatus = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+  
+  //       if (locationPermissionStatus !== RESULTS.GRANTED) {
+  //         const locationPermission = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+  //         return locationPermission;
+  //       }
+  //       return RESULTS.GRANTED;
+  //     } catch (err) {
+  //       console.warn(err);
+  //     }
+  //   }
+  // };
+
   const checkPermission = async () => {
     if (Platform.OS === 'android') {
       try {
-        const granted = await PermissionsAndroid.requestMultiple([
+        const permissions = [
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-        ]);
-        return granted;
+        ];
+        
+        const permissionStatusesArray = await Promise.all(
+          permissions.map((permission) => PermissionsAndroid.check(permission))
+        );
+  
+        // Creating an object with permission names as keys and their statuses as values
+        const permissionStatuses = Object.fromEntries(
+          permissions.map((permission, index) => [
+            permission,
+            permissionStatusesArray[index] ? 'granted' : 'denied',
+          ])
+        );
+  
+        // Filter permissions that need to be requested
+        const permissionsToRequest = permissions.filter(
+          (_, index) => !permissionStatusesArray[index]
+        );
+  
+        if (permissionsToRequest.length > 0) {
+          const requestResults = await PermissionsAndroid.requestMultiple(permissionsToRequest);
+  
+          // Update permissionStatuses with results of requested permissions
+          Object.entries(requestResults).forEach(([key, value]) => {
+            permissionStatuses[key] = value;
+  
+            // Show alert if permission is permanently denied
+            if (value === 'never_ask_again') {
+              showBlockedPermissionAlert(key);
+            }
+          });
+  
+          return permissionStatuses;
+        }
+  
+        return permissionStatuses;
       } catch (err) {
         console.warn(err);
       }
     } else if (Platform.OS === 'ios') {
       try {
-        const locationPermission = await request(
-          PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-        );
-        return locationPermission;
+        const locationPermissionStatus = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+  
+        const permissionStatuses = {
+          'ios.location_permission': locationPermissionStatus,
+        };
+  
+        if (locationPermissionStatus === RESULTS.BLOCKED) {
+          await showBlockedPermissionAlert('Location');
+        } else if (locationPermissionStatus !== RESULTS.GRANTED) {
+          const locationPermission = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+          permissionStatuses['ios.location_permission'] = locationPermission;
+        }
+  
+        return permissionStatuses;
       } catch (err) {
         console.warn(err);
       }
     }
   };
+  const showBlockedPermissionAlert = (permissionName) => {
+//    const alertShown = useRef(false); // Use a ref to track alert display status
+  
+    return new Promise((resolve) => {
+      if (!alertShown.current) {
+        alertShown.current = true; // Set the alert shown flag
+  
+        Alert.alert(
+          `LOCATION Permission Blocked`,
+          `It looks like you have blocked the ${permissionName} permission. To enable it, go to your app settings.`,
+          [
+            // {
+            //   text: 'Cancel',
+            //   style: 'cancel',
+            //   onPress: () => {
+            //     alertShown.current = false; // Reset the flag when alert is dismissed
+            //     resolve('cancel');
+            //   },
+            // },
+            {
+              text: 'Open Settings',
+              onPress: async () => {
+                try {
+                  alertShown.current=false;
+                  await openSettings();
+                  resolve('settings');
+                } catch (error) {
+                  console.warn('Cannot open settings', error);
+                  resolve('error');
+                } finally {
+                  alertShown.current = false; // Reset the flag after opening settings
+                }
+              },
+            },
+          ],
+          { cancelable: false }
+        );
+      } else {
+        resolve('already_shown'); // Return a different response if the alert was already shown
+      }
+    });
+  };
+  // const showBlockedPermissionAlert = async (permissionName) => {
+  //   return new Promise((resolve) => {
+  //     Alert.alert(
+  //       `${permissionName} Permission Blocked`,
+  //       `It looks like you have blocked the ${permissionName} permission. To enable it, go to your app settings.`,
+  //       [
+  //         {
+  //           text: 'Cancel',
+  //           style: 'cancel',
+  //           onPress: () => resolve('cancel'),
+  //         },
+  //         {
+  //           text: 'Open Settings',
+  //           onPress: () => {
+  //             openSettings().catch(() => console.warn('Cannot open settings'));
+  //             resolve('settings');
+  //           },
+  //         },
+  //       ],
+  //       { cancelable: true }
+  //     );
+  //   });
+  // };
   const allPermission = async () => {
     let granted = await checkPermission();
+
     let UserLocation = await getUserLocation(granted);
   };
   // useEffect(() => {
@@ -272,7 +458,15 @@ setColorMode(state.isConnected);
 
   // }, []);
 
+  useEffect(() => {
+  
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
 
+    return () => {
+      subscription.remove();
+    
+    };
+  }, [appState]);
   useEffect(() => {
     const runAsyncFunctions = async () => {
       try {
@@ -301,7 +495,7 @@ setColorMode(state.isConnected);
   
     // Execute async functions
     runAsyncFunctions();
-  
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
     // Subscribe to network state changes
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected  && state.isInternetReachable);
@@ -313,6 +507,7 @@ setColorMode(state.isConnected);
   
     // Cleanup on unmount
     return () => {
+      subscription.remove();
       unsubscribe();
     };
   }, []);

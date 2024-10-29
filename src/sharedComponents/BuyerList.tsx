@@ -20,7 +20,7 @@ import {
   getFollowingList,
 } from '../../BrokerAppCore/services/new/profileServices';
 import { useApiPagingRequest } from '../hooks/useApiPagingRequest';
-import { getPostCommentLikeList, getPostCommentReplyLikeList, getPostLikeList } from '../../BrokerAppCore/services/new/postServices';
+import { getPodcastLikeList, getPostBuyerList, getPostLikeList } from '../../BrokerAppCore/services/new/postServices';
 import { useApiPagingWithtotalRequest } from '../hooks/useApiPagingWithtotalRequest';
 import UserAvartarWithName from './UserAvartarWithName';
 
@@ -35,7 +35,7 @@ const staticData = [
   },
 ];
 
-const PostCommentReplyLikeList: React.FC = ({
+const BuyerList: React.FC = ({
   isPageSkeleton,
   toggleSkeletonoff,
   toggleSkeletonOn,
@@ -48,7 +48,7 @@ const PostCommentReplyLikeList: React.FC = ({
 }) => {
   const colors = useSelector(state => state.theme.theme);
   const [issearch, setissearch] = useState(false);
-  const [ListType, setlistType] = useState(route.params?.type);
+  
   const [paramsuserId, setparamsuserId] = useState(route.params?.userId);
   const [ActionId, setActionId] = useState(route.params?.ActionId);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
@@ -66,7 +66,7 @@ const PostCommentReplyLikeList: React.FC = ({
     pageSize_Set,
     currentPage_Set,
     hasMore_Set
-  } = useApiPagingWithtotalRequest(getPostCommentReplyLikeList,setInfiniteLoading);
+  } = useApiPagingWithtotalRequest(getPostBuyerList,setInfiniteLoading);
  
   const BlurredStyle = {
     backgroundColor: colors.inputBg,
@@ -98,9 +98,9 @@ const PostCommentReplyLikeList: React.FC = ({
       
    currentPage_Set(1);
   hasMore_Set(true);
-        await execute(listType,ActionId,route.params.userId);
+        await execute(ActionId,paramsuserId);
     
-      pageTitle(`${listType} Reply Likes`);
+      pageTitle(`Buyer List`);
     } catch (error) {}
   };
 
@@ -126,7 +126,7 @@ const PostCommentReplyLikeList: React.FC = ({
   const loadMore = async () => {
     if(!isInfiniteLoading)
   {  
-    await executeloadMore(listType,ActionId,route.params.userId);
+    await executeloadMore(ActionId,paramsuserId);
     
   }
   };
@@ -156,8 +156,8 @@ const PostCommentReplyLikeList: React.FC = ({
                 <UserAvartarWithName
                   userName={item?.userName}
                   userImage={item?.profileImage}
-                  userId={item.userId}
-                  loggedInUserId={user.userId}
+                 userId={item.userId}
+                 loggedInUserId={user.userId}
                   key={index}
                 />
               </View>
@@ -207,4 +207,4 @@ const localStyles = StyleSheet.create({
     ...styles.ph15,
   },
 });
-export default AppBaseContainer(PostCommentReplyLikeList, '', true);
+export default AppBaseContainer(BuyerList, '', true);

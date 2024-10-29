@@ -426,7 +426,7 @@ const CarPostPreview: React.FC = ({
       )}
     </View>
   );
-  console.log(JSON.stringify(displayfilter));
+
   return (
     <ZSafeAreaView>
       <ZHeader

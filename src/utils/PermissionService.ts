@@ -90,7 +90,55 @@ class PermissionService {
       }
     }
   }
+const checkPermission = async () => {
+  if (Platform.OS === 'android') {
+    try {
+      const permissions = [
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+      ];
+      
+      const permissionStatuses = await Promise.all(
+        permissions.map((permission) => PermissionsAndroid.check(permission))
+      );
 
+      const permissionsToRequest = permissions.filter(
+        (_, index) => !permissionStatuses[index]
+      );
+
+      if (permissionsToRequest.length > 0) {
+        const result = await PermissionsAndroid.requestMultiple(permissionsToRequest);
+        
+        // Check if any permission is permanently denied (blocked)
+        for (const [key, value] of Object.entries(result)) {
+          if (value === 'never_ask_again') {
+            await showBlockedPermissionAlert(key);
+          }
+        }
+        return result;
+      }
+      
+      return permissionStatuses;
+    } catch (err) {
+      console.warn(err);
+    }
+  } else if (Platform.OS === 'ios') {
+    try {
+      const locationPermissionStatus = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+
+      if (locationPermissionStatus === RESULTS.BLOCKED) {
+        await showBlockedPermissionAlert('Location');
+      } else if (locationPermissionStatus !== RESULTS.GRANTED) {
+        const locationPermission = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+        return locationPermission;
+      }
+      
+      return RESULTS.GRANTED;
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+};
   static waitForAppForeground() {
     return new Promise((resolve) => {
       const subscription = AppState.addEventListener('change', async (nextAppState) => {

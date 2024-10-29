@@ -84,21 +84,17 @@ const StoryCommentBottomSheet = forwardRef(({ postItem, User, listTypeData,Story
        await pageSize_Set(5)
        await currentPage_Set(0);
        await  hasMore_Set(true);
-      console.log("==========================");
-      console.log(postItem);
-      console.log(User);
+    
         await execute(
          
          User.userId,
          postItem.storyId,
          
         );
-        console.log('data :-', data);
-        console.log('status :-', status);
-        console.log('error :-', error);
+     
       }
       const loadMorepage = async () => {
-        console.log('loadMorepage');
+    
         if(!isInfiniteLoading)
       { 
           await loadMore( 
@@ -153,7 +149,7 @@ const StoryCommentBottomSheet = forwardRef(({ postItem, User, listTypeData,Story
       }));
     
       const handleSheetChanges = useCallback((index) => {
-        console.log('handleSheetChanges', index);
+     
         setIsOpen(index >= 0);
         if(index==-1)
         {  
@@ -328,7 +324,7 @@ module="Post"
    // setisDataRef(!isDataRef);
   };
   const handleCommentLike = async item => {
-    console.log("handleCommentLike",item);
+ 
      let result;
     let endpoint=""
       if(!isInfiniteLoading)
@@ -442,8 +438,7 @@ module="Post"
               
               );
               //
-              console.log("===========postComment==========");
-             console.log(postComment.data.data.storyDetails[0]);
+           
 
            await  setStoryState({
               likeCount: postComment.data.data.storyDetails[0].likeCount,
@@ -465,7 +460,7 @@ module="Post"
                 newComment,
                 endpoint,
               );
-          console.log(postComment);
+ 
               setReset(!Reset);
             //   //  await getCommentData();
             //   setisSubmitPressed(true);

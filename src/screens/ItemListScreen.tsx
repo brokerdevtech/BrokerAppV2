@@ -70,6 +70,7 @@ import FilterBottomSheet from '../sharedComponents/FilterBottomSheet';
 import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
 import {concat} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
+import RecentSearchSection from './Dashboard/RecentSearchSection';
 const SkeletonPlaceholder = () => {
   return (
     <HStack space={10} style={styles.skeletonContainer}>
@@ -80,7 +81,7 @@ const SkeletonPlaceholder = () => {
   );
 };
 const RederListHeader = React.memo(
-  ({categoryId, AppLocation, FilterChipsData, recordCount}) => {
+  ({categoryId, AppLocation, FilterChipsData, recordCount,user}) => {
     return (
       <>
         <UserStories />
@@ -98,6 +99,19 @@ const RederListHeader = React.memo(
             categoryId: categoryId,
           }}
         />
+
+<RecentSearchSection
+            heading={'Recent Search'}
+            background={'#F7F8FA'}
+            endpoint={`/RecentSearch/Categorywise`}
+            isShowAll={false}
+            request={{
+              userId:user.userId,
+              categoryId: categoryId,
+            }}
+          />
+
+
         {/* <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips> */}
       </>
     );
@@ -309,6 +323,8 @@ const ItemListScreen: React.FC<any> = ({
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
+  const [brandfilters, setbrandfilters] = useState(route.params.brandfilters);
+
   const [listApiobj, setlistApiobj] = useState({});
   const [ApppageTitle, setApppageTitle] = useState('');
   const [searchKeyword, setsearchKeyword] = useState('');
@@ -323,21 +339,17 @@ const ItemListScreen: React.FC<any> = ({
   const FilterSheetRef = useRef(null);
   const closeModal = useCallback(
     item => {
-      console.log('============== closeModal==================');
-      console.log(item);
-      console.log('============== closeModal==================');
+  
       if (Object.keys(item).length > 0) {
 
-        console.log('============== one==================');
-        
-        console.log(Object.keys(item).length);
+
         // setPopUPFilter(item);
         // setLoading(true);
         // pageSize_Set(5);
         // currentPage_Set(1);
         // hasMore_Set(true);
          let tags = getFilterTags(item);
-
+         tags.frontendFilters=JSON.stringify(item)
         // callPodcastList(tags);
 
         navigation.navigate('ItemFilterListScreen', {
@@ -573,6 +585,21 @@ const ItemListScreen: React.FC<any> = ({
     setLoading(false);
   }
 
+  const convertTagsToNewFormat=(tags)=> {
+    console.log("tags")
+    console.log(tags)
+    return tags.reduce((acc, tag) => {
+        const transformedValues = tag.values.map((item) => ({
+            key: item.key ,// Assign the new key value
+         
+            value: item.value  // Set the new value
+        }));
+        acc[tag.name] = transformedValues;
+        return acc;
+    }, {});
+}
+
+
   useEffect(() => {
     setLoading(true);
     if (listTypeData == 'RealEstate') {
@@ -585,7 +612,7 @@ const ItemListScreen: React.FC<any> = ({
     }
     setItemslocalities(AppLocation);
 
-    let obj = {
+    let obj:any = {
       keyWord: searchKeyword,
       cityName: AppLocation.City,
       userId: user.userId,
@@ -595,6 +622,17 @@ const ItemListScreen: React.FC<any> = ({
       geoLocationLongitude: AppLocation.geoLocationLongitude,
       isSearch: false,
     };
+
+    let BraandPopUPFilter=null;
+    if(brandfilters)
+
+{obj.filters=brandfilters
+
+ BraandPopUPFilter=convertTagsToNewFormat(brandfilters.tags);
+  console.log("brandfilters",BraandPopUPFilter);
+
+}
+
     setlistApiobj(obj);
 
     const locationData = [
@@ -606,22 +644,26 @@ const ItemListScreen: React.FC<any> = ({
     ];
     if (listTypeData == 'Car') {
     // Uncomment if you need to set additional selected filters
-    const updatedPopUPFilter = {
+    let updatedPopUPFilter = {
       Location: locationData,
       Budget: {minValue: 20000, maxValue: 500000000 ,isDefault:true},
      
     };
+    if(BraandPopUPFilter!=null)
+    {updatedPopUPFilter={...updatedPopUPFilter,...BraandPopUPFilter}}
     setPopUPFilter(updatedPopUPFilter);
   }
 
 
   if (listTypeData == 'RealEstate') {
     // Uncomment if you need to set additional selected filters
-    const updatedPopUPFilter = {
+    let updatedPopUPFilter = {
       Location: locationData,
       Budget: {minValue: 20000, maxValue: 500000000 ,isDefault:true},
       Area: {minValue: 0, maxValue: 5000,isDefault:true},
     };
+    if(BraandPopUPFilter!=null)
+      {updatedPopUPFilter={...updatedPopUPFilter,...BraandPopUPFilter}}
     setPopUPFilter(updatedPopUPFilter);
   }
 
@@ -656,6 +698,8 @@ const ItemListScreen: React.FC<any> = ({
     let obj = {
       ...listApiobj,
       keyWord: searchText,
+     frontendFilters:JSON.stringify(PopUPFilter),
+     isSearch: true,
     };
 
 
@@ -724,6 +768,7 @@ const ItemListScreen: React.FC<any> = ({
                   AppLocation={AppLocation}
                   FilterChipsData={FilterChipsData}
                   recordCount={recordCount}
+                  user={user}
                 />
               }
               keyExtractor={(item, index) => index.toString()}

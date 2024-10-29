@@ -24,6 +24,7 @@ import {
   imagesBucketcloudfrontPath,
   postsImagesBucketPath,
 } from '../../config/constants';
+import { RecentSearchSData } from '../../../BrokerAppCore/services/new/dashboardService';
 
 interface BrandSectionProps {
   heading: string;
@@ -33,40 +34,65 @@ interface BrandSectionProps {
   request: ListDashboardPostRequest;
 }
 
-const BrandSection = (props: BrandSectionProps) => {
-  const {data, status, error, execute} = useApiRequest(fetchDashboardData);
+const RecentSearchSection = (props: BrandSectionProps) => {
+  const {data, status, error, execute} = useApiRequest(RecentSearchSData);
   const navigation = useNavigation();
 
   const callBrandList = async () => {
     await execute(props.endpoint, props.request);
-    // console.log(props.heading, 'data :-', data);
+    console.log(props.heading, 'data :-', data);
   };
-
+  useEffect(() => {
+    console.log('data :-', data);
+  }, [data]);
   useEffect(() => {
     callBrandList();
   }, [props]);
 
   const renderProductItems = ({item, index}) => {
-  
+    const parsedItem =  JSON.parse(item.requestJson) ;
+    const frontendFilters = JSON.parse(item.frontendFilters);
+
+    const callFilterListScreen = async () => {
+     
+      let obj = {
+        ...parsedItem,
+      
+       frontendFilters:item.frontendFilter,
+       isSearch: false,
+      };
+  let listTypeData="RealEstate"
+
+  if(item.categoryId==2)
+  {
+    listTypeData="car"
+  }
+      navigation.navigate('ItemFilterListScreen', {
+        listType: listTypeData,
+        categoryId: item.categoryId,
+        Filters:frontendFilters,
+        listApiobj:obj,
+        searchText:parsedItem.keyWord
+      })
+
+
+
+    };
+
+
     return (
       <View style={styles.cardContainer}>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('ItemListScreen', {
-              listType: item.hasOwnProperty('fuelType') ? 'Car' : 'RealEstate',
-              categoryId: item.hasOwnProperty('fuelType') ? 2 : 1,
-              brandfilters:item.filters,
-            })
+          onPress={
+            callFilterListScreen
           }>
-          <Image
-            source={{
-              uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
-            }}
-            style={styles.carImage}
-          />
+          
           <View style={styles.detailsContainer}>            
+            <ZText type={'R16'}   numberOfLines={1}  >
+              {parsedItem?.keyWord}
+            </ZText>
             <ZText type={'R14'}   numberOfLines={1}  style={styles.carBrand}>
-              {item.title}
+              {parsedItem?.cityName}
             </ZText>
         </View>
         </TouchableOpacity>
@@ -75,7 +101,14 @@ const BrandSection = (props: BrandSectionProps) => {
   };
 
   return (
-    <View style={{backgroundColor: props.background, paddingVertical: 2}}>
+<>
+    { data!= null && data.length > 0 &&
+<View
+          style={{
+            backgroundColor: props.background,
+            paddingVertical: 10,
+            flex: 1,
+          }}>
       <HStack space="md" reversed={false} style={styles.heading}>
         <ZText type={'R18'}>{props.heading}</ZText>
         <ZText type={'R14'} style={styles.link} />
@@ -83,7 +116,7 @@ const BrandSection = (props: BrandSectionProps) => {
       <HStack space="md" reversed={false} style={{paddingHorizontal: 10}}>
         <FlatList
           data={data}
-          keyExtractor={item => item.postId.toString()}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={renderProductItems}
           initialNumToRender={3}
           showsHorizontalScrollIndicator={false}
@@ -92,7 +125,8 @@ const BrandSection = (props: BrandSectionProps) => {
           // ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
       </HStack>
-    </View>
+    </View>}
+    </>
   );
 };
 const styles = StyleSheet.create({
@@ -147,7 +181,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   cardContainer: {
-    width: 132,
+   
     borderRadius: 12,
     backgroundColor: '#FFF',
     margin: 10,
@@ -157,6 +191,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 20,
     elevation: 4,
+    width: 120,
+    height: 109,
+    alignContent:'center',
+    
   },
   carImage: {
     width: 132,
@@ -185,6 +223,11 @@ const styles = StyleSheet.create({
   detailsContainer: {
     paddingHorizontal: 10,
     paddingTop: 10,
+    alignContent:'center',
+    height:"100%",
+   // backgroundColor:'red',
+    display:'flex',
+    justifyContent:'center'
   },
   price: {
     fontSize: 16,
@@ -201,10 +244,10 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   carBrand: {
-    fontSize: 14,
-    fontWeight: '500',
+   
+   
     color: '#000',
-    marginTop: 4,
+    marginTop: 15,
   },
 });
-export default BrandSection;
+export default RecentSearchSection;

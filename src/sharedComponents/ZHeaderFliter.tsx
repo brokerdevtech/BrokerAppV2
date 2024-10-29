@@ -49,7 +49,7 @@ function ZHeaderFliter(props) {
     }
   };
   const searchSubmit = (e: any, mode: string) => {
-    console.log(searchText);
+ 
     handleSearch(searchText);
     setShowSearchBox(false);
   };

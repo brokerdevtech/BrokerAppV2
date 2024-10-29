@@ -52,7 +52,7 @@ import {useNavigation} from '@react-navigation/native';
 import {colors} from '../themes';
 
 const propertyDetails = (data: any, user: any, navigation: any) => {
-  console.log('propertyDetails', data);
+
 
   const onPressUser = (userId, userName, userImage) => {
     if (user.userId === userId) {
@@ -69,7 +69,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
   };
 
   const generateLink = async () => {
-    console.log(JSON.stringify(data));
+
     try {
       const response = await fetch(
         `https://tinyurl.com/api-create.php?url=${encodeURIComponent(
@@ -77,14 +77,14 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
         )}`,
       );
       const text = await response.text();
-      console.log('TinyURL Response:', text);
+
       return text;
     } catch (error) {}
   };
 
   const sharePost = async () => {
     const getLink = await generateLink();
-    console.log('Generated Link:', getLink);
+ 
     try {
       await Share.share({
         message: getLink,
@@ -253,14 +253,14 @@ const carDetails = (data: any, user: any, navigation: any) => {
         )}`,
       );
       const text = await response.text();
-      console.log('TinyURL Response:', text);
+
       return text;
     } catch (error) {}
   };
 
   const sharePost = async () => {
     const getLink = await generateLink();
-    console.log('Generated Link:', getLink);
+ 
     try {
       await Share.share({
         message: getLink,
@@ -386,8 +386,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
     await execute(route.params.postType, route.params.postId);
   };
   const chatProfilePress = useCallback(async () => {
-    console.log(data);
-    console.log('chatProfilePress');
+
     if (user.userId.toString() == data.userId.toString()) {
       Alert.alert('Error', 'You cannot chat with yourself.');
     } else {

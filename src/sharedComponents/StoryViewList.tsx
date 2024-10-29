@@ -156,7 +156,8 @@ const StoryViewList: React.FC = ({
                 <UserAvartarWithName
                   userName={item?.viewerName}
                   userImage={item?.profileImage}
-                 
+                  userId={item.userId}
+                  loggedInUserId={user.userId}
                   key={index}
                 />
               </View>

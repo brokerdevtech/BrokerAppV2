@@ -9,7 +9,9 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  Linking,Alert,
+  Linking,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
@@ -32,6 +34,7 @@ import {
   Whatsapp_Icon,
   share_PIcon,
   bookmark_icon,
+  description_icon,
 } from '../assets/svg';
 import {imagesBucketcloudfrontPath} from '../config/constants';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
@@ -56,8 +59,17 @@ import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import UserStories from '../components/story/UserStories';
 import Recommend from '../sharedComponents/RecomendedBrokers';
 import ProductSection from './Dashboard/ProductSection';
-
-
+import flex from '@/themes/flex';
+import padding from '@/themes/padding';
+import {FlashList} from '@shopify/flash-list';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {colors} from '../themes';
+import {Color} from '@/styles/GlobalStyles';
+import ZHeaderFliter from '../sharedComponents/ZHeaderFliter';
+import FilterBottomSheet from '../sharedComponents/FilterBottomSheet';
+import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
+import {concat} from 'lodash';
+import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
 
 const ProductItem =  React.memo(
   ({ item, listTypeData, User, navigation }) => {
@@ -137,6 +149,7 @@ return (
       onUpdateLikeCount={newCount => {
         console.log(newCount);
       }}
+      PageName="MyItemList"
     /></View>
     {/* Car Details */}
     <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>

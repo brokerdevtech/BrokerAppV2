@@ -122,13 +122,13 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     execute: SocialLoginexecute,
   } = useApiRequest(SocialLogin);
   const handleLogin = async values => {
-    console.log(values, 'values');
+
     const {email, password} = values;
     setLoading(true);
     await execute(email, password);
     setLoading(false);
     if (error) {
-      console.log(status);
+    
       if (!toast.isActive(toastId)) {
         const newId = Math.random();
         setToastId(newId);
