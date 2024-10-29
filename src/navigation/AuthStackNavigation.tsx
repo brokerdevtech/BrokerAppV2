@@ -4,6 +4,9 @@ import {createStackNavigator} from '@react-navigation/stack';
 import LoginScreen from '../screens/Auth/LoginScreen';
 import RegisterScreen from '../screens/Auth/RegisterScreen';
 import ForgotPasswordScreen from '../screens/Auth/ForgotPasswordScreen';
+import GuestDashboardScreen from '../screens/GuestDashBoardScreen';
+import GuestAppTab from './GuestAppTab';
+import GuestAppDrawer from './GuestAppDrawer';
 
 const Stack = createStackNavigator();
 
@@ -43,6 +46,14 @@ const AuthStackNavigation: React.FC<StackNavigationProps> = ({
           headerShown: false,
         }}>
         {props => <ForgotPasswordScreen />}
+      </Stack.Screen>
+      <Stack.Screen
+        name="GuestHome"
+        options={{
+          headerTitle: '',
+          headerShown: false,
+        }}>
+        {props => <GuestAppDrawer />}
       </Stack.Screen>
     </Stack.Navigator>
   );

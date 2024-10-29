@@ -1,3 +1,4 @@
+/* eslint-disable no-catch-shadow */
 import React, {useEffect} from 'react';
 import {
   View,
@@ -36,6 +37,7 @@ import {
 } from '@react-native-google-signin/google-signin';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
+import {handleApiError} from '../../../BrokerAppCore/services/new/ApiResponse';
 
 // Configure Google Sign-In
 GoogleSignin.configure({
@@ -66,6 +68,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [toastId, setToastId] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
+  const isGuest = false;
   const toast = useToast();
   const navigation = useNavigation();
   const handleState = () => {
@@ -78,10 +81,9 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       setLoading(true);
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-
       const fcmToken = await getfcmToken();
 
-      await SocialLoginexecute(
+      const loginResponse = await SocialLogin(
         userInfo.data?.user.email,
         'Google',
         userInfo.data?.idToken,
@@ -98,22 +100,51 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         AppLocation.viewportSouthWestLat,
         AppLocation.viewportSouthWestLng,
       );
+
+      if (!loginResponse.success) {
+        const {statusMessage} = loginResponse.data;
+        console.log(statusMessage, 'Status Message');
+        setLoading(false);
+
+        if (!toast.isActive(toastId)) {
+          const newId = Math.random();
+          setToastId(newId);
+          toast.show({
+            id: newId,
+            placement: 'bottom',
+            duration: 3000,
+            render: ({id}) => {
+              const uniqueToastId = 'toast-' + id;
+              return (
+                <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                  <ToastDescription>
+                    {statusMessage || 'An error occurred'}
+                  </ToastDescription>
+                </Toast>
+              );
+            },
+          });
+        }
+      }
     } catch (error) {
       setLoading(false);
 
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // user cancelled the login flow
+        // User cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {
-        // operation (e.g. sign in) is in progress already
+        // Operation (e.g., sign in) is in progress already
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        // play services not available or outdated
+        // Play services not available or outdated
       } else {
-        // some other error happened
+        // Other error
+        const apiError = handleApiError(error);
+        console.log(apiError.message, 'API Error');
       }
     } finally {
-      //setLoading(false);
+      setLoading(false);
     }
   };
+
   const {data, status, error, execute} = useApiRequest(login, setLoading);
   const {
     data: SocialLogindata,
@@ -122,7 +153,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     execute: SocialLoginexecute,
   } = useApiRequest(SocialLogin);
   const handleLogin = async values => {
-
+    // console.log(values, 'values');
     const {email, password} = values;
     setLoading(true);
     await execute(email, password);
@@ -244,6 +275,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       // Proceed with storing tokens and user data
     }
   }, [data]);
+  // console.log(SocialLoginstatus, 'jdk');
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Login Account</Text>
@@ -326,7 +358,13 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
           </View>
         )}
       </Formik>
-
+      <TouchableOpacity
+        style={[styles.signInButton]}
+        onPress={() => {
+          navigation.navigate('GuestHome');
+        }}>
+        <Text style={styles.signInText}>Continue As Guest</Text>
+      </TouchableOpacity>
       {/* Social Media Sign In Options */}
       <View
         style={{
@@ -437,8 +475,8 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 30,
     alignItems: 'center',
-    marginBottom: 50,
-    marginTop: 56,
+    marginBottom: 40,
+    // marginTop: 56,
   },
   signInText: {
     color: '#fff',

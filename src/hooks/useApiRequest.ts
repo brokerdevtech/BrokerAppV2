@@ -39,7 +39,7 @@ export const useApiRequest = <T, P extends any[]>(
       if (setLoading) {
         setLoading(false);
       }
-
+      console.log(error.response.message, 'mesks');
       setError('An unexpected error occurred');
       setStatus(500);
     } finally {

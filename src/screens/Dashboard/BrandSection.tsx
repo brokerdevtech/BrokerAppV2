@@ -24,19 +24,35 @@ import {
   imagesBucketcloudfrontPath,
   postsImagesBucketPath,
 } from '../../config/constants';
+import {
+  AlertDialog,
+  AlertDialogBackdrop,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+} from '../../../components/ui/alert-dialog';
+import {Button} from '../../../components/ui/button';
+import {Color} from '../../styles/GlobalStyles';
 
 interface BrandSectionProps {
   heading: string;
   background: string;
   endpoint: string;
   isShowAll: boolean;
+  isGuest: boolean;
   request: ListDashboardPostRequest;
 }
 
 const BrandSection = (props: BrandSectionProps) => {
   const {data, status, error, execute} = useApiRequest(fetchDashboardData);
   const navigation = useNavigation();
-
+  const [showAlertDialog, setShowAlertDialog] = React.useState(false);
+  const handleClose = () => setShowAlertDialog(false);
+  const onPressSignUp = () => {
+    //  onOpen();
+    setShowAlertDialog(false);
+    navigation.navigate('Register');
+  };
   const callBrandList = async () => {
     await execute(props.endpoint, props.request);
     // console.log(props.heading, 'data :-', data);
@@ -47,28 +63,32 @@ const BrandSection = (props: BrandSectionProps) => {
   }, [props]);
 
   const renderProductItems = ({item, index}) => {
-  
+    // console.log('item =====>', item);
+    const handlePress = () => {
+      if (props.isGuest) {
+        setShowAlertDialog(true); // Show alert dialog if user is a guest
+      } else {
+        navigation.navigate('ItemListScreen', {
+          listType: item.hasOwnProperty('fuelType') ? 'Car' : 'RealEstate',
+          categoryId: item.hasOwnProperty('fuelType') ? 2 : 1,
+          brandName: item.searchText ?? '',
+        });
+      }
+    };
     return (
       <View style={styles.cardContainer}>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('ItemListScreen', {
-              listType: item.hasOwnProperty('fuelType') ? 'Car' : 'RealEstate',
-              categoryId: item.hasOwnProperty('fuelType') ? 2 : 1,
-              brandfilters:item.filters,
-            })
-          }>
+        <TouchableOpacity onPress={handlePress}>
           <Image
             source={{
               uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
             }}
             style={styles.carImage}
           />
-          <View style={styles.detailsContainer}>            
-            <ZText type={'R14'}   numberOfLines={1}  style={styles.carBrand}>
+          <View style={styles.detailsContainer}>
+            <ZText type={'R14'} numberOfLines={1} style={styles.carBrand}>
               {item.title}
             </ZText>
-        </View>
+          </View>
         </TouchableOpacity>
       </View>
     );
@@ -92,6 +112,43 @@ const BrandSection = (props: BrandSectionProps) => {
           // ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
       </HStack>
+      <AlertDialog isOpen={showAlertDialog} onClose={handleClose} size="md">
+        <AlertDialogBackdrop />
+        <AlertDialogContent>
+          <AlertDialogBody className="mt-3 mb-4 ">
+            <ZText type="S18" style={{marginBottom: 20, textAlign: 'center'}}>
+              Want to see More ?
+            </ZText>
+            <ZText type="R16" style={{marginBottom: 20, textAlign: 'center'}}>
+              Hurry up create an account with us now.
+            </ZText>
+          </AlertDialogBody>
+          <AlertDialogFooter
+            style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Button
+              variant="outline"
+              action="secondary"
+              style={{borderColor: Color.primary}}
+              onPress={handleClose}
+              size="md">
+              <ZText
+                type="R16"
+                color={Color.primary}
+                style={{textAlign: 'center'}}>
+                Cancel
+              </ZText>
+            </Button>
+            <Button
+              size="md"
+              onPress={onPressSignUp}
+              style={{backgroundColor: Color.primary, marginLeft: 10}}>
+              <ZText type="R16" style={{color: 'white', textAlign: 'center'}}>
+                Sign Up
+              </ZText>
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </View>
   );
 };

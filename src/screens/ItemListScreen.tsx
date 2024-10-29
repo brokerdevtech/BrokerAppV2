@@ -88,7 +88,7 @@ const RederListHeader = React.memo(
 
         <Recommend categoryId={categoryId} />
         <ProductSection
-          heading={'Newly Launched'}
+          heading={'Newly Launch'}
           background={'#FFFFFF'}
           endpoint={'Newin'}
           isShowAll={false}
