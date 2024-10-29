@@ -358,14 +358,13 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
           </View>
         )}
       </Formik>
-      {/* <TouchableOpacity
+      <TouchableOpacity
         style={[styles.signInButton]}
         onPress={() => {
-          setLoggedIn(false);
-          navigation.navigate('Home', {isGuest: true});
+          navigation.navigate('GuestHome');
         }}>
         <Text style={styles.signInText}>Continue As Guest</Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
       {/* Social Media Sign In Options */}
       <View
         style={{
