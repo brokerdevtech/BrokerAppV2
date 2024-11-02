@@ -28,8 +28,12 @@ export const useApiRequest = <T, P extends any[]>(
       }
 
       if (!response.success) {
-        setError(response.message || 'An error occurred');
+        if (setLoading) {
+          setLoading(false);
+        }
+        setError(response?.data?.statusMessage || 'An error occurred');
         setStatus(response.status || 500);
+        console.log(response);
       } else {
         // debugger;
         setData(response.data || null);
@@ -39,7 +43,7 @@ export const useApiRequest = <T, P extends any[]>(
       if (setLoading) {
         setLoading(false);
       }
-      console.log(error.response.message, 'mesks');
+      // console.log(error.response.message, 'mesks');
       setError('An unexpected error occurred');
       setStatus(500);
     } finally {
