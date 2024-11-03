@@ -68,9 +68,8 @@ function UserAvartarWithNameComponent({
     }
   };
   const onPressArrow = () => {
-    navigation.push(StackNav.Network, {
+    navigation.push('ConnectionScreen', {
       activeUserName: userName,
-
       activeUserId: userId,
       menuValue: true,
     });

@@ -60,6 +60,7 @@ import RenderUserDetail from './RenderUserDetails';
 import FollowUnfollowComponent from './FollowUnfollowButton';
 import ButtonWithPermissionCheck from './ButtonWithPermissionCheck';
 import {Chat_icon, Network_icon} from '../assets/svg';
+import ZButton from './ZButton';
 
 const OtherProfileScreen: React.FC = ({
   toast,
@@ -72,6 +73,7 @@ const OtherProfileScreen: React.FC = ({
   color,
   route,
   pageTitle,
+  toastMessage,
 }) => {
   const userId = route.params.userId;
 
@@ -319,16 +321,13 @@ const OtherProfileScreen: React.FC = ({
       }
 
       const result = await addToMyNetwork(InUserId, userId);
-
+      console.log(result);
       if (result?.status === 'success') {
-        toast.show({
-          description: result.statusMessage,
-        });
+        toastMessage(result.statusMessage);
+
         setisrefresh(!isrefresh);
       } else {
-        toast.show({
-          description: result.error,
-        });
+        toastMessage(result.error);
       }
       setLoading(false);
     } catch (error) {
@@ -347,6 +346,8 @@ const OtherProfileScreen: React.FC = ({
       </TouchableOpacity>
     );
   };
+  // clg;
+  console.log(ProfileData);
   const PostHeader = () => {
     return (
       <>
