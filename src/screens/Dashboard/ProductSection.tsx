@@ -58,7 +58,7 @@ const ProductSection = (props: ProductSectionProps) => {
   const onPressSignUp = () => {
     //  onOpen();
     setShowAlertDialog(false);
-    navigation.navigate('Register');
+    navigation.navigate('Login');
   };
   const callPodcastList = async () => {
     // console.log("props.request");
@@ -238,7 +238,7 @@ const ProductSection = (props: ProductSectionProps) => {
                   <ZText
                     type="R16"
                     style={{color: 'white', textAlign: 'center'}}>
-                    Sign Up
+                   Login
                   </ZText>
                 </Button>
               </AlertDialogFooter>

@@ -107,7 +107,7 @@ const GuestAppTab: React.FC = () => {
   const onPressSignUp = () => {
     //  onOpen();
     setShowAlertDialog(false);
-    navigation.navigate('Register');
+    navigation.navigate('Login');
   };
 
   return (

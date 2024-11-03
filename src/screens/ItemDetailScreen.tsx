@@ -540,15 +540,15 @@ const styles = StyleSheet.create({
     marginRight: 10,
     justifyContent: 'center',
   },
-  footer: {
-    flexDirection: 'row',
-    //justifyContent: 'space-around',
-    alignItems: 'center',
-    // paddingVertical: 15,
-    backgroundColor: '#FFF',
-    borderTopWidth: 1,
-    borderColor: '#e0e0e0',
-  },
+  // footer: {
+  //   flexDirection: 'row',
+  //   //justifyContent: 'space-around',
+  //   alignItems: 'center',
+  //   // paddingVertical: 15,
+  //   backgroundColor: '#FFF',
+  //   borderTopWidth: 1,
+  //   borderColor: '#e0e0e0',
+  // },
 
   profileImage: {
     width: moderateScale(48),

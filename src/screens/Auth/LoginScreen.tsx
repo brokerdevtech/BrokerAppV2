@@ -396,7 +396,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         Don't have an account?{' '}
         <Text
           style={styles.signUpText}
-          onPress={() => navigation.navigate('Register')}>
+          onPress={() => navigation.navigate('Login')}>
           Sign Up
         </Text>
       </Text>
