@@ -81,9 +81,10 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       setLoading(true);
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
+
       const fcmToken = await getfcmToken();
 
-      const loginResponse = await SocialLogin(
+      await SocialLoginexecute(
         userInfo.data?.user.email,
         'Google',
         userInfo.data?.idToken,
@@ -100,12 +101,9 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         AppLocation.viewportSouthWestLat,
         AppLocation.viewportSouthWestLng,
       );
-
-      if (!loginResponse.success) {
-        const {statusMessage} = loginResponse.data;
-        console.log(statusMessage, 'Status Message');
+      if (SocialLoginerror) {
         setLoading(false);
-
+        console.log(SocialLoginerror, 'erroe');
         if (!toast.isActive(toastId)) {
           const newId = Math.random();
           setToastId(newId);
@@ -117,9 +115,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
               const uniqueToastId = 'toast-' + id;
               return (
                 <Toast nativeID={uniqueToastId} action="muted" variant="solid">
-                  <ToastDescription>
-                    {statusMessage || 'An error occurred'}
-                  </ToastDescription>
+                  <ToastDescription>{SocialLoginerror}</ToastDescription>
                 </Toast>
               );
             },
@@ -130,28 +126,25 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       setLoading(false);
 
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // User cancelled the login flow
+        // user cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {
-        // Operation (e.g., sign in) is in progress already
+        // operation (e.g. sign in) is in progress already
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        // Play services not available or outdated
+        // play services not available or outdated
       } else {
-        // Other error
-        const apiError = handleApiError(error);
-        console.log(apiError.message, 'API Error');
+        // some other error happened
       }
     } finally {
-      setLoading(false);
+      //setLoading(false);
     }
   };
-
   const {data, status, error, execute} = useApiRequest(login, setLoading);
   const {
     data: SocialLogindata,
     status: SocialLoginstatus,
     error: SocialLoginerror,
     execute: SocialLoginexecute,
-  } = useApiRequest(SocialLogin);
+  } = useApiRequest(SocialLogin, setLoading);
   const handleLogin = async values => {
     // console.log(values, 'values');
     const {email, password} = values;
