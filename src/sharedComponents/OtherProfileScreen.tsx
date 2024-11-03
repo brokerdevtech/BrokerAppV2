@@ -60,6 +60,7 @@ import RenderUserDetail from './RenderUserDetails';
 import FollowUnfollowComponent from './FollowUnfollowButton';
 import ButtonWithPermissionCheck from './ButtonWithPermissionCheck';
 import {Chat_icon, Network_icon} from '../assets/svg';
+import ZButton from './ZButton';
 
 const OtherProfileScreen: React.FC = ({
   toast,
@@ -524,7 +525,7 @@ const OtherProfileScreen: React.FC = ({
     navigation.navigate(screen.navigationScreen, {
       listType: screen.listType,
       categoryId: screen.categoryId,
-      userId: user.userId,
+      userId: userId,
     });
   };
 

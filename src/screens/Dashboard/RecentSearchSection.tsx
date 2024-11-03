@@ -49,56 +49,66 @@ const RecentSearchSection = (props: BrandSectionProps) => {
     callBrandList();
   }, [props]);
 
-  const renderProductItems = ({item, index}) => {
-    const parsedItem =  JSON.parse(item.requestJson) ;
-    const frontendFilters = JSON.parse(item.frontendFilters);
-
+  const renderProductItems = ({ item, index }) => {
+    if (!item || !item.requestJson || !item.frontendFilters) {
+     // console.warn('Invalid item structure:', item);
+      return null; // Return null if item structure is invalid
+    }
+  
+    let parsedItem;
+    let frontendFilters;
+  
+    try {
+      parsedItem = JSON.parse(item.requestJson);
+      frontendFilters = JSON.parse(item.frontendFilters);
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      return null; // Return null if JSON parsing fails
+    }
+  
     const callFilterListScreen = async () => {
-     
+      if (!parsedItem) {
+        console.warn('Parsed item is invalid');
+        return;
+      }
+  
       let obj = {
         ...parsedItem,
-      
-       frontendFilters:item.frontendFilter,
-       isSearch: false,
+        frontendFilters: item.frontendFilter || [],
+        isSearch: false,
       };
-  let listTypeData="RealEstate"
-
-  if(item.categoryId==2)
-  {
-    listTypeData="car"
-  }
+  
+      let listTypeData = "RealEstate";
+  
+      if (item.categoryId === 2) {
+        listTypeData = "car";
+      }
+  
       navigation.navigate('ItemFilterListScreen', {
         listType: listTypeData,
         categoryId: item.categoryId,
-        Filters:frontendFilters,
-        listApiobj:obj,
-        searchText:parsedItem.keyWord
-      })
-
-
-
+        Filters: frontendFilters || [],
+        listApiobj: obj,
+        searchText: parsedItem.keyWord || '',
+      });
     };
-
-
+  
     return (
       <View style={styles.cardContainer}>
-        <TouchableOpacity
-          onPress={
-            callFilterListScreen
-          }>
-          
-          <View style={styles.detailsContainer}>            
-            <ZText type={'R16'}   numberOfLines={1}  >
-              {parsedItem?.keyWord}
+        <TouchableOpacity onPress={callFilterListScreen}>
+          <View style={styles.detailsContainer}>
+            <ZText type={'R16'} numberOfLines={1}>
+              {parsedItem?.keyWord || 'N/A'}
             </ZText>
-            <ZText type={'R14'}   numberOfLines={1}  style={styles.carBrand}>
-              {parsedItem?.cityName}
+            <ZText type={'R14'} numberOfLines={1} style={styles.carBrand}>
+              {parsedItem?.cityName || 'N/A'}
             </ZText>
-        </View>
+          </View>
         </TouchableOpacity>
       </View>
     );
   };
+  
 
   return (
 <>

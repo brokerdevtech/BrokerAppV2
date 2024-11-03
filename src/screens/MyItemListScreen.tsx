@@ -348,7 +348,7 @@ const MyItemListScreen: React.FC<any> = ({
 
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-          
+              contentContainerStyle={{paddingBottom: 100, gap: 20}}
              keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.8}
               onEndReached={loadMorepage}
@@ -379,40 +379,43 @@ const MyItemListScreen: React.FC<any> = ({
 };
 
 const styles = StyleSheet.create({
-  callbtn:{display:'flex',
-    flexDirection:'row',
-    alignItems:'center',
-     backgroundColor:"#fef4f4",
+  callbtn: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fef4f4',
     width: '90%',
-    marginLeft:10,
+    marginLeft: 10,
     paddingVertical: 5, // Vertical padding
     paddingHorizontal: 5, // Horizontal padding
     borderRadius: 8, // Rounded corners
-    
-    justifyContent: 'center'},
-    Chatbtn:
-      {display:'flex',flexDirection:'row',alignItems:'center', backgroundColor:"#F2F7FE",
-        width: '90%',
-        
-        paddingVertical: 5, // Vertical padding
-        paddingHorizontal: 5, // Horizontal padding
-        borderRadius: 8, // Rounded corners
-  
-   marginRight:10,
-        justifyContent: 'center'
-        
-                   },
-    
+
+    justifyContent: 'center',
+  },
+  Chatbtn: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F2F7FE',
+    width: '90%',
+
+    paddingVertical: 5, // Vertical padding
+    paddingHorizontal: 5, // Horizontal padding
+    borderRadius: 8, // Rounded corners
+
+    marginRight: 10,
+    justifyContent: 'center',
+  },
+
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 20,
- 
   },
   emptyText: {
     fontSize: 16,
-    color: '#555',  // Use a subtle color to match your design
+    color: '#555', // Use a subtle color to match your design
     textAlign: 'center',
   },
   loader: {
@@ -424,7 +427,7 @@ const styles = StyleSheet.create({
   },
   header: {
     justifyContent: 'space-between',
-  
+
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingVertical: 20,
@@ -496,15 +499,15 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
-  WrapcardContainer:{
-    paddingHorizontal:20,
+  WrapcardContainer: {
+    paddingHorizontal: 20,
   },
   cardContainer: {
     width: '100%',
-display:'flex',
+    display: 'flex',
     borderRadius: 12,
     backgroundColor: '#FFF',
- //  margin:20,
+    //  margin:20,
     shadowColor: 'rgba(0, 0, 0, 0.8)',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 1,
@@ -520,7 +523,7 @@ display:'flex',
   iconContainer: {
     position: 'absolute',
     top: 8,
-   
+
     right: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -538,26 +541,24 @@ display:'flex',
   detailsContainer: {
     paddingLeft: 20,
     paddingBottom: 10,
-     paddingTop: 10,
-     width:'100%',
-     paddingRight: 20,
-
-    },
-    detailsContainerBottom: {
+    paddingTop: 10,
+    width: '100%',
+    paddingRight: 20,
+  },
+  detailsContainerBottom: {
     //  paddingLeft: 20,
     borderRadius: 12,
-    paddingTop:5,
-    paddingBottom:10,
-       width:'100%',
-     //  paddingRight: 20,
+    paddingTop: 5,
+    paddingBottom: 10,
+    width: '100%',
+    //  paddingRight: 20,
     //  borderColor:colors.light.appred,
     //  borderBottomWidth:1,
     //  borderBottomLeftRadius: 12,
     //  borderBottomRightRadius: 12,
     //  borderLeftWidth:1,
     //  borderRightWidth:1,
-  
-      },
+  },
   price: {
     fontSize: 16,
     fontWeight: '600',
@@ -580,5 +581,6 @@ display:'flex',
   },
 });
 
-export default AppBaseContainer(MyItemListScreen, '', true,true);
+
+export default AppBaseContainer(MyItemListScreen, '', true,false);
 //export default ItemListScreen;

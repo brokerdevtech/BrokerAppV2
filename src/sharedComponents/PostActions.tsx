@@ -121,8 +121,11 @@ const PostActions = ({item, User, listTypeData, onUpdateLikeCount,PageName='Item
 
   const handleLike = async () => {
 
-    let endpoint =
-      listTypeData === 'RealEstate' || listTypeData === 'Car' ? 'Car' : '';
+let endpoint="RealEstate";
+if( listTypeData === 'RealEstate')
+ {endpoint ="post"}
+else{   
+listTypeData === 'Car'}
     const result = await SetPostLikeUnLike(
       endpoint,
       'Like',
@@ -139,9 +142,12 @@ const PostActions = ({item, User, listTypeData, onUpdateLikeCount,PageName='Item
   };
 
   const handleUnLike = async () => {
-  
-    let endpoint =
-      listTypeData === 'RealEstate' || listTypeData === 'Car' ? 'Car' : '';
+
+  let endpoint="RealEstate";
+  if( listTypeData === 'RealEstate')
+    {endpoint ="post"}
+  else{   
+  listTypeData === 'Car'}
     const result = await SetPostLikeUnLike(
       endpoint,
       'UnLike',

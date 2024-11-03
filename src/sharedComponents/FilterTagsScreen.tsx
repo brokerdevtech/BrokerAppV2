@@ -68,6 +68,8 @@ const FilterTagsScreen: React.FC = ({
   const [resetChild, setResetChild] = useState(false);
   const [childState, setChildState] = useState({});
   const [localities, setLocalities] = useState({});
+  const [Applocalities, setApplocalities] = useState([]);
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const [loading, setLoading] = useState(false);
   const [dependCascade, setDependCascade] = useState(null);
   const {
@@ -94,6 +96,14 @@ const FilterTagsScreen: React.FC = ({
         // First, wait for filterexecute to complete
         await filterexecute(user.userId, 'post');
 
+        const locationData = [
+          {
+            place: {
+              ...AppLocation,
+            },
+          },
+        ];
+        setApplocalities(locationData);
         // // Now fetch the filter data after filterexecute is done
         // await Tagfetching();
       } catch (error) {
@@ -107,8 +117,9 @@ const FilterTagsScreen: React.FC = ({
     // Make sure user.userId is available before calling fetchData
     if (user?.userId) {
       fetchData();
+      
     }
-  }, [user?.userId]);
+  }, [user?.userId,AppLocation]);
   useEffect(() => {
     if (resetChild) {
       setChildState({});
@@ -593,6 +604,7 @@ const FilterTagsScreen: React.FC = ({
         </View>
         <View style={{marginBottom: 20, marginTop: 30}}>
           <LocalityTag
+              selectedLocation={Applocalities}
             isMandatory={true}
             onLocalityChange={onFiltersLocalityChange}></LocalityTag>
         </View>

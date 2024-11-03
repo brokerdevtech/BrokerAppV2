@@ -1,6 +1,6 @@
 import {Formik} from 'formik';
 
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import * as Yup from 'yup';
 import {colors, styles} from '../../../themes';
@@ -31,6 +31,8 @@ import LocalityTag from '../../../sharedComponents/LocalityTag';
 import RegistrationYear from '../../../sharedComponents/RegistrationYear';
 import TagSelector from '../../../sharedComponents/TagSelector';
 import SingleSelectComponent from '../../../sharedComponents/Genric/SingleSelectComponent';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../BrokerAppCore/redux/store/reducers';
 function noWhitespace() {
   return this.transform((value, originalValue) =>
     /\s/.test(originalValue) ? NaN : value,
@@ -73,6 +75,21 @@ const PropertyvalidationSchema = Yup.object().shape({
 const devicewidth = Dimensions.get('window').width;
 const CarForm = ({formikRef}) => {
   const [localities, setLocalities] = useState({});
+  const [Applocalities, setApplocalities] = useState([]);
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
+
+  useEffect(() => {
+    const locationData = [
+      {
+        place: {
+          ...AppLocation,
+        },
+      },
+    ];
+    setApplocalities(locationData);
+console.log(localities);
+
+  }, [AppLocation]);
 
   const PropertyinitialValues = {
     title: '',
@@ -186,6 +203,7 @@ const CarForm = ({formikRef}) => {
             </Box>
             <Box mb="5" style={localStyles.BoxStyles}>
               <LocalityTag
+              selectedLocation={Applocalities}
                 onLocalityChange={onFiltersLocalityChange}
                 isMandatory={true}></LocalityTag>
               {errors.Location && touched.Location && (

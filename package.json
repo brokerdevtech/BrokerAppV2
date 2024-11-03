@@ -52,7 +52,7 @@
     "@react-native-community/geolocation": "^3.4.0",
     "@react-native-community/netinfo": "^11.4.1",
     "@react-native-community/slider": "^4.5.5",
-    "@react-native-firebase/app": "^20.5.0",
+    "@react-native-firebase/app": "^21.3.0",
     "@react-native-firebase/dynamic-links": "^21.0.0",
     "@react-native-firebase/messaging": "^20.5.0",
     "@react-native-google-signin/google-signin": "^13.1.0",
