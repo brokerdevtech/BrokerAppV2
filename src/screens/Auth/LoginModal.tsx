@@ -66,7 +66,7 @@ export default function LoginModal({
 
   useEffect(() => {
     if (data) {
-      console.log('Data is available:', data);
+  
       afterhandleLogin();
       // Proceed with storing tokens and user data
     }

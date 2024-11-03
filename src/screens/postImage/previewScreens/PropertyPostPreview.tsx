@@ -414,7 +414,7 @@ const PropertyPostPreview: React.FC = ({
       </Box>
     );
   };
-  console.log(formValue, 'jjj');
+ 
   return (
     <ZSafeAreaView>
       <ZHeader

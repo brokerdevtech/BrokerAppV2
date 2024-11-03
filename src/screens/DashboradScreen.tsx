@@ -9,7 +9,6 @@ import {
   FlatList,
   TouchableOpacity,
   SafeAreaView,
-  Alert,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
@@ -36,23 +35,24 @@ import {fetchDashboardData} from '../../BrokerAppCore/services/new/dashboardServ
 import UserStories from '../components/story/UserStories';
 import {colors} from '../themes';
 import MarqueeScreen from '../sharedComponents/profile/Marquee';
+import RecentSearchSection from './Dashboard/RecentSearchSection';
 
-export default function DashboradScreen({isGuest = false}) {
+export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
 
   const {data, status, error, execute} = useApiRequest(fetchPodcastList);
   //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
-  const cityToShow = 'Noida';
+  const cityToShow = AppLocation.City;
   const navigation = useNavigation();
 
   const callPodcastList = async () => {
-    await execute(user.userId, 1, 4);
+     execute(user.userId, 1, 4);
     //await footerExecute()
   };
   const callmarList = async () => {
     const request = {pageNo: 1, pageSize: 10, cityName: cityToShow};
-    await marqueeExecute('Marqueue', request);
+     marqueeExecute('Marqueue', request);
   };
   const {
     data: marqueeText,
@@ -63,7 +63,7 @@ export default function DashboradScreen({isGuest = false}) {
   useEffect(() => {
     callPodcastList();
     callmarList();
-  }, []);
+  }, [AppLocation]);
 
   const handleThumbnailTap = async (item, index) => {
     navigation.navigate('VideoReels', {
@@ -121,27 +121,9 @@ export default function DashboradScreen({isGuest = false}) {
       </TouchableOpacity>
     );
   });
-  const handleGuestOverlayClick = () => {
-    Alert.alert('Restricted Access', 'Please log in to access this feature.');
-  };
-  // console.log(user, 'marqueeText');
+
   return (
     <SafeAreaView style={{flex: 1}}>
-      {isGuest && (
-        <TouchableOpacity
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0)',
-            zIndex: 1,
-          }}
-          onPress={handleGuestOverlayClick}
-          activeOpacity={1} // Prevents other components from receiving touches
-        />
-      )}
       <ScrollView style={styles.scrollView}>
         <View>
           <View style={styles.subHeaderSection}>
@@ -252,9 +234,18 @@ export default function DashboradScreen({isGuest = false}) {
             isShowAll={false}
             request={{pageNo: 1, pageSize: 10, cityName: AppLocation.City}}
           />
+           <RecentSearchSection
+            heading={'Recent Search'}
+            background={'#F7F8FA'}
+            endpoint={`RecentSearch`}
+            isShowAll={true}
+            request={{
+              userId:user.userId
+            }}
+          />
           <ProductSection
             heading={'New In Property'}
-            background={'#F7F8FA'}
+            background={'#FFFFFF'}
             endpoint={`Newin`}
             isShowAll={true}
             request={{
@@ -266,7 +257,7 @@ export default function DashboradScreen({isGuest = false}) {
           />
           <ProductSection
             heading={'New In Car'}
-            background={'#FFFFFF'}
+            background={'#F7F8FA'}
             endpoint={`Newin`}
             isShowAll={true}
             request={{
@@ -302,13 +293,10 @@ export default function DashboradScreen({isGuest = false}) {
           <BrandSection
             heading={'Brands Associated'}
             background={'#FFFFFF'}
-            endpoint={`BrandAssociate`}
+            endpoint={`RecentSearch`}
             isShowAll={true}
             request={{
-              pageNo: 1,
-              pageSize: 10,
-              cityName: AppLocation.City,
-              categoryId: 2,
+              userId:user.userId
             }}
           />
           <Footer />
@@ -343,6 +331,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     margin: 20,
     marginRight: 10,
+    //backgroundColor:'#FFFFFF'
   },
   heading: {
     flexDirection: 'row',

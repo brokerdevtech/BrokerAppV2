@@ -103,12 +103,10 @@ const CommentBottomSheet = forwardRef(({ postItem, User, listTypeData,userPermis
          postItem.postId,
 
         );
-        console.log('data :-', data);
-        console.log('status :-', status);
-        console.log('error :-', error);
+      
       }
       const loadMorepage = async () => {
-        console.log('loadMorepage');
+     
         if(!isInfiniteLoading)
       {  console.log('loadMorepage');
         let endpoint = '';
@@ -484,7 +482,7 @@ module="Post"
             }
           } else {
             if (postId != 0 && newComment !== '') {
-              console.log(newReplyName);
+            
               const newStr = newComment.replace(newReplyName, "");
 
               const postComment = await ReplyComment(
@@ -493,7 +491,7 @@ module="Post"
                 newStr,
                 endpoint,
               );
-          console.log(postComment);
+      
               setReset(!Reset);
             //   //  await getCommentData();
             //   setisSubmitPressed(true);

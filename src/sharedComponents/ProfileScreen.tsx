@@ -250,7 +250,7 @@ const ProfileScreen: React.FC = ({
   );
   useEffect(() => {
     if (profilestatus == 200) {
-      console.log(profiledata?.data);
+    
       setProfileData(profiledata?.data);
       const Userfollower: any = [];
       if (profiledata.data) {

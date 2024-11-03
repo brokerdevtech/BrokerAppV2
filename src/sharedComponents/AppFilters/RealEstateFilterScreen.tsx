@@ -168,9 +168,7 @@ const RealEstateFilterScreen: React.FC = ({
 
           if (PopUPFilter) {
             // Fetch filters based on Developer and localities.City
-            console.log('PopUPFilter');
-
-            console.log(PopUPFilter.Location);
+       
 
             setfilterlocalities(PopUPFilter.Location);
 
@@ -196,16 +194,7 @@ const RealEstateFilterScreen: React.FC = ({
             //       },
             //     },
             //   ];
-            console.log(
-              '=================selectedFilters==========================',
-            );
-
-            console.log(
-              selectedFilters,
-            );
-            console.log(
-              PopUPFilter,
-            );
+          
             //   // Uncomment if you need to set additional selected filters
             const updatedSelectedFilters = {
               ...selectedFilters,
@@ -215,11 +204,8 @@ const RealEstateFilterScreen: React.FC = ({
               ...PopUPFilter,
             };
 
-            console.log(
-              '=================updatedSelectedFilters==========================',
-            );
-
-            console.log(updatedSelectedFilters);
+      
+      
             setSelectedFilters(updatedSelectedFilters);
           }
         } catch (error) {
@@ -239,8 +225,7 @@ const RealEstateFilterScreen: React.FC = ({
       'Developer',
       City,
     );
-    console.log('===getDeveloper');
-    console.log(result);
+
     // Update the records for the dependent filter
     if (result.data.filters.length > 0) {
       const updatedFilters = await updateRecordsByName(
@@ -255,7 +240,7 @@ const RealEstateFilterScreen: React.FC = ({
   };
 
   const handleApplyFilters = () => {
-    console.log(JSON.stringify(selectedFilters));
+
     onApply(selectedFilters);
     // Check for mandatory filters
     //   const missingMandatoryFilters = CarfiltersState
@@ -295,18 +280,14 @@ const RealEstateFilterScreen: React.FC = ({
     
     };
     setfilterlocalities(locationData);
-    console.log(
-      '=================updatedSelectedFilters==========================',
-    );
 
-    console.log(updatedSelectedFilters);
     setSelectedFilters(updatedSelectedFilters);
 
     onApply(updatedSelectedFilters);
 
   };
   const onFiltersLocalityChange = async Localitys => {
-    console.log('onFiltersLocalityChange', Localitys);
+ 
     const locationData = [
       {
         place: {
@@ -320,8 +301,7 @@ const RealEstateFilterScreen: React.FC = ({
     let updatedSelectedFilters = {...selectedFilters};
     updatedSelectedFilters[selectedItem.name] = [...locationData];
     setSelectedFilters(updatedSelectedFilters);
-    console.log('SelectedFilters');
-    console.log(selectedFilters);
+    
     if (selectedItem.dependsOn) {
       try {
         // Fetch the cascaded filters for the dependent item
@@ -332,8 +312,7 @@ const RealEstateFilterScreen: React.FC = ({
           Localitys.City,
         );
 
-        console.log('SelectedFilters');
-        console.log(result);
+    
         // Update the records for the dependent filter
         if (result.data.filters.length > 0) {
           const updatedFilters = await updateRecordsByName(
@@ -393,8 +372,7 @@ const RealEstateFilterScreen: React.FC = ({
     let updatedSelectedFilters = {...selectedFilters};
     updatedSelectedFilters[selectedItem.name] = [item];
     setSelectedFilters(updatedSelectedFilters);
-    console.log('Selected');
-    console.log(JSON.stringify(updatedSelectedFilters));
+  
 
     if (selectedItem.dependsOn) {
       try {
@@ -434,8 +412,7 @@ const RealEstateFilterScreen: React.FC = ({
     let updatedSelectedFilters = {...selectedFilters};
     updatedSelectedFilters[selectedItem.name] = [...item];
     setSelectedFilters(updatedSelectedFilters);
-    console.log('Selected');
-    console.log(JSON.stringify(updatedSelectedFilters));
+
 
     if (selectedItem.dependsOn) {
       try {
@@ -470,10 +447,10 @@ const RealEstateFilterScreen: React.FC = ({
     }
   };
   const handleRangeChange = range => {
-    console.log('Range changed:', range);
+   
   };
   const handleRangeBudgetChange = range => {
-    console.log('Range changed:', range);
+
 
     const updatedSelectedFilters = {
       ...selectedFilters,
@@ -483,7 +460,7 @@ const RealEstateFilterScreen: React.FC = ({
     setSelectedFilters(updatedSelectedFilters);
   };
   const handleRangeAreaChange = range => {
-    console.log('Range changed:', range);
+
 
     const updatedSelectedFilters = {
       ...selectedFilters,
@@ -511,7 +488,7 @@ const RealEstateFilterScreen: React.FC = ({
         let items = selectedFilters[selectedItem.name]
           ? selectedFilters[selectedItem.name]
           : null;
-        console.log('Budget', items);
+    
         ComponentToRender = (
           <RangeSlider
             min={0}

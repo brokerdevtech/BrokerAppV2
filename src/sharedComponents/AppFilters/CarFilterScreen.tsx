@@ -119,10 +119,7 @@ const CarFilterScreen: React.FC = ({
     const updateFilters = async () => {
       if (Filters != null) {
         try {
-          console.log(
-            'updateFiltersupdateFiltersupdateFiltersupdateFiltersupdateFilters==============================',
-          );
-          console.log(Filters);
+       
           // Filter out the 'PropertySizeUnit' item from the Filters data
           const filteredItems = Filters.data.filters.filter(
             item => item.name !== 'PropertySizeUnit',
@@ -223,11 +220,7 @@ const CarFilterScreen: React.FC = ({
               ...PopUPFilter,
             };
 
-            console.log(
-              '=================updatedSelectedFilters==========================',
-            );
-
-            console.log(updatedSelectedFilters);
+        
             setSelectedFilters(updatedSelectedFilters);
           }
         } catch (error) {
@@ -247,8 +240,7 @@ const CarFilterScreen: React.FC = ({
       'Developer',
       City,
     );
-    console.log('===getDeveloper');
-    console.log(result);
+ 
     // Update the records for the dependent filter
     if (result.data.filters.length > 0) {
       const updatedFilters = await updateRecordsByName(
@@ -263,7 +255,7 @@ const CarFilterScreen: React.FC = ({
   };
 
   const handleApplyFilters = () => {
-    console.log(JSON.stringify(selectedFilters));
+
     onApply(selectedFilters);
     // Check for mandatory filters
     //   const missingMandatoryFilters = CarfiltersState
@@ -288,7 +280,7 @@ const CarFilterScreen: React.FC = ({
   };
 
   const onFiltersLocalityChange = async Localitys => {
-    console.log('onFiltersLocalityChange', Localitys);
+
     const locationData = [
       {
         place: {
@@ -302,8 +294,7 @@ const CarFilterScreen: React.FC = ({
     let updatedSelectedFilters = {...selectedFilters};
     updatedSelectedFilters[selectedItem.name] = [...locationData];
     setSelectedFilters(updatedSelectedFilters);
-    console.log('SelectedFilters');
-    console.log(selectedFilters);
+
     if (selectedItem.dependsOn) {
       try {
         // Fetch the cascaded filters for the dependent item
@@ -314,8 +305,7 @@ const CarFilterScreen: React.FC = ({
           Localitys.City,
         );
 
-        console.log('SelectedFilters');
-        console.log(result);
+     
         // Update the records for the dependent filter
         if (result.data.filters.length > 0) {
           const updatedFilters = await updateRecordsByName(
@@ -375,8 +365,7 @@ const CarFilterScreen: React.FC = ({
     let updatedSelectedFilters = {...selectedFilters};
     updatedSelectedFilters[selectedItem.name] = [item];
     setSelectedFilters(updatedSelectedFilters);
-    console.log('Selected');
-    console.log(JSON.stringify(updatedSelectedFilters));
+
 
     if (selectedItem.dependsOn) {
       try {
@@ -388,7 +377,7 @@ const CarFilterScreen: React.FC = ({
           item.key,
         );
 
-        console.log(JSON.stringify(result));
+   
         // Update the records for the dependent filter
         if (result.data.data.filters.length > 0) {
           const updatedFilters = await updateRecordsByName(
@@ -417,8 +406,7 @@ const CarFilterScreen: React.FC = ({
     let updatedSelectedFilters = {...selectedFilters};
     updatedSelectedFilters[selectedItem.name] = [...item];
     setSelectedFilters(updatedSelectedFilters);
-    console.log('Selected');
-    console.log(JSON.stringify(updatedSelectedFilters));
+
 
     if (selectedItem.dependsOn) {
       try {
@@ -456,7 +444,7 @@ const CarFilterScreen: React.FC = ({
     console.log('Range changed:', range);
   };
   const handleRangeBudgetChange = range => {
-    console.log('Range changed:', range);
+  
 
     const updatedSelectedFilters = {
       ...selectedFilters,
@@ -466,7 +454,7 @@ const CarFilterScreen: React.FC = ({
     setSelectedFilters(updatedSelectedFilters);
   };
   const handleRangeAreaChange = range => {
-    console.log('Range changed:', range);
+
 
     const updatedSelectedFilters = {
       ...selectedFilters,
@@ -494,7 +482,7 @@ const CarFilterScreen: React.FC = ({
         let items = selectedFilters[selectedItem.name]
           ? selectedFilters[selectedItem.name]
           : null;
-        console.log('Budget', items);
+  
         ComponentToRender = (
           <RangeSlider
             min={0}
@@ -742,11 +730,7 @@ const CarFilterScreen: React.FC = ({
     
     };
     setfilterlocalities(locationData);
-    console.log(
-      '=================updatedSelectedFilters==========================',
-    );
 
-    console.log(updatedSelectedFilters);
     setSelectedFilters(updatedSelectedFilters);
 
     onApply(updatedSelectedFilters);

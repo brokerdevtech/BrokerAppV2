@@ -37,7 +37,7 @@ const SkeletonLoader = ({style, width, height, borderRadius}) => {
 
 const ProductSectionSkeleton = ({heading, isShowAll}) => {
   const placeholderData = Array(5).fill({});
-  console.log(heading, isShowAll, 'peof');
+
   return (
     <View style={styles.skeletonContainer}>
       {/* Header */}

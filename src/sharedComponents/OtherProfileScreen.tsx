@@ -525,7 +525,7 @@ const OtherProfileScreen: React.FC = ({
     navigation.navigate(screen.navigationScreen, {
       listType: screen.listType,
       categoryId: screen.categoryId,
-      userId: user.userId,
+      userId: userId,
     });
   };
 

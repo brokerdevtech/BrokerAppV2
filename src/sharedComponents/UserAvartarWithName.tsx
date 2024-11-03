@@ -33,7 +33,8 @@ import {Button, ButtonText} from '../../components/ui/button';
 function UserAvartarWithName({
   userName,
   userImage,
-
+  userId,
+  loggedInUserId
 }) {
   const appuser = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();

@@ -24,78 +24,101 @@ import {
   imagesBucketcloudfrontPath,
   postsImagesBucketPath,
 } from '../../config/constants';
-import {
-  AlertDialog,
-  AlertDialogBackdrop,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-} from '../../../components/ui/alert-dialog';
-import {Button} from '../../../components/ui/button';
-import {Color} from '../../styles/GlobalStyles';
+import { RecentSearchSData } from '../../../BrokerAppCore/services/new/dashboardService';
 
 interface BrandSectionProps {
   heading: string;
   background: string;
   endpoint: string;
   isShowAll: boolean;
-  isGuest: boolean;
   request: ListDashboardPostRequest;
 }
 
-const BrandSection = (props: BrandSectionProps) => {
-  const {data, status, error, execute} = useApiRequest(fetchDashboardData);
+const RecentSearchSection = (props: BrandSectionProps) => {
+  const {data, status, error, execute} = useApiRequest(RecentSearchSData);
   const navigation = useNavigation();
-  const [showAlertDialog, setShowAlertDialog] = React.useState(false);
-  const handleClose = () => setShowAlertDialog(false);
-  const onPressSignUp = () => {
-    //  onOpen();
-    setShowAlertDialog(false);
-    navigation.navigate('Login');
-  };
+
   const callBrandList = async () => {
     await execute(props.endpoint, props.request);
-    // console.log(props.heading, 'data :-', data);
+    console.log(props.heading, 'data :-', data);
   };
-
+  useEffect(() => {
+    console.log('data :-', data);
+  }, [data]);
   useEffect(() => {
     callBrandList();
   }, [props]);
 
-  const renderProductItems = ({item, index}) => {
-    // console.log('item =====>', item);
-    const handlePress = () => {
-      if (props.isGuest) {
-        setShowAlertDialog(true); // Show alert dialog if user is a guest
-      } else {
-        navigation.navigate('ItemListScreen', {
-          listType: item.hasOwnProperty('fuelType') ? 'Car' : 'RealEstate',
-          categoryId: item.hasOwnProperty('fuelType') ? 2 : 1,
-          brandName: item.searchText ?? '',
-        });
+  const renderProductItems = ({ item, index }) => {
+    if (!item || !item.requestJson || !item.frontendFilters) {
+     // console.warn('Invalid item structure:', item);
+      return null; // Return null if item structure is invalid
+    }
+  
+    let parsedItem;
+    let frontendFilters;
+  
+    try {
+      parsedItem = JSON.parse(item.requestJson);
+      frontendFilters = JSON.parse(item.frontendFilters);
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      return null; // Return null if JSON parsing fails
+    }
+  
+    const callFilterListScreen = async () => {
+      if (!parsedItem) {
+        console.warn('Parsed item is invalid');
+        return;
       }
+  
+      let obj = {
+        ...parsedItem,
+        frontendFilters: item.frontendFilter || [],
+        isSearch: false,
+      };
+  
+      let listTypeData = "RealEstate";
+  
+      if (item.categoryId === 2) {
+        listTypeData = "car";
+      }
+  
+      navigation.navigate('ItemFilterListScreen', {
+        listType: listTypeData,
+        categoryId: item.categoryId,
+        Filters: frontendFilters || [],
+        listApiobj: obj,
+        searchText: parsedItem.keyWord || '',
+      });
     };
+  
     return (
       <View style={styles.cardContainer}>
-        <TouchableOpacity onPress={handlePress}>
-          <Image
-            source={{
-              uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
-            }}
-            style={styles.carImage}
-          />
+        <TouchableOpacity onPress={callFilterListScreen}>
           <View style={styles.detailsContainer}>
+            <ZText type={'R16'} numberOfLines={1}>
+              {parsedItem?.keyWord || 'N/A'}
+            </ZText>
             <ZText type={'R14'} numberOfLines={1} style={styles.carBrand}>
-              {item.title}
+              {parsedItem?.cityName || 'N/A'}
             </ZText>
           </View>
         </TouchableOpacity>
       </View>
     );
   };
+  
 
   return (
-    <View style={{backgroundColor: props.background, paddingVertical: 2}}>
+<>
+    { data!= null && data.length > 0 &&
+<View
+          style={{
+            backgroundColor: props.background,
+            paddingVertical: 10,
+            flex: 1,
+          }}>
       <HStack space="md" reversed={false} style={styles.heading}>
         <ZText type={'R18'}>{props.heading}</ZText>
         <ZText type={'R14'} style={styles.link} />
@@ -103,7 +126,7 @@ const BrandSection = (props: BrandSectionProps) => {
       <HStack space="md" reversed={false} style={{paddingHorizontal: 10}}>
         <FlatList
           data={data}
-          keyExtractor={item => item.postId.toString()}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={renderProductItems}
           initialNumToRender={3}
           showsHorizontalScrollIndicator={false}
@@ -112,44 +135,8 @@ const BrandSection = (props: BrandSectionProps) => {
           // ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
       </HStack>
-      <AlertDialog isOpen={showAlertDialog} onClose={handleClose} size="md">
-        <AlertDialogBackdrop />
-        <AlertDialogContent>
-          <AlertDialogBody className="mt-3 mb-4 ">
-            <ZText type="S18" style={{marginBottom: 20, textAlign: 'center'}}>
-              Want to see More ?
-            </ZText>
-            <ZText type="R16" style={{marginBottom: 20, textAlign: 'center'}}>
-              Hurry up create an account with us now.
-            </ZText>
-          </AlertDialogBody>
-          <AlertDialogFooter
-            style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Button
-              variant="outline"
-              action="secondary"
-              style={{borderColor: Color.primary}}
-              onPress={handleClose}
-              size="md">
-              <ZText
-                type="R16"
-                color={Color.primary}
-                style={{textAlign: 'center'}}>
-                Cancel
-              </ZText>
-            </Button>
-            <Button
-              size="md"
-              onPress={onPressSignUp}
-              style={{backgroundColor: Color.primary, marginLeft: 10}}>
-              <ZText type="R16" style={{color: 'white', textAlign: 'center'}}>
-              Login
-              </ZText>
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </View>
+    </View>}
+    </>
   );
 };
 const styles = StyleSheet.create({
@@ -204,7 +191,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   cardContainer: {
-    width: 132,
+   
     borderRadius: 12,
     backgroundColor: '#FFF',
     margin: 10,
@@ -214,6 +201,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 20,
     elevation: 4,
+    width: 120,
+    height: 109,
+    alignContent:'center',
+    
   },
   carImage: {
     width: 132,
@@ -242,6 +233,11 @@ const styles = StyleSheet.create({
   detailsContainer: {
     paddingHorizontal: 10,
     paddingTop: 10,
+    alignContent:'center',
+    height:"100%",
+   // backgroundColor:'red',
+    display:'flex',
+    justifyContent:'center'
   },
   price: {
     fontSize: 16,
@@ -258,10 +254,10 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   carBrand: {
-    fontSize: 14,
-    fontWeight: '500',
+   
+   
     color: '#000',
-    marginTop: 4,
+    marginTop: 15,
   },
 });
-export default BrandSection;
+export default RecentSearchSection;

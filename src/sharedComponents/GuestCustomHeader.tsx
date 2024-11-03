@@ -64,7 +64,7 @@ const GuestCustomHeader = () => {
   const onPressSignUp = () => {
     //  onOpen();
     setShowAlertDialog(false);
-    navigation.navigate('Register');
+    navigation.navigate('Login');
   };
   return (
     <SafeAreaView>
@@ -137,7 +137,7 @@ const GuestCustomHeader = () => {
                 onPress={onPressSignUp}
                 style={{backgroundColor: Color.primary, marginLeft: 10}}>
                 <ZText type="R16" style={{color: 'white', textAlign: 'center'}}>
-                  Sign Up
+                Login
                 </ZText>
               </Button>
             </AlertDialogFooter>

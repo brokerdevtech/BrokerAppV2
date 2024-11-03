@@ -11,7 +11,7 @@ const KeyValueRow = ({label, values, valueKey, screentype = 'default'}) => {
   if (!values || values.length === 0) {
     return null; // Do not render if values are missing or empty
   }
-  console.log(values, 'preview');
+
   return (
     <VStack
       space="md"

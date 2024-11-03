@@ -325,8 +325,7 @@ const ItemFilterListScreen: React.FC<any> = ({
   const FilterSheetRef = useRef(null);
   const closeModal = useCallback(
     item => {
-      console.log('============== closeModal==================');
-      console.log(item);
+   
       if (Object.keys(item).length > 0)  {
         setPopUPFilter(item);
         setLoading(true);
@@ -334,7 +333,7 @@ const ItemFilterListScreen: React.FC<any> = ({
         currentPage_Set(1);
         hasMore_Set(true);
         let tags = getFilterTags(item);
-
+        tags.frontendFilters=JSON.stringify(item)
         callPodcastList(tags);
 
 
@@ -406,7 +405,7 @@ const ItemFilterListScreen: React.FC<any> = ({
     };
 
     if (input.hasOwnProperty('Location')) {
-      console.log(input.Location);
+ 
 
       obj.cityName = input.Location[0].place.City;
       obj.placeID = input.Location[0].place.placeID;
@@ -577,11 +576,7 @@ const ItemFilterListScreen: React.FC<any> = ({
       setApppageTitle('Car List');
     }
     setItemslocalities(AppLocation);
-    console.log("=============FiltersOBJ");
-   
-console.log(FiltersOBJ);
-console.log("=============listApiobj");
-console.log(listApiobj);
+
     setPopUPFilter(FiltersOBJ);
 
     //set_FilterChipsData(obj);
@@ -618,6 +613,8 @@ console.log(listApiobj);
     let obj = {
       ...listApiobj,
       keyWord: searchText,
+      frontendFilters:JSON.stringify(PopUPFilter),
+      isSearch: true,
     };
     // console.log('apphandleSearch');
     // console.log(obj);

@@ -19,7 +19,7 @@ const RangeSlider = ({
   const [localMaxValue, setLocalMaxValue] = useState(initialMaxValue);
 
   useEffect(() => {
-    console.log('preselectedItem', preselectedItem);
+  
     // Update local values when props or preselectedItem change
     setLocalMinValue(preselectedItem?.minValue ?? minValue ?? min);
     setLocalMaxValue(preselectedItem?.maxValue ?? maxValue ?? max);

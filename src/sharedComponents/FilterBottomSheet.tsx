@@ -125,7 +125,7 @@ const FilterBottomSheet = forwardRef(
 
     const handleSheetChanges = useCallback(
       index => {
-        console.log('handleSheetChanges', index);
+       
         setIsOpen(index >= 0);
         if (index == -1) {
           onClose(selectedFilters);

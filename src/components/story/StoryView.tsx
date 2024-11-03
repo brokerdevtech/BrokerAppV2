@@ -379,8 +379,7 @@ const StoryView: React.FC = ({route}) => {
     // togglePlayPause();
   };
   const closeModal = async (item: any) => {
-    console.log("==========item==============");
-console.log(item);
+
     setOpen(false);
     // await new Promise(resolve => setTimeout(resolve, 200));
 

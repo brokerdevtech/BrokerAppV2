@@ -92,7 +92,9 @@ import bathroomType from './propertyIcon/bathroomType.svg';
 import bedroomType from './propertyIcon/bedroomType.svg';
 import propertySize from './propertyIcon/propertySize.svg';
 import ComingSoon from './ComingSoon.svg';
-export {
+import Buyer from './buyer.svg';
+import BuyerActive from './buyer-fill.svg';
+export {Buyer,BuyerActive,
   balconyType,
   ComingSoon,
   bathroomType,

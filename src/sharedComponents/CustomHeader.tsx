@@ -49,7 +49,7 @@ import ZAvatarInitials from './ZAvatarInitials';
 const CustomHeader = () => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-  const cityToShow = 'Noida';
+  let cityToShow = AppLocation.City;
   const navigation = useNavigation();
   const {
     data: marqueeText,
@@ -59,7 +59,8 @@ const CustomHeader = () => {
   } = useApiRequest(fetchDashboardData);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const callPodcastList = async () => {
+  const callPodcastList = async (cityToShow:any) => {
+   
     const request = {pageNo: 1, pageSize: 10, cityName: cityToShow};
     await marqueeExecute('Marqueue', request);
   };
@@ -76,8 +77,11 @@ const CustomHeader = () => {
     // await marqueeExecute('Marqueue', request)
   };
   useEffect(() => {
-    callPodcastList();
-  }, []);
+    // console.log("AppLocation");
+    // console.log(AppLocation);
+    callPodcastList(AppLocation.City);
+    cityToShow = AppLocation.City;
+  }, [AppLocation]);
   const onPressUser = () => {
     navigation.toggleDrawer();
   };

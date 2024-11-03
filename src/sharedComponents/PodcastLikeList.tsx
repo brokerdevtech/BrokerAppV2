@@ -156,7 +156,8 @@ const PodcastLikeList: React.FC = ({
                 <UserAvartarWithName
                   userName={item?.userName}
                   userImage={item?.profileImage}
-                 
+                  userId={item.userId}
+                  loggedInUserId={user.userId}
                   key={index}
                 />
               </View>

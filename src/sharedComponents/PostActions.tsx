@@ -42,10 +42,12 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import {moderateScale, PermissionKey} from '../config/constants';
 import TouchableOpacityWithPermissionCheck from './TouchableOpacityWithPermissionCheck';
-import {Like, UnLike, Send, CloseIcon} from '../assets/svg';
+import {Like, UnLike, Send, CloseIcon,BuyerActive,Buyer} from '../assets/svg';
 import CommentBottomSheet from './CommentBottomSheet';
 import {useNavigation} from '@react-navigation/native';
-const PostActions = ({item, User, listTypeData, onUpdateLikeCount}) => {
+import { PostUnLIke ,PostLike as PostLikeApi} from '../../BrokerAppCore/services/postService';
+const PostActions = ({item, User, listTypeData, onUpdateLikeCount,PageName='ItemList'}) => {
+  console.log(item);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const {
     data,
@@ -62,7 +64,11 @@ const PostActions = ({item, User, listTypeData, onUpdateLikeCount}) => {
   const [isOpenArray, setisOpenArray] = useState([]);
   const navigation = useNavigation();
   const [PostLike, SetPostLike] = useState(item.userLiked === 1);
+  const [israisedPostBuyerHand, setisraisedPostBuyerHand] = useState(
+    item?.raisedPostBuyerHand === 0 ? false : true,
+  );
   const [PostlikesCount, SetPostlikesCount] = useState(item.likes);
+
   const commentSheetRef = useRef(null);
   const [cardComment, setCardComment] = useState(item.comments);
   const snapPoints = useMemo(() => ['60%'], []);
@@ -74,7 +80,7 @@ const PostActions = ({item, User, listTypeData, onUpdateLikeCount}) => {
   // TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}
   const generateLink = async () => {
     let postType = listTypeData === 'RealEstate' ? 'Post' : 'Car/Post';
-    console.log(postType);
+
     try {
       const response = await fetch(
         `https://tinyurl.com/api-create.php?url=${encodeURIComponent(
@@ -82,7 +88,7 @@ const PostActions = ({item, User, listTypeData, onUpdateLikeCount}) => {
         )}`,
       );
       const text = await response.text();
-      console.log('TinyURL Response:', text);
+    
       return text;
     } catch (error) {}
   };
@@ -95,7 +101,7 @@ const PostActions = ({item, User, listTypeData, onUpdateLikeCount}) => {
     setIsSharing(true);
 
     const getLink = await generateLink();
-    console.log('Generated Link:', getLink);
+
     try {
       await Share.share({
         message: getLink,
@@ -112,11 +118,14 @@ const PostActions = ({item, User, listTypeData, onUpdateLikeCount}) => {
       ActionId: item?.postId,
     });
   };
-  console.log(listTypeData, 'list');
+
   const handleLike = async () => {
-    console.log('like');
-    let endpoint =
-      listTypeData === 'RealEstate' || listTypeData === 'Car' ? 'Car' : '';
+
+let endpoint="RealEstate";
+if( listTypeData === 'RealEstate')
+ {endpoint ="post"}
+else{   
+listTypeData === 'Car'}
     const result = await SetPostLikeUnLike(
       endpoint,
       'Like',
@@ -124,7 +133,7 @@ const PostActions = ({item, User, listTypeData, onUpdateLikeCount}) => {
       item.postId,
     );
 
-    console.log(result, 'jk');
+ 
     if (result.success) {
       SetPostLike(true);
       SetPostlikesCount(PostlikesCount + 1);
@@ -133,9 +142,12 @@ const PostActions = ({item, User, listTypeData, onUpdateLikeCount}) => {
   };
 
   const handleUnLike = async () => {
-    console.log('unlike');
-    let endpoint =
-      listTypeData === 'RealEstate' || listTypeData === 'Car' ? 'Car' : '';
+
+  let endpoint="RealEstate";
+  if( listTypeData === 'RealEstate')
+    {endpoint ="post"}
+  else{   
+  listTypeData === 'Car'}
     const result = await SetPostLikeUnLike(
       endpoint,
       'UnLike',
@@ -175,6 +187,40 @@ const PostActions = ({item, User, listTypeData, onUpdateLikeCount}) => {
   useEffect(() => {
     callCommentList();
   }, []);
+  const HaveBuyerList = async () => {
+    //
+    //
+    navigation.navigate("BuyerList", {
+      ActionId: item.postId,
+      userId: User.userId
+    });
+  };
+
+  const postHaveBuyer = async () => {
+    //
+    //
+    if (item?.raisedPostBuyerHand && item?.raisedPostBuyerHand == 1) {
+      const result = await PostUnLIke(User.userId, 'buyer', item.postId);
+
+      //
+      if (result?.status == 'success') {
+        item.buyers = item.buyers - 1;
+        item.raisedPostBuyerHand = 0;
+        setisraisedPostBuyerHand(false);
+      }
+    } else {
+      const result = await PostLikeApi(User.userId, 'buyer', item.postId);
+      //
+      //
+      if (result?.status == 'success') {
+        item.buyers = item.buyers + 1;
+        item.raisedPostBuyerHand = 1;
+        setisraisedPostBuyerHand(true);
+      }
+    }
+  };
+
+
 
   return (
     <>
@@ -215,6 +261,42 @@ const PostActions = ({item, User, listTypeData, onUpdateLikeCount}) => {
             <Icon as={share_PIcon} size="xxl" />
           </TouchableOpacity>
         </VStack>
+        {listTypeData=='RealEstate' && PageName!="MyItemList" &&
+        <VStack style={{marginRight: 10}}>
+           <HStack style={{justifyContent: 'center', alignItems: 'center'}}>
+          <TouchableOpacity onPress={postHaveBuyer}>
+          <Icon
+                as={Buyer}
+                size="xxl"
+                style={{marginRight: 5}}
+                color={israisedPostBuyerHand ? 'red' : undefined}
+              />
+
+            {/* <Icon as={Buyer} size="xxl" /> */}
+          </TouchableOpacity>
+           
+          </HStack>
+        </VStack>
+}
+
+
+{listTypeData=='RealEstate' && PageName=="MyItemList" &&
+        <VStack style={{marginRight: 10}}>
+           <HStack style={{justifyContent: 'center', alignItems: 'center'}}>
+          <TouchableOpacity onPress={HaveBuyerList}>
+          <Icon
+                as={Buyer}
+                size="xxl"
+                style={{marginRight: 5}}
+                color={'red'}
+              />
+
+            {/* <Icon as={Buyer} size="xxl" /> */}
+          </TouchableOpacity>
+          <ZText type={'R16'}>{item.raisedPostBuyerHand}</ZText>          
+          </HStack>
+        </VStack>
+}
 
         {/* <VStack style={{ marginLeft: 'auto' }}>
         <Icon as={bookmark_icon} />

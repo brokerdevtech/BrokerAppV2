@@ -10,7 +10,7 @@ const SelectableFlatList = ({
   emptyessage = 'Please select a brand first',
 }) => {
   const [selectedItem, setSelectedItem] = useState(null);
-  console.log(data, 'de');
+
   useEffect(() => {
     if (preselectedItem) {
       setSelectedItem(preselectedItem);

@@ -152,7 +152,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     await execute(email, password);
     setLoading(false);
     if (error) {
-      console.log(status);
+    
       if (!toast.isActive(toastId)) {
         const newId = Math.random();
         setToastId(newId);
@@ -389,7 +389,9 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         Don't have an account?{' '}
         <Text
           style={styles.signUpText}
-          onPress={() => navigation.navigate('Register')}>
+          onPress={() => 
+          {console.log('ww');
+            navigation.navigate('Register')}}>
           Sign Up
         </Text>
       </Text>
