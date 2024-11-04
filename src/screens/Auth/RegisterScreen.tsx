@@ -211,9 +211,30 @@ export default function RegisterScreen({setLoggedIn}) {
         isOrg: values.organizationType == '1' ? false : true,
       };
 
-      // console.log(user);
+      console.log(user);
 
       await registerexecute(user);
+      if (registererror) {
+        console.log(registererror);
+
+        if (!toast.isActive(toastId)) {
+          const newId = Math.random();
+          setToastId(newId);
+          toast.show({
+            id: newId,
+            placement: 'bottom',
+            duration: 3000,
+            render: ({id}) => {
+              const uniqueToastId = 'toast-' + id;
+              return (
+                <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                  <ToastDescription>{registererror}</ToastDescription>
+                </Toast>
+              );
+            },
+          });
+        }
+      }
     } catch (error) {
       console.error('Error in handleSubmit:', error);
     } finally {
@@ -389,7 +410,6 @@ export default function RegisterScreen({setLoggedIn}) {
             <Select
               selectedValue={'Real Estate Sector'}
               onValueChange={(selectedValue: any) => {
-           
                 setFieldValue('BrokerCategory', selectedValue);
                 handleBlur('BrokerCategory');
               }}>

@@ -31,9 +31,8 @@ export const useApiRequest = <T, P extends any[]>(
         if (setLoading) {
           setLoading(false);
         }
-        setError(response?.data?.statusMessage || 'An error occurred');
+        setError(response?.message || 'An error occurred');
         setStatus(response.status || 500);
-   
       } else {
         // debugger;
         setData(response.data || null);

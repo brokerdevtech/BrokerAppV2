@@ -1,6 +1,6 @@
 import {moderateScale, PermissionKey} from '../config/constants';
 import {useSelector} from 'react-redux';
-import {useToast} from '../../components/ui/toast';
+import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 import {checkPermission} from '../utils/helpers';
 import {styles} from '../themes';
 import {StyleSheet, TouchableOpacity} from 'react-native';
@@ -42,15 +42,26 @@ const ButtonWithPermissionCheck: React.FC<ButtonWithPermissionCheckProps> = ({
   const colors = useSelector(state => state.theme.theme);
   const toast = useToast();
   const permissionGranted = checkPermission(permissionsArray, permissionEnum);
-
+  const [toastId, setToastId] = React.useState(0);
   const handlePress = () => {
     if (permissionGranted == false) {
-      if (!toast.isActive(2)) {
+      if (!toast.isActive(toastId)) {
+        const newId = Math.random();
+        setToastId(newId);
         toast.show({
-          id: 2,
-          description: `You do not have permission.Contact dev@brokerapp.com.`,
-          //Permission ${PermissionKey[permissionEnum]} is not granted.`,
-          // placement: 'top',
+          id: newId,
+          placement: 'bottom',
+          duration: 3000,
+          render: ({id}) => {
+            const uniqueToastId = 'toast-' + id;
+            return (
+              <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                <ToastDescription>
+                  {'You do not have permission.Contact dev@brokerapp.com.'}
+                </ToastDescription>
+              </Toast>
+            );
+          },
         });
       }
     } else {

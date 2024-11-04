@@ -196,12 +196,10 @@ const CustomDrawerContent = props => {
       <AlertDialog isOpen={showAlertDialog} onClose={handleClose} size="md">
         <AlertDialogBackdrop />
         <AlertDialogContent>
-          <AlertDialogHeader>
+          <AlertDialogBody className="mt-3 mb-4 ">
             <ZText type="S18" style={{marginBottom: 20, textAlign: 'center'}}>
               Are you sure you want to logout?
             </ZText>
-          </AlertDialogHeader>
-          <AlertDialogBody className="mt-3 mb-4 ">
             <ZText type="R16" style={{marginBottom: 20, textAlign: 'center'}}>
               Please confirm if you want to proceed.
             </ZText>
