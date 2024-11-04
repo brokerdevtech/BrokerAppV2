@@ -260,7 +260,8 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
         setLoading(false);
         return;
       }
-
+console.log("fetchPhotos");
+console.log(data);
       // If photos exist, process them
       if (data.page_info.has_next_page) {
         setEndCursor(data?.page_info?.end_cursor?.toString());
@@ -300,8 +301,9 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
   const fetchPhotosnext = async (after: any) => {
     try {
       // Show loading indicator
-      setLoading(true);
-
+     // setLoadingOverlay(true);
+      console.log("fetchPhotosnext");
+console.log(after);
       const fetchParams = {
         first: 20, // Number of photos to fetch
         assetType: 'Photos',
@@ -314,7 +316,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       // Check if the fetched data is empty
       if (data.edges.length === 0) {
         setGalleryEmpty(true); // No more photos
-        setLoading(false);
+     //   setLoadingOverlay(false);
         return;
       }
 
@@ -339,7 +341,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       setGalleryEmpty(true); // If an error occurs, assume no photos
     } finally {
       // Hide loading indicator
-      setLoading(false);
+      //setLoadingOverlay(false);
     }
   };
 
