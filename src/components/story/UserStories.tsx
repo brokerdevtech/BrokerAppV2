@@ -78,7 +78,7 @@ const UserStories = React.memo(() => {
       StorieshasMore_Set(true);
       Storiesexecute(user.userId);
     } catch (error) {
-      console.log(error);
+  
     }
   };
 
@@ -135,7 +135,7 @@ const UserStories = React.memo(() => {
       <Text style={localStyles.emptyText}>No Stories available</Text>
     </View>
   );
-  console.log(StoryData, 'dat');
+
   return (
     <VStack style={{paddingHorizontal: 20, backgroundColor: 'white'}}>
       {/* <ZText type="b22" style={{...globalStyles.mt8}}>

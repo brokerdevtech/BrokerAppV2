@@ -40,10 +40,10 @@ const RecentSearchSection = (props: BrandSectionProps) => {
 
   const callBrandList = async () => {
     await execute(props.endpoint, props.request);
-    console.log(props.heading, 'data :-', data);
+
   };
   useEffect(() => {
-    console.log('data :-', data);
+  
   }, [data]);
   useEffect(() => {
     callBrandList();

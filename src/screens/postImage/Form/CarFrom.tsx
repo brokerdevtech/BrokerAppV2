@@ -87,7 +87,7 @@ const CarForm = ({formikRef}) => {
       },
     ];
     setApplocalities(locationData);
-console.log(localities);
+
 
   }, [AppLocation]);
 
@@ -116,7 +116,7 @@ console.log(localities);
   }
 
   const handleYearChange = year => {
-    console.log('Selected Year:', year);
+ 
   };
   const onFiltersLocalityChange = Localitys => {
     //
