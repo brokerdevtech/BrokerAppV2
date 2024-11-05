@@ -129,6 +129,7 @@ const PostWizardScreen: React.FC = ({
           Isvideo: Isvideo,
           localities: carFormikref.current.values.Location,
           formValue: carFormikref.current.values,
+          pageName: 'Post',
         });
       }
     }

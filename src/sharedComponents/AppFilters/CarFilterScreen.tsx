@@ -85,6 +85,7 @@ const CarFilterScreen: React.FC = ({
   const [imagesArray, setimagesArray] = useState<any>(route.params?.postVisual);
   const [Isvideo, setIsvideo] = useState<any>(route.params?.Isvideo);
   const [formValue, setformValue] = useState<any>(route.params?.formValue);
+
   const [filterlocalities, setfilterlocalities] = useState<any>();
 
   const [selectedItem, setSelectedItem] = useState(null);
@@ -119,12 +120,10 @@ const CarFilterScreen: React.FC = ({
     const updateFilters = async () => {
       if (Filters != null) {
         try {
-       
           // Filter out the 'PropertySizeUnit' item from the Filters data
           const filteredItems = Filters.data.filters.filter(
             item => item.name !== 'PropertySizeUnit',
           );
-
 
           const years = [];
           for (let year = 2024; year >= 2000; year--) {
@@ -132,17 +131,17 @@ const CarFilterScreen: React.FC = ({
           }
 
           const kms = [
-            { key: '10000', value: '10,000 kms or less' },
-            { key: '30000', value: '30,000 kms or less' },
-            { key: '50000', value: '50,000 kms or less' },
-            { key: '75000', value: '75,000 kms or less' },
-            { key: '100000', value: '1,00,000 kms or less' },
-            { key: '125000', value: '1,25,000 kms or less' },
-            { key: '150000', value: '1,50,000 kms or less' },
-            { key: '175000', value: '1,75,000 kms or less' },
-            { key: '200000', value: '2,00,000 kms or less' }
+            {key: '10000', value: '10,000 kms or less'},
+            {key: '30000', value: '30,000 kms or less'},
+            {key: '50000', value: '50,000 kms or less'},
+            {key: '75000', value: '75,000 kms or less'},
+            {key: '100000', value: '1,00,000 kms or less'},
+            {key: '125000', value: '1,25,000 kms or less'},
+            {key: '150000', value: '1,50,000 kms or less'},
+            {key: '175000', value: '1,75,000 kms or less'},
+            {key: '200000', value: '2,00,000 kms or less'},
           ];
-          
+
           // Define filters without 'PostedSince'
           const filtersWithoutPostedSince = [
             {
@@ -175,7 +174,6 @@ const CarFilterScreen: React.FC = ({
               isMandatory: false,
               dependsOn: '',
               records: years,
-            
             },
             {
               name: 'ManufactureYear',
@@ -186,7 +184,6 @@ const CarFilterScreen: React.FC = ({
               isMandatory: false,
               dependsOn: '',
               records: years,
-             
             },
             {
               name: 'KmsDriven',
@@ -197,7 +194,6 @@ const CarFilterScreen: React.FC = ({
               isMandatory: false,
               dependsOn: '',
               records: kms,
-             
             },
             ...filteredItems,
           ];
@@ -220,7 +216,6 @@ const CarFilterScreen: React.FC = ({
               ...PopUPFilter,
             };
 
-        
             setSelectedFilters(updatedSelectedFilters);
           }
         } catch (error) {
@@ -240,7 +235,7 @@ const CarFilterScreen: React.FC = ({
       'Developer',
       City,
     );
- 
+
     // Update the records for the dependent filter
     if (result.data.filters.length > 0) {
       const updatedFilters = await updateRecordsByName(
@@ -255,7 +250,6 @@ const CarFilterScreen: React.FC = ({
   };
 
   const handleApplyFilters = () => {
-
     onApply(selectedFilters);
     // Check for mandatory filters
     //   const missingMandatoryFilters = CarfiltersState
@@ -280,7 +274,6 @@ const CarFilterScreen: React.FC = ({
   };
 
   const onFiltersLocalityChange = async Localitys => {
-
     const locationData = [
       {
         place: {
@@ -305,7 +298,6 @@ const CarFilterScreen: React.FC = ({
           Localitys.City,
         );
 
-     
         // Update the records for the dependent filter
         if (result.data.filters.length > 0) {
           const updatedFilters = await updateRecordsByName(
@@ -366,7 +358,6 @@ const CarFilterScreen: React.FC = ({
     updatedSelectedFilters[selectedItem.name] = [item];
     setSelectedFilters(updatedSelectedFilters);
 
-
     if (selectedItem.dependsOn) {
       try {
         // Fetch the cascaded filters for the dependent item
@@ -377,7 +368,6 @@ const CarFilterScreen: React.FC = ({
           item.key,
         );
 
-   
         // Update the records for the dependent filter
         if (result.data.data.filters.length > 0) {
           const updatedFilters = await updateRecordsByName(
@@ -406,7 +396,6 @@ const CarFilterScreen: React.FC = ({
     let updatedSelectedFilters = {...selectedFilters};
     updatedSelectedFilters[selectedItem.name] = [...item];
     setSelectedFilters(updatedSelectedFilters);
-
 
     if (selectedItem.dependsOn) {
       try {
@@ -444,8 +433,6 @@ const CarFilterScreen: React.FC = ({
     console.log('Range changed:', range);
   };
   const handleRangeBudgetChange = range => {
-  
-
     const updatedSelectedFilters = {
       ...selectedFilters,
 
@@ -454,8 +441,6 @@ const CarFilterScreen: React.FC = ({
     setSelectedFilters(updatedSelectedFilters);
   };
   const handleRangeAreaChange = range => {
-
-
     const updatedSelectedFilters = {
       ...selectedFilters,
 
@@ -482,7 +467,7 @@ const CarFilterScreen: React.FC = ({
         let items = selectedFilters[selectedItem.name]
           ? selectedFilters[selectedItem.name]
           : null;
-  
+
         ComponentToRender = (
           <RangeSlider
             min={0}
@@ -525,7 +510,7 @@ const CarFilterScreen: React.FC = ({
           />
         );
       }
-    
+
       if (selectedItem.name == 'KmsDriven') {
         let items = selectedFilters[selectedItem.name]
           ? selectedFilters[selectedItem.name][0]
@@ -541,7 +526,6 @@ const CarFilterScreen: React.FC = ({
           />
         );
       }
-
 
       if (selectedItem.name == 'Brand') {
         let items = selectedFilters[selectedItem.name]
@@ -723,18 +707,14 @@ const CarFilterScreen: React.FC = ({
     ];
     setfilterlocalities(locationData);
     const updatedSelectedFilters = {
-     
-       Location: locationData,
-       Budget: {minValue: 20000, maxValue: 500000000 ,isDefault:true},
-    
-    
+      Location: locationData,
+      Budget: {minValue: 20000, maxValue: 500000000, isDefault: true},
     };
     setfilterlocalities(locationData);
 
     setSelectedFilters(updatedSelectedFilters);
 
     onApply(updatedSelectedFilters);
-
   };
   const RightIcon = () => (
     <TouchableOpacity onPress={handleApplyFilters}>

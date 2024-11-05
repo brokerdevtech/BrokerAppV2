@@ -842,7 +842,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
           <>
             <View>
               <ZHeader
-                title={`New Post`}
+                title={'New Post'}
                 rightIcon={<RightIcon />}
                 isHideBack={true}
                 isLeftIcon={<LeftIcon />}
@@ -907,18 +907,12 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
             </View>
             {/* <Box> */}
             <View style={styles.footer}>
-              <TouchableOpacity
-                onPress={() => setPage('Post')}
-                style={styles.footerSection}>
+              <TouchableOpacity style={styles.footerSection}>
                 <ZText
                   numberOfLines={1}
-                  style={[
-                    page === 'Post'
-                      ? styles.pickedFooterTitle
-                      : styles.footerTitle,
-                  ]}
+                  style={[styles.pickedFooterTitle]}
                   type={'R16'}>
-                  {`Post`}
+                  {'Post'}
                 </ZText>
               </TouchableOpacity>
               <TouchableOpacity
@@ -926,25 +920,19 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
                 style={styles.footerSection}>
                 <ZText
                   numberOfLines={1}
-                  style={[
-                    page === 'Reel'
-                      ? styles.pickedFooterTitle
-                      : styles.footerTitle,
-                  ]}
+                  style={[styles.footerTitle]}
                   type={'R16'}>
-                  {`Reel`}
+                  {'Reel'}
                 </ZText>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handlePressSelectStoryButton()}>
+              <TouchableOpacity
+                style={styles.footerSection}
+                onPress={() => handlePressSelectStoryButton()}>
                 <ZText
                   numberOfLines={1}
-                  style={[
-                    page === 'Story'
-                      ? styles.pickedFooterTitle
-                      : styles.footerTitle,
-                  ]}
+                  style={[styles.footerTitle]}
                   type={'R16'}>
-                  {`Story`}
+                  {'Story'}
                 </ZText>
               </TouchableOpacity>
             </View>
@@ -1058,6 +1046,7 @@ const styles = StyleSheet.create({
   },
   footerSection: {
     // width: '50%',
+
     alignItems: 'center',
     padding: 10,
     justifyContent: 'center',

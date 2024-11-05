@@ -50,10 +50,9 @@ import LocationMap from '../sharedComponents/LocationMap';
 import ZAvatarInitials from '../sharedComponents/ZAvatarInitials';
 import {useNavigation} from '@react-navigation/native';
 import {colors} from '../themes';
+import {formatNumberToIndianSystem} from '../utils/helpers';
 
 const propertyDetails = (data: any, user: any, navigation: any) => {
-
-
   const onPressUser = (userId, userName, userImage) => {
     if (user.userId === userId) {
       navigation.navigate('ProfileScreen');
@@ -69,7 +68,6 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
   };
 
   const generateLink = async () => {
-
     try {
       const response = await fetch(
         `https://tinyurl.com/api-create.php?url=${encodeURIComponent(
@@ -84,7 +82,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
 
   const sharePost = async () => {
     const getLink = await generateLink();
- 
+
     try {
       await Share.share({
         message: getLink,
@@ -111,7 +109,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
       {/* Car Details */}
       <VStack space="xs" style={styles.detailsContainetop}>
         <ZText type={'M16'} color={colors.light.appred}>
-          {'\u20B9'} {data?.price}
+          {'\u20B9'} {formatNumberToIndianSystem(data?.price)}
         </ZText>
 
         <HStack>
@@ -213,9 +211,13 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
                 styles={styles.profileImage}
                 name={data.postedBy}
               />
-              <View style={{marginLeft: 15, justifyContent: 'center'}}>
+              <TouchableOpacity
+                onPress={() =>
+                  onPressUser(data.userId, data.postedBy, data.profileImage)
+                }
+                style={{marginLeft: 15, justifyContent: 'center'}}>
                 <ZText type={'B16'}>{data.postedBy}</ZText>
-              </View>
+              </TouchableOpacity>
             </HStack>
           </VStack>
 
@@ -260,7 +262,7 @@ const carDetails = (data: any, user: any, navigation: any) => {
 
   const sharePost = async () => {
     const getLink = await generateLink();
- 
+
     try {
       await Share.share({
         message: getLink,
@@ -288,7 +290,7 @@ const carDetails = (data: any, user: any, navigation: any) => {
       {/* Car Details */}
       <VStack space="md" style={styles.detailsContainer}>
         <ZText type={'M16'} color={'#E00000'}>
-          {'\u20B9'} {data?.price}
+          {'\u20B9'} {formatNumberToIndianSystem(data?.price)}
         </ZText>
 
         <ZTextMore type={'B16'} numberOfLines={1}>
@@ -362,9 +364,13 @@ const carDetails = (data: any, user: any, navigation: any) => {
                 styles={styles.profileImage}
                 name={data.postedBy}
               />
-              <View style={{marginLeft: 15, justifyContent: 'center'}}>
+              <TouchableOpacity
+                onPress={() =>
+                  onPressUser(data.userId, data.postedBy, data.profileImage)
+                }
+                style={{marginLeft: 15, justifyContent: 'center'}}>
                 <ZText type={'B16'}>{data.postedBy}</ZText>
-              </View>
+              </TouchableOpacity>
             </HStack>
           </VStack>
         </VStack>
@@ -386,7 +392,6 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
     await execute(route.params.postType, route.params.postId);
   };
   const chatProfilePress = useCallback(async () => {
-
     if (user.userId.toString() == data.userId.toString()) {
       Alert.alert('Error', 'You cannot chat with yourself.');
     } else {

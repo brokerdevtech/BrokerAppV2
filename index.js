@@ -22,6 +22,7 @@ const tokenProvider: TokenOrProvider = async userId => {
 };
 messaging().getInitialNotification(async remoteMessage => {});
 messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log(remoteMessage, 'meass');
   if (Object.keys(remoteMessage.data).length === 0) {
     const channelId = await notifee.createChannel({
       id: 'app-messages',

@@ -144,7 +144,6 @@ function uriToBlob(uri: string): Promise<Blob> {
   });
 }
 function uriToBlobRFNS(uri) {
-
   return new Promise((resolve, reject) => {
     RNFS.readFile(uri, 'base64')
       .then(data => {

@@ -111,10 +111,11 @@ const GuestCustomHeader = () => {
           <AlertDialogContent>
             <AlertDialogBody className="mt-3 mb-4 ">
               <ZText type="S18" style={{marginBottom: 20, textAlign: 'center'}}>
-                Want to see More ?
+                Discover endless premium listing with BrokerApp
               </ZText>
               <ZText type="R16" style={{marginBottom: 20, textAlign: 'center'}}>
-                Hurry up create an account with us now.
+                your trusted partner for properties, cars, and loans. Join us
+                and turn your dreams into reality!
               </ZText>
             </AlertDialogBody>
             <AlertDialogFooter
@@ -137,7 +138,7 @@ const GuestCustomHeader = () => {
                 onPress={onPressSignUp}
                 style={{backgroundColor: Color.primary, marginLeft: 10}}>
                 <ZText type="R16" style={{color: 'white', textAlign: 'center'}}>
-                Login
+                  Login
                 </ZText>
               </Button>
             </AlertDialogFooter>

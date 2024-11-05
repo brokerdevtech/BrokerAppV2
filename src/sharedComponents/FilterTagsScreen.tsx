@@ -35,6 +35,15 @@ import {
   getFilterTags,
 } from '../../BrokerAppCore/services/new/filterTags';
 import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
+import {
+  AlertDialog,
+  AlertDialogBackdrop,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+} from '../../components/ui/alert-dialog';
+import {Button} from '../../components/ui/button';
+import {Color} from '../styles/GlobalStyles';
 
 const devicewidth = Dimensions.get('window').width;
 let Selectedfiltersobj = {tags: []};
@@ -78,6 +87,8 @@ const FilterTagsScreen: React.FC = ({
     error: filtererror,
     execute: filterexecute,
   } = useApiRequest(getFilterTags);
+  const [showAlertDialog, setShowAlertDialog] = React.useState(false);
+  const handleClose = () => setShowAlertDialog(false);
   const {
     data: filterCascadedata,
     status: filterCascadestatus,
@@ -117,9 +128,8 @@ const FilterTagsScreen: React.FC = ({
     // Make sure user.userId is available before calling fetchData
     if (user?.userId) {
       fetchData();
-      
     }
-  }, [user?.userId,AppLocation]);
+  }, [user?.userId, AppLocation]);
   useEffect(() => {
     if (resetChild) {
       setChildState({});
@@ -475,7 +485,7 @@ const FilterTagsScreen: React.FC = ({
   };
   const LeftIcon = () => {
     return (
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity onPress={() => setShowAlertDialog(true)}>
         <View
           style={{
             // ...styles.appTitleMain,
@@ -604,11 +614,48 @@ const FilterTagsScreen: React.FC = ({
         </View>
         <View style={{marginBottom: 20, marginTop: 30}}>
           <LocalityTag
-              selectedLocation={Applocalities}
+            selectedLocation={Applocalities}
             isMandatory={true}
             onLocalityChange={onFiltersLocalityChange}></LocalityTag>
         </View>
         {renderFilterComponents()}
+        <AlertDialog isOpen={showAlertDialog} onClose={handleClose} size="md">
+          <AlertDialogBackdrop />
+          <AlertDialogContent>
+            <AlertDialogBody className="mt-3 mb-4 ">
+              <ZText type="S18" style={{marginBottom: 20, textAlign: 'center'}}>
+                Are you sure you want go back?
+              </ZText>
+              <ZText type="R16" style={{marginBottom: 20, textAlign: 'center'}}>
+                if you go back your data will be lost .
+              </ZText>
+            </AlertDialogBody>
+            <AlertDialogFooter
+              style={{justifyContent: 'center', alignItems: 'center'}}>
+              <Button
+                variant="outline"
+                action="secondary"
+                style={{borderColor: Color.primary}}
+                onPress={handleClose}
+                size="md">
+                <ZText
+                  type="R16"
+                  color={Color.primary}
+                  style={{textAlign: 'center'}}>
+                  Cancel
+                </ZText>
+              </Button>
+              <Button
+                size="md"
+                style={{backgroundColor: Color.primary, marginLeft: 10}}
+                onPress={() => navigation.goBack()}>
+                <ZText type="R16" style={{color: 'white', textAlign: 'center'}}>
+                  Back
+                </ZText>
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </ScrollView>
     </ZSafeAreaView>
   );

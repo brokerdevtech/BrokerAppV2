@@ -11,7 +11,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import {useSelector} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {RootState} from '@reduxjs/toolkit/query';
 import {HStack} from '@/components/ui/hstack';
 import {Grid, GridItem} from '@/components/ui/grid';
@@ -36,6 +36,9 @@ import UserStories from '../components/story/UserStories';
 import {colors} from '../themes';
 import MarqueeScreen from '../sharedComponents/profile/Marquee';
 import RecentSearchSection from './Dashboard/RecentSearchSection';
+import {GetDashboardData} from '../../BrokerAppCore/services/authService';
+import {setDashboard} from '../../BrokerAppCore/redux/store/Dashboard/dashboardSlice';
+import store from '../../BrokerAppCore/redux/store';
 
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -47,12 +50,12 @@ export default function DashboradScreen() {
   const navigation = useNavigation();
 
   const callPodcastList = async () => {
-     execute(user.userId, 1, 4);
+    execute(user.userId, 1, 4);
     //await footerExecute()
   };
   const callmarList = async () => {
     const request = {pageNo: 1, pageSize: 10, cityName: cityToShow};
-     marqueeExecute('Marqueue', request);
+    marqueeExecute('Marqueue', request);
   };
   const {
     data: marqueeText,
@@ -64,7 +67,24 @@ export default function DashboradScreen() {
     callPodcastList();
     callmarList();
   }, [AppLocation]);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        try {
+          GetDashboardData(user.userId)
+            .then(data => {
+              store.dispatch(setDashboard(data.data));
+            })
+            .catch(error => {});
+        } catch (error) {
+          console.error('Error fetching posts:', error);
+        }
+      };
+      fetchData();
 
+      return () => {};
+    }, []),
+  );
   const handleThumbnailTap = async (item, index) => {
     navigation.navigate('VideoReels', {
       podcastitem: item,
@@ -234,13 +254,13 @@ export default function DashboradScreen() {
             isShowAll={false}
             request={{pageNo: 1, pageSize: 10, cityName: AppLocation.City}}
           />
-           <RecentSearchSection
+          <RecentSearchSection
             heading={'Recent Search'}
             background={'#F7F8FA'}
             endpoint={`RecentSearch`}
             isShowAll={true}
             request={{
-              userId:user.userId
+              userId: user.userId,
             }}
           />
           <ProductSection
@@ -296,7 +316,7 @@ export default function DashboradScreen() {
             endpoint={`RecentSearch`}
             isShowAll={true}
             request={{
-              userId:user.userId
+              userId: user.userId,
             }}
           />
           <Footer />

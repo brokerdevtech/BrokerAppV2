@@ -101,27 +101,27 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         AppLocation.viewportSouthWestLat,
         AppLocation.viewportSouthWestLng,
       );
-      if (SocialLoginerror) {
-        setLoading(false);
-        console.log(SocialLoginerror, 'erroe');
-        if (!toast.isActive(toastId)) {
-          const newId = Math.random();
-          setToastId(newId);
-          toast.show({
-            id: newId,
-            placement: 'bottom',
-            duration: 3000,
-            render: ({id}) => {
-              const uniqueToastId = 'toast-' + id;
-              return (
-                <Toast nativeID={uniqueToastId} action="muted" variant="solid">
-                  <ToastDescription>{SocialLoginerror}</ToastDescription>
-                </Toast>
-              );
-            },
-          });
-        }
-      }
+      // if (SocialLoginerror) {
+      //   setLoading(false);
+      //   console.log(SocialLoginerror, 'erroe');
+      //   if (!toast.isActive(toastId)) {
+      //     const newId = Math.random();
+      //     setToastId(newId);
+      //     toast.show({
+      //       id: newId,
+      //       placement: 'bottom',
+      //       duration: 3000,
+      //       render: ({id}) => {
+      //         const uniqueToastId = 'toast-' + id;
+      //         return (
+      //           <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+      //             <ToastDescription>{SocialLoginerror}</ToastDescription>
+      //           </Toast>
+      //         );
+      //       },
+      //     });
+      //   }
+      // }
     } catch (error) {
       setLoading(false);
 
@@ -152,7 +152,6 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     await execute(email, password);
     setLoading(false);
     if (error) {
-    
       if (!toast.isActive(toastId)) {
         const newId = Math.random();
         setToastId(newId);
@@ -268,6 +267,29 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       // Proceed with storing tokens and user data
     }
   }, [data]);
+  useEffect(() => {
+    if (SocialLoginerror) {
+      setLoading(false);
+
+      if (!toast.isActive(toastId)) {
+        const newId = Math.random();
+        setToastId(newId);
+        toast.show({
+          id: newId,
+          placement: 'bottom',
+          duration: 3000,
+          render: ({id}) => {
+            const uniqueToastId = 'toast-' + id;
+            return (
+              <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                <ToastDescription>{SocialLoginerror}</ToastDescription>
+              </Toast>
+            );
+          },
+        });
+      }
+    }
+  }, [SocialLoginerror]);
   // console.log(SocialLoginstatus, 'jdk');
   return (
     <View style={styles.container}>
@@ -389,9 +411,10 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         Don't have an account?{' '}
         <Text
           style={styles.signUpText}
-          onPress={() => 
-          {console.log('ww');
-            navigation.navigate('Register')}}>
+          onPress={() => {
+            console.log('ww');
+            navigation.navigate('Register');
+          }}>
           Sign Up
         </Text>
       </Text>
