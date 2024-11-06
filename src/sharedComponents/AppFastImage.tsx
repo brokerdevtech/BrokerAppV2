@@ -9,8 +9,8 @@ import {
   Modal,
   Text,
 } from 'react-native';
-import { VStack } from '../../components/ui/vstack';
-import { Skeleton } from '../../components/ui/skeleton';
+import {VStack} from '../../components/ui/vstack';
+import {Skeleton} from '../../components/ui/skeleton';
 import FastImage from '@d11/react-native-fast-image';
 import flex from '@/themes/flex';
 //import FastImage from 'react-native-fast-image';
@@ -20,8 +20,14 @@ const AppFastImage = ({uri}) => {
   const [isFullscreen, setIsFullscreen] = useState(false); // New state to control modal visibility
 
   return (
-    <View style={{flex:1,width:'100%',borderRadius: 10, justifyContent: 'center',
-      alignItems: 'center', }}>
+    <View
+      style={{
+        flex: 1,
+        width: '100%',
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
       {/* {isLoading && (
         <></>
         // <VStack
@@ -37,7 +43,6 @@ const AppFastImage = ({uri}) => {
         style={{...styles.vertical}}
         onPress={() => setIsFullscreen(true)} // Open the image in fullscreen on tap
       >
-    
         <FastImage
           onLoadStart={() => setIsLoading(true)}
           source={{uri}}
@@ -45,7 +50,6 @@ const AppFastImage = ({uri}) => {
           style={styles.vertical}
           resizeMode={FastImage.resizeMode.cover}
         />
-   
       </TouchableOpacity>
 
       {/* Fullscreen Modal */}
@@ -61,9 +65,8 @@ const AppFastImage = ({uri}) => {
             style={styles.closeButton}>
             <Text style={styles.closeButtonText}>Close</Text>
           </TouchableOpacity>
-        
 
-<FastImage
+          <FastImage
             source={{uri}}
             style={styles.fullscreenImage}
             resizeMode={FastImage.resizeMode.contain}
@@ -79,15 +82,15 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 12,
-    display:'flex',
-    justifyContent: 'center'
+    display: 'flex',
+    justifyContent: 'center',
   },
   fullscreenContainer: {
     flex: 1,
     backgroundColor: 'black', // Change as needed
     justifyContent: 'center',
     alignItems: 'center',
-    color:'white'
+    color: 'white',
   },
   fullscreenImage: {
     width: '100%',

@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "291590546828",
     "project_id": "brokerapp-5e5f3",
-    "storage_bucket": "brokerapp-5e5f3.appspot.com"
+    "storage_bucket": "brokerapp-5e5f3.firebasestorage.app"
   },
   "client": [
     {
@@ -14,7 +14,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "291590546828-c6i0jsih7jphgfoe3ej1tgvangloc5h5.apps.googleusercontent.com",
+          "client_id": "291590546828-ll1pnno0vmbog94lkhfvkoda38lf93sg.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -29,6 +29,14 @@
             {
               "client_id": "291590546828-c6i0jsih7jphgfoe3ej1tgvangloc5h5.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "291590546828-sq554qt1cr52ng0g2amdd1q8gt0pmrqi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.broker.broker",
+                "app_store_id": "6480364900"
+              }
             }
           ]
         }

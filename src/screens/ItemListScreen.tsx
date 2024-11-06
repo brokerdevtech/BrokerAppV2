@@ -13,6 +13,8 @@ import {
   Linking,
   Alert,
   ActivityIndicator,
+  Platform,
+  PermissionsAndroid,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
@@ -154,18 +156,43 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
       defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
     });
   }, []);
-  const makeCall = useCallback(phoneNumber => {
+  const makeCall = useCallback(async phoneNumber => {
     const url = `tel:${phoneNumber}`;
 
-    Linking.canOpenURL(url)
-      .then(supported => {
-        if (supported) {
+    const checkPermissionAndOpen = async () => {
+      const hasPermission = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+      );
+      if (hasPermission) {
+        Linking.openURL(url);
+      } else {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           Linking.openURL(url);
         } else {
-          Alert.alert('Error', 'Your device does not support phone calls');
+          Alert.alert(
+            'Permission Denied',
+            'You need to enable call permissions to use this feature',
+          );
         }
-      })
-      .catch(err => console.error('Error opening dialer', err));
+      }
+    };
+
+    if (Platform.OS === 'android') {
+      await checkPermissionAndOpen();
+    } else {
+      Linking.canOpenURL(url)
+        .then(supported => {
+          if (supported) {
+            Linking.openURL(url);
+          } else {
+            Alert.alert('Error', 'Your device does not support phone calls');
+          }
+        })
+        .catch(err => console.error('Error opening dialer', err));
+    }
   }, []);
   return (
     <View style={styles.WrapcardContainer}>
@@ -197,7 +224,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
             User={User}
             listTypeData={listTypeData}
             onUpdateLikeCount={newCount => {
-              console.log(newCount);
+              // console.log(newCount);
             }}
           />
         </View>
@@ -582,8 +609,8 @@ const ItemListScreen: React.FC<any> = ({
   }
 
   const convertTagsToNewFormat = tags => {
-    console.log('tags');
-    console.log(tags);
+    // console.log('tags');
+    // console.log(tags);
     return tags.reduce((acc, tag) => {
       const transformedValues = tag.values.map(item => ({
         key: item.key, // Assign the new key value

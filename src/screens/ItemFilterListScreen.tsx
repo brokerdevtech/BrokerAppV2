@@ -318,7 +318,7 @@ const ItemFilterListScreen: React.FC<any> = ({
   const [Itemslocalities, setItemslocalities] = useState(null);
   const [PopUPFilter, setPopUPFilter] = useState(null);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
-
+  // console.log(route.params, 'jj');
   const brandName =
     route.params.brandName !== undefined ? route.params.brandName : '';
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -542,7 +542,7 @@ const ItemFilterListScreen: React.FC<any> = ({
     // hasMore_Set(true);
     set_FilterChipsData(APiobj);
     //     console.log("=APiobj");
-    // console.log(APiobj);
+    console.log(APiobj);
     // console.log(user);
 
     //  execute(listTypeData, {
@@ -620,7 +620,7 @@ const ItemFilterListScreen: React.FC<any> = ({
   const OnPressfilters = () => {
     FilterSheetRef.current?.open();
   };
-  // console.log(data);
+  // console.log(status);
   return (
     <BottomSheetModalProvider>
       <ZHeaderFliter

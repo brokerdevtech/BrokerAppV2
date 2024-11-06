@@ -83,7 +83,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       const userInfo = await GoogleSignin.signIn();
 
       const fcmToken = await getfcmToken();
-
+      console.log(fcmToken?.toString());
       await SocialLoginexecute(
         userInfo.data?.user.email,
         'Google',
@@ -270,7 +270,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   useEffect(() => {
     if (SocialLoginerror) {
       setLoading(false);
-
+      console.log(SocialLoginerror);
       if (!toast.isActive(toastId)) {
         const newId = Math.random();
         setToastId(newId);

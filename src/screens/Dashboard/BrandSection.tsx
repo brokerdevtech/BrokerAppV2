@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -9,7 +9,7 @@ import {
 import {HStack} from '@/components/ui/hstack';
 import {VStack} from '@/components/ui/vstack';
 import {Box} from '@/components/ui/box';
-import {useApiRequest} from '@/src/hooks/useApiRequest';
+import {useApiRequest} from '../../../src/hooks/useApiRequest';
 import {
   fetchDashboardData,
   ListDashboardPostRequest,
@@ -48,6 +48,7 @@ const BrandSection = (props: BrandSectionProps) => {
   const navigation = useNavigation();
   const [showAlertDialog, setShowAlertDialog] = React.useState(false);
   const handleClose = () => setShowAlertDialog(false);
+  const [brandData, setBrandData] = useState(null);
   const onPressSignUp = () => {
     //  onOpen();
     setShowAlertDialog(false);
@@ -57,11 +58,18 @@ const BrandSection = (props: BrandSectionProps) => {
     await execute(props.endpoint, props.request);
     // console.log(props.heading, 'data :-', data);
   };
-
+  // console.log(data);
   useEffect(() => {
     callBrandList();
   }, [props]);
 
+  useEffect(() => {
+    if (status == 200) {
+      // setBrandData()
+      console.log(data, 'hh');
+    }
+  }, [status]);
+  // console.log(status);
   const renderProductItems = ({item, index}) => {
     // console.log('item =====>', item);
     const handlePress = () => {
@@ -93,7 +101,7 @@ const BrandSection = (props: BrandSectionProps) => {
       </View>
     );
   };
-
+  // console.log(data, 'jj');
   return (
     <View style={{backgroundColor: props.background, paddingVertical: 2}}>
       <HStack space="md" reversed={false} style={styles.heading}>

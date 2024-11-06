@@ -43,7 +43,7 @@ import store from '../../BrokerAppCore/redux/store';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-
+  console.log(user);
   const {data, status, error, execute} = useApiRequest(fetchPodcastList);
   //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
   const cityToShow = AppLocation.City;
@@ -291,9 +291,9 @@ export default function DashboradScreen() {
           <View style={styles.container}>
             <HStack space="md" reversed={false} style={styles.heading}>
               <ZText type={'R18'}>Podcast</ZText>
-              <ZText type={'R14'} style={styles.headingLink}>
+              {/* <ZText type={'R14'} style={styles.headingLink}>
                 See All
-              </ZText>
+              </ZText> */}
             </HStack>
             <HStack space="md" reversed={false} style={styles.list}>
               <FlatList
@@ -313,8 +313,9 @@ export default function DashboradScreen() {
           <BrandSection
             heading={'Brands Associated'}
             background={'#FFFFFF'}
-            endpoint={`RecentSearch`}
+            endpoint={`BrandAssociate`}
             isShowAll={true}
+            isGuest={false}
             request={{
               userId: user.userId,
             }}

@@ -408,7 +408,6 @@ export default function RegisterScreen({setLoggedIn}) {
             {/* Category Selection */}
             <Text style={styles.label}>Select Category</Text>
             <Select
-              selectedValue={'Real Estate Sector'}
               onValueChange={(selectedValue: any) => {
                 setFieldValue('BrokerCategory', selectedValue);
                 handleBlur('BrokerCategory');
