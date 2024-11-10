@@ -210,8 +210,9 @@ const PostActions = ({
 
   const postHaveBuyer = async () => {
     if (item?.raisedPostBuyerHand && item?.raisedPostBuyerHand == 1) {
+      // console.log()
       console.log(User.userId, item.postId);
-      const result = await addHaveABuyer(User.userId, 'buyer', item.postId);
+      const result = await RemoveHaveABuyer(User.userId, item.postId);
       console.log(result);
       //
       if (result?.status == 'success') {
@@ -220,9 +221,8 @@ const PostActions = ({
         setisraisedPostBuyerHand(false);
       }
     } else {
-      const result = await RemoveHaveABuyer(User.userId, 'buyer', item.postId);
-      //
-      //
+      const result = await addHaveABuyer(User.userId, item.postId);
+
       if (result?.status == 'success') {
         item.buyers = item.buyers + 1;
         item.raisedPostBuyerHand = 1;
@@ -230,7 +230,30 @@ const PostActions = ({
       }
     }
   };
-  // console.log(item, 'item');
+  // const postHaveBuyer = async () => {
+  //   //
+  //   //
+  //   if (item?.raisedPostBuyerHand && item?.raisedPostBuyerHand == 1) {
+  //     const result = await PostUnLIke(User.userId, 'buyer', item.postId);
+
+  //     //
+  //     if (result?.status == 'success') {
+  //       item.buyers = item.buyers - 1;
+  //       item.raisedPostBuyerHand = 0;
+  //       setisraisedPostBuyerHand(false);
+  //     }
+  //   } else {
+  //     const result = await PostLikeApi(User.userId, 'buyer', item.postId);
+  //     //
+  //     //
+  //     if (result?.status == 'success') {
+  //       item.buyers = item.buyers + 1;
+  //       item.raisedPostBuyerHand = 1;
+  //       setisraisedPostBuyerHand(true);
+  //     }
+  //   }
+  // };
+  console.log(item, 'item');
   return (
     <>
       <HStack style={{marginRight: 20, marginTop: 10}}>

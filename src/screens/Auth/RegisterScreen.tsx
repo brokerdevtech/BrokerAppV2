@@ -214,27 +214,6 @@ export default function RegisterScreen({setLoggedIn}) {
       console.log(user);
 
       await registerexecute(user);
-      if (registererror) {
-        console.log(registererror);
-
-        if (!toast.isActive(toastId)) {
-          const newId = Math.random();
-          setToastId(newId);
-          toast.show({
-            id: newId,
-            placement: 'bottom',
-            duration: 3000,
-            render: ({id}) => {
-              const uniqueToastId = 'toast-' + id;
-              return (
-                <Toast nativeID={uniqueToastId} action="muted" variant="solid">
-                  <ToastDescription>{registererror}</ToastDescription>
-                </Toast>
-              );
-            },
-          });
-        }
-      }
     } catch (error) {
       console.error('Error in handleSubmit:', error);
     } finally {
@@ -271,6 +250,29 @@ export default function RegisterScreen({setLoggedIn}) {
     };
     createuser();
   }, [registerdata]);
+  useEffect(() => {
+    if (registererror) {
+      console.log(registererror);
+
+      if (!toast.isActive(toastId)) {
+        const newId = Math.random();
+        setToastId(newId);
+        toast.show({
+          id: newId,
+          placement: 'bottom',
+          duration: 3000,
+          render: ({id}) => {
+            const uniqueToastId = 'toast-' + id;
+            return (
+              <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                <ToastDescription>{registererror}</ToastDescription>
+              </Toast>
+            );
+          },
+        });
+      }
+    }
+  }, [registererror]);
   return (
     <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.container}>
       <Text style={styles.header}>Create An Account</Text>

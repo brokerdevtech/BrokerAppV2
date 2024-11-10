@@ -391,6 +391,19 @@ const MyItemListScreen: React.FC<any> = ({
               keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.8}
               onEndReached={loadMorepage}
+              ListEmptyComponent={() =>
+                data === undefined ? (
+                  <ActivityIndicator
+                    size="large"
+                    color="#0000ff"
+                    style={styles.loader}
+                  />
+                ) : (
+                  <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>No Data Found</Text>
+                  </View>
+                )
+              }
               ListFooterComponent={
                 isInfiniteLoading ? (
                   <LoadingSpinner isVisible={isInfiniteLoading} />

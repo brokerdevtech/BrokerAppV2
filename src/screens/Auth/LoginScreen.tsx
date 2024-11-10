@@ -78,34 +78,46 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   };
   const clearGoogleSignInCache = async () => {
     try {
-      const isSignedIn = await GoogleSignin.isSignedIn();
+      // First check if Google Play Services are available
+      await GoogleSignin.hasPlayServices();
+
+      // Then check if user is signed in
+      const isSignedIn = await GoogleSignin.hasPreviousSignIn();
+
       if (isSignedIn) {
-        await GoogleSignin.revokeAccess();
-        await GoogleSignin.signOut();
-        this.setState({user: null});
+        try {
+          await GoogleSignin.revokeAccess();
+          await GoogleSignin.signOut();
+        } catch (signOutError) {
+          console.error('Error signing out:', signOutError);
+          // Continue with sign in even if sign out fails
+        }
       }
     } catch (error) {
-      console.error('Error clearing Google Sign-In cache:', error);
+      console.error('Error checking Google Sign-In status:', error);
+      // Don't throw error, just log it and continue with sign in
     }
   };
 
   const signInWithGoogle = async () => {
     try {
       setLoading(true);
-      await GoogleSignin.hasPlayServices(); // Ensure Google Play services are available
+      await GoogleSignin.hasPlayServices();
 
-      // Only call revokeAccess() or signOut() if necessary
-      await clearGoogleSignInCache(); // You can call this only if you really need to clear the cache
+      // Try to clear cache but don't let it block sign in if it fails
+      await clearGoogleSignInCache().catch(console.error);
 
-      const userInfo = await GoogleSignin.signIn(); // Sign in with Google
-
+      const userInfo = await GoogleSignin.signIn();
       const fcmToken = await getfcmToken();
-      console.log(fcmToken?.toString());
+
+      if (!userInfo.user || !userInfo.user.email) {
+        throw new Error('Failed to get user email from Google Sign In');
+      }
 
       await SocialLoginexecute(
-        userInfo.data?.user.email,
+        userInfo.user.email,
         'Google',
-        userInfo.data?.idToken,
+        userInfo.idToken,
         fcmToken?.toString(),
         AppLocation.City,
         AppLocation.State,
@@ -121,18 +133,27 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       );
     } catch (error) {
       setLoading(false);
-      console.error(error);
+      console.error('Google Sign In Error:', error);
 
+      let errorMessage = 'Failed to sign in with Google';
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // User cancelled the login flow
+        errorMessage = 'Sign in cancelled';
       } else if (error.code === statusCodes.IN_PROGRESS) {
-        // Operation in progress
+        errorMessage = 'Sign in already in progress';
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        // Google Play Services are not available
-      } else {
-        // Other error
-        console.log('Error during sign-in:', error);
+        errorMessage = 'Google Play Services not available';
       }
+
+      toast.show({
+        id: Math.random(),
+        placement: 'bottom',
+        duration: 3000,
+        render: ({id}) => (
+          <Toast nativeID={`toast-${id}`} action="error" variant="solid">
+            <ToastDescription>{errorMessage}</ToastDescription>
+          </Toast>
+        ),
+      });
     }
   };
 
