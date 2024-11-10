@@ -19,7 +19,8 @@ import {
   getFollowerList,
   getFollowingList,
 } from '../../BrokerAppCore/services/new/profileServices';
-import { useApiPagingRequest } from '../hooks/useApiPagingRequest';
+import {useApiPagingRequest} from '../hooks/useApiPagingRequest';
+import ZText from './ZText';
 
 const DEBOUNCE_DELAY = 300;
 const staticData = [
@@ -49,7 +50,6 @@ const FollowerList: React.FC = ({
   const [paramsuserId, setparamsuserId] = useState(route.params?.userId);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
 
-
   const [searchText, setSearch] = useState('');
   const [userLists, setuserLists] = useState();
   const listType = route.params?.type;
@@ -59,20 +59,20 @@ const FollowerList: React.FC = ({
     error: followererror,
     execute: followerexecute,
     loadMore: followerLoadMore,
-    pageSize_Set:followerpageSize_Set,
-    currentPage_Set:followercurrentPage_Set,
-    hasMore_Set:followerhasMore_Set
-  } = useApiPagingRequest(getFollowerList,setInfiniteLoading);
+    pageSize_Set: followerpageSize_Set,
+    currentPage_Set: followercurrentPage_Set,
+    hasMore_Set: followerhasMore_Set,
+  } = useApiPagingRequest(getFollowerList, setInfiniteLoading);
   const {
     data: followingdata,
     status: followingstatus,
     error: followingerror,
     execute: followingexecute,
     loadMore: followingoadMore,
-    pageSize_Set:followingpageSize_Set,
-    currentPage_Set:followingcurrentPage_Set,
-    hasMore_Set:followinghasMore_Set
-  } = useApiPagingRequest(getFollowingList,setInfiniteLoading);
+    pageSize_Set: followingpageSize_Set,
+    currentPage_Set: followingcurrentPage_Set,
+    hasMore_Set: followinghasMore_Set,
+  } = useApiPagingRequest(getFollowingList, setInfiniteLoading);
   const BlurredStyle = {
     backgroundColor: colors.inputBg,
     borderColor: colors.btnColor1,
@@ -88,7 +88,7 @@ const FollowerList: React.FC = ({
 
   const onSearchInput = async (text: string) => {
     //
- 
+
     setSearch(text);
 
     await getList();
@@ -104,7 +104,6 @@ const FollowerList: React.FC = ({
   };
   const getList = async () => {
     try {
-
       if (listType === 'Followers') {
         followercurrentPage_Set(1);
         followerhasMore_Set(true);
@@ -122,34 +121,38 @@ const FollowerList: React.FC = ({
     React.useCallback(() => {
       setSearch('');
       getList();
-    }, [listType, route.params.userId, pageTitle])
+    }, [listType, route.params.userId, pageTitle]),
   );
-
 
   useEffect(() => {
     // Bind data to the state when the data fetch is successful
-//console.log(followerdata);
+    //console.log(followerdata);
 
     if (followerstatus === 200 && followerdata?.length > 0) {
-     // console.log(followerdata);
+      // console.log(followerdata);
       setuserLists(followerdata);
     } else if (followingstatus === 200 && followingdata?.length > 0) {
       setuserLists(followingdata);
     }
   }, [followerstatus, followerdata, followingstatus, followingdata]);
 
-
   const loadMore = async () => {
-    if(!isInfiniteLoading)
-  {  if (listType === 'Followers') {
-      await followerLoadMore(route.params.userId, searchText);
-    } else {
-      await followingoadMore(route.params.userId, searchText);
-    }}
+    if (!isInfiniteLoading) {
+      if (listType === 'Followers') {
+        await followerLoadMore(route.params.userId, searchText);
+      } else {
+        await followingoadMore(route.params.userId, searchText);
+      }
+    }
   };
 
- 
-
+  const EmptyListComponent = () => (
+    <View style={localStyles.emptyContainer}>
+      <ZText type={'R16'} style={localStyles.emptyText}>
+        No data available
+      </ZText>
+    </View>
+  );
 
   return (
     <ZSafeAreaView>
@@ -170,7 +173,7 @@ const FollowerList: React.FC = ({
           _onFocus={onHighlightInput}
           onBlur={onUnHighlightInput}
         />
-     <View style={{ flex: 1 }}>
+        <View style={{flex: 1}}>
           <FlatList
             data={userLists}
             showsVerticalScrollIndicator={false}
@@ -205,6 +208,7 @@ const FollowerList: React.FC = ({
               paddingBottom: 50,
               flexGrow: 1,
             }}
+            ListEmptyComponent={<EmptyListComponent />}
             keyExtractor={(item, index) => index.toString()}
             onEndReachedThreshold={0.5}
             onEndReached={loadMore}
@@ -244,6 +248,18 @@ const localStyles = StyleSheet.create({
   },
   inputBoxStyle: {
     ...styles.ph15,
+  },
+  emptyContainer: {
+    display: 'flex',
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    flex: 1,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: 'grey',
   },
 });
 export default AppBaseContainer(FollowerList, '', true);

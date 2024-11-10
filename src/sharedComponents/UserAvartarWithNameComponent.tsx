@@ -29,6 +29,7 @@ import TextWithPermissionCheck from './TextWithPermissionCheck';
 import ButtonWithPermissionCheck from './ButtonWithPermissionCheck';
 import {AddIcon, Icon, ThreeDotsIcon} from '../../components/ui/icon';
 import {Button, ButtonText} from '../../components/ui/button';
+import TouchableOpacityWithPermissionCheck from './TouchableOpacityWithPermissionCheck';
 
 function UserAvartarWithNameComponent({
   userName,
@@ -92,7 +93,7 @@ function UserAvartarWithNameComponent({
             permissionsArray={userPermissions}
             style={{padding: 10}}
             type="r14"
-            permissionEnum={PermissionKey.AllowDeleteConnection}
+            permissionEnum={false}
             onPress={handleRemovePress}>
             {type === 'network' ? 'Remove' : 'Leave'}
           </TextWithPermissionCheck>

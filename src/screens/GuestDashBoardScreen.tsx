@@ -214,42 +214,50 @@ export default function GuestDashboardScreen({isGuest = false}) {
             <GridItem
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
-              <View style={styles.tabItemContainer}>
-                <TABLoan />
-                <ZText type={'R16'} style={styles.tabItemTitle}>
-                  Loan
-                </ZText>
-              </View>
+              <TouchableOpacity onPress={() => setShowAlertDialog(true)}>
+                <View style={styles.tabItemContainer}>
+                  <TABLoan />
+                  <ZText type={'R16'} style={styles.tabItemTitle}>
+                    Loan
+                  </ZText>
+                </View>
+              </TouchableOpacity>
             </GridItem>
             <GridItem
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
-              <View style={styles.tabItemContainer}>
-                <TABInsurance />
-                <ZText type={'R16'} style={styles.tabItemTitle}>
-                  Insurance
-                </ZText>
-              </View>
+              <TouchableOpacity onPress={() => setShowAlertDialog(true)}>
+                <View style={styles.tabItemContainer}>
+                  <TABInsurance />
+                  <ZText type={'R16'} style={styles.tabItemTitle}>
+                    Insurance
+                  </ZText>
+                </View>
+              </TouchableOpacity>
             </GridItem>
             <GridItem
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
-              <View style={styles.tabItemContainer}>
-                <TABTravel />
-                <ZText type={'R16'} style={styles.tabItemTitle}>
-                  Travel
-                </ZText>
-              </View>
+              <TouchableOpacity onPress={() => setShowAlertDialog(true)}>
+                <View style={styles.tabItemContainer}>
+                  <TABTravel />
+                  <ZText type={'R16'} style={styles.tabItemTitle}>
+                    Travel
+                  </ZText>
+                </View>
+              </TouchableOpacity>
             </GridItem>
             <GridItem
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
-              <View style={styles.tabItemContainer}>
-                <TABWealth />
-                <ZText type={'R16'} style={styles.tabItemTitle}>
-                  Wealth
-                </ZText>
-              </View>
+              <TouchableOpacity onPress={() => setShowAlertDialog(true)}>
+                <View style={styles.tabItemContainer}>
+                  <TABWealth />
+                  <ZText type={'R16'} style={styles.tabItemTitle}>
+                    Wealth
+                  </ZText>
+                </View>
+              </TouchableOpacity>
             </GridItem>
           </Grid>
           <ProductSection

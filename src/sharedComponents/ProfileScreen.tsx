@@ -24,6 +24,7 @@ import {styles} from '../themes';
 import {useFocusEffect} from '@react-navigation/native';
 
 import {
+  checkPermission,
   getFileExtensionFromMimeType,
   getList,
   updateNestedObject,
@@ -52,7 +53,11 @@ import {HStack} from '../../components/ui/hstack';
 import {Color} from '../styles/GlobalStyles';
 import {Checkerror} from '../utils/utilTokens';
 import {StackNav} from '../navigation/NavigationKeys';
-import {imagesBucketcloudfrontPath, moderateScale} from '../config/constants';
+import {
+  imagesBucketcloudfrontPath,
+  moderateScale,
+  PermissionKey,
+} from '../config/constants';
 import {VStack} from '../../components/ui/vstack';
 import ZAvatarInitials from './ZAvatarInitials';
 import ZSafeAreaView from './ZSafeAreaView';
@@ -97,7 +102,14 @@ const ProfileScreen: React.FC = ({
   const [ProfilePostData, setProfilePostData] = useState([]);
   const [page, setPage] = useState(1);
   const [isEditing, setIsEditing] = useState(false);
+  const userPermissions = useSelector(
+    (state: RootState) => state.user.user.userPermissions,
+  );
 
+  const permissionGranted = checkPermission(
+    userPermissions,
+    PermissionKey.AllowViewMyPost,
+  );
   const [biodata, setBiodata] = useState('');
   const [TabSelect, setTabSelect] = useState(0);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -115,11 +127,13 @@ const ProfileScreen: React.FC = ({
     execute: profileUpdateexecute,
   } = useApiRequest(UpdateProfile, setLoading);
   const handleCategoryPress = screen => {
-    navigation.navigate(screen.navigationScreen, {
-      listType: screen.listType,
-      categoryId: screen.categoryId,
-      userId: user.userId,
-    });
+    permissionGranted
+      ? navigation.navigate(screen.navigationScreen, {
+          listType: screen.listType,
+          categoryId: screen.categoryId,
+          userId: user.userId,
+        })
+      : toastMessage('You do not have permission.Contact dev@brokerapp.com.');
   };
 
   const categories = [
@@ -250,7 +264,6 @@ const ProfileScreen: React.FC = ({
   );
   useEffect(() => {
     if (profilestatus == 200) {
-    
       setProfileData(profiledata?.data);
       const Userfollower: any = [];
       if (profiledata.data) {

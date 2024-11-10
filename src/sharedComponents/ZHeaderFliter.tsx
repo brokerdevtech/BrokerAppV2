@@ -7,7 +7,7 @@ import {CommonActions, useNavigation} from '@react-navigation/native';
 import ZText from './ZText';
 
 import {useSelector} from 'react-redux';
-import {moderateScale} from '../config/constants';
+import {moderateScale, PermissionKey} from '../config/constants';
 
 import {Text} from 'react-native';
 
@@ -19,6 +19,8 @@ import {
   InputIcon,
   InputSlot,
 } from '../../components/ui/input';
+import {checkPermission} from '../utils/helpers';
+import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 function ZHeaderFliter(props) {
   const {
     title,
@@ -34,10 +36,39 @@ function ZHeaderFliter(props) {
     AppFliter,
   } = props;
   const navigation = useNavigation();
+  const toast = useToast();
   const colors = useSelector((state: RootState) => state.theme.theme);
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [searchText, setSearchText] = useState('');
-
+  const userPermissions = useSelector(
+    (state: RootState) => state.user.user.userPermissions,
+  );
+  const [toastId, setToastId] = React.useState(0);
+  const permissionGranted = checkPermission(
+    userPermissions,
+    PermissionKey.AllowSearchPost,
+  );
+  const showToast = () => {
+    if (!toast.isActive(toastId)) {
+      const newId = Math.random();
+      setToastId(newId);
+      toast.show({
+        id: newId,
+        placement: 'bottom',
+        duration: 3000,
+        render: ({id}) => {
+          const uniqueToastId = 'toast-' + id;
+          return (
+            <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+              <ToastDescription>
+                {'You do not have permission.Contact dev@brokerapp.com.'}
+              </ToastDescription>
+            </Toast>
+          );
+        },
+      });
+    }
+  };
   const searchInput = (e: any, mode: string) => {
     if (e.nativeEvent.key == 'ENTER') {
       handleSearch(searchText);
@@ -49,7 +80,6 @@ function ZHeaderFliter(props) {
     }
   };
   const searchSubmit = (e: any, mode: string) => {
- 
     handleSearch(searchText);
     setShowSearchBox(false);
   };
@@ -122,7 +152,11 @@ function ZHeaderFliter(props) {
         </View>
         {isSearch && !showSearchBox && (
           <TouchableOpacity
-            onPress={() => setShowSearchBox(showBox => !showBox)}>
+            onPress={() => {
+              permissionGranted
+                ? setShowSearchBox(showBox => !showBox)
+                : showToast();
+            }}>
             <Icon as={SearchIcon} size="xl" />
           </TouchableOpacity>
         )}

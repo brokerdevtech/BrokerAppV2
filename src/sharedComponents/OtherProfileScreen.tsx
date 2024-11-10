@@ -76,7 +76,7 @@ const OtherProfileScreen: React.FC = ({
   toastMessage,
 }) => {
   const userId = route.params.userId;
-
+  console.log(user);
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
@@ -506,8 +506,8 @@ const OtherProfileScreen: React.FC = ({
             permissionsArray={userPermissions}
             tagNames={[Icon]}
             onPress={chatProfilePress}>
-            <Icon as={Chat_icon} size="xxl" />
-            {/* <Chat height="30" width="30" color={colors.primary} /> */}
+            {/* <Icon as={Chat_icon} size="xxl" /> */}
+            <Chat_icon height="30" width="30" color={colors.primary} />
             {/* <Ionicons
               name="chatbubble-outline"
               size={moderateScale(30)}

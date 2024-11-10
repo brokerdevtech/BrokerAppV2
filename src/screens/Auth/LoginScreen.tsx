@@ -76,14 +76,32 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       return !showState;
     });
   };
+  const clearGoogleSignInCache = async () => {
+    try {
+      const isSignedIn = await GoogleSignin.isSignedIn();
+      if (isSignedIn) {
+        await GoogleSignin.revokeAccess();
+        await GoogleSignin.signOut();
+        this.setState({user: null});
+      }
+    } catch (error) {
+      console.error('Error clearing Google Sign-In cache:', error);
+    }
+  };
+
   const signInWithGoogle = async () => {
     try {
       setLoading(true);
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
+      await GoogleSignin.hasPlayServices(); // Ensure Google Play services are available
+
+      // Only call revokeAccess() or signOut() if necessary
+      await clearGoogleSignInCache(); // You can call this only if you really need to clear the cache
+
+      const userInfo = await GoogleSignin.signIn(); // Sign in with Google
 
       const fcmToken = await getfcmToken();
       console.log(fcmToken?.toString());
+
       await SocialLoginexecute(
         userInfo.data?.user.email,
         'Google',
@@ -101,43 +119,23 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         AppLocation.viewportSouthWestLat,
         AppLocation.viewportSouthWestLng,
       );
-      // if (SocialLoginerror) {
-      //   setLoading(false);
-      //   console.log(SocialLoginerror, 'erroe');
-      //   if (!toast.isActive(toastId)) {
-      //     const newId = Math.random();
-      //     setToastId(newId);
-      //     toast.show({
-      //       id: newId,
-      //       placement: 'bottom',
-      //       duration: 3000,
-      //       render: ({id}) => {
-      //         const uniqueToastId = 'toast-' + id;
-      //         return (
-      //           <Toast nativeID={uniqueToastId} action="muted" variant="solid">
-      //             <ToastDescription>{SocialLoginerror}</ToastDescription>
-      //           </Toast>
-      //         );
-      //       },
-      //     });
-      //   }
-      // }
     } catch (error) {
       setLoading(false);
+      console.error(error);
 
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // user cancelled the login flow
+        // User cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {
-        // operation (e.g. sign in) is in progress already
+        // Operation in progress
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        // play services not available or outdated
+        // Google Play Services are not available
       } else {
-        // some other error happened
+        // Other error
+        console.log('Error during sign-in:', error);
       }
-    } finally {
-      //setLoading(false);
     }
   };
+
   const {data, status, error, execute} = useApiRequest(login, setLoading);
   const {
     data: SocialLogindata,

@@ -131,7 +131,7 @@ const RederListHeader = React.memo(
 
 const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
   const MediaGalleryRef = useRef(null);
-
+  // console.log(item, 'item');
   const openWhatsApp = useCallback((phoneNumber, message) => {
     const url = `whatsapp://send?text=${encodeURIComponent(
       message,
@@ -157,6 +157,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
     });
   }, []);
   const makeCall = useCallback(async phoneNumber => {
+    // console.log(phoneNumber, 'phone');
     const url = `tel:${phoneNumber}`;
 
     const checkPermissionAndOpen = async () => {
@@ -297,7 +298,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
               }}>
               <TouchableOpacity
                 style={styles.callbtn}
-                onPress={() => makeCall('+919910199761')}>
+                onPress={() => makeCall(item.contactNo)}>
                 <View style={{alignItems: 'center'}}>
                   <Icon
                     as={Telephone_Icon}
@@ -341,6 +342,7 @@ const ItemListScreen: React.FC<any> = ({
   setLoading,
   navigation,
   user,
+  toastMessage,
   color,
   route,
   pageTitle,

@@ -16,7 +16,7 @@ import {RootState} from '@reduxjs/toolkit/query';
 import {HStack} from '@/components/ui/hstack';
 import {Grid, GridItem} from '@/components/ui/grid';
 import FastImage from '@d11/react-native-fast-image';
-import {imagesBucketcloudfrontPath} from '../config/constants';
+import {imagesBucketcloudfrontPath, PermissionKey} from '../config/constants';
 import ZText from '../sharedComponents/ZText';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {fetchPodcastList} from '@/BrokerAppCore/services/new/podcastService';
@@ -39,10 +39,25 @@ import RecentSearchSection from './Dashboard/RecentSearchSection';
 import {GetDashboardData} from '../../BrokerAppCore/services/authService';
 import {setDashboard} from '../../BrokerAppCore/redux/store/Dashboard/dashboardSlice';
 import store from '../../BrokerAppCore/redux/store';
+import {checkPermission} from '../utils/helpers';
+import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
+  const userPermissions = useSelector(
+    (state: RootState) => state.user.user.userPermissions,
+  );
+  const [toastId, setToastId] = React.useState(0);
+  const permissionGrantedPodacast = checkPermission(
+    userPermissions,
+    PermissionKey.AllowViewPodcast,
+  );
+  const permissionGrantedDashPost = checkPermission(
+    userPermissions,
+    PermissionKey.AllowViewDashboardPost,
+  );
+  const toast = useToast();
   console.log(user);
   const {data, status, error, execute} = useApiRequest(fetchPodcastList);
   //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
@@ -85,14 +100,37 @@ export default function DashboradScreen() {
       return () => {};
     }, []),
   );
+  const showToast = () => {
+    if (!toast.isActive(toastId)) {
+      const newId = Math.random();
+      setToastId(newId);
+      toast.show({
+        id: newId,
+        placement: 'bottom',
+        duration: 3000,
+        render: ({id}) => {
+          const uniqueToastId = 'toast-' + id;
+          return (
+            <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+              <ToastDescription>
+                {'You do not have permission.Contact dev@brokerapp.com.'}
+              </ToastDescription>
+            </Toast>
+          );
+        },
+      });
+    }
+  };
   const handleThumbnailTap = async (item, index) => {
-    navigation.navigate('VideoReels', {
-      podcastitem: item,
-      podcastId: item.podcastId,
-      podcastData: data,
-      podcastIndex: index,
-      podcastPage: 1,
-    });
+    permissionGrantedPodacast
+      ? navigation.navigate('VideoReels', {
+          podcastitem: item,
+          podcastId: item.podcastId,
+          podcastData: data,
+          podcastIndex: index,
+          podcastPage: 1,
+        })
+      : showToast();
   };
 
   const RenderPodcastItems = React.memo(({item, index}) => {
@@ -174,12 +212,14 @@ export default function DashboradScreen() {
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('ItemListScreen', {
-                    listType: 'RealEstate',
-                    categoryId: 1,
-                  })
-                }>
+                onPress={() => {
+                  permissionGrantedDashPost
+                    ? navigation.navigate('ItemListScreen', {
+                        listType: 'RealEstate',
+                        categoryId: 1,
+                      })
+                    : showToast();
+                }}>
                 <View style={styles.tabItemContainer}>
                   <TABTravel />
                   <ZText type={'R16'} style={styles.tabItemTitle}>
@@ -192,12 +232,14 @@ export default function DashboradScreen() {
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('ItemListScreen', {
-                    listType: 'Car',
-                    categoryId: 2,
-                  })
-                }>
+                onPress={() => {
+                  permissionGrantedDashPost
+                    ? navigation.navigate('ItemListScreen', {
+                        listType: 'Car',
+                        categoryId: 2,
+                      })
+                    : showToast();
+                }}>
                 <View style={styles.tabItemContainer}>
                   <TABCard />
                   <ZText type={'R16'} style={styles.tabItemTitle}>

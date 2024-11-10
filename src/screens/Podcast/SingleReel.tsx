@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import Video from 'react-native-video';
-import { imagesBucketcloudfrontPath} from '../../config/constants';
+import {imagesBucketcloudfrontPath} from '../../config/constants';
 import {
   VolumeMute,
   Volume,
@@ -17,7 +17,7 @@ import {
   OpenEye,
 } from '../../assets/svg';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import { StackNav } from '../../navigation/NavigationKeys';
+import {StackNav} from '../../navigation/NavigationKeys';
 import {useSelector} from 'react-redux';
 // import {
 //   AddPodcastViwer,
@@ -26,13 +26,16 @@ import {useSelector} from 'react-redux';
 // } from '../../../BrokerAppCore/services/podcast';
 //import { Box, Center } from 'native-base';
 import ZText from '../../sharedComponents/ZText';
-import { fetchPodcastDetails } from '@/BrokerAppCore/services/new/podcastService';
+import {fetchPodcastDetails} from '@/BrokerAppCore/services/new/podcastService';
 import TouchableOpacityWithPermissionCheck from '../../sharedComponents/TouchableOpacityWithPermissionCheck';
 import {PermissionKey} from '../../config/constants';
 import TextWithPermissionCheck from '../../sharedComponents/TextWithPermissionCheck';
-import { Box } from '../../../components/ui/box';
-import { Center } from '../../../components/ui/center';
-import { PodcastLike, PodcastUnlike } from '../../../BrokerAppCore/services/podcast';
+import {Box} from '../../../components/ui/box';
+import {Center} from '../../../components/ui/center';
+import {
+  PodcastLike,
+  PodcastUnlike,
+} from '../../../BrokerAppCore/services/podcast';
 
 const SingleReel = ({item, index, currentIndex}) => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -88,8 +91,7 @@ const SingleReel = ({item, index, currentIndex}) => {
 
       getPodcastDetails();
 
-      return () => {
-      };
+      return () => {};
     }, [item, currentIndex, index]), // Make sure all necessary dependencies are listed here
   );
   const Stopplay = () => {
@@ -108,22 +110,21 @@ const SingleReel = ({item, index, currentIndex}) => {
   };
   const podcastLikes = (item: any) => {
     Stopplay();
-    navigation.push("PodcastLikeList", {
+    navigation.push('PodcastLikeList', {
       ActionId: item.podcastId,
-      userId: user.userId
+      userId: user.userId,
     });
   };
   const podcastviewList = (item: any) => {
     Stopplay();
     navigation.push('PodcastViewList', {
       ActionId: item.podcastId,
-      userId: user.userId
-   
+      userId: user.userId,
     });
   };
   const handleViewerAdd = async () => {
     try {
-      const res = null //await AddPodcastViwer(user.userId, item.podcastId);
+      const res = null; //await AddPodcastViwer(user.userId, item.podcastId);
     } catch (e) {}
   };
   const [likeProcessingStatus, setlikeProcessingStatus] = useState(false);
@@ -132,17 +133,17 @@ const SingleReel = ({item, index, currentIndex}) => {
 
     setlikeProcessingStatus(true);
     try {
-        const result = {
-            data: {
-                likeCount: 0,
-                commentCount: 0,
-                viewerCount: 0,
-                userLiked: 0
-            }
-        }
+      const result = {
+        data: {
+          likeCount: 0,
+          commentCount: 0,
+          viewerCount: 0,
+          userLiked: 0,
+        },
+      };
       if (StoryState?.userLiked && StoryState?.userLiked == 1) {
         const result = await PodcastUnlike(user.userId, item.podcastId);
-        
+
         setStoryState({
           likeCount: result.data.likeCount,
           reactionCount: result.data.commentCount,

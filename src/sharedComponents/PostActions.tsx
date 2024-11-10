@@ -33,7 +33,11 @@ import {
 import {Box} from '../../components/ui/box';
 import {Button, ButtonIcon} from '../../components/ui/button';
 import {useApiPagingWithtotalRequest} from '../hooks/useApiPagingWithtotalRequest';
-import {GetCommentList} from '../../BrokerAppCore/services/new/postServices';
+import {
+  addHaveABuyer,
+  GetCommentList,
+  RemoveHaveABuyer,
+} from '../../BrokerAppCore/services/new/postServices';
 import LoadingSpinner from './LoadingSpinner';
 import ZAvatarInitials from './ZAvatarInitials';
 import moment from 'moment';
@@ -133,7 +137,7 @@ const PostActions = ({
     if (listTypeData === 'RealEstate') {
       endpoint = 'post';
     } else {
-      listTypeData === 'Car';
+      endpoint = 'Car';
     }
     const result = await SetPostLikeUnLike(
       endpoint,
@@ -154,7 +158,7 @@ const PostActions = ({
     if (listTypeData === 'RealEstate') {
       endpoint = 'post';
     } else {
-      listTypeData === 'Car';
+      endpoint = 'Car';
     }
     const result = await SetPostLikeUnLike(
       endpoint,
@@ -205,11 +209,10 @@ const PostActions = ({
   };
 
   const postHaveBuyer = async () => {
-    //
-    //
     if (item?.raisedPostBuyerHand && item?.raisedPostBuyerHand == 1) {
-      const result = await PostUnLIke(User.userId, 'buyer', item.postId);
-
+      console.log(User.userId, item.postId);
+      const result = await addHaveABuyer(User.userId, 'buyer', item.postId);
+      console.log(result);
       //
       if (result?.status == 'success') {
         item.buyers = item.buyers - 1;
@@ -217,7 +220,7 @@ const PostActions = ({
         setisraisedPostBuyerHand(false);
       }
     } else {
-      const result = await PostLikeApi(User.userId, 'buyer', item.postId);
+      const result = await RemoveHaveABuyer(User.userId, 'buyer', item.postId);
       //
       //
       if (result?.status == 'success') {
@@ -233,31 +236,47 @@ const PostActions = ({
       <HStack style={{marginRight: 20, marginTop: 10}}>
         <VStack style={{marginRight: 10}}>
           <HStack style={{justifyContent: 'center', alignItems: 'center'}}>
-            <TouchableOpacity onPress={PostLike ? handleUnLike : handleLike}>
+            <TouchableOpacityWithPermissionCheck
+              tagNames={[Like, UnLike]}
+              permissionEnum={
+                item?.userLiked
+                  ? PermissionKey.AllowUnlikePostComment
+                  : PermissionKey.AllowLikePostComment
+              }
+              permissionsArray={userPermissions}
+              onPress={PostLike ? handleUnLike : handleLike}>
               <Icon
                 as={FavouriteIcon}
                 size="xxl"
                 style={{marginRight: 5}}
                 color={PostLike ? 'red' : undefined}
               />
-            </TouchableOpacity>
+            </TouchableOpacityWithPermissionCheck>
             {PostlikesCount > 0 && (
-              <TouchableOpacity onPress={handleListView}>
+              <TouchableOpacityWithPermissionCheck
+                tagNames={[ZText]}
+                permissionEnum={PermissionKey.AllowViewPostLikes}
+                permissionsArray={userPermissions}
+                onPress={handleListView}>
                 <ZText type={'R16'}>{PostlikesCount}</ZText>
-              </TouchableOpacity>
+              </TouchableOpacityWithPermissionCheck>
             )}
           </HStack>
         </VStack>
 
         <VStack style={{marginRight: 10}}>
           <HStack style={{justifyContent: 'center', alignItems: 'center'}}>
-            <TouchableOpacity onPress={handlePresentModalPress}>
+            <TouchableOpacityWithPermissionCheck
+              tagNames={[Icon]}
+              permissionEnum={PermissionKey.AllowViewPostComment}
+              permissionsArray={userPermissions}
+              onPress={handlePresentModalPress}>
               <Icon
                 as={MessageCircleIcon}
                 style={{marginRight: 5}}
                 size="xxl"
               />
-            </TouchableOpacity>
+            </TouchableOpacityWithPermissionCheck>
             {cardComment > 0 && <ZText type={'R16'}>{cardComment}</ZText>}
           </HStack>
         </VStack>
@@ -267,10 +286,14 @@ const PostActions = ({
             <Icon as={share_PIcon} size="xxl" />
           </TouchableOpacity>
         </VStack>
-        {listTypeData == 'RealEstate' && User.userId !== item.userId && (
+        {listTypeData === 'RealEstate' && User.userId !== item.userId && (
           <VStack style={{marginRight: 10}}>
             <HStack style={{justifyContent: 'center', alignItems: 'center'}}>
-              <TouchableOpacity onPress={postHaveBuyer}>
+              <TouchableOpacity
+                // tagNames={[Icon]}
+                // permissionEnum={false}
+                // permissionsArray={userPermissions}
+                onPress={postHaveBuyer}>
                 <Icon
                   as={Buyer}
                   size="xxl"
@@ -284,9 +307,9 @@ const PostActions = ({
           </VStack>
         )}
 
-        {listTypeData == 'RealEstate' &&
-          PageName == 'MyItemList' &&
-          User.userId == item.userId && (
+        {listTypeData === 'RealEstate' &&
+          PageName !== 'MyItemList' &&
+          User.userId === item.userId && (
             <VStack style={{marginRight: 10}}>
               <HStack style={{justifyContent: 'center', alignItems: 'center'}}>
                 <TouchableOpacity onPress={HaveBuyerList}>
@@ -298,6 +321,24 @@ const PostActions = ({
                   />
 
                   {/* <Icon as={Buyer} size="xxl" /> */}
+                </TouchableOpacity>
+                <ZText type={'R16'}>{item.raisedPostBuyerHand}</ZText>
+              </HStack>
+            </VStack>
+          )}
+        {listTypeData === 'RealEstate' &&
+          PageName === 'MyItemList' &&
+          User.userId === item.userId &&
+          item.raisedPostBuyerHand > 0 && (
+            <VStack style={{marginRight: 10}}>
+              <HStack style={{justifyContent: 'center', alignItems: 'center'}}>
+                <TouchableOpacity onPress={HaveBuyerList}>
+                  <Icon
+                    as={Buyer}
+                    size="xxl"
+                    style={{marginRight: 5}}
+                    color={'red'}
+                  />
                 </TouchableOpacity>
                 <ZText type={'R16'}>{item.raisedPostBuyerHand}</ZText>
               </HStack>

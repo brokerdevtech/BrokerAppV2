@@ -256,7 +256,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
               }}>
               <TouchableOpacity
                 style={styles.callbtn}
-                onPress={() => makeCall('+919910199761')}>
+                onPress={() => makeCall(item.contactNo)}>
                 <View style={{alignItems: 'center'}}>
                   <Icon
                     as={Telephone_Icon}

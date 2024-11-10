@@ -47,6 +47,9 @@ import store from '../../BrokerAppCore/redux/store';
 import {setAppLocation} from '../../BrokerAppCore/redux/store/AppLocation/appLocation';
 import ZAvatarInitials from './ZAvatarInitials';
 import {Color} from '../styles/GlobalStyles';
+import TouchableOpacityWithPermissionCheck from './TouchableOpacityWithPermissionCheck';
+import {PermissionKey} from '../config/constants';
+import {checkPermission} from '../utils/helpers';
 
 const CustomHeader = () => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -68,7 +71,9 @@ const CustomHeader = () => {
   const handlePlaceSelected = (place: any) => {
     store.dispatch(setAppLocation(place));
   };
-
+  const userPermissions = useSelector(
+    (state: RootState) => state.user.user.userPermissions,
+  );
   const ChangeCity = async () => {
     setModalVisible(true);
 
@@ -87,6 +92,10 @@ const CustomHeader = () => {
   // console.log('marqueeText', marqueeText);
   //onPress={() => navigation.toggleDrawer()}
   console.log(dashboard);
+  const permissionGrantedNotification = checkPermission(
+    userPermissions,
+    PermissionKey.AllowViewNotification,
+  );
   return (
     <SafeAreaView>
       <View style={styles.headerSection}>
@@ -115,9 +124,18 @@ const CustomHeader = () => {
           </View>
 
           <View style={styles.rightContainer}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Notification')}
-              style={styles.iconButton}>
+            <TouchableOpacityWithPermissionCheck
+              permissionEnum={PermissionKey.AllowViewNotification}
+              permissionsArray={userPermissions}
+              style={{
+                marginLeft: 10,
+                marginRight: 10,
+                marginTop: 5,
+              }}
+              tagNames={[Notification_Icon, VStack, Badge]}
+              onPress={() => {
+                navigation.navigate('Notification');
+              }}>
               <VStack>
                 {dashboard.notificationCount > 0 && (
                   <Badge
@@ -126,7 +144,9 @@ const CustomHeader = () => {
                       alignSelf: 'flex-end',
                       height: 22,
                       width: 22,
-                      backgroundColor: '#DC2626', // Hex color for red-600
+                      backgroundColor: permissionGrantedNotification
+                        ? '#bc4a50'
+                        : Color.primaryDisable, // Hex color for red-600
                       borderRadius: 50,
                       marginBottom: -10, // Converts -3.5 to px
                       marginRight: -10,
@@ -138,9 +158,10 @@ const CustomHeader = () => {
                   </Badge>
                 )}
 
-                <Icon as={Notification_Icon} size="2xl" />
+                {/* <Icon as={Notification_Icon} size="2xl" /> */}
+                <Notification_Icon height="25" width="25" />
               </VStack>
-            </TouchableOpacity>
+            </TouchableOpacityWithPermissionCheck>
             <TouchableOpacity
               style={styles.iconButton}
               onPress={() => {

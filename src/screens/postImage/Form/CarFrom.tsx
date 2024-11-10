@@ -31,8 +31,8 @@ import LocalityTag from '../../../sharedComponents/LocalityTag';
 import RegistrationYear from '../../../sharedComponents/RegistrationYear';
 import TagSelector from '../../../sharedComponents/TagSelector';
 import SingleSelectComponent from '../../../sharedComponents/Genric/SingleSelectComponent';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../../BrokerAppCore/redux/store/reducers';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../../BrokerAppCore/redux/store/reducers';
 function noWhitespace() {
   return this.transform((value, originalValue) =>
     /\s/.test(originalValue) ? NaN : value,
@@ -87,8 +87,6 @@ const CarForm = ({formikRef}) => {
       },
     ];
     setApplocalities(locationData);
-
-
   }, [AppLocation]);
 
   const PropertyinitialValues = {
@@ -115,9 +113,7 @@ const CarForm = ({formikRef}) => {
     years.push({label: year.toString(), value: year});
   }
 
-  const handleYearChange = year => {
- 
-  };
+  const handleYearChange = year => {};
   const onFiltersLocalityChange = Localitys => {
     //
     //
@@ -203,7 +199,7 @@ const CarForm = ({formikRef}) => {
             </Box>
             <Box mb="5" style={localStyles.BoxStyles}>
               <LocalityTag
-              selectedLocation={Applocalities}
+                selectedLocation={Applocalities}
                 onLocalityChange={onFiltersLocalityChange}
                 isMandatory={true}></LocalityTag>
               {errors.Location && touched.Location && (

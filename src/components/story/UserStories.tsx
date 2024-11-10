@@ -77,9 +77,7 @@ const UserStories = React.memo(() => {
       StoriescurrentPage_Set(1);
       StorieshasMore_Set(true);
       Storiesexecute(user.userId);
-    } catch (error) {
-  
-    }
+    } catch (error) {}
   };
 
   useFocusEffect(
@@ -90,6 +88,10 @@ const UserStories = React.memo(() => {
 
   useEffect(() => {
     if (Storiesstatus === 200) {
+      // if (!permissionGrantedDashBoard) {
+      //   setStoryData([]);
+      //   return;
+      // }
       setStoryData(Storiesdata.data.storyList);
     }
   }, [Storiesstatus, Storiesdata]);
@@ -102,6 +104,8 @@ const UserStories = React.memo(() => {
 
   const onPressStory = item => {
     if (item.userId == user.userId && !permissionGrantedmyStory) {
+      Alert.alert("You don't have permission to view Story");
+    } else if (item.userId !== user.userId && !permissionGrantedDashBoard) {
       Alert.alert("You don't have permission to view Story");
     } else {
       navigation.navigate('StoryView', {userImage: item});
@@ -153,17 +157,7 @@ const UserStories = React.memo(() => {
             horizontal={true}
             initialNumToRender={2}
             maxToRenderPerBatch={4}
-            ListEmptyComponent={
-              permissionGrantedDashBoard ? (
-                <EmptyListComponent />
-              ) : (
-                <View style={localStyles.emptyContainer}>
-                  <Text style={localStyles.emptyText}>
-                    You don't Have Permission to see stories
-                  </Text>
-                </View>
-              )
-            }
+            ListEmptyComponent={<EmptyListComponent />}
             showsHorizontalScrollIndicator={false}
             removeClippedSubviews={true}
             contentContainerStyle={localStyles.mainContainer}

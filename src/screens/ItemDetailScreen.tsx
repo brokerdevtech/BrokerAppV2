@@ -11,6 +11,7 @@ import {
   Share,
   Linking,
   Alert,
+  PermissionsAndroid,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
@@ -36,7 +37,7 @@ import {
 import {imagesBucketcloudfrontPath, moderateScale} from '../config/constants';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {fetchPostByID} from '@/BrokerAppCore/services/new/dashboardService';
-import {Icon, ShareIcon} from '../../components/ui/icon';
+import {Icon, ShareIcon, TrashIcon} from '../../components/ui/icon';
 import {Divider} from '@/components/ui/divider';
 import {VStack} from '@/components/ui/vstack';
 import MediaGallery from '../sharedComponents/MediaGallery';
@@ -404,10 +405,33 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
       });
     }
   }, [data]);
-  const makeCall = useCallback(
-    phoneNumber => {
-      const url = `tel:${phoneNumber}`;
+  const makeCall = useCallback(async phoneNumber => {
+    const url = `tel:${phoneNumber}`;
 
+    const checkPermissionAndOpen = async () => {
+      const hasPermission = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+      );
+      if (hasPermission) {
+        Linking.openURL(url);
+      } else {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          Linking.openURL(url);
+        } else {
+          Alert.alert(
+            'Permission Denied',
+            'You need to enable call permissions to use this feature',
+          );
+        }
+      }
+    };
+
+    if (Platform.OS === 'android') {
+      await checkPermissionAndOpen();
+    } else {
       Linking.canOpenURL(url)
         .then(supported => {
           if (supported) {
@@ -417,13 +441,12 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
           }
         })
         .catch(err => console.error('Error opening dialer', err));
-    },
-    [data],
-  );
+    }
+  }, []);
   useEffect(() => {
     callItemDetail();
   }, []);
-  console.log(data, 'detaisl');
+  console.log(user.userId, 'detaisl');
   return (
     <BottomSheetModalProvider>
       <View style={styles.listContainer}>
@@ -444,9 +467,11 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
                 </View>
                 <ZText type={'R18'}>{data?.title}</ZText>
               </View>
-              {/* <View style={styles.IconButton}>
-                    <Share_Icon />
-                 </View> */}
+              {user.userId == data?.userId && (
+                <View style={styles.IconButton}>
+                  <Icon as={TrashIcon} size="xl" />
+                </View>
+              )}
             </View>
           </View>
           <View>
@@ -480,7 +505,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
               }}>
               <TouchableOpacity
                 style={styles.callbtn}
-                onPress={() => makeCall('+919910199761')}>
+                onPress={() => makeCall(data.contactNo)}>
                 <View style={{alignItems: 'center'}}>
                   <Icon
                     as={Telephone_Icon}
@@ -567,6 +592,7 @@ const styles = StyleSheet.create({
   },
   header: {
     justifyContent: 'space-between',
+    alignItems: 'center',
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingVertical: 20,
