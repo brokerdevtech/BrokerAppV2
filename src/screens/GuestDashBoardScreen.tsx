@@ -214,42 +214,50 @@ export default function GuestDashboardScreen({isGuest = false}) {
             <GridItem
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
-              <View style={styles.tabItemContainer}>
-                <TABLoan />
-                <ZText type={'R16'} style={styles.tabItemTitle}>
-                  Loan
-                </ZText>
-              </View>
+              <TouchableOpacity onPress={() => setShowAlertDialog(true)}>
+                <View style={styles.tabItemContainer}>
+                  <TABLoan />
+                  <ZText type={'R16'} style={styles.tabItemTitle}>
+                    Loan
+                  </ZText>
+                </View>
+              </TouchableOpacity>
             </GridItem>
             <GridItem
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
-              <View style={styles.tabItemContainer}>
-                <TABInsurance />
-                <ZText type={'R16'} style={styles.tabItemTitle}>
-                  Insurance
-                </ZText>
-              </View>
+              <TouchableOpacity onPress={() => setShowAlertDialog(true)}>
+                <View style={styles.tabItemContainer}>
+                  <TABInsurance />
+                  <ZText type={'R16'} style={styles.tabItemTitle}>
+                    Insurance
+                  </ZText>
+                </View>
+              </TouchableOpacity>
             </GridItem>
             <GridItem
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
-              <View style={styles.tabItemContainer}>
-                <TABTravel />
-                <ZText type={'R16'} style={styles.tabItemTitle}>
-                  Travel
-                </ZText>
-              </View>
+              <TouchableOpacity onPress={() => setShowAlertDialog(true)}>
+                <View style={styles.tabItemContainer}>
+                  <TABTravel />
+                  <ZText type={'R16'} style={styles.tabItemTitle}>
+                    Travel
+                  </ZText>
+                </View>
+              </TouchableOpacity>
             </GridItem>
             <GridItem
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
-              <View style={styles.tabItemContainer}>
-                <TABWealth />
-                <ZText type={'R16'} style={styles.tabItemTitle}>
-                  Wealth
-                </ZText>
-              </View>
+              <TouchableOpacity onPress={() => setShowAlertDialog(true)}>
+                <View style={styles.tabItemContainer}>
+                  <TABWealth />
+                  <ZText type={'R16'} style={styles.tabItemTitle}>
+                    Wealth
+                  </ZText>
+                </View>
+              </TouchableOpacity>
             </GridItem>
           </Grid>
           <ProductSection
@@ -330,10 +338,11 @@ export default function GuestDashboardScreen({isGuest = false}) {
           <AlertDialogContent>
             <AlertDialogBody className="mt-3 mb-4 ">
               <ZText type="S18" style={{marginBottom: 20, textAlign: 'center'}}>
-                Want to see More ?
+                Discover endless premium listing with BrokerApp
               </ZText>
               <ZText type="R16" style={{marginBottom: 20, textAlign: 'center'}}>
-                Hurry up create an account with us now.
+                your trusted partner for properties, cars, and loans. Join us
+                and turn your dreams into reality!
               </ZText>
             </AlertDialogBody>
             <AlertDialogFooter

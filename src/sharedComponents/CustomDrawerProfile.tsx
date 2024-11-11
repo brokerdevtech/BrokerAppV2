@@ -31,7 +31,7 @@ import ZText from './ZText';
 import {Color} from '../styles/GlobalStyles';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../BrokerAppCore/redux/store/reducers';
-import {imagesBucketcloudfrontPath} from '../config/constants';
+import {imagesBucketcloudfrontPath, PermissionKey} from '../config/constants';
 import {useNavigation} from '@react-navigation/native';
 import {
   AlertDialog,
@@ -49,6 +49,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {clearTokens} from '../utils/utilTokens';
 import {useApiRequest} from '../hooks/useApiRequest';
 import ZAvatarInitials from './ZAvatarInitials';
+import {checkPermission} from '../utils/helpers';
+import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 
 const CustomDrawerItem = ({label, onPress, leftIcon, rightIcon}) => {
   return (
@@ -67,6 +69,31 @@ const CustomDrawerItem = ({label, onPress, leftIcon, rightIcon}) => {
 const CustomDrawerContent = props => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.user);
+  console.log(user);
+  const userPermissions = useSelector(
+    (state: RootState) => state.user?.user?.userPermissions,
+  );
+  const showToast = () => {
+    if (!toast.isActive(toastId)) {
+      const newId = Math.random();
+      setToastId(newId);
+      toast.show({
+        id: newId,
+        placement: 'bottom',
+        duration: 3000,
+        render: ({id}) => {
+          const uniqueToastId = 'toast-' + id;
+          return (
+            <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+              <ToastDescription>
+                {'You do not have permission.Contact dev@brokerapp.com.'}
+              </ToastDescription>
+            </Toast>
+          );
+        },
+      });
+    }
+  };
   const [isloading, setIsloading] = useState(false);
   const {
     data: logoutData,
@@ -83,6 +110,23 @@ const CustomDrawerContent = props => {
       type: type,
     });
   };
+  const toast = useToast();
+  const permissionGranted = checkPermission(
+    userPermissions,
+    PermissionKey?.AllowViewConnection,
+  );
+  const FollowerpermissionGranted = checkPermission(
+    userPermissions,
+    PermissionKey?.AllowViewFollowers,
+  );
+  const FollowingpermissionGranted = checkPermission(
+    userPermissions,
+    PermissionKey?.AllowViewFollowings,
+  );
+  const SearchpermissionGranted = checkPermission(
+    userPermissions,
+    PermissionKey?.AllowSearchUser,
+  );
   const [showAlertDialog, setShowAlertDialog] = React.useState(false);
   const handleClose = () => setShowAlertDialog(false);
   const LogoutProceed = async () => {
@@ -97,7 +141,7 @@ const CustomDrawerContent = props => {
     // Reset navigation stack or redirect as necessary here
     setIsloading(false);
   };
-
+  const [toastId, setToastId] = React.useState(0);
   return (
     <DrawerContentScrollView {...props} style={{marginLeft: 10}}>
       <View style={[styles.drawerHeader, styles.bottomBorder]}>
@@ -130,20 +174,34 @@ const CustomDrawerContent = props => {
         </TouchableOpacity>
         <CustomDrawerItem
           label="Followers"
-          onPress={() => viewFollower('Followers')}
+          onPress={() => {
+            if (FollowerpermissionGranted) {
+              viewFollower('Followers');
+            } else {
+              showToast();
+            }
+          }}
           leftIcon={Follower_Icon}
           rightIcon={ChevronRightIcon}
         />
         <CustomDrawerItem
           label="Following"
-          onPress={() => viewFollower('Following')}
+          onPress={() => {
+            if (FollowingpermissionGranted) {
+              viewFollower('Following');
+            } else {
+              showToast();
+            }
+          }}
           leftIcon={Follower_Icon}
           rightIcon={ChevronRightIcon}
         />
         <CustomDrawerItem
           label="Search Brokers"
           onPress={() => {
-            navigation.navigate('BrokerList');
+            SearchpermissionGranted
+              ? navigation.navigate('BrokerList')
+              : showToast();
           }}
           leftIcon={SearchIcon}
           rightIcon={ChevronRightIcon}
@@ -151,7 +209,11 @@ const CustomDrawerContent = props => {
         <CustomDrawerItem
           label="My Network"
           onPress={() => {
-            navigation.navigate('ConnectionScreen');
+            if (permissionGranted) {
+              navigation.navigate('ConnectionScreen');
+            } else {
+              showToast();
+            }
           }}
           leftIcon={Network_icon}
           rightIcon={ChevronRightIcon}

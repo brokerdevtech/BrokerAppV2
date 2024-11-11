@@ -333,17 +333,18 @@ const ProfileSetting: React.FC = ({
         size="md">
         <AlertDialogBackdrop />
         <AlertDialogContent>
-          <AlertDialogHeader>
+          <AlertDialogBody className="mt-3 mb-4">
             <ZText
               type={'S18'}
-              style={{marginBottom: 20}}
+              style={{marginBottom: 20, textAlign: 'center'}}
               // className="text-typography-950 font-semibold"
             >
               Are you sure you want to delete account?
             </ZText>
-          </AlertDialogHeader>
-          <AlertDialogBody className="mt-3 mb-4">
-            <ZText type={'R16'} style={{marginBottom: 20}} size="sm">
+            <ZText
+              type={'R16'}
+              style={{marginBottom: 20, textAlign: 'center'}}
+              size="sm">
               Please confirm if you want to proceed.
             </ZText>
           </AlertDialogBody>

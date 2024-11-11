@@ -267,7 +267,8 @@ const GuestAppTab: React.FC = () => {
               Want to add posts?
             </ZText>
             <ZText type="R16" style={{marginBottom: 20, textAlign: 'center'}}>
-              Hurry up create an account with us now.
+              your trusted partner for properties, cars, and loans. Join us and
+              turn your dreams into reality!
             </ZText>
           </AlertDialogBody>
           <AlertDialogFooter

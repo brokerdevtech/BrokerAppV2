@@ -5,7 +5,7 @@ import {checkPermission} from '../utils/helpers';
 import {PermissionKey} from '../config/constants';
 import {Color} from '../styles/GlobalStyles';
 import ZText from './ZText';
-import { useToast } from '../../components/ui/toast';
+import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 
 interface TextWithPermissionCheckProps {
   permissionEnum: PermissionKey;
@@ -31,18 +31,31 @@ const TextWithPermissionCheck: React.FC<TextWithPermissionCheckProps> = ({
 }) => {
   const permissionGranted = checkPermission(permissionsArray, permissionEnum);
   const toast = useToast();
-
+  const [toastId, setToastId] = useState(0);
   const handlePress = () => {
     if (permissionGranted == false) {
-      if (!toast.isActive(2)) {
+      if (!toast.isActive(toastId)) {
+        const newId = Math.random();
+        setToastId(newId);
         toast.show({
-          id: 2,
-          description: `You do not have permission.Contact dev@brokerapp.com.`,
-          placement: type === 'comment' ? 'top' : 'bottom',
+          id: newId,
+          placement: 'bottom',
+          duration: 3000,
+          render: ({id}) => {
+            const uniqueToastId = 'toast-' + id;
+            return (
+              <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                <ToastDescription>
+                  {'You do not have permission.Contact dev@brokerapp.com.'}
+                </ToastDescription>
+              </Toast>
+            );
+          },
         });
       }
     } else {
       onPress && onPress();
+      console.log('press');
     }
   };
 

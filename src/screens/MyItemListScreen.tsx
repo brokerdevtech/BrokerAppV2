@@ -12,6 +12,7 @@ import {
   Linking,
   Alert,
   ActivityIndicator,
+  PermissionsAndroid,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
@@ -70,175 +71,212 @@ import FilterBottomSheet from '../sharedComponents/FilterBottomSheet';
 import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
 import {concat} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
+import {formatNumberToIndianSystem} from '../utils/helpers';
 
-const ProductItem =  React.memo(
-  ({ item, listTypeData, User, navigation }) => {
-const MediaGalleryRef = useRef(null);
+const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
+  const MediaGalleryRef = useRef(null);
 
-const openWhatsApp = useCallback((phoneNumber, message) => {
+  const openWhatsApp = useCallback((phoneNumber, message) => {
+    const url = `whatsapp://send?text=${encodeURIComponent(
+      message,
+    )}&phone=${phoneNumber}`;
 
+    Linking.canOpenURL(url)
+      .then(supported => {
+        if (supported) {
+          Linking.openURL(url);
+        } else {
+          Alert.alert('Error', 'WhatsApp is not installed on this device');
+        }
+      })
+      .catch(err => console.error('Error opening WhatsApp', err));
+  }, []);
+  const chatProfilePress = useCallback(async () => {
+    const members = [User.userId.toString(), item.userId.toString()];
 
-  const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
+    navigation.navigate('AppChat', {
+      defaultScreen: 'ChannelScreen',
+      defaultParams: members,
+      defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
+    });
+  }, []);
+  const makeCall = useCallback(async phoneNumber => {
+    const url = `tel:${phoneNumber}`;
 
- 
-  Linking.canOpenURL(url)
-    .then(supported => {
-      if (supported) {
+    const checkPermissionAndOpen = async () => {
+      const hasPermission = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+      );
+      if (hasPermission) {
         Linking.openURL(url);
       } else {
-        Alert.alert('Error', 'WhatsApp is not installed on this device');
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          Linking.openURL(url);
+        } else {
+          Alert.alert(
+            'Permission Denied',
+            'You need to enable call permissions to use this feature',
+          );
+        }
       }
-    })
-    .catch(err => console.error('Error opening WhatsApp', err));
-},[]);
-const chatProfilePress = useCallback(async () => {
+    };
 
+    if (Platform.OS === 'android') {
+      await checkPermissionAndOpen();
+    } else {
+      Linking.canOpenURL(url)
+        .then(supported => {
+          if (supported) {
+            Linking.openURL(url);
+          } else {
+            Alert.alert('Error', 'Your device does not support phone calls');
+          }
+        })
+        .catch(err => console.error('Error opening dialer', err));
+    }
+  }, []);
+  return (
+    <View style={styles.WrapcardContainer}>
+      <View style={styles.cardContainer}>
+        <MediaGallery
+          ref={MediaGalleryRef}
+          mediaItems={item.postMedias}
+          paused={false}
+        />
 
-  const members = [User.userId.toString(), item.userId.toString()];
-
-
-  navigation.navigate('AppChat', {
-    defaultScreen: 'ChannelScreen',
-    defaultParams: members,
-    defaultchannelSubject:`Hi,i want to connect on ${item.title}`,
-  });
-
-},[]);
-const makeCall = useCallback((phoneNumber) => {
-  const url = `tel:${phoneNumber}`;
-
-  Linking.canOpenURL(url)
-    .then(supported => {
-      if (supported) {
-        Linking.openURL(url);
-      } else {
-        Alert.alert('Error', 'Your device does not support phone calls');
-      }
-    })
-    .catch(err => console.error('Error opening dialer', err));
-},[]);
-return (
-<View style={styles.WrapcardContainer}>
-  <View style={styles.cardContainer}>
-    <MediaGallery
-      ref={MediaGalleryRef}
-      mediaItems={item.postMedias}
-      paused={false}
-    />
-
-    {/* <Image
+        {/* <Image
       source={{
         uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
       }}
       style={styles.carImage}
     /> */}
 
-    {/* Check and Heart Icons */}
-    {item.isBrokerAppVerified && (
-      <View style={styles.iconContainer}>
-        <View style={styles.checkIcon}>
-          <Card_check_icon />
+        {/* Check and Heart Icons */}
+        {item.isBrokerAppVerified && (
+          <View style={styles.iconContainer}>
+            <View style={styles.checkIcon}>
+              <Card_check_icon />
+            </View>
+          </View>
+        )}
+        <View style={{marginLeft: 20}}>
+          <PostActions
+            item={item}
+            User={User}
+            listTypeData={listTypeData}
+            onUpdateLikeCount={newCount => {
+              // console.log(newCount);
+            }}
+            PageName="MyItemList"
+          />
+        </View>
+        {/* Car Details */}
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('ItemDetailScreen', {
+              postId: item.postId,
+              postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post',
+            })
+          }>
+          <VStack space="xs" style={styles.detailsContainer}>
+            <HStack>
+              <Box style={{marginLeft: 4}}>
+                <ZText type={'M16'} style={{color: colors.light.appred}}>
+                  {'\u20B9'}{' '}
+                </ZText>
+              </Box>
+              <Box>
+                <ZText type={'M16'} style={{color: colors.light.appred}}>
+                  {formatNumberToIndianSystem(item.price)}
+                </ZText>
+              </Box>
+            </HStack>
+
+            {item.location?.cityName && (
+              <HStack>
+                <Box>
+                  <Icon as={Location_Icon} size="xl" />
+                </Box>
+                <Box style={{width: '100%', flex: 1}}>
+                  <ZText
+                    type={'R16'}
+                    numberOfLines={1} // Limits to 2 lines
+                    ellipsizeMode="tail">
+                    {' '}
+                    {item.location.placeName}
+                  </ZText>
+                </Box>
+              </HStack>
+            )}
+
+            <HStack style={{width: '100%', flex: 1}}>
+              <Box>
+                <Icon as={description_icon} fill="black" size="xl" />
+              </Box>
+              <Box style={{width: '100%', flex: 1}}>
+                <ZText
+                  type={'R16'}
+                  numberOfLines={1} // Limits to 2 lines
+                  ellipsizeMode="tail">
+                  {' '}
+                  {item.title}
+                </ZText>
+              </Box>
+            </HStack>
+          </VStack>
+        </TouchableOpacity>
+        {/* <Divider  className="my-0.5" /> */}
+
+        <View style={styles.detailsContainerBottom}>
+          <HStack
+          // space="md"
+          >
+            <HStack
+              style={{
+                alignItems: 'center',
+                width: '50%',
+                justifyContent: 'center',
+              }}>
+              <TouchableOpacity
+                style={styles.callbtn}
+                onPress={() => makeCall('+919910199761')}>
+                <View style={{alignItems: 'center'}}>
+                  <Icon
+                    as={Telephone_Icon}
+                    color={colors.light.appred}
+                    size={'xxl'}
+                  />
+                </View>
+                <View style={{alignItems: 'center', paddingVertical: 10}}>
+                  <ZText type={'M14'}>Call</ZText>
+                </View>
+              </TouchableOpacity>
+            </HStack>
+            <HStack
+              style={{
+                alignItems: 'center',
+                width: '50%',
+                justifyContent: 'center',
+              }}>
+              <TouchableOpacity
+                style={styles.Chatbtn}
+                onPress={() => chatProfilePress()}>
+                <View style={{alignItems: 'center', marginRight: 10}}>
+                  <Icon as={Chat_Icon} color={'#0F5DC4'} size={'xxl'} />
+                </View>
+                <View style={{alignItems: 'center', paddingVertical: 10}}>
+                  <ZText type={'M14'}>Chat</ZText>
+                </View>
+              </TouchableOpacity>
+            </HStack>
+          </HStack>
         </View>
       </View>
-    )}
-<View style={{marginLeft:20}}>
-    <PostActions
-      item={item}
-      User={User}
-      listTypeData={listTypeData}
-      onUpdateLikeCount={newCount => {
-        console.log(newCount);
-      }}
-      PageName="MyItemList"
-    /></View>
-    {/* Car Details */}
-    <TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}>
-    <VStack space="xs" style={styles.detailsContainer}>
-      <HStack>
-        <Box style={{marginLeft: 4}}>
-          <ZText type={'M16'} style={{color:colors.light.appred}}>{'\u20B9'} </ZText>
-        </Box>
-        <Box>
-          <ZText type={'M16'} style={{color:colors.light.appred}}>{item.price}</ZText>
-        </Box>
-      </HStack>
-
-      {item.location?.cityName && (
-        <HStack>
-          <Box>
-            <Icon as={Location_Icon} size='xl'/>
-          </Box>
-          <Box style={{width:'100%' ,flex:1}}>
-            <ZText
-            
-              type={'R16'}
-              numberOfLines={1} // Limits to 2 lines
-              ellipsizeMode="tail"
-            >
-              {' '}
-              {item.location.placeName}
-            </ZText>
-          </Box>
-        </HStack>
-      )}
-
-  
-        <HStack style={{width:'100%' ,flex:1}}>
-        <Box>
-            <Icon as={description_icon} fill='black' size='xl'/>
-          </Box>
-          <Box style={{width:'100%' ,flex:1}}>
-          <ZText
-        
-            type={'R16'}
-            numberOfLines={1} // Limits to 2 lines
-            ellipsizeMode="tail"
-          > {' '}
-            {item.title}
-          </ZText>
-          </Box>
-        </HStack>
-    
-    </VStack>
-    </TouchableOpacity>
-    {/* <Divider  className="my-0.5" /> */}
-
-    <View style={styles.detailsContainerBottom}>
-      <HStack
-        // space="md"
-        
-      >
-        <HStack style={{alignItems: 'center', width: '50%',    justifyContent: 'center'}}>
-        <TouchableOpacity style={styles.callbtn} onPress={() => makeCall('+919910199761')}>
-          <View style={{alignItems: 'center'}}>
-            <Icon as={Telephone_Icon} color={colors.light.appred} size={'xxl'} />
-          </View>
-          <View style={{ alignItems: 'center',paddingVertical: 10}}>
-            <ZText type={'M14'} >Call</ZText>
-          </View>
-          </TouchableOpacity>
-          
-        </HStack>
-        <HStack style={{alignItems: 'center',width: '50%',    justifyContent: 'center'}}>
-        <TouchableOpacity
-        style={styles.Chatbtn}
-        
-        
-        onPress={() =>chatProfilePress()}>
-          <View style={{alignItems: 'center',marginRight:10}}>
-            <Icon as={Chat_Icon}  color={'#0F5DC4'} size={'xxl'}  />
-          </View>
-          <View style={{ alignItems: 'center',paddingVertical: 10,}}>
-            <ZText type={'M14'}>Chat</ZText>
-          </View>
-          </TouchableOpacity>
-        </HStack>
-    
-      </HStack>
     </View>
-  </View>
-  </View>
-);
+  );
 });
 
 const MyItemListScreen: React.FC<any> = ({
@@ -261,8 +299,6 @@ const MyItemListScreen: React.FC<any> = ({
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
   const [PageuserId, setPageuserId] = useState(route.params.userId);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
-  
-
 
   const {
     data,
@@ -279,7 +315,12 @@ const MyItemListScreen: React.FC<any> = ({
   //const {data, status, error, execute} = useApiPagingRequest5(fetchItemList);
   const renderItem = useCallback(
     ({item}) => (
-      <ProductItem item={item} listTypeData={listTypeData} User={user} navigation={navigation} />
+      <ProductItem
+        item={item}
+        listTypeData={listTypeData}
+        User={user}
+        navigation={navigation}
+      />
     ),
     [],
   );
@@ -295,11 +336,10 @@ const MyItemListScreen: React.FC<any> = ({
     currentPage_Set(1);
     hasMore_Set(true);
 
-    await execute(listTypeData,PageuserId ).then(result => {
-      
+    await execute(listTypeData, PageuserId).then(result => {
       setLoading(false);
     });
-  
+
     setLoading(false);
   }
 
@@ -319,7 +359,7 @@ const MyItemListScreen: React.FC<any> = ({
 
   const loadMorepage = async () => {
     if (!isInfiniteLoading) {
-      await loadMore(listTypeData,PageuserId);
+      await loadMore(listTypeData, PageuserId);
     }
   };
   // const rederListHeader = useCallback((categoryId, FilterChipsData, recordsCount) => (
@@ -331,37 +371,49 @@ const MyItemListScreen: React.FC<any> = ({
   //     <FilterChips filters={FilterChipsData} recordsCount={recordsCount} />
   //   </>
   // ), [categoryId, FilterChipsData, recordCount]);
-  const getItemLayout = (data, index) => (
-    { length: itemHeight, offset: itemHeight * index, index }
-  );
+  const getItemLayout = (data, index) => ({
+    length: itemHeight,
+    offset: itemHeight * index,
+    index,
+  });
   return (
     <>
-    <BottomSheetModalProvider>
- 
-      <View style={{ flex: 1 }}>
-     
-         {data &&
-          <FlatList
+      <BottomSheetModalProvider>
+        <View style={{flex: 1}}>
+          {data && (
+            <FlatList
               data={data}
               getItemLayout={getItemLayout}
               renderItem={renderItem}
-
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{paddingBottom: 100, gap: 20}}
-             keyExtractor={(item, index) => index.toString()}
+              keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.8}
               onEndReached={loadMorepage}
+              ListEmptyComponent={() =>
+                data === undefined ? (
+                  <ActivityIndicator
+                    size="large"
+                    color="#0000ff"
+                    style={styles.loader}
+                  />
+                ) : (
+                  <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>No Data Found</Text>
+                  </View>
+                )
+              }
               ListFooterComponent={
                 isInfiniteLoading ? (
                   <LoadingSpinner isVisible={isInfiniteLoading} />
                 ) : null
               }
-        
-            />}
+            />
+          )}
+        </View>
+      </BottomSheetModalProvider>
 
-        </View></BottomSheetModalProvider>
-    
       {/* <View style={styles.footer}>
         <ZText type={'S16'} >Properties</ZText>
         <View style={styles.IconButton}>
@@ -373,8 +425,8 @@ const MyItemListScreen: React.FC<any> = ({
           <ZText type={'S16'} >Filter</ZText>
         </View>
       </View> */}
-    {/* // </View> */}
-   </>
+      {/* // </View> */}
+    </>
   );
 };
 
@@ -581,6 +633,5 @@ const styles = StyleSheet.create({
   },
 });
 
-
-export default AppBaseContainer(MyItemListScreen, '', true,false);
+export default AppBaseContainer(MyItemListScreen, '', true, false);
 //export default ItemListScreen;

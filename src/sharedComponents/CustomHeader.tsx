@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
 import {
   Button,
@@ -32,7 +33,7 @@ import {
   Notification_Icon,
   verified_blue,
 } from '../assets/svg';
-import {Badge, BadgeIcon, BadgeText} from '@/components/ui/badge';
+import {Badge, BadgeIcon, BadgeText} from '../../components/ui/badge';
 import {useNavigation} from '@react-navigation/native';
 import UserProfile from './profile/UserProfile';
 import MarqueeBanner from './profile/MarqueeBanner';
@@ -45,6 +46,10 @@ import {set} from 'react-hook-form';
 import store from '../../BrokerAppCore/redux/store';
 import {setAppLocation} from '../../BrokerAppCore/redux/store/AppLocation/appLocation';
 import ZAvatarInitials from './ZAvatarInitials';
+import {Color} from '../styles/GlobalStyles';
+import TouchableOpacityWithPermissionCheck from './TouchableOpacityWithPermissionCheck';
+import {PermissionKey} from '../config/constants';
+import {checkPermission} from '../utils/helpers';
 
 const CustomHeader = () => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -58,18 +63,17 @@ const CustomHeader = () => {
     execute: marqueeExecute,
   } = useApiRequest(fetchDashboardData);
   const [modalVisible, setModalVisible] = useState(false);
-
-  const callPodcastList = async (cityToShow:any) => {
-   
+  const dashboard = useSelector((state: RootState) => state.dashboard);
+  const callPodcastList = async (cityToShow: any) => {
     const request = {pageNo: 1, pageSize: 10, cityName: cityToShow};
     await marqueeExecute('Marqueue', request);
   };
   const handlePlaceSelected = (place: any) => {
-
-
     store.dispatch(setAppLocation(place));
   };
-
+  const userPermissions = useSelector(
+    (state: RootState) => state.user.user.userPermissions,
+  );
   const ChangeCity = async () => {
     setModalVisible(true);
 
@@ -87,55 +91,94 @@ const CustomHeader = () => {
   };
   // console.log('marqueeText', marqueeText);
   //onPress={() => navigation.toggleDrawer()}
-  // console.log(user);
+  console.log(dashboard);
+  const permissionGrantedNotification = checkPermission(
+    userPermissions,
+    PermissionKey.AllowViewNotification,
+  );
   return (
     <SafeAreaView>
-    <View style={styles.headerSection}>
-      <View style={styles.headerContainer}>
-        <View style={styles.leftContainer}>
-          <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-            <ZAvatarInitials
-              onPress={onPressUser}
-              sourceUrl={user.profileImage}
-              iconSize="md"
-              name={`${user.firstName} ${user.lastName}`}
-            />
-          </TouchableOpacity>
-          <View style={styles.appName}>
-            <View style={styles.appTitleWrapper}>
-              <Text style={styles.appTitleMain}>Broker</Text>
-              <Text style={styles.appTitle}>App</Text>
+      <View style={styles.headerSection}>
+        <View style={styles.headerContainer}>
+          <View style={styles.leftContainer}>
+            <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
+              <ZAvatarInitials
+                onPress={onPressUser}
+                sourceUrl={user.profileImage}
+                iconSize="md"
+                name={`${user.firstName} ${user.lastName}`}
+              />
+            </TouchableOpacity>
+            <View style={styles.appName}>
+              <View style={styles.appTitleWrapper}>
+                <Text style={styles.appTitleMain}>Broker</Text>
+                <Text style={styles.appTitle}>App</Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => ChangeCity()}
+                style={styles.cityContainer}>
+                <Icon as={Map_pin} size="2xl" />
+                <Text style={{marginLeft: 5}}>{AppLocation.City}</Text>
+              </TouchableOpacity>
             </View>
+          </View>
+
+          <View style={styles.rightContainer}>
+            <TouchableOpacityWithPermissionCheck
+              permissionEnum={PermissionKey.AllowViewNotification}
+              permissionsArray={userPermissions}
+              style={{
+                marginLeft: 10,
+                marginRight: 10,
+                marginTop: 5,
+              }}
+              tagNames={[Notification_Icon, VStack, Badge]}
+              onPress={() => {
+                navigation.navigate('Notification');
+              }}>
+              <VStack>
+                {dashboard.notificationCount > 0 && (
+                  <Badge
+                    style={{
+                      zIndex: 10,
+                      alignSelf: 'flex-end',
+                      height: 22,
+                      width: 22,
+                      backgroundColor: permissionGrantedNotification
+                        ? '#bc4a50'
+                        : Color.primaryDisable, // Hex color for red-600
+                      borderRadius: 50,
+                      marginBottom: -10, // Converts -3.5 to px
+                      marginRight: -10,
+                    }}
+                    variant="solid">
+                    <BadgeText style={{color: 'white'}}>
+                      {dashboard.notificationCount}
+                    </BadgeText>
+                  </Badge>
+                )}
+
+                {/* <Icon as={Notification_Icon} size="2xl" /> */}
+                <Notification_Icon height="25" width="25" />
+              </VStack>
+            </TouchableOpacityWithPermissionCheck>
             <TouchableOpacity
-              onPress={() => ChangeCity()}
-              style={styles.cityContainer}>
-              <Icon as={Map_pin} size="2xl" />
-              <Text style={{marginLeft: 5}}>{AppLocation.City}</Text>
+              style={styles.iconButton}
+              onPress={() => {
+                navigation.navigate('AppChat');
+              }}>
+              <Icon as={Chat_icon} size="2xl" />
             </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.rightContainer}>
-          <TouchableOpacity onPress={()=>navigation.navigate('Notification')} style={styles.iconButton}>
-            <Icon as={Notification_Icon} size="2xl" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={() => {
-              navigation.navigate('AppChat');
-            }}>
-            <Icon as={Chat_icon} size="2xl" />
-          </TouchableOpacity>
-        </View>
+        <GooglePlacesAutocompleteModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          onPlaceSelected={handlePlaceSelected}
+          SetCityFilter={''}
+        />
       </View>
-
-      <GooglePlacesAutocompleteModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        onPlaceSelected={handlePlaceSelected}
-        SetCityFilter={''}
-      />
-    </View>
     </SafeAreaView>
   );
 };

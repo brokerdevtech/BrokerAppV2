@@ -13,6 +13,8 @@ import {
   Linking,
   Alert,
   ActivityIndicator,
+  Platform,
+  PermissionsAndroid,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
@@ -71,6 +73,7 @@ import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
 import {concat} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
 import RecentSearchSection from './Dashboard/RecentSearchSection';
+import {formatNumberToIndianSystem} from '../utils/helpers';
 const SkeletonPlaceholder = () => {
   return (
     <HStack space={10} style={styles.skeletonContainer}>
@@ -81,7 +84,7 @@ const SkeletonPlaceholder = () => {
   );
 };
 const RederListHeader = React.memo(
-  ({categoryId, AppLocation, FilterChipsData, recordCount,user}) => {
+  ({categoryId, AppLocation, FilterChipsData, recordCount, user}) => {
     return (
       <>
         <UserStories />
@@ -100,17 +103,16 @@ const RederListHeader = React.memo(
           }}
         />
 
-<RecentSearchSection
-            heading={'Recent Search'}
-            background={'#F7F8FA'}
-            endpoint={`/RecentSearch/Categorywise`}
-            isShowAll={false}
-            request={{
-              userId:user.userId,
-              categoryId: categoryId,
-            }}
-          />
-
+        <RecentSearchSection
+          heading={'Recent Search'}
+          background={'#F7F8FA'}
+          endpoint={`/RecentSearch/Categorywise`}
+          isShowAll={false}
+          request={{
+            userId: user.userId,
+            categoryId: categoryId,
+          }}
+        />
 
         {/* <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips> */}
       </>
@@ -129,7 +131,7 @@ const RederListHeader = React.memo(
 
 const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
   const MediaGalleryRef = useRef(null);
-
+  // console.log(item, 'item');
   const openWhatsApp = useCallback((phoneNumber, message) => {
     const url = `whatsapp://send?text=${encodeURIComponent(
       message,
@@ -154,18 +156,44 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
       defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
     });
   }, []);
-  const makeCall = useCallback(phoneNumber => {
+  const makeCall = useCallback(async phoneNumber => {
+    // console.log(phoneNumber, 'phone');
     const url = `tel:${phoneNumber}`;
 
-    Linking.canOpenURL(url)
-      .then(supported => {
-        if (supported) {
+    const checkPermissionAndOpen = async () => {
+      const hasPermission = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+      );
+      if (hasPermission) {
+        Linking.openURL(url);
+      } else {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           Linking.openURL(url);
         } else {
-          Alert.alert('Error', 'Your device does not support phone calls');
+          Alert.alert(
+            'Permission Denied',
+            'You need to enable call permissions to use this feature',
+          );
         }
-      })
-      .catch(err => console.error('Error opening dialer', err));
+      }
+    };
+
+    if (Platform.OS === 'android') {
+      await checkPermissionAndOpen();
+    } else {
+      Linking.canOpenURL(url)
+        .then(supported => {
+          if (supported) {
+            Linking.openURL(url);
+          } else {
+            Alert.alert('Error', 'Your device does not support phone calls');
+          }
+        })
+        .catch(err => console.error('Error opening dialer', err));
+    }
   }, []);
   return (
     <View style={styles.WrapcardContainer}>
@@ -197,7 +225,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
             User={User}
             listTypeData={listTypeData}
             onUpdateLikeCount={newCount => {
-              console.log(newCount);
+              // console.log(newCount);
             }}
           />
         </View>
@@ -218,7 +246,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
               </Box>
               <Box>
                 <ZText type={'M16'} style={{color: colors.light.appred}}>
-                  {item.price}
+                  {formatNumberToIndianSystem(item.price)}
                 </ZText>
               </Box>
             </HStack>
@@ -270,7 +298,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
               }}>
               <TouchableOpacity
                 style={styles.callbtn}
-                onPress={() => makeCall('+919910199761')}>
+                onPress={() => makeCall(item.contactNo)}>
                 <View style={{alignItems: 'center'}}>
                   <Icon
                     as={Telephone_Icon}
@@ -314,6 +342,7 @@ const ItemListScreen: React.FC<any> = ({
   setLoading,
   navigation,
   user,
+  toastMessage,
   color,
   route,
   pageTitle,
@@ -339,26 +368,22 @@ const ItemListScreen: React.FC<any> = ({
   const FilterSheetRef = useRef(null);
   const closeModal = useCallback(
     item => {
-  
       if (Object.keys(item).length > 0) {
-
-
         // setPopUPFilter(item);
         // setLoading(true);
         // pageSize_Set(5);
         // currentPage_Set(1);
         // hasMore_Set(true);
-         let tags = getFilterTags(item);
-         tags.frontendFilters=JSON.stringify(item)
+        let tags = getFilterTags(item);
+        tags.frontendFilters = JSON.stringify(item);
         // callPodcastList(tags);
 
         navigation.navigate('ItemFilterListScreen', {
           listType: listTypeData,
           categoryId: categoryId,
-          Filters:item,
-          listApiobj:tags
-        })
-
+          Filters: item,
+          listApiobj: tags,
+        });
       }
     },
     [searchKeyword],
@@ -394,12 +419,12 @@ const ItemListScreen: React.FC<any> = ({
             break;
           case 'Area':
             break;
-            case 'RegistrationYear':
-              break;
-              case 'ManufactureYear':
-                break;
-                case 'KmsDriven':
-                  break;
+          case 'RegistrationYear':
+            break;
+          case 'ManufactureYear':
+            break;
+          case 'KmsDriven':
+            break;
           // Add more cases as needed
           default:
             // Default case if key doesn't match any predefined cases
@@ -433,11 +458,11 @@ const ItemListScreen: React.FC<any> = ({
       obj.geoLocationLatitude = input.Location[0].place.geoLocationLongitude;
       obj.geoLocationLongitude = input.Location[0].place.geoLocationLongitude;
     }
-    if (input.hasOwnProperty('Budget') && input.Budget.isDefault==false) {
+    if (input.hasOwnProperty('Budget') && input.Budget.isDefault == false) {
       obj.minPrice = input.Budget.minValue;
       obj.maxPrice = input.Budget.maxValue;
     }
-    if (input.hasOwnProperty('Area') && input.Area.isDefault==false) {
+    if (input.hasOwnProperty('Area') && input.Area.isDefault == false) {
       obj.propertySizeMin = input.Area.minValue;
       obj.propertySizeMax = input.Area.maxValue;
     }
@@ -445,13 +470,13 @@ const ItemListScreen: React.FC<any> = ({
     if (input.hasOwnProperty('ManufactureYear')) {
       // console.log(input.RegistrationYear);
       // console.log("RegistrationYear");
-       obj.makeYear = String(input.ManufactureYear[0].value);
+      obj.makeYear = String(input.ManufactureYear[0].value);
       // obj.propertySizeMax = input.Area.maxValue;
     }
     if (input.hasOwnProperty('KmsDriven')) {
       // console.log(input.RegistrationYear);
       // console.log("RegistrationYear");
-       obj.kilometerDriven = String(input.KmsDriven[0].key);
+      obj.kilometerDriven = String(input.KmsDriven[0].key);
       // obj.propertySizeMax = input.Area.maxValue;
     }
     // console.log('sssssssss');
@@ -517,7 +542,7 @@ const ItemListScreen: React.FC<any> = ({
       FilterChipsData.push({label: 'Manufacture Year:' + obj.makeYear});
     }
     if (obj.kilometerDriven != undefined && obj.kilometerDriven !== '') {
-      FilterChipsData.push({label: 'Km:' + obj.kilometerDriven+' or less'});
+      FilterChipsData.push({label: 'Km:' + obj.kilometerDriven + ' or less'});
     }
     if (obj.filters && obj.filters.tags && Array.isArray(obj.filters.tags)) {
       obj.filters.tags.forEach(tag => {
@@ -585,20 +610,19 @@ const ItemListScreen: React.FC<any> = ({
     setLoading(false);
   }
 
-  const convertTagsToNewFormat=(tags)=> {
-    console.log("tags")
-    console.log(tags)
+  const convertTagsToNewFormat = tags => {
+    // console.log('tags');
+    // console.log(tags);
     return tags.reduce((acc, tag) => {
-        const transformedValues = tag.values.map((item) => ({
-            key: item.key ,// Assign the new key value
-         
-            value: item.value  // Set the new value
-        }));
-        acc[tag.name] = transformedValues;
-        return acc;
-    }, {});
-}
+      const transformedValues = tag.values.map(item => ({
+        key: item.key, // Assign the new key value
 
+        value: item.value, // Set the new value
+      }));
+      acc[tag.name] = transformedValues;
+      return acc;
+    }, {});
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -612,7 +636,7 @@ const ItemListScreen: React.FC<any> = ({
     }
     setItemslocalities(AppLocation);
 
-    let obj:any = {
+    let obj: any = {
       keyWord: searchKeyword,
       cityName: AppLocation.City,
       userId: user.userId,
@@ -623,15 +647,13 @@ const ItemListScreen: React.FC<any> = ({
       isSearch: false,
     };
 
-    let BraandPopUPFilter=null;
-    if(brandfilters)
+    let BraandPopUPFilter = null;
+    if (brandfilters) {
+      obj.filters = brandfilters;
 
-{obj.filters=brandfilters
-
- BraandPopUPFilter=convertTagsToNewFormat(brandfilters.tags);
-  console.log("brandfilters",BraandPopUPFilter);
-
-}
+      BraandPopUPFilter = convertTagsToNewFormat(brandfilters.tags);
+      console.log('brandfilters', BraandPopUPFilter);
+    }
 
     setlistApiobj(obj);
 
@@ -643,29 +665,29 @@ const ItemListScreen: React.FC<any> = ({
       },
     ];
     if (listTypeData == 'Car') {
-    // Uncomment if you need to set additional selected filters
-    let updatedPopUPFilter = {
-      Location: locationData,
-      Budget: {minValue: 20000, maxValue: 500000000 ,isDefault:true},
-     
-    };
-    if(BraandPopUPFilter!=null)
-    {updatedPopUPFilter={...updatedPopUPFilter,...BraandPopUPFilter}}
-    setPopUPFilter(updatedPopUPFilter);
-  }
+      // Uncomment if you need to set additional selected filters
+      let updatedPopUPFilter = {
+        Location: locationData,
+        Budget: {minValue: 20000, maxValue: 500000000, isDefault: true},
+      };
+      if (BraandPopUPFilter != null) {
+        updatedPopUPFilter = {...updatedPopUPFilter, ...BraandPopUPFilter};
+      }
+      setPopUPFilter(updatedPopUPFilter);
+    }
 
-
-  if (listTypeData == 'RealEstate') {
-    // Uncomment if you need to set additional selected filters
-    let updatedPopUPFilter = {
-      Location: locationData,
-      Budget: {minValue: 20000, maxValue: 500000000 ,isDefault:true},
-      Area: {minValue: 0, maxValue: 5000,isDefault:true},
-    };
-    if(BraandPopUPFilter!=null)
-      {updatedPopUPFilter={...updatedPopUPFilter,...BraandPopUPFilter}}
-    setPopUPFilter(updatedPopUPFilter);
-  }
+    if (listTypeData == 'RealEstate') {
+      // Uncomment if you need to set additional selected filters
+      let updatedPopUPFilter = {
+        Location: locationData,
+        Budget: {minValue: 20000, maxValue: 500000000, isDefault: true},
+        Area: {minValue: 0, maxValue: 5000, isDefault: true},
+      };
+      if (BraandPopUPFilter != null) {
+        updatedPopUPFilter = {...updatedPopUPFilter, ...BraandPopUPFilter};
+      }
+      setPopUPFilter(updatedPopUPFilter);
+    }
 
     //set_FilterChipsData(obj);
     callPodcastList(obj);
@@ -698,20 +720,17 @@ const ItemListScreen: React.FC<any> = ({
     let obj = {
       ...listApiobj,
       keyWord: searchText,
-     frontendFilters:JSON.stringify(PopUPFilter),
-     isSearch: true,
+      frontendFilters: JSON.stringify(PopUPFilter),
+      isSearch: true,
     };
-
 
     navigation.navigate('ItemFilterListScreen', {
       listType: listTypeData,
       categoryId: categoryId,
-      Filters:PopUPFilter,
-      listApiobj:obj,
-      searchText:searchText
-    })
-
-
+      Filters: PopUPFilter,
+      listApiobj: obj,
+      searchText: searchText,
+    });
 
     // pageSize_Set(5);
     // currentPage_Set(1);

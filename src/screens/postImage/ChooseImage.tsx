@@ -58,6 +58,8 @@ import {useApiRequest} from '../../hooks/useApiRequest';
 import AppBaseContainer from '../../hoc/AppBaseContainer_old';
 import {Toast, ToastDescription} from '../../../components/ui/toast';
 import {Color} from '../../styles/GlobalStyles';
+import TextWithPermissionCheck from '../../sharedComponents/TextWithPermissionCheck';
+import {PermissionKey} from '../../config/constants';
 const windowWidth = Dimensions.get('window').width;
 const windowheight = Dimensions.get('window').height;
 const Bucket = 'broker2023';
@@ -260,8 +262,8 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
         setLoading(false);
         return;
       }
-console.log("fetchPhotos");
-console.log(data);
+      console.log('fetchPhotos');
+      console.log(data);
       // If photos exist, process them
       if (data.page_info.has_next_page) {
         setEndCursor(data?.page_info?.end_cursor?.toString());
@@ -301,9 +303,9 @@ console.log(data);
   const fetchPhotosnext = async (after: any) => {
     try {
       // Show loading indicator
-     // setLoadingOverlay(true);
-      console.log("fetchPhotosnext");
-console.log(after);
+      // setLoadingOverlay(true);
+      console.log('fetchPhotosnext');
+      console.log(after);
       const fetchParams = {
         first: 20, // Number of photos to fetch
         assetType: 'Photos',
@@ -316,7 +318,7 @@ console.log(after);
       // Check if the fetched data is empty
       if (data.edges.length === 0) {
         setGalleryEmpty(true); // No more photos
-     //   setLoadingOverlay(false);
+        //   setLoadingOverlay(false);
         return;
       }
 
@@ -844,7 +846,7 @@ console.log(after);
           <>
             <View>
               <ZHeader
-                title={`New Post`}
+                title={'New Post'}
                 rightIcon={<RightIcon />}
                 isHideBack={true}
                 isLeftIcon={<LeftIcon />}
@@ -909,18 +911,12 @@ console.log(after);
             </View>
             {/* <Box> */}
             <View style={styles.footer}>
-              <TouchableOpacity
-                onPress={() => setPage('Post')}
-                style={styles.footerSection}>
+              <TouchableOpacity style={styles.footerSection}>
                 <ZText
                   numberOfLines={1}
-                  style={[
-                    page === 'Post'
-                      ? styles.pickedFooterTitle
-                      : styles.footerTitle,
-                  ]}
+                  style={[styles.pickedFooterTitle]}
                   type={'R16'}>
-                  {`Post`}
+                  {'Post'}
                 </ZText>
               </TouchableOpacity>
               <TouchableOpacity
@@ -928,27 +924,23 @@ console.log(after);
                 style={styles.footerSection}>
                 <ZText
                   numberOfLines={1}
-                  style={[
-                    page === 'Reel'
-                      ? styles.pickedFooterTitle
-                      : styles.footerTitle,
-                  ]}
+                  style={[styles.footerTitle]}
                   type={'R16'}>
-                  {`Reel`}
+                  {'Reel'}
                 </ZText>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handlePressSelectStoryButton()}>
+              <TextWithPermissionCheck
+                permissionEnum={PermissionKey.AllowAddStory}
+                permissionsArray={userPermissions}
+                style={styles.footerSection}
+                onPress={() => handlePressSelectStoryButton()}>
                 <ZText
                   numberOfLines={1}
-                  style={[
-                    page === 'Story'
-                      ? styles.pickedFooterTitle
-                      : styles.footerTitle,
-                  ]}
+                  style={[styles.footerTitle]}
                   type={'R16'}>
-                  {`Story`}
+                  {'Story'}
                 </ZText>
-              </TouchableOpacity>
+              </TextWithPermissionCheck>
             </View>
             {/* </Box> */}
             <LoadingOverlay isVisible={isLoadingOverlay} />
@@ -1060,6 +1052,7 @@ const styles = StyleSheet.create({
   },
   footerSection: {
     // width: '50%',
+
     alignItems: 'center',
     padding: 10,
     justifyContent: 'center',

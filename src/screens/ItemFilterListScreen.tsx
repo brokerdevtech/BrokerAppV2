@@ -256,7 +256,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
               }}>
               <TouchableOpacity
                 style={styles.callbtn}
-                onPress={() => makeCall('+919910199761')}>
+                onPress={() => makeCall(item.contactNo)}>
                 <View style={{alignItems: 'center'}}>
                   <Icon
                     as={Telephone_Icon}
@@ -312,11 +312,13 @@ const ItemFilterListScreen: React.FC<any> = ({
   const [listApiobj, setlistApiobj] = useState(route.params.listApiobj);
   const [FiltersOBJ, setFiltersOBJ] = useState(route.params.Filters);
   const [ApppageTitle, setApppageTitle] = useState('');
-  const [searchKeyword, setsearchKeyword] = useState(route.params.searchText?route.params.searchText:'');
+  const [searchKeyword, setsearchKeyword] = useState(
+    route.params.searchText ? route.params.searchText : '',
+  );
   const [Itemslocalities, setItemslocalities] = useState(null);
   const [PopUPFilter, setPopUPFilter] = useState(null);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
-
+  // console.log(route.params, 'jj');
   const brandName =
     route.params.brandName !== undefined ? route.params.brandName : '';
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -325,20 +327,15 @@ const ItemFilterListScreen: React.FC<any> = ({
   const FilterSheetRef = useRef(null);
   const closeModal = useCallback(
     item => {
-   
-      if (Object.keys(item).length > 0)  {
+      if (Object.keys(item).length > 0) {
         setPopUPFilter(item);
         setLoading(true);
         pageSize_Set(5);
         currentPage_Set(1);
         hasMore_Set(true);
         let tags = getFilterTags(item);
-        tags.frontendFilters=JSON.stringify(item)
+        tags.frontendFilters = JSON.stringify(item);
         callPodcastList(tags);
-
-
-
-
       }
     },
     [searchKeyword],
@@ -374,12 +371,12 @@ const ItemFilterListScreen: React.FC<any> = ({
             break;
           case 'Area':
             break;
-            case 'RegistrationYear':
-              break;
-              case 'ManufactureYear':
-                break;
-                case 'KmsDriven':
-                  break;
+          case 'RegistrationYear':
+            break;
+          case 'ManufactureYear':
+            break;
+          case 'KmsDriven':
+            break;
           // Add more cases as needed
           default:
             // Default case if key doesn't match any predefined cases
@@ -405,19 +402,17 @@ const ItemFilterListScreen: React.FC<any> = ({
     };
 
     if (input.hasOwnProperty('Location')) {
- 
-
       obj.cityName = input.Location[0].place.City;
       obj.placeID = input.Location[0].place.placeID;
       obj.placeName = input.Location[0].place.placeName;
       obj.geoLocationLatitude = input.Location[0].place.geoLocationLongitude;
       obj.geoLocationLongitude = input.Location[0].place.geoLocationLongitude;
     }
-    if (input.hasOwnProperty('Budget') && input.Budget.isDefault==false) {
+    if (input.hasOwnProperty('Budget') && input.Budget.isDefault == false) {
       obj.minPrice = input.Budget.minValue;
       obj.maxPrice = input.Budget.maxValue;
     }
-    if (input.hasOwnProperty('Area') && input.Area.isDefault==false) {
+    if (input.hasOwnProperty('Area') && input.Area.isDefault == false) {
       obj.propertySizeMin = input.Area.minValue;
       obj.propertySizeMax = input.Area.maxValue;
     }
@@ -425,13 +420,13 @@ const ItemFilterListScreen: React.FC<any> = ({
     if (input.hasOwnProperty('ManufactureYear')) {
       // console.log(input.RegistrationYear);
       // console.log("RegistrationYear");
-       obj.makeYear = String(input.ManufactureYear[0].value);
+      obj.makeYear = String(input.ManufactureYear[0].value);
       // obj.propertySizeMax = input.Area.maxValue;
     }
     if (input.hasOwnProperty('KmsDriven')) {
       // console.log(input.RegistrationYear);
       // console.log("RegistrationYear");
-       obj.kilometerDriven = String(input.KmsDriven[0].key);
+      obj.kilometerDriven = String(input.KmsDriven[0].key);
       // obj.propertySizeMax = input.Area.maxValue;
     }
     // console.log('sssssssss');
@@ -497,7 +492,7 @@ const ItemFilterListScreen: React.FC<any> = ({
       FilterChipsData.push({label: 'Manufacture Year:' + obj.makeYear});
     }
     if (obj.kilometerDriven != undefined && obj.kilometerDriven !== '') {
-      FilterChipsData.push({label: 'Km:' + obj.kilometerDriven+' or less'});
+      FilterChipsData.push({label: 'Km:' + obj.kilometerDriven + ' or less'});
     }
     if (obj.filters && obj.filters.tags && Array.isArray(obj.filters.tags)) {
       obj.filters.tags.forEach(tag => {
@@ -547,7 +542,7 @@ const ItemFilterListScreen: React.FC<any> = ({
     // hasMore_Set(true);
     set_FilterChipsData(APiobj);
     //     console.log("=APiobj");
-    // console.log(APiobj);
+    console.log(APiobj);
     // console.log(user);
 
     //  execute(listTypeData, {
@@ -613,7 +608,7 @@ const ItemFilterListScreen: React.FC<any> = ({
     let obj = {
       ...listApiobj,
       keyWord: searchText,
-      frontendFilters:JSON.stringify(PopUPFilter),
+      frontendFilters: JSON.stringify(PopUPFilter),
       isSearch: true,
     };
     // console.log('apphandleSearch');
@@ -625,7 +620,7 @@ const ItemFilterListScreen: React.FC<any> = ({
   const OnPressfilters = () => {
     FilterSheetRef.current?.open();
   };
-  // console.log(data);
+  // console.log(status);
   return (
     <BottomSheetModalProvider>
       <ZHeaderFliter

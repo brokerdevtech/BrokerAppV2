@@ -13,11 +13,7 @@ import {
   Alert,
 } from 'react-native';
 
-import {
- 
-  CommentWhite,
-  TrashWhite,
-} from '../../assets/svg';
+import {CommentWhite, TrashWhite} from '../../assets/svg';
 
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import LinearGradient from 'react-native-linear-gradient';
@@ -48,8 +44,9 @@ import {
 import {CloseIcon, LikeWhite, OpenEye, UnLikeWhite} from '../../assets/svg';
 import {Icon} from '../../../components/ui/icon';
 import TextWithPermissionCheck from '../../sharedComponents/TextWithPermissionCheck';
-import { Center } from '../../../components/ui/center';
+import {Center} from '../../../components/ui/center';
 import StoryCommentBottomSheet from '../../sharedComponents/StoryCommentBottomSheet';
+import {DeleteStory} from '../../../BrokerAppCore/services/Story';
 
 const {width, height} = Dimensions.get('window');
 const avatars = [
@@ -231,14 +228,12 @@ const StoryView: React.FC = ({route}) => {
       useNativeDriver: false,
     }).start(({finished}) => {
       if (finished) {
-
         onPressNext(); // Move to the next item
       }
     });
   }
 
   const onLoadVideo = status => {
-
     const videoDuration = secondsToMilliseconds(status.duration);
 
     setEnd(videoDuration); // Set the end based on video duration
@@ -289,8 +284,6 @@ const StoryView: React.FC = ({route}) => {
 
   // next() is for changing the content of the current content to +1
   function onPressNext() {
- 
-
     if (KeybordShow) {
       Keyboard.dismiss();
       return;
@@ -347,23 +340,21 @@ const StoryView: React.FC = ({route}) => {
   // };
   const storyLikeList = (item: any) => {
     togglePlayPause();
-    navigation.push("StoryLikeList", {
+    navigation.push('StoryLikeList', {
       ActionId: item.storyId,
-      userId: user.userId
+      userId: user.userId,
     });
   };
   const storyviewList = (item: any) => {
     togglePlayPause();
-     navigation.push("StoryViewList", {
+    navigation.push('StoryViewList', {
       ActionId: item.storyId,
-      userId: user.userId
-     });
+      userId: user.userId,
+    });
   };
   const onLoadVideo1 = status => {
-
-
     const videoDuration = secondsToMilliseconds(status.duration);
-  
+
     setEnd(videoDuration);
 
     progress.setValue(0);
@@ -379,12 +370,11 @@ const StoryView: React.FC = ({route}) => {
     // togglePlayPause();
   };
   const closeModal = async (item: any) => {
-
     setOpen(false);
     // await new Promise(resolve => setTimeout(resolve, 200));
 
-   setStoryState(item);
-   await new Promise(resolve => setTimeout(resolve, 200));
+    setStoryState(item);
+    await new Promise(resolve => setTimeout(resolve, 200));
     togglePlayPause();
     // setPostId(0);
   };
@@ -465,193 +455,195 @@ const StoryView: React.FC = ({route}) => {
       setModalVisible(false);
     });
   };
-
+  console.log(reversedContent[current]);
   return (
     <SafeAreaView style={localStyles.containerModal}>
-       <BottomSheetModalProvider>
-      <StatusBar backgroundColor="black" barStyle="light-content" />
+      <BottomSheetModalProvider>
+        <StatusBar backgroundColor="black" barStyle="light-content" />
 
-      <View style={localStyles.backgroundContainer}>
-        {reversedContent[current] &&
-        reversedContent[current].mediaType == 'video' ? (
-          <Video
-            source={{
-              uri: `${imagesBucketcloudfrontPath}${reversedContent[current].mediaBlob}`,
-            }}
-            rate={1.0}
-            volume={1.0}
-            resizeMode="cover"
-            //onReadyForDisplay={play}
-            onLoad={onLoadVideo}
-            style={{height: height, width: width}}
-          />
-        ) : (
-          <FastImage
-            onLoadEnd={onLoadEndImage}
-            source={{
-              uri: `${imagesBucketcloudfrontPath}${reversedContent[current].mediaBlob}`,
-              priority: FastImage.priority.high,
-            }}
-            resizeMode={FastImage.resizeMode.contain}
-            style={{width: width, height: height}}
-          />
-        )}
-      </View>
-      <View style={localStyles.mainContainer}>
-        <LinearGradient
-          colors={['rgba(0,0,0,1)', 'transparent']}
-          style={localStyles.gradientView}
-        />
-        {/* ANIMATION BARS */}
-        <View style={localStyles.animationBar}>
-          {content.map((index, key) => {
-            return (
-              <View key={key} style={localStyles.barItemContainer}>
-                {/* THE ANIMATION OF THE BAR*/}
-                <Animated.View
-                  style={{
-                    flex: current == key ? progress : content[key].finish,
-                    height: 2,
-                    backgroundColor: colors.white,
-                  }}
-                />
-              </View>
-            );
-          })}
-        </View>
-
-        {/* END OF ANIMATION BARS */}
-        <View style={localStyles.header}>
-          {/* THE AVATAR AND USERNAME  */}
-          <TouchableOpacity style={localStyles.userAvatarContainer}>
-            {!!userImage?.profileImage && (
-              <FastImage
-                style={localStyles.userImage}
-                source={{
-                  uri: `${imagesBucketcloudfrontPath}${userImage.profileImage}`,
-                }}
-                resizeMode={FastImage.resizeMode.contain}
-              />
-            )}
-            <ZText type={'S14'} style={{...styles.pl10, color: 'white'}}>
-              {userImage.postedBy}
-            </ZText>
-          </TouchableOpacity>
-          {/* END OF THE AVATAR AND USERNAME */}
-          {/* THE CLOSE BUTTON */}
-          <TouchableOpacity onPress={onCloseStory}>
-            <View style={localStyles.closeContainer}>
-              {/* <Ionicons name="close-outline" size={28} color="white" /> */}
-              <Icon as={CloseIcon} />
-            </View>
-          </TouchableOpacity>
-          {/* END OF CLOSE BUTTON */}
-        </View>
-
-        {/* HERE IS THE HANDLE FOR PREVIOUS AND NEXT PRESS */}
-        <View style={localStyles.nextPreviousContainer}>
-          <TouchableWithoutFeedback onPress={onPressPrevious}>
-            <View style={styles.flex} />
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={onPressNext}>
-            <View style={styles.flex} />
-          </TouchableWithoutFeedback>
-        </View>
-        {/* END OF THE HANDLE FOR PREVIOUS AND NEXT PRESS */}
-      </View>
-      <View style={localStyles.actionButtons}>
-        <Box
-          display="flex"
-          alignItems="center"
-          style={localStyles.likeBtnStyle}>
-          <TouchableOpacityWithPermissionCheck
-            fontColor={colors.white}
-             tagNames={[LikeWhite, UnLikeWhite]}
-            permissionEnum={
-              StoryState.userLiked
-                ? PermissionKey.AllowUnLikeStory
-                : PermissionKey.AllowLikeStory
-            }
-            permissionsArray={userPermissions}
-            onPress={() => storyLike(reversedContent[current])}>
-            {StoryState.userLiked ? (
-               <LikeWhite accessible={true} accessibilityLabel="Like White" />
-            ) : (
-              <UnLikeWhite
-                accessible={true}
-                accessibilityLabel="unlike white"
-              />
-            )}
-          </TouchableOpacityWithPermissionCheck>
-          <TextWithPermissionCheck
-            permissionEnum={PermissionKey.AllowViewStoryLikes}
-            permissionsArray={userPermissions}
-            type={'L16'}
-            color={colors.white}
-            fontColor={colors.white}
-            onPress={() => storyLikeList(reversedContent[current])}>
-            {StoryState.likeCount}
-          </TextWithPermissionCheck>
-        </Box>
-        <Box
-          display="flex"
-          alignItems="center"
-          style={localStyles.likeBtnStyle}>
-          <TouchableOpacityWithPermissionCheck
-            fontColor={colors.white}
-            tagNames={[Center, OpenEye, ZText]}
-            permissionEnum={PermissionKey.AllowViewStoryViewers}
-            onPress={() => storyviewList(reversedContent[current])}>
-            <Center>
-              <OpenEye accessible={true} accessibilityLabel="open eye" />
-              <ZText type={'L16'} style={{color: colors.white}}>
-                {StoryState.viewerCount}
-              </ZText>
-            </Center>
-          </TouchableOpacityWithPermissionCheck>
-        </Box>
-        <Box
-          display="flex"
-          alignItems="center"
-          style={localStyles.likeBtnStyle}>
-          <TouchableOpacityWithPermissionCheck
-            fontColor={colors.white}
-            tagNames={[Center, OpenEye, ZText]}
-            permissionEnum={PermissionKey.AllowViewStoryReaction}
-            onPress={() => StoryComment()}>
-            <CommentWhite
-              accessible={true}
-              accessibilityLabel="comment white"
+        <View style={localStyles.backgroundContainer}>
+          {reversedContent[current] &&
+          reversedContent[current].mediaType == 'video' ? (
+            <Video
+              source={{
+                uri: `${imagesBucketcloudfrontPath}${reversedContent[current].mediaBlob}`,
+              }}
+              rate={1.0}
+              volume={1.0}
+              resizeMode="cover"
+              //onReadyForDisplay={play}
+              onLoad={onLoadVideo}
+              style={{height: height, width: width}}
             />
-            <Center>
-              <ZText type={'L16'} style={{color: colors.white}}>
-                {StoryState.reactionCount}
+          ) : (
+            <FastImage
+              onLoadEnd={onLoadEndImage}
+              source={{
+                uri: `${imagesBucketcloudfrontPath}${reversedContent[current].mediaBlob}`,
+                priority: FastImage.priority.high,
+              }}
+              resizeMode={FastImage.resizeMode.contain}
+              style={{width: width, height: height}}
+            />
+          )}
+        </View>
+        <View style={localStyles.mainContainer}>
+          <LinearGradient
+            colors={['rgba(0,0,0,1)', 'transparent']}
+            style={localStyles.gradientView}
+          />
+          {/* ANIMATION BARS */}
+          <View style={localStyles.animationBar}>
+            {content.map((index, key) => {
+              return (
+                <View key={key} style={localStyles.barItemContainer}>
+                  {/* THE ANIMATION OF THE BAR*/}
+                  <Animated.View
+                    style={{
+                      flex: current == key ? progress : content[key].finish,
+                      height: 2,
+                      backgroundColor: colors.white,
+                    }}
+                  />
+                </View>
+              );
+            })}
+          </View>
+
+          {/* END OF ANIMATION BARS */}
+          <View style={localStyles.header}>
+            {/* THE AVATAR AND USERNAME  */}
+            <TouchableOpacity style={localStyles.userAvatarContainer}>
+              {!!userImage?.profileImage && (
+                <FastImage
+                  style={localStyles.userImage}
+                  source={{
+                    uri: `${imagesBucketcloudfrontPath}${userImage.profileImage}`,
+                  }}
+                  resizeMode={FastImage.resizeMode.contain}
+                />
+              )}
+              <ZText type={'S14'} style={{...styles.pl10, color: 'white'}}>
+                {userImage.postedBy}
               </ZText>
-            </Center>
-          </TouchableOpacityWithPermissionCheck>
-        </Box>
-        {user.userId === userImage.userId && (
+            </TouchableOpacity>
+            {/* END OF THE AVATAR AND USERNAME */}
+            {/* THE CLOSE BUTTON */}
+            <TouchableOpacity onPress={onCloseStory}>
+              <View style={localStyles.closeContainer}>
+                {/* <Ionicons name="close-outline" size={28} color="white" /> */}
+                <Icon as={CloseIcon} />
+              </View>
+            </TouchableOpacity>
+            {/* END OF CLOSE BUTTON */}
+          </View>
+
+          {/* HERE IS THE HANDLE FOR PREVIOUS AND NEXT PRESS */}
+          <View style={localStyles.nextPreviousContainer}>
+            <TouchableWithoutFeedback onPress={onPressPrevious}>
+              <View style={styles.flex} />
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={onPressNext}>
+              <View style={styles.flex} />
+            </TouchableWithoutFeedback>
+          </View>
+          {/* END OF THE HANDLE FOR PREVIOUS AND NEXT PRESS */}
+        </View>
+        <View style={localStyles.actionButtons}>
           <Box
             display="flex"
             alignItems="center"
             style={localStyles.likeBtnStyle}>
-            {/* <TouchableOpacityWithPermissionCheck
-              tagNames={[View, TrashWhite]}
-              permissionEnum={PermissionKey.AllowDeleteStory}
+            <TouchableOpacityWithPermissionCheck
+              fontColor={colors.white}
+              tagNames={[LikeWhite, UnLikeWhite]}
+              permissionEnum={
+                StoryState.userLiked
+                  ? PermissionKey.AllowUnLikeStory
+                  : PermissionKey.AllowLikeStory
+              }
               permissionsArray={userPermissions}
-              onPress={() => onDeleteStory(reversedContent[current].storyId)}>
-              <View style={localStyles.deleteContainer}>
-                <TrashWhite
+              onPress={() => storyLike(reversedContent[current])}>
+              {StoryState.userLiked ? (
+                <LikeWhite accessible={true} accessibilityLabel="Like White" />
+              ) : (
+                <UnLikeWhite
                   accessible={true}
-                  accessibilityLabel="trash white"
+                  accessibilityLabel="unlike white"
                 />
-              </View>
-            </TouchableOpacityWithPermissionCheck> */}
+              )}
+            </TouchableOpacityWithPermissionCheck>
+            <TextWithPermissionCheck
+              permissionEnum={PermissionKey.AllowViewStoryLikes}
+              permissionsArray={userPermissions}
+              type={'L16'}
+              color={colors.white}
+              fontColor={colors.white}
+              onPress={() => storyLikeList(reversedContent[current])}>
+              {StoryState.likeCount}
+            </TextWithPermissionCheck>
           </Box>
-        )}
-      </View>
+          <Box
+            display="flex"
+            alignItems="center"
+            style={localStyles.likeBtnStyle}>
+            <TouchableOpacityWithPermissionCheck
+              fontColor={colors.white}
+              permissionsArray={userPermissions}
+              tagNames={[Center, OpenEye, ZText]}
+              permissionEnum={PermissionKey.AllowViewStoryViewers}
+              onPress={() => storyviewList(reversedContent[current])}>
+              <Center>
+                <OpenEye accessible={true} accessibilityLabel="open eye" />
+                <ZText type={'L16'} style={{color: colors.white}}>
+                  {StoryState.viewerCount}
+                </ZText>
+              </Center>
+            </TouchableOpacityWithPermissionCheck>
+          </Box>
+          <Box
+            display="flex"
+            alignItems="center"
+            style={localStyles.likeBtnStyle}>
+            <TouchableOpacityWithPermissionCheck
+              fontColor={colors.white}
+              tagNames={[CommentWhite]}
+              permissionsArray={userPermissions}
+              permissionEnum={PermissionKey.AllowViewStoryReaction}
+              onPress={() => StoryComment()}>
+              <CommentWhite
+                accessible={true}
+                accessibilityLabel="comment white"
+              />
+              <Center>
+                <ZText type={'L16'} style={{color: colors.white}}>
+                  {StoryState.reactionCount}
+                </ZText>
+              </Center>
+            </TouchableOpacityWithPermissionCheck>
+          </Box>
+          {user.userId === userImage.userId && (
+            <Box
+              display="flex"
+              alignItems="center"
+              style={localStyles.likeBtnStyle}>
+              <TouchableOpacityWithPermissionCheck
+                tagNames={[View, TrashWhite]}
+                permissionEnum={PermissionKey.AllowDeleteStory}
+                permissionsArray={userPermissions}
+                onPress={() => onDeleteStory(reversedContent[current].storyId)}>
+                <View style={localStyles.deleteContainer}>
+                  <TrashWhite
+                    accessible={true}
+                    accessibilityLabel="trash white"
+                  />
+                </View>
+              </TouchableOpacityWithPermissionCheck>
+            </Box>
+          )}
+        </View>
 
-      {/* <View style={localStyles.avatarGroupContainer}>
+        {/* <View style={localStyles.avatarGroupContainer}>
         <AvatarGroup>
           <Avatar size="sm">
             <AvatarFallbackText>John Doe</AvatarFallbackText>
@@ -672,18 +664,16 @@ const StoryView: React.FC = ({route}) => {
         </AvatarGroup>
       </View> */}
 
-      
-    <StoryCommentBottomSheet 
-     
-     ref={commentSheetRef}
-     StoryStateParam={StoryState}
-     postItem={reversedContent[current]}
-     User={user}
-     listTypeData={''}
-     userPermissions={userPermissions}
-     onClose={closeModal}
-   />
-    </BottomSheetModalProvider>
+        <StoryCommentBottomSheet
+          ref={commentSheetRef}
+          StoryStateParam={StoryState}
+          postItem={reversedContent[current]}
+          User={user}
+          listTypeData={''}
+          userPermissions={userPermissions}
+          onClose={closeModal}
+        />
+      </BottomSheetModalProvider>
     </SafeAreaView>
   );
 };

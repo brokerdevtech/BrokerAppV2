@@ -76,18 +76,48 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       return !showState;
     });
   };
+  const clearGoogleSignInCache = async () => {
+    try {
+      // First check if Google Play Services are available
+      await GoogleSignin.hasPlayServices();
+
+      // Then check if user is signed in
+      const isSignedIn = await GoogleSignin.hasPreviousSignIn();
+
+      if (isSignedIn) {
+        try {
+          await GoogleSignin.revokeAccess();
+          await GoogleSignin.signOut();
+        } catch (signOutError) {
+          console.error('Error signing out:', signOutError);
+          // Continue with sign in even if sign out fails
+        }
+      }
+    } catch (error) {
+      console.error('Error checking Google Sign-In status:', error);
+      // Don't throw error, just log it and continue with sign in
+    }
+  };
+
   const signInWithGoogle = async () => {
     try {
       setLoading(true);
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
 
+      // Try to clear cache but don't let it block sign in if it fails
+      await clearGoogleSignInCache().catch(console.error);
+
+      const userInfo = await GoogleSignin.signIn();
       const fcmToken = await getfcmToken();
 
+      if (!userInfo.user || !userInfo.user.email) {
+        throw new Error('Failed to get user email from Google Sign In');
+      }
+
       await SocialLoginexecute(
-        userInfo.data?.user.email,
+        userInfo.user.email,
         'Google',
-        userInfo.data?.idToken,
+        userInfo.idToken,
         fcmToken?.toString(),
         AppLocation.City,
         AppLocation.State,
@@ -101,43 +131,32 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         AppLocation.viewportSouthWestLat,
         AppLocation.viewportSouthWestLng,
       );
-      if (SocialLoginerror) {
-        setLoading(false);
-        console.log(SocialLoginerror, 'erroe');
-        if (!toast.isActive(toastId)) {
-          const newId = Math.random();
-          setToastId(newId);
-          toast.show({
-            id: newId,
-            placement: 'bottom',
-            duration: 3000,
-            render: ({id}) => {
-              const uniqueToastId = 'toast-' + id;
-              return (
-                <Toast nativeID={uniqueToastId} action="muted" variant="solid">
-                  <ToastDescription>{SocialLoginerror}</ToastDescription>
-                </Toast>
-              );
-            },
-          });
-        }
-      }
     } catch (error) {
       setLoading(false);
+      console.error('Google Sign In Error:', error);
 
+      let errorMessage = 'Failed to sign in with Google';
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // user cancelled the login flow
+        errorMessage = 'Sign in cancelled';
       } else if (error.code === statusCodes.IN_PROGRESS) {
-        // operation (e.g. sign in) is in progress already
+        errorMessage = 'Sign in already in progress';
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        // play services not available or outdated
-      } else {
-        // some other error happened
+        errorMessage = 'Google Play Services not available';
       }
-    } finally {
-      //setLoading(false);
+
+      toast.show({
+        id: Math.random(),
+        placement: 'bottom',
+        duration: 3000,
+        render: ({id}) => (
+          <Toast nativeID={`toast-${id}`} action="error" variant="solid">
+            <ToastDescription>{errorMessage}</ToastDescription>
+          </Toast>
+        ),
+      });
     }
   };
+
   const {data, status, error, execute} = useApiRequest(login, setLoading);
   const {
     data: SocialLogindata,
@@ -152,7 +171,6 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     await execute(email, password);
     setLoading(false);
     if (error) {
-    
       if (!toast.isActive(toastId)) {
         const newId = Math.random();
         setToastId(newId);
@@ -268,6 +286,29 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       // Proceed with storing tokens and user data
     }
   }, [data]);
+  useEffect(() => {
+    if (SocialLoginerror) {
+      setLoading(false);
+      console.log(SocialLoginerror);
+      if (!toast.isActive(toastId)) {
+        const newId = Math.random();
+        setToastId(newId);
+        toast.show({
+          id: newId,
+          placement: 'bottom',
+          duration: 3000,
+          render: ({id}) => {
+            const uniqueToastId = 'toast-' + id;
+            return (
+              <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+                <ToastDescription>{SocialLoginerror}</ToastDescription>
+              </Toast>
+            );
+          },
+        });
+      }
+    }
+  }, [SocialLoginerror]);
   // console.log(SocialLoginstatus, 'jdk');
   return (
     <View style={styles.container}>
@@ -389,9 +430,10 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         Don't have an account?{' '}
         <Text
           style={styles.signUpText}
-          onPress={() => 
-          {console.log('ww');
-            navigation.navigate('Register')}}>
+          onPress={() => {
+            console.log('ww');
+            navigation.navigate('Register');
+          }}>
           Sign Up
         </Text>
       </Text>

@@ -158,7 +158,7 @@ const Recommend = React.memo(categoryIds => {
   //   if (brokerList === null) {
   //     return <CarouselCardSkeleton />;
   //   }
-  // console.log(brokerList, 'BrokerList');
+  console.log(brokerList, 'BrokerList');
   // console.log(brokersdata);
   return (
     <View style={localStyles.container}>

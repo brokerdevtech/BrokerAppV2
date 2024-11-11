@@ -13,7 +13,7 @@ import ZText from '../sharedComponents/ZText';
 import {useNavigation} from '@react-navigation/native';
 import {styles} from '../themes';
 import {getHeight, moderateScale, PermissionKey} from '../config/constants';
-import {checkPlatform} from '../utils/helpers';
+import {checkPermission, checkPlatform} from '../utils/helpers';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
 
@@ -43,6 +43,7 @@ import DashboradScreen from '../screens/DashboradScreen';
 import ChooseImage from '../screens/postImage/ChooseImage';
 import {Color} from '../styles/GlobalStyles';
 import AllSkeletonComponent from '../sharedComponents/Skeleton/AllSkeletonComponent';
+import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 
 const Tab = createBottomTabNavigator();
 
@@ -74,9 +75,14 @@ const PlaceholderScreen = () => (
 const AppTab: React.FC = () => {
   const navigation = useNavigation();
   const userP = useSelector((state: RootState) => state.user.user);
-
+  const toast = useToast();
+  const [toastId, setToastId] = React.useState(0);
   const userPermissions = useSelector(
     (state: RootState) => state.user.user?.userPermissions,
+  );
+  const permissionGranted = checkPermission(
+    userPermissions,
+    PermissionKey.AllowAddPost,
   );
   const colors = useSelector((state: RootState) => state.theme.theme);
   const TabText = ({text, focused, icon}) => (
@@ -93,11 +99,30 @@ const AppTab: React.FC = () => {
       )}
     </View>
   );
-
+  const showToast = () => {
+    if (!toast.isActive(toastId)) {
+      const newId = Math.random();
+      setToastId(newId);
+      toast.show({
+        id: newId,
+        placement: 'bottom',
+        duration: 3000,
+        render: ({id}) => {
+          const uniqueToastId = 'toast-' + id;
+          return (
+            <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+              <ToastDescription>
+                {'You do not have permission.Contact dev@brokerapp.com.'}
+              </ToastDescription>
+            </Toast>
+          );
+        },
+      });
+    }
+  };
   const onPressAdd = () => {
     //  onOpen();
-
-    navigation.navigate('ChooseImage');
+    permissionGranted ? navigation.navigate('ChooseImage') : showToast();
   };
 
   return (

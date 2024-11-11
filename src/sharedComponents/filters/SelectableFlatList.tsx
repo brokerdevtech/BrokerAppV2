@@ -17,11 +17,12 @@ const SelectableFlatList = ({
     } else {
       setSelectedItem(null);
     }
-  }, [preselectedItem,numColumn]);
+  }, [preselectedItem, numColumn]);
   const handleItemPress = item => {
     setSelectedItem(item);
     if (onSelectItem) {
-      onSelectItem(item); // Pass the selected item to the parent
+      onSelectItem(item);
+      console.log(item);
     }
   };
 
@@ -58,7 +59,7 @@ const SelectableFlatList = ({
       contentContainerStyle={styles.listContainer}
       numColumns={numColumn} // Set number of columns to 2
       columnWrapperStyle={numColumn > 1 ? styles.columnWrapper : null}
-   //   columnWrapperStyle={styles.columnWrapper} // Add spacing between columns
+      //   columnWrapperStyle={styles.columnWrapper} // Add spacing between columns
       showsVerticalScrollIndicator={false} // Hide the scroll indicator
       extraData={numColumn}
       key={numColumn}

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -9,7 +9,7 @@ import {
 import {HStack} from '@/components/ui/hstack';
 import {VStack} from '@/components/ui/vstack';
 import {Box} from '@/components/ui/box';
-import {useApiRequest} from '@/src/hooks/useApiRequest';
+import {useApiRequest} from '../../../src/hooks/useApiRequest';
 import {
   fetchDashboardData,
   ListDashboardPostRequest,
@@ -48,6 +48,7 @@ const BrandSection = (props: BrandSectionProps) => {
   const navigation = useNavigation();
   const [showAlertDialog, setShowAlertDialog] = React.useState(false);
   const handleClose = () => setShowAlertDialog(false);
+  const [brandData, setBrandData] = useState(null);
   const onPressSignUp = () => {
     //  onOpen();
     setShowAlertDialog(false);
@@ -57,11 +58,18 @@ const BrandSection = (props: BrandSectionProps) => {
     await execute(props.endpoint, props.request);
     // console.log(props.heading, 'data :-', data);
   };
-
+  // console.log(data);
   useEffect(() => {
     callBrandList();
   }, [props]);
 
+  useEffect(() => {
+    if (status == 200) {
+      // setBrandData()
+      console.log(data, 'hh');
+    }
+  }, [status]);
+  // console.log(status);
   const renderProductItems = ({item, index}) => {
     // console.log('item =====>', item);
     const handlePress = () => {
@@ -93,7 +101,7 @@ const BrandSection = (props: BrandSectionProps) => {
       </View>
     );
   };
-
+  // console.log(data, 'jj');
   return (
     <View style={{backgroundColor: props.background, paddingVertical: 2}}>
       <HStack space="md" reversed={false} style={styles.heading}>
@@ -117,10 +125,11 @@ const BrandSection = (props: BrandSectionProps) => {
         <AlertDialogContent>
           <AlertDialogBody className="mt-3 mb-4 ">
             <ZText type="S18" style={{marginBottom: 20, textAlign: 'center'}}>
-              Want to see More ?
+              Discover endless premium listing with BrokerApp
             </ZText>
             <ZText type="R16" style={{marginBottom: 20, textAlign: 'center'}}>
-              Hurry up create an account with us now.
+              your trusted partner for properties, cars, and loans. Join us and
+              turn your dreams into reality!
             </ZText>
           </AlertDialogBody>
           <AlertDialogFooter
@@ -143,7 +152,7 @@ const BrandSection = (props: BrandSectionProps) => {
               onPress={onPressSignUp}
               style={{backgroundColor: Color.primary, marginLeft: 10}}>
               <ZText type="R16" style={{color: 'white', textAlign: 'center'}}>
-              Login
+                Login
               </ZText>
             </Button>
           </AlertDialogFooter>

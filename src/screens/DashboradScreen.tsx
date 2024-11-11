@@ -11,12 +11,12 @@ import {
   SafeAreaView,
 } from 'react-native';
 import {useSelector} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {RootState} from '@reduxjs/toolkit/query';
 import {HStack} from '@/components/ui/hstack';
 import {Grid, GridItem} from '@/components/ui/grid';
 import FastImage from '@d11/react-native-fast-image';
-import {imagesBucketcloudfrontPath} from '../config/constants';
+import {imagesBucketcloudfrontPath, PermissionKey} from '../config/constants';
 import ZText from '../sharedComponents/ZText';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {fetchPodcastList} from '@/BrokerAppCore/services/new/podcastService';
@@ -36,23 +36,41 @@ import UserStories from '../components/story/UserStories';
 import {colors} from '../themes';
 import MarqueeScreen from '../sharedComponents/profile/Marquee';
 import RecentSearchSection from './Dashboard/RecentSearchSection';
+import {GetDashboardData} from '../../BrokerAppCore/services/authService';
+import {setDashboard} from '../../BrokerAppCore/redux/store/Dashboard/dashboardSlice';
+import store from '../../BrokerAppCore/redux/store';
+import {checkPermission} from '../utils/helpers';
+import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-
+  const userPermissions = useSelector(
+    (state: RootState) => state.user.user.userPermissions,
+  );
+  const [toastId, setToastId] = React.useState(0);
+  const permissionGrantedPodacast = checkPermission(
+    userPermissions,
+    PermissionKey.AllowViewPodcast,
+  );
+  const permissionGrantedDashPost = checkPermission(
+    userPermissions,
+    PermissionKey.AllowViewDashboardPost,
+  );
+  const toast = useToast();
+  console.log(user);
   const {data, status, error, execute} = useApiRequest(fetchPodcastList);
   //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
   const cityToShow = AppLocation.City;
   const navigation = useNavigation();
 
   const callPodcastList = async () => {
-     execute(user.userId, 1, 4);
+    execute(user.userId, 1, 4);
     //await footerExecute()
   };
   const callmarList = async () => {
     const request = {pageNo: 1, pageSize: 10, cityName: cityToShow};
-     marqueeExecute('Marqueue', request);
+    marqueeExecute('Marqueue', request);
   };
   const {
     data: marqueeText,
@@ -64,15 +82,55 @@ export default function DashboradScreen() {
     callPodcastList();
     callmarList();
   }, [AppLocation]);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        try {
+          GetDashboardData(user.userId)
+            .then(data => {
+              store.dispatch(setDashboard(data.data));
+            })
+            .catch(error => {});
+        } catch (error) {
+          console.error('Error fetching posts:', error);
+        }
+      };
+      fetchData();
 
+      return () => {};
+    }, []),
+  );
+  const showToast = () => {
+    if (!toast.isActive(toastId)) {
+      const newId = Math.random();
+      setToastId(newId);
+      toast.show({
+        id: newId,
+        placement: 'bottom',
+        duration: 3000,
+        render: ({id}) => {
+          const uniqueToastId = 'toast-' + id;
+          return (
+            <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+              <ToastDescription>
+                {'You do not have permission.Contact dev@brokerapp.com.'}
+              </ToastDescription>
+            </Toast>
+          );
+        },
+      });
+    }
+  };
   const handleThumbnailTap = async (item, index) => {
-    navigation.navigate('VideoReels', {
-      podcastitem: item,
-      podcastId: item.podcastId,
-      podcastData: data,
-      podcastIndex: index,
-      podcastPage: 1,
-    });
+    permissionGrantedPodacast
+      ? navigation.navigate('VideoReels', {
+          podcastitem: item,
+          podcastId: item.podcastId,
+          podcastData: data,
+          podcastIndex: index,
+          podcastPage: 1,
+        })
+      : showToast();
   };
 
   const RenderPodcastItems = React.memo(({item, index}) => {
@@ -154,12 +212,14 @@ export default function DashboradScreen() {
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('ItemListScreen', {
-                    listType: 'RealEstate',
-                    categoryId: 1,
-                  })
-                }>
+                onPress={() => {
+                  permissionGrantedDashPost
+                    ? navigation.navigate('ItemListScreen', {
+                        listType: 'RealEstate',
+                        categoryId: 1,
+                      })
+                    : showToast();
+                }}>
                 <View style={styles.tabItemContainer}>
                   <TABTravel />
                   <ZText type={'R16'} style={styles.tabItemTitle}>
@@ -172,12 +232,14 @@ export default function DashboradScreen() {
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('ItemListScreen', {
-                    listType: 'Car',
-                    categoryId: 2,
-                  })
-                }>
+                onPress={() => {
+                  permissionGrantedDashPost
+                    ? navigation.navigate('ItemListScreen', {
+                        listType: 'Car',
+                        categoryId: 2,
+                      })
+                    : showToast();
+                }}>
                 <View style={styles.tabItemContainer}>
                   <TABCard />
                   <ZText type={'R16'} style={styles.tabItemTitle}>
@@ -234,13 +296,13 @@ export default function DashboradScreen() {
             isShowAll={false}
             request={{pageNo: 1, pageSize: 10, cityName: AppLocation.City}}
           />
-           <RecentSearchSection
+          <RecentSearchSection
             heading={'Recent Search'}
             background={'#F7F8FA'}
             endpoint={`RecentSearch`}
             isShowAll={true}
             request={{
-              userId:user.userId
+              userId: user.userId,
             }}
           />
           <ProductSection
@@ -271,9 +333,9 @@ export default function DashboradScreen() {
           <View style={styles.container}>
             <HStack space="md" reversed={false} style={styles.heading}>
               <ZText type={'R18'}>Podcast</ZText>
-              <ZText type={'R14'} style={styles.headingLink}>
+              {/* <ZText type={'R14'} style={styles.headingLink}>
                 See All
-              </ZText>
+              </ZText> */}
             </HStack>
             <HStack space="md" reversed={false} style={styles.list}>
               <FlatList
@@ -293,10 +355,11 @@ export default function DashboradScreen() {
           <BrandSection
             heading={'Brands Associated'}
             background={'#FFFFFF'}
-            endpoint={`RecentSearch`}
+            endpoint={`BrandAssociate`}
             isShowAll={true}
+            isGuest={false}
             request={{
-              userId:user.userId
+              userId: user.userId,
             }}
           />
           <Footer />

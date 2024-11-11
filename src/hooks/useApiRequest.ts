@@ -22,7 +22,7 @@ export const useApiRequest = <T, P extends any[]>(
     try {
       const response = await apiFunction(...params);
       // console.log('========broker');
-      // console.log(JSON.stringify(response));
+      // console.log(JSON.stringify(response.data));
       if (setLoading) {
         setLoading(false);
       }
@@ -35,6 +35,7 @@ export const useApiRequest = <T, P extends any[]>(
         setStatus(response.status || 500);
       } else {
         // debugger;
+        // console.log(response.data, 'branfd');
         setData(response.data || null);
         setStatus(response.status || 200);
       }

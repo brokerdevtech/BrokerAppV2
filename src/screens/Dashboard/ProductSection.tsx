@@ -40,6 +40,7 @@ import {
 } from '../../../components/ui/alert-dialog';
 import {Button} from '../../../components/ui/button';
 import {Color} from '../../styles/GlobalStyles';
+import {formatNumberToIndianSystem} from '../../utils/helpers';
 
 interface ProductSectionProps {
   heading: string;
@@ -111,7 +112,7 @@ const ProductSection = (props: ProductSectionProps) => {
         <View style={styles.detailsContainer}>
           <TouchableOpacity onPress={handlePress}>
             <ZText type={'R16'} style={styles.price}>
-              {'\u20B9'} {item.price}
+              {'\u20B9'} {formatNumberToIndianSystem(item.price)}
             </ZText>
             <View style={styles.locationContainer}>
               {item.placeName && (
@@ -208,12 +209,13 @@ const ProductSection = (props: ProductSectionProps) => {
                 <ZText
                   type="S18"
                   style={{marginBottom: 20, textAlign: 'center'}}>
-                  Want to see More ?
+                  Discover endless premium listing with BrokerApp
                 </ZText>
                 <ZText
                   type="R16"
                   style={{marginBottom: 20, textAlign: 'center'}}>
-                  Hurry up create an account with us now.
+                  your trusted partner for properties, cars, and loans. Join us
+                  and turn your dreams into reality!
                 </ZText>
               </AlertDialogBody>
               <AlertDialogFooter
@@ -238,7 +240,7 @@ const ProductSection = (props: ProductSectionProps) => {
                   <ZText
                     type="R16"
                     style={{color: 'white', textAlign: 'center'}}>
-                   Login
+                    Login
                   </ZText>
                 </Button>
               </AlertDialogFooter>

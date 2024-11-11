@@ -11,6 +11,7 @@ import {
   Share,
   Linking,
   Alert,
+  PermissionsAndroid,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
@@ -36,7 +37,7 @@ import {
 import {imagesBucketcloudfrontPath, moderateScale} from '../config/constants';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {fetchPostByID} from '@/BrokerAppCore/services/new/dashboardService';
-import {Icon, ShareIcon} from '../../components/ui/icon';
+import {Icon, ShareIcon, TrashIcon} from '../../components/ui/icon';
 import {Divider} from '@/components/ui/divider';
 import {VStack} from '@/components/ui/vstack';
 import MediaGallery from '../sharedComponents/MediaGallery';
@@ -50,10 +51,9 @@ import LocationMap from '../sharedComponents/LocationMap';
 import ZAvatarInitials from '../sharedComponents/ZAvatarInitials';
 import {useNavigation} from '@react-navigation/native';
 import {colors} from '../themes';
+import {formatNumberToIndianSystem} from '../utils/helpers';
 
 const propertyDetails = (data: any, user: any, navigation: any) => {
-
-
   const onPressUser = (userId, userName, userImage) => {
     if (user.userId === userId) {
       navigation.navigate('ProfileScreen');
@@ -69,7 +69,6 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
   };
 
   const generateLink = async () => {
-
     try {
       const response = await fetch(
         `https://tinyurl.com/api-create.php?url=${encodeURIComponent(
@@ -84,7 +83,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
 
   const sharePost = async () => {
     const getLink = await generateLink();
- 
+
     try {
       await Share.share({
         message: getLink,
@@ -111,7 +110,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
       {/* Car Details */}
       <VStack space="xs" style={styles.detailsContainetop}>
         <ZText type={'M16'} color={colors.light.appred}>
-          {'\u20B9'} {data?.price}
+          {'\u20B9'} {formatNumberToIndianSystem(data?.price)}
         </ZText>
 
         <HStack>
@@ -213,9 +212,13 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
                 styles={styles.profileImage}
                 name={data.postedBy}
               />
-              <View style={{marginLeft: 15, justifyContent: 'center'}}>
+              <TouchableOpacity
+                onPress={() =>
+                  onPressUser(data.userId, data.postedBy, data.profileImage)
+                }
+                style={{marginLeft: 15, justifyContent: 'center'}}>
                 <ZText type={'B16'}>{data.postedBy}</ZText>
-              </View>
+              </TouchableOpacity>
             </HStack>
           </VStack>
 
@@ -260,7 +263,7 @@ const carDetails = (data: any, user: any, navigation: any) => {
 
   const sharePost = async () => {
     const getLink = await generateLink();
- 
+
     try {
       await Share.share({
         message: getLink,
@@ -288,7 +291,7 @@ const carDetails = (data: any, user: any, navigation: any) => {
       {/* Car Details */}
       <VStack space="md" style={styles.detailsContainer}>
         <ZText type={'M16'} color={'#E00000'}>
-          {'\u20B9'} {data?.price}
+          {'\u20B9'} {formatNumberToIndianSystem(data?.price)}
         </ZText>
 
         <ZTextMore type={'B16'} numberOfLines={1}>
@@ -362,9 +365,13 @@ const carDetails = (data: any, user: any, navigation: any) => {
                 styles={styles.profileImage}
                 name={data.postedBy}
               />
-              <View style={{marginLeft: 15, justifyContent: 'center'}}>
+              <TouchableOpacity
+                onPress={() =>
+                  onPressUser(data.userId, data.postedBy, data.profileImage)
+                }
+                style={{marginLeft: 15, justifyContent: 'center'}}>
                 <ZText type={'B16'}>{data.postedBy}</ZText>
-              </View>
+              </TouchableOpacity>
             </HStack>
           </VStack>
         </VStack>
@@ -386,7 +393,6 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
     await execute(route.params.postType, route.params.postId);
   };
   const chatProfilePress = useCallback(async () => {
-
     if (user.userId.toString() == data.userId.toString()) {
       Alert.alert('Error', 'You cannot chat with yourself.');
     } else {
@@ -399,10 +405,33 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
       });
     }
   }, [data]);
-  const makeCall = useCallback(
-    phoneNumber => {
-      const url = `tel:${phoneNumber}`;
+  const makeCall = useCallback(async phoneNumber => {
+    const url = `tel:${phoneNumber}`;
 
+    const checkPermissionAndOpen = async () => {
+      const hasPermission = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+      );
+      if (hasPermission) {
+        Linking.openURL(url);
+      } else {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          Linking.openURL(url);
+        } else {
+          Alert.alert(
+            'Permission Denied',
+            'You need to enable call permissions to use this feature',
+          );
+        }
+      }
+    };
+
+    if (Platform.OS === 'android') {
+      await checkPermissionAndOpen();
+    } else {
       Linking.canOpenURL(url)
         .then(supported => {
           if (supported) {
@@ -412,13 +441,12 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
           }
         })
         .catch(err => console.error('Error opening dialer', err));
-    },
-    [data],
-  );
+    }
+  }, []);
   useEffect(() => {
     callItemDetail();
   }, []);
-  console.log(data, 'detaisl');
+  console.log(user.userId, 'detaisl');
   return (
     <BottomSheetModalProvider>
       <View style={styles.listContainer}>
@@ -439,9 +467,11 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
                 </View>
                 <ZText type={'R18'}>{data?.title}</ZText>
               </View>
-              {/* <View style={styles.IconButton}>
-                    <Share_Icon />
-                 </View> */}
+              {user.userId == data?.userId && (
+                <View style={styles.IconButton}>
+                  <Icon as={TrashIcon} size="xl" />
+                </View>
+              )}
             </View>
           </View>
           <View>
@@ -475,7 +505,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
               }}>
               <TouchableOpacity
                 style={styles.callbtn}
-                onPress={() => makeCall('+919910199761')}>
+                onPress={() => makeCall(data.contactNo)}>
                 <View style={{alignItems: 'center'}}>
                   <Icon
                     as={Telephone_Icon}
@@ -562,6 +592,7 @@ const styles = StyleSheet.create({
   },
   header: {
     justifyContent: 'space-between',
+    alignItems: 'center',
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingVertical: 20,
