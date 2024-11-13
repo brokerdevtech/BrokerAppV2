@@ -127,12 +127,12 @@ const Recommend = React.memo(categoryIds => {
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      getList();
-    }, []),
-  );
-
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     getList();
+  //   }, []),
+  // );
+  useEffect(() => { getList(); }, []);
   useEffect(() => {
     // Bind data to the state when the data fetch is successful
     // console.log(brokersstatus, 'redf');

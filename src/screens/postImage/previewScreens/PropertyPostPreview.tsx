@@ -565,7 +565,7 @@ const PropertyPostPreview: React.FC = ({
                       {formValue.propDescription}
                     </ZTextMore>
                   </VStack>
-                  {filter.Amenities.records.length > 0 && (
+                  {filter.Amenities?.records.length > 0 && (
                     <>
                       <Divider className="my-0.5" />
                       <KeyValueRow
@@ -576,7 +576,7 @@ const PropertyPostPreview: React.FC = ({
                       />
                     </>
                   )}
-                  {filter.NearbyFacilities.records.length > 0 && (
+                  {filter.NearbyFacilities?.records.length > 0 && (
                     <>
                       <Divider className="my-0.5" />
                       <KeyValueRow
@@ -587,7 +587,7 @@ const PropertyPostPreview: React.FC = ({
                       />
                     </>
                   )}
-                  {filter.PropertyType.records.length > 0 && (
+                  {filter.PropertyType?.records.length > 0 && (
                     <>
                       <Divider className="my-0.5" />
                       <KeyValueRow

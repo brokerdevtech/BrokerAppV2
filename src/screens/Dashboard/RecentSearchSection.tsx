@@ -39,11 +39,11 @@ const RecentSearchSection = (props: BrandSectionProps) => {
   const navigation = useNavigation();
 
   const callBrandList = async () => {
-    await execute(props.endpoint, props.request);
+     execute(props.endpoint, props.request);
 
   };
   useEffect(() => {
-  
+  console.log("callBrandList",data);
   }, [data]);
   useEffect(() => {
     callBrandList();
@@ -54,13 +54,17 @@ const RecentSearchSection = (props: BrandSectionProps) => {
      // console.warn('Invalid item structure:', item);
       return null; // Return null if item structure is invalid
     }
-  
+  //   console.log("renderProductItems")
+  // console.log(item)
     let parsedItem;
     let frontendFilters;
   
     try {
       parsedItem = JSON.parse(item.requestJson);
       frontendFilters = JSON.parse(item.frontendFilters);
+
+      console.log(parsedItem)
+      console.log(frontendFilters)
     } catch (error) {
       console.error('Error parsing JSON:', error);
       return null; // Return null if JSON parsing fails
@@ -74,7 +78,7 @@ const RecentSearchSection = (props: BrandSectionProps) => {
   
       let obj = {
         ...parsedItem,
-        frontendFilters: item.frontendFilter || [],
+        frontendFilters: item.frontendFilters || [],
         isSearch: false,
       };
   
@@ -112,7 +116,7 @@ const RecentSearchSection = (props: BrandSectionProps) => {
 
   return (
 <>
-    { data!= null && data.length > 0 &&
+    {/* { data!= null && data.length > 0 && */}
 <View
           style={{
             backgroundColor: props.background,
@@ -135,7 +139,8 @@ const RecentSearchSection = (props: BrandSectionProps) => {
           // ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
       </HStack>
-    </View>}
+    </View>
+    {/* } */}
     </>
   );
 };

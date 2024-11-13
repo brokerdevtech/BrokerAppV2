@@ -78,9 +78,9 @@ import { useFocusEffect } from '@react-navigation/native';
 const SkeletonPlaceholder = () => {
   return (
     <HStack space={10} style={styles.skeletonContainer}>
-      {/* {Array.from({length: 6}).map((_, index) => (
+      {Array.from({length: 6}).map((_, index) => (
         <ListingCardSkeleton   key={index} size={60} />
-      ))} */}
+      ))}
     </HStack>
   );
 };
@@ -90,8 +90,8 @@ const RederListHeader = React.memo(
       <>
         <UserStories />
 
-        <Recommend categoryId={categoryId} />
-        <ProductSection
+        {/* <Recommend categoryId={categoryId} /> */}
+        {/* <ProductSection
           heading={'Newly Launch'}
           background={'#FFFFFF'}
           endpoint={'Newin'}
@@ -102,7 +102,7 @@ const RederListHeader = React.memo(
             cityName: AppLocation.City,
             categoryId: categoryId,
           }}
-        />
+        /> */}
 
         <RecentSearchSection
           heading={'Recent Search'}
@@ -817,7 +817,7 @@ const ItemListScreen: React.FC<any> = ({
               getItemLayout={getItemLayout}
               renderItem={renderItem}
               initialNumToRender={2}
-              maxToRenderPerBatch={4}
+              maxToRenderPerBatch={2}
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
               ListHeaderComponent={

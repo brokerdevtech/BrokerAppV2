@@ -129,6 +129,8 @@ const CustomDrawerContent = props => {
   );
   const [showAlertDialog, setShowAlertDialog] = React.useState(false);
   const handleClose = () => setShowAlertDialog(false);
+  const dashboard = useSelector((state: RootState) => state.dashboard);
+  console.log("dashboard",dashboard);
   const LogoutProceed = async () => {
     setIsloading(true);
     await logoutExecute();
@@ -165,7 +167,7 @@ const CustomDrawerContent = props => {
       <View style={styles.drawerItemsContainer}>
         <TouchableOpacity style={[styles.drawerItem, styles.bottomBorder]}>
           <ZText type={'S16'} style={styles.drawerLabel}>
-            {user?.profileViews}
+            {dashboard?.profileViews}
             <ZText type={'R16'} style={styles.viewProfileText}>
               {' '}
               Profile Viewers

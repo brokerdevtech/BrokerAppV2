@@ -185,6 +185,9 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     setLoading(true);
     await execute(email, password);
     setLoading(false);
+   
+  };
+  useEffect(() => {
     if (error) {
       if (!toast.isActive(toastId)) {
         const newId = Math.random();
@@ -206,7 +209,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         });
       }
     }
-  };
+  }, [error]);
   const afterhandleLogin = async () => {
     setLoading(true);
     if (data) {

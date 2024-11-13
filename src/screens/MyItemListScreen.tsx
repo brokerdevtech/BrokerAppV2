@@ -73,7 +73,7 @@ import {concat} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
 import {formatNumberToIndianSystem} from '../utils/helpers';
 
-const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
+const ProductItem = React.memo(({item, listTypeData, User, navigation,OnGoBack}) => {
   const MediaGalleryRef = useRef(null);
 
   const openWhatsApp = useCallback((phoneNumber, message) => {
@@ -177,6 +177,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('ItemDetailScreen', {
+              onGoBack: OnGoBack, 
               postId: item.postId,
               postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post',
             })
@@ -299,7 +300,8 @@ const MyItemListScreen: React.FC<any> = ({
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
   const [PageuserId, setPageuserId] = useState(route.params.userId);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
-
+  const [isrest, setisrest] = useState(false);
+  const flatListRef = useRef(null);
   const {
     data,
     status,
@@ -320,6 +322,7 @@ const MyItemListScreen: React.FC<any> = ({
         listTypeData={listTypeData}
         User={user}
         navigation={navigation}
+        OnGoBack={OnGoBack}
       />
     ),
     [],
@@ -331,6 +334,23 @@ const MyItemListScreen: React.FC<any> = ({
     setFilterChipsData(FilterChipsData);
   }
 
+  const OnGoBack = (updatedItem) => {
+    console.log('OnGoBack');
+    console.log(updatedItem);
+    //   console.log("updatedItem");
+    //  console.log(updatedItem);
+    //  console.log(data);
+    //  let newd=  data.map((item) =>
+    //     item.postId === updatedItem?.postId ? updatedItem : item
+    //   )
+  
+    //   data=[...newd]
+    //   console.log(data);
+    //   // setData(newd);
+    flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+      setisrest(!isrest);
+    
+    };
   async function callPodcastList() {
     pageSize_Set(5);
     currentPage_Set(1);
@@ -354,7 +374,7 @@ const MyItemListScreen: React.FC<any> = ({
 
     set_FilterChipsData();
     callPodcastList();
-  }, []);
+  }, [isrest]);
   const [itemHeight, setItemHeight] = useState(560);
 
   const loadMorepage = async () => {
@@ -383,6 +403,7 @@ const MyItemListScreen: React.FC<any> = ({
           {data && (
             <FlatList
               data={data}
+              ref={flatListRef}
               getItemLayout={getItemLayout}
               renderItem={renderItem}
               showsHorizontalScrollIndicator={false}

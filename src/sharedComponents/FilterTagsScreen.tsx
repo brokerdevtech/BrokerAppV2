@@ -116,6 +116,8 @@ const FilterTagsScreen: React.FC = ({
           },
         ];
         setApplocalities(locationData);
+        setLocalities(AppLocation);
+       // onFiltersLocalityChange(locationData);
         // // Now fetch the filter data after filterexecute is done
         // await Tagfetching();
       } catch (error) {
@@ -343,6 +345,8 @@ const FilterTagsScreen: React.FC = ({
   };
 
   const onFiltersLocalityChange = Localitys => {
+    console.log("Localitys");
+    console.log(Localitys);
     setLocalities(Localitys);
 
     let DeveloperData = {

@@ -411,9 +411,9 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
 console.log('thumbnail');
 console.log(thumbnail);
 
-          // navigation.navigate('EditImagesScreen', {
-          //   selectedThumbnails: thumbnail,
-          // });
+          navigation.navigate('EditImagesScreen', {
+            selectedThumbnails: thumbnail,
+          });
         } else {
           let stickers = ['sticker0.png'];
         }

@@ -21,6 +21,19 @@ const SkeletonLoader = ({style, width, height, borderRadius}) => {
     ).start();
   }, [opacity]);
 
+  const SkeletonLoader = ({ style, width = 100, height = 20, borderRadius = 4 }) => {
+    return (
+      <View
+        style={[
+          styles.skeleton,
+          { width, height, borderRadius },
+          style
+        ]}
+      />
+    );
+  };
+
+
   return (
     <Animated.View
       style={[
@@ -89,15 +102,20 @@ const ListingCardSkeleton = () => {
 };
 
 const styles = StyleSheet.create({
+  skeleton: {
+    backgroundColor: '#E1E9EE',
+    opacity: 0.5,  // You can adjust this for a lighter or darker shimmer
+    borderRadius: 4,
+  },
   cardContainer: {
     padding: 16,
     backgroundColor: '#fff',
     borderRadius: 10,
     marginVertical: 8,
   },
-  skeleton: {
-    backgroundColor: '#e0e0e0',
-  },
+  // skeleton: {
+  //   backgroundColor: '#e0e0e0',
+  // },
   imageSkeleton: {
     width: '100%',
     height: 180,

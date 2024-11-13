@@ -435,8 +435,8 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
               if (data.postId) {
                 const result = await deleteMyPost(user.userId, data.postId);
                 showToast(result.statusMessage);
-                
-                navigation.goBack();
+                handleUpdate();
+              //  navigation.goBack();
                  // navigation.navigate("ProfileScreen");
                 } else {
                   showToast(result.error);
