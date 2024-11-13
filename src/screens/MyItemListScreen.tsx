@@ -75,7 +75,12 @@ import {formatNumberToIndianSystem} from '../utils/helpers';
 
 const ProductItem = React.memo(({item, listTypeData, User, navigation,OnGoBack}) => {
   const MediaGalleryRef = useRef(null);
-
+  const [isrefresh, setisrefresh] = useState(0);
+  const ProductItemOnGoBack =(item)=>{
+    console.log("ProductItemOnGoBack");
+    setisrefresh(isrefresh+1)
+    OnGoBack(item);
+  }
   const openWhatsApp = useCallback((phoneNumber, message) => {
     const url = `whatsapp://send?text=${encodeURIComponent(
       message,
@@ -167,6 +172,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation,OnGoBack})
             item={item}
             User={User}
             listTypeData={listTypeData}
+            isrefresh={isrefresh}
             onUpdateLikeCount={newCount => {
               // console.log(newCount);
             }}
@@ -177,7 +183,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation,OnGoBack})
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('ItemDetailScreen', {
-              onGoBack: OnGoBack, 
+              onGoBack: ProductItemOnGoBack, 
               postId: item.postId,
               postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post',
             })

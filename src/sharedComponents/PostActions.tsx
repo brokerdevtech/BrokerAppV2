@@ -36,6 +36,7 @@ import {useApiPagingWithtotalRequest} from '../hooks/useApiPagingWithtotalReques
 import {
   addHaveABuyer,
   GetCommentList,
+  GetPostInsights,
   RemoveHaveABuyer,
 } from '../../BrokerAppCore/services/new/postServices';
 import LoadingSpinner from './LoadingSpinner';
@@ -59,6 +60,7 @@ const PostActions = ({
   listTypeData,
   onUpdateLikeCount,
   PageName = 'ItemList',
+  isrefresh=0,
 }) => {
  
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
@@ -90,7 +92,22 @@ const PostActions = ({
     (state: RootState) => state.user.user.userPermissions,
   );
 
-
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isrefresh > 0) {
+        console.log('isrefresh', item);
+        let k = await GetPostInsights(listTypeData,item.postId);
+        console.log(k)
+        setisraisedPostBuyerHand(k.data?.raisedPostBuyerHand === 0 ? false : true)
+        SetPostLike(k.data.userLiked === 1)
+        SetPostlikesCount(k.data.likes);
+        setCardComment(k.data.comments);
+        // You can use the value of k here, e.g., set state with it
+      }
+    };
+  
+    fetchData();
+  }, [isrefresh]);
 
   useEffect(() => {
   
