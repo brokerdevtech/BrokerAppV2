@@ -408,8 +408,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       if (thumbnail.length > 0) {
         if (page !== 'Story') {
 
-console.log('thumbnail');
-console.log(thumbnail);
+
 
           navigation.navigate('EditImagesScreen', {
             selectedThumbnails: thumbnail,

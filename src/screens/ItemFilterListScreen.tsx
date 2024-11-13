@@ -566,8 +566,7 @@ const ItemFilterListScreen: React.FC<any> = ({
   }
   const flatListRef = useRef(null);
   const OnGoBack = (updatedItem) => {
-    console.log("updatedItem");
-   console.log(updatedItem);
+ 
   //  console.log(data);
   //  let newd=  data.map((item) =>
   //     item.postId === updatedItem?.postId ? updatedItem : item

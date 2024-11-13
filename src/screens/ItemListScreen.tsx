@@ -363,7 +363,7 @@ const ItemListScreen: React.FC<any> = ({
   isLoading,
   listType,
 }) => {
-  console.log("ok");
+
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
@@ -406,8 +406,7 @@ const ItemListScreen: React.FC<any> = ({
 
   const flatListRef = useRef(null);
   const OnGoBack = (updatedItem) => {
-    console.log("updatedItem");
-   console.log(updatedItem);
+ 
   //  console.log(data);
   //  let newd=  data.map((item) =>
   //     item.postId === updatedItem?.postId ? updatedItem : item

@@ -524,9 +524,9 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
     callItemDetail();
   }, []);
   const handleUpdate = async (Action:any="Back") => {
-    console.log("handleUpdate");
+
     if (onGoBack) {
-      console.log("onGoBack");
+
       // await execute();
       // await new Promise(resolve => setTimeout(resolve, 100));
       // console.log("execute");

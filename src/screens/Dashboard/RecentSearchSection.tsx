@@ -43,7 +43,7 @@ const RecentSearchSection = (props: BrandSectionProps) => {
 
   };
   useEffect(() => {
-  console.log("callBrandList",data);
+
   }, [data]);
   useEffect(() => {
     callBrandList();

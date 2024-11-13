@@ -93,7 +93,7 @@ export default function DashboradScreen() {
         try {
           GetDashboardData(user.userId)
             .then(data => {
-              console.log('data:', data);
+       
               store.dispatch(setDashboard(data.data));
             })
             .catch(error => {});
@@ -228,7 +228,7 @@ export default function DashboradScreen() {
                 }}> */}
                    <TouchableOpacity
                 onPress={() => {
-                  console.log('onPress');
+                 
                   navigation.navigate('ItemListScreen', {
                         listType: 'RealEstate',
                         categoryId: 1,

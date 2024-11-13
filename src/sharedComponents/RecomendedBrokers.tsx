@@ -123,7 +123,7 @@ const Recommend = React.memo(categoryIds => {
       brokershasMore_Set(true);
       brokersexecute(user.userId, categoryId, AppLocation.City);
     } catch (error) {
-      console.log(error);
+ 
     }
   };
 

@@ -36,8 +36,7 @@ const AppFastImage = ({uri}) => {
         setContainerWidth(width)
         setContainerheight(height)
         setcontaineraspectRatio(width/height);
-        console.log(width);
-        console.log(height);
+
       //  setContainerWidth(width); 
         // Set container width based on layout
       }}
