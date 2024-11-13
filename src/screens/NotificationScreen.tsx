@@ -1,4 +1,9 @@
-import {imagesBucketcloudfrontPath, moderateScale} from '../config/constants';
+/* eslint-disable react-native/no-inline-styles */
+import {
+  imagesBucketcloudfrontPath,
+  moderateScale,
+  PermissionKey,
+} from '../config/constants';
 import ZAvatarInitials from '../sharedComponents/ZAvatarInitials';
 import ZText from '../sharedComponents/ZText';
 import FastImage from '@d11/react-native-fast-image';
@@ -30,6 +35,11 @@ import typography from '../themes/typography';
 import AppBaseContainer from '../hoc/AppBaseContainer_old';
 import moment from 'moment';
 import {useNavigation} from '@react-navigation/native';
+import ButtonWithPermissionCheck from '../sharedComponents/ButtonWithPermissionCheck';
+import {colors} from '../themes';
+import {Icon} from '../../components/ui/icon';
+import {CloseBlack, CloseIcon} from '../assets/svg';
+import {Color} from '../styles/GlobalStyles';
 const NotificationItem = ({
   item,
   index,
@@ -147,11 +157,23 @@ const NotificationItem = ({
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-        {/* {shouldRenderButtons && (
+        {shouldRenderButtons && (
           <View style={styles.iconContainer}>
             <ButtonWithPermissionCheck
               title="Accept"
               permissionsArray={userPermissions}
+              containerStyle={[
+                {
+                  borderColor: '#bc4a50',
+                  borderWidth: 1,
+                  paddingVertical: 10,
+                  paddingHorizontal: 10,
+                  borderRadius: 5,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginLeft: 5,
+                },
+              ]}
               color={colors.white}
               textType="b14"
               bgColor={colors.primary}
@@ -192,7 +214,7 @@ const NotificationItem = ({
                   status,
                 )
               }
-              frontIcon={<Ionicons name="close" size={20} color="#bc4a50" />}
+              frontIcon={<Icon as={CloseBlack} stroke={'#000000'} />}
               permissionEnum={PermissionKey.AllowUpdateConnection}
             />
             {/* <TouchableOpacity
@@ -201,8 +223,8 @@ const NotificationItem = ({
                 marginLeft: 5, // Adjust the left margin to your preference
                 backgroundColor: 'rgba(1, 125, 197, 0.1)', // Change the background color for rejected buttons
               }}></TouchableOpacity> */}
-        {/* </View>
-        )}  */}
+          </View>
+        )}
       </View>
     </View>
   );
@@ -248,29 +270,6 @@ const NotificationScreen: React.FC = ({
         // console.log("========data");
         // console.log(data);
         setNotificationData(data.data.notifications);
-
-        // if (data?.data?.notifications?.length > 0) {
-        //   const firstNotification = data.data.notifications[0];
-        //   const metaData = firstNotification?.metaData;
-
-        //   // if (metaData) {
-        //   //   const parsedMetaData = JSON.parse(metaData);
-        //   //   const postId = parsedMetaData?.PostId;
-        //   //   //
-        //   //   const userId = parsedMetaData?.UserId;
-
-        //   //   if (postId) {
-        //   //     const postDetails = await getPostDetails(postId);
-        //   //     //
-        //   //     setMediaData(postDetails.data.postMedia);
-        //   //     // setPostTitle(postDetails.data.projectName);
-        //   //   }
-        //   //   if (userId) {
-        //   //     const userIdData = await getOtherProfile(userId, user.userId);
-
-        //   //   }
-        //   // }
-        // }
 
         UpdateDashboardData(user.userId)
           .then(data => {

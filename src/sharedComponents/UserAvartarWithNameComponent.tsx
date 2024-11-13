@@ -88,12 +88,15 @@ function UserAvartarWithNameComponent({
             </Pressable>
           );
         }}>
-        <MenuItem key="Add account" textValue="Add account">
+        <MenuItem
+          key="Add account"
+          textValue="Add account"
+          onPress={handleRemovePress}>
           <TextWithPermissionCheck
             permissionsArray={userPermissions}
             style={{padding: 10}}
             type="r14"
-            permissionEnum={false}
+            permissionEnum={PermissionKey.AllowDeleteConnection}
             onPress={handleRemovePress}>
             {type === 'network' ? 'Remove' : 'Leave'}
           </TextWithPermissionCheck>
@@ -105,24 +108,32 @@ function UserAvartarWithNameComponent({
     const isConnectionAvailable = connectionCount > 0;
     //
     return (
-      <View style={localStyles.connectContainer}>
-        <ButtonWithPermissionCheck
-          permissionEnum={PermissionKey.AllowViewConnection}
-          permissionsArray={userPermissions}
-          title={`${connectionCount} Connections`}
-          color={colors.white}
-          textType="B14"
-          containerStyle={[
-            localStyles.buttonContainer,
-            {
-              borderColor: colors.primary,
-              opacity: isConnectionAvailable ? 1 : 0.5,
-            },
-          ]}
-          bgColor={colors.transparent}
-          onPress={isConnectionAvailable ? onPressArrow : undefined}
-          disabled={!isConnectionAvailable}
-        />
+      <View
+        style={[
+          localStyles.connectContainer,
+          {
+            justifyContent: isConnectionAvailable ? 'space-evenly' : 'flex-end',
+          },
+        ]}>
+        {isConnectionAvailable && (
+          <ButtonWithPermissionCheck
+            permissionEnum={PermissionKey.AllowViewConnection}
+            permissionsArray={userPermissions}
+            title={`${connectionCount} Connections`}
+            color={colors.white}
+            textType="B14"
+            containerStyle={[
+              localStyles.buttonContainer,
+              {
+                borderColor: colors.primary,
+                opacity: isConnectionAvailable ? 1 : 0.5,
+              },
+            ]}
+            bgColor={colors.transparent}
+            onPress={isConnectionAvailable ? onPressArrow : undefined}
+            disabled={!isConnectionAvailable}
+          />
+        )}
         {shouldMenuRender !== true && <UserMenuComponent />}
       </View>
     );
@@ -148,6 +159,7 @@ function UserAvartarWithNameComponent({
               );
 
               OnRemoveConnection();
+              navigation.goBack();
             } catch (error) {
               console.error('Error deleting connection:', error);
             }
@@ -206,17 +218,6 @@ function UserAvartarWithNameComponent({
 
       {type === 'network' && <UserConnectionComponent />}
       {type === 'under' && userId !== loggedInUserId && <UserMenuComponent />}
-
-      {/*       
-      {isSuggested && (
-        <TouchableOpacity style={styles.ml5}>
-          <Ionicons
-            name="close-sharp"
-            size={moderateScale(26)}
-            color={colors.primary}
-          />
-        </TouchableOpacity>
-      )} */}
     </View>
   );
 }
@@ -273,7 +274,7 @@ const localStyles = StyleSheet.create({
   connectContainer: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+
     alignItems: 'center',
   },
 });
