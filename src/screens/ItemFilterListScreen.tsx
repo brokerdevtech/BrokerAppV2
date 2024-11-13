@@ -113,7 +113,7 @@ const RederListHeader = React.memo(
 //   </>
 // ));
 
-const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
+const ProductItem = React.memo(({item, listTypeData, User, navigation,OnGoBack}) => {
   const MediaGalleryRef = useRef(null);
 
   const openWhatsApp = useCallback((phoneNumber, message) => {
@@ -191,8 +191,10 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('ItemDetailScreen', {
+              onGoBack: OnGoBack, 
               postId: item.postId,
               postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post',
+            
             })
           }>
           <VStack space="xs" style={styles.detailsContainer}>
@@ -325,6 +327,7 @@ const ItemFilterListScreen: React.FC<any> = ({
   // console.log('=============user=============');
   // console.log(user);
   const FilterSheetRef = useRef(null);
+  const [isrest, setisrest] = useState(false);
   const closeModal = useCallback(
     item => {
       if (Object.keys(item).length > 0) {
@@ -461,6 +464,7 @@ const ItemFilterListScreen: React.FC<any> = ({
         listTypeData={listTypeData}
         User={user}
         navigation={navigation}
+        OnGoBack={OnGoBack}
       />
     ),
     [],
@@ -560,7 +564,23 @@ const ItemFilterListScreen: React.FC<any> = ({
     execute(listTypeData, APiobj);
     setLoading(false);
   }
+  const flatListRef = useRef(null);
+  const OnGoBack = (updatedItem) => {
+    console.log("updatedItem");
+   console.log(updatedItem);
+  //  console.log(data);
+  //  let newd=  data.map((item) =>
+  //     item.postId === updatedItem?.postId ? updatedItem : item
+  //   )
 
+  //   data=[...newd]
+  //   console.log(data);
+  //   // setData(newd);
+  if(updatedItem.Action=="Delete")
+{  flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+   setisrest(!isrest);
+} 
+  };
   useEffect(() => {
     setLoading(true);
     if (listTypeData == 'RealEstate') {
@@ -577,7 +597,7 @@ const ItemFilterListScreen: React.FC<any> = ({
 
     //set_FilterChipsData(obj);
     callPodcastList(listApiobj);
-  }, []);
+  }, [isrest]);
   const [itemHeight, setItemHeight] = useState(560);
 
   const loadMorepage = async () => {
@@ -647,6 +667,7 @@ const ItemFilterListScreen: React.FC<any> = ({
           ) : (
             <FlatList
               data={data}
+              ref={flatListRef}
               getItemLayout={getItemLayout}
               renderItem={renderItem}
               initialNumToRender={2}

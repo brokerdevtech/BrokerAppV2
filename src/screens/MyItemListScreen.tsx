@@ -335,22 +335,21 @@ const MyItemListScreen: React.FC<any> = ({
   }
 
   const OnGoBack = (updatedItem) => {
-    console.log('OnGoBack');
-    console.log(updatedItem);
-    //   console.log("updatedItem");
-    //  console.log(updatedItem);
-    //  console.log(data);
-    //  let newd=  data.map((item) =>
-    //     item.postId === updatedItem?.postId ? updatedItem : item
-    //   )
-  
-    //   data=[...newd]
-    //   console.log(data);
-    //   // setData(newd);
-    flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
-      setisrest(!isrest);
-    
-    };
+    console.log("updatedItem");
+   console.log(updatedItem);
+  //  console.log(data);
+  //  let newd=  data.map((item) =>
+  //     item.postId === updatedItem?.postId ? updatedItem : item
+  //   )
+
+  //   data=[...newd]
+  //   console.log(data);
+  //   // setData(newd);
+  if(updatedItem.Action=="Delete")
+{  flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+   setisrest(!isrest);
+} 
+  };
   async function callPodcastList() {
     pageSize_Set(5);
     currentPage_Set(1);

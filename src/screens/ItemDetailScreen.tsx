@@ -448,14 +448,14 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
               if (data.postId) {
                 const result = await deleteMyPost(user.userId, data.postId);
                 showToast(result.statusMessage);
-                handleUpdate();
+                handleUpdate("Delete");
               //  navigation.goBack();
                  // navigation.navigate("ProfileScreen");
                 } else {
                   showToast(result.error);
                  
                 }
-              }
+              
             } catch (error) {}
           },
         },
@@ -523,13 +523,15 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
   useEffect(() => {
     callItemDetail();
   }, []);
-  const handleUpdate = async () => {
+  const handleUpdate = async (Action:any="Back") => {
+    console.log("handleUpdate");
     if (onGoBack) {
+      console.log("onGoBack");
       // await execute();
       // await new Promise(resolve => setTimeout(resolve, 100));
       // console.log("execute");
       //   console.log(data);
-      onGoBack(data); // Call the callback function with updated data
+      onGoBack({Action:Action,Data:data}); // Call the callback function with updated data
     }
     navigation.goBack(); // Go back to FirstScreen
   };

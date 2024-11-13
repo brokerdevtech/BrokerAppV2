@@ -130,7 +130,7 @@ const RederListHeader = React.memo(
 //   </>
 // ));
 
-const ProductItem = React.memo(({item, listTypeData, User, navigation,updateItem}) => {
+const ProductItem = React.memo(({item, listTypeData, User, navigation,OnGoBack}) => {
   
   const MediaGalleryRef = useRef(null);
 
@@ -235,7 +235,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation,updateItem
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('ItemDetailScreen', {
-              onGoBack: updateItem, 
+              onGoBack: OnGoBack, 
               postId: item.postId,
               postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post',
             })
@@ -405,9 +405,9 @@ const ItemListScreen: React.FC<any> = ({
   );
 
   const flatListRef = useRef(null);
-  const updateItem = (updatedItem) => {
-  //   console.log("updatedItem");
-  //  console.log(updatedItem);
+  const OnGoBack = (updatedItem) => {
+    console.log("updatedItem");
+   console.log(updatedItem);
   //  console.log(data);
   //  let newd=  data.map((item) =>
   //     item.postId === updatedItem?.postId ? updatedItem : item
@@ -416,9 +416,10 @@ const ItemListScreen: React.FC<any> = ({
   //   data=[...newd]
   //   console.log(data);
   //   // setData(newd);
-  flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+  if(updatedItem.Action=="Delete")
+{  flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
    setisrest(!isrest);
-  
+} 
   };
 
 
@@ -545,7 +546,7 @@ const ItemListScreen: React.FC<any> = ({
         listTypeData={listTypeData}
         User={user}
         navigation={navigation}
-        updateItem={updateItem}
+        OnGoBack={OnGoBack}
       />
     ),
     [data],
@@ -728,7 +729,7 @@ const ItemListScreen: React.FC<any> = ({
 
     //set_FilterChipsData(obj);
     callPodcastList(obj);
-  }, []);
+  }, [isrest]);
   const [itemHeight, setItemHeight] = useState(560);
 
   const loadMorepage = async () => {
