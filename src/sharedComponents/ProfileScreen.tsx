@@ -596,7 +596,7 @@ const ProfileScreen: React.FC = ({
       </>
     );
   };
-  console.log(profiledata);
+ 
   const LeftIcon = () => {
     return (
       <TouchableOpacity onPress={() => navigation.goBack()}>

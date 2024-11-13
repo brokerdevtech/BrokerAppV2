@@ -455,7 +455,7 @@ const StoryView: React.FC = ({route}) => {
       setModalVisible(false);
     });
   };
-  console.log(reversedContent[current]);
+
   return (
     <SafeAreaView style={localStyles.containerModal}>
       <BottomSheetModalProvider>

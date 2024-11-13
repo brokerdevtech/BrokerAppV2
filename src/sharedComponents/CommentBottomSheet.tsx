@@ -130,7 +130,7 @@ const CommentBottomSheet = forwardRef(
     }
     const loadMorepage = async () => {
       if (!isInfiniteLoading) {
-        console.log('loadMorepage');
+
         let endpoint = '';
 
         if (listTypeData == 'RealEstate') {
@@ -185,7 +185,7 @@ const CommentBottomSheet = forwardRef(
 
     const handleSheetChanges = useCallback(
       index => {
-        console.log('handleSheetChanges', index);
+
         setIsOpen(index >= 0);
         if (index - 1) {
           onClose(recordCount);

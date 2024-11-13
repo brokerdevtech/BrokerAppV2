@@ -46,7 +46,7 @@ const LocalityTag: React.FC<LocalityTagProps> = ({
 
     onLocalityChange(localities);
   };
-  console.log(localities);
+
   const selectedLocalityName =
     localities.length > 0
       ? localities[0].place.placeName.length > 20

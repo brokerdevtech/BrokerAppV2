@@ -69,7 +69,7 @@ const CustomDrawerItem = ({label, onPress, leftIcon, rightIcon}) => {
 const CustomDrawerContent = props => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.user);
-  console.log(user);
+
   const userPermissions = useSelector(
     (state: RootState) => state.user?.user?.userPermissions,
   );

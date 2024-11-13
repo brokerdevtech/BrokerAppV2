@@ -21,7 +21,7 @@ import ZAvatarInitials from '../../sharedComponents/ZAvatarInitials';
 import {checkPermission} from '../../utils/helpers';
 import {moderateScale, PermissionKey} from '../../config/constants';
 import {HStack} from '../../../components/ui/hstack';
-import {Skeleton} from '../../../components/ui/skeleton';
+
 import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
 
 import {VStack} from '../../../components/ui/vstack';
@@ -147,7 +147,8 @@ const UserStories = React.memo(() => {
       </ZText> */}
       <HStack>
         {StoryData === null || loading ? (
-          <SkeletonPlaceholder />
+          <></>
+          // <SkeletonPlaceholder />
         ) : (
           <FlatList
             data={StoryData}

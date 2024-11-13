@@ -59,7 +59,7 @@ const ChatPageStackLazy = () => (
 const globalScreenOptions = {
   gestureEnabled: false,
   gestureDirection: 'horizontal',
-  cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS, // Example of a horizontal slide transition
+  cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid, // Example of a horizontal slide transition
 };
 
 const HomeNavigation: React.FC = () => {

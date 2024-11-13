@@ -262,8 +262,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
         setLoading(false);
         return;
       }
-      console.log('fetchPhotos');
-      console.log(data);
+   
       // If photos exist, process them
       if (data.page_info.has_next_page) {
         setEndCursor(data?.page_info?.end_cursor?.toString());
@@ -304,8 +303,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
     try {
       // Show loading indicator
       // setLoadingOverlay(true);
-      console.log('fetchPhotosnext');
-      console.log(after);
+
       const fetchParams = {
         first: 20, // Number of photos to fetch
         assetType: 'Photos',
@@ -409,9 +407,13 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
     try {
       if (thumbnail.length > 0) {
         if (page !== 'Story') {
-          navigation.navigate('EditImagesScreen', {
-            selectedThumbnails: thumbnail,
-          });
+
+console.log('thumbnail');
+console.log(thumbnail);
+
+          // navigation.navigate('EditImagesScreen', {
+          //   selectedThumbnails: thumbnail,
+          // });
         } else {
           let stickers = ['sticker0.png'];
         }

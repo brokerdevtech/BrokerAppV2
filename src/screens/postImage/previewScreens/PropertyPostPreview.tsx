@@ -75,10 +75,13 @@ const PropertyPostPreview: React.FC = ({
   const [formValue, setformValue] = useState<any>(route.params?.formValue);
   const [localities, setlocalities] = useState<any>(route.params?.localities);
   // const isLast = index === filter.length - 1;
-  const [selectedPropertySize, setselectedPropertySize] = useState('1');
+ // const [selectedPropertySize, setselectedPropertySize] = useState('1');
+
+  const [selectedPropertySize, setselectedPropertySize] = useState<any>(route.params?.selectedPropertySize);
   const [loading, setLoading] = useState(false);
   const [toastId, setToastId] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
+
   let localitie = route.params?.localities;
   const {
     data: Propdata,
@@ -257,7 +260,7 @@ const PropertyPostPreview: React.FC = ({
       tags.push({name: property, values: tag});
     }
 
-    if (selectedPropertySize == '1') {
+    if (selectedPropertySize == 'Sq. Ft.') {
       tags.push({
         name: 'PropertySizeUnit',
         values: [
@@ -268,7 +271,7 @@ const PropertyPostPreview: React.FC = ({
         ],
       });
     }
-    if (selectedPropertySize == '2') {
+    if (selectedPropertySize == 'Sq. Mtr.') {
       tags.push({
         name: 'PropertySizeUnit',
         values: [
@@ -279,7 +282,7 @@ const PropertyPostPreview: React.FC = ({
         ],
       });
     }
-    if (selectedPropertySize == '3') {
+    if (selectedPropertySize == 'Sq Yd.') {
       tags.push({
         name: 'PropertySizeUnit',
         values: [
@@ -495,7 +498,7 @@ const PropertyPostPreview: React.FC = ({
                   />
                   <IconValueDisplay
                     IconKey="propertySize"
-                    value={formValue.propertySize}
+                    value={`${formValue.propertySize} ${selectedPropertySize}`}
                   />
                 </HStack>
                 <View style={localStyles.locationContainer}>

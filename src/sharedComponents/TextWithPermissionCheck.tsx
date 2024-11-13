@@ -55,7 +55,7 @@ const TextWithPermissionCheck: React.FC<TextWithPermissionCheckProps> = ({
       }
     } else {
       onPress && onPress();
-      console.log('press');
+    
     }
   };
 

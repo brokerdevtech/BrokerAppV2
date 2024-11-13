@@ -54,7 +54,7 @@ const PostWizardScreen: React.FC = ({
   const [error, setError] = useState(null);
   const [localities, setLocalities] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-
+  const [selectedPropertySize, setselectedPropertySize] = useState('1');
   const PropertyformikRef = useRef(null);
   const genericformikRef = useRef(null);
   const carFormikref = useRef(null);
@@ -103,6 +103,7 @@ const PostWizardScreen: React.FC = ({
           visualData: visualData,
           Isvideo: Isvideo,
           formValue: PropertyformikRef.current.values,
+          selectedPropertySize:selectedPropertySize
         });
       }
     }
@@ -151,7 +152,11 @@ const PostWizardScreen: React.FC = ({
   const handleCategorySelect = selectedValue => {
     setselectedcategory(selectedValue);
   };
+  const handlePropertySizeData = (data) => {
 
+    setselectedPropertySize(data);
+    // You can now use the PropertySizeData as needed in the parent component
+  };
   const renderItem = ({item, index}) => (
     <View style={localStyles.card}>
       {Platform.OS == 'ios' ? (
@@ -260,7 +265,7 @@ const PostWizardScreen: React.FC = ({
             onSelect={handleCategorySelect}
           />
           {selectedcategory == 'property' && (
-            <PropertyForm formikRef={PropertyformikRef}></PropertyForm>
+              <PropertyForm formikRef={PropertyformikRef}  onPropertySizeData={handlePropertySizeData}></PropertyForm>
           )}
           {selectedcategory == 'generic' && (
             <GenericForm formikRef={genericformikRef}></GenericForm>

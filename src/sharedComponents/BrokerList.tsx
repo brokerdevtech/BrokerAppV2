@@ -100,7 +100,7 @@ const BrokerList: React.FC = ({
     try {
       currentPage_Set(1);
       hasMore_Set(true);
-      console.log(user);
+
       await execute(user.userId, searchText);
 
       pageTitle(`Brokers`);

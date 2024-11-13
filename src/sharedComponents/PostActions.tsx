@@ -60,7 +60,7 @@ const PostActions = ({
   onUpdateLikeCount,
   PageName = 'ItemList',
 }) => {
-  // console.log(item);
+ 
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const {
     data,
@@ -89,6 +89,16 @@ const PostActions = ({
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
+
+
+
+  useEffect(() => {
+  
+    setisraisedPostBuyerHand(item?.raisedPostBuyerHand === 0 ? false : true)
+    SetPostLike(item.userLiked === 1)
+    SetPostlikesCount(item.likes);
+    setCardComment(item.comments);
+  }, [item]);
 
   // TouchableOpacity onPress={() => navigation.navigate('ItemDetailScreen', { postId: item.postId , postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post'})}
   const generateLink = async () => {
@@ -209,51 +219,32 @@ const PostActions = ({
   };
 
   const postHaveBuyer = async () => {
+
     if (item?.raisedPostBuyerHand && item?.raisedPostBuyerHand == 1) {
       // console.log()
-      console.log(User.userId, item.postId);
+
       const result = await RemoveHaveABuyer(User.userId, item.postId);
-      console.log(result);
+
       //
-      if (result?.status == 'success') {
+      if (result?.status) {
         item.buyers = item.buyers - 1;
         item.raisedPostBuyerHand = 0;
         setisraisedPostBuyerHand(false);
       }
     } else {
-      const result = await addHaveABuyer(User.userId, item.postId);
 
-      if (result?.status == 'success') {
+
+      const result = await addHaveABuyer(User.userId, item.postId);
+   
+      if (result.success) {
+ 
         item.buyers = item.buyers + 1;
         item.raisedPostBuyerHand = 1;
         setisraisedPostBuyerHand(true);
       }
     }
   };
-  // const postHaveBuyer = async () => {
-  //   //
-  //   //
-  //   if (item?.raisedPostBuyerHand && item?.raisedPostBuyerHand == 1) {
-  //     const result = await PostUnLIke(User.userId, 'buyer', item.postId);
 
-  //     //
-  //     if (result?.status == 'success') {
-  //       item.buyers = item.buyers - 1;
-  //       item.raisedPostBuyerHand = 0;
-  //       setisraisedPostBuyerHand(false);
-  //     }
-  //   } else {
-  //     const result = await PostLikeApi(User.userId, 'buyer', item.postId);
-  //     //
-  //     //
-  //     if (result?.status == 'success') {
-  //       item.buyers = item.buyers + 1;
-  //       item.raisedPostBuyerHand = 1;
-  //       setisraisedPostBuyerHand(true);
-  //     }
-  //   }
-  // };
-  console.log(item, 'item');
   return (
     <>
       <HStack style={{marginRight: 20, marginTop: 10}}>
@@ -321,7 +312,7 @@ const PostActions = ({
                   as={Buyer}
                   size="xxl"
                   style={{marginRight: 5}}
-                  color={israisedPostBuyerHand ? 'red' : undefined}
+                  color={israisedPostBuyerHand ? 'red' : 'black'}
                 />
 
                 {/* <Icon as={Buyer} size="xxl" /> */}
@@ -330,7 +321,8 @@ const PostActions = ({
           </VStack>
         )}
 
-        {listTypeData === 'RealEstate' &&
+
+        {/* {listTypeData === 'RealEstate' &&
           PageName !== 'MyItemList' &&
           User.userId === item.userId && (
             <VStack style={{marginRight: 10}}>
@@ -343,16 +335,16 @@ const PostActions = ({
                     color={'red'}
                   />
 
-                  {/* <Icon as={Buyer} size="xxl" /> */}
                 </TouchableOpacity>
                 <ZText type={'R16'}>{item.raisedPostBuyerHand}</ZText>
               </HStack>
             </VStack>
-          )}
+          )} */}
+
         {listTypeData === 'RealEstate' &&
-          PageName === 'MyItemList' &&
-          User.userId === item.userId &&
-          item.raisedPostBuyerHand > 0 && (
+    item.buyers>0 &&
+          User.userId == item.userId &&
+        (
             <VStack style={{marginRight: 10}}>
               <HStack style={{justifyContent: 'center', alignItems: 'center'}}>
                 <TouchableOpacity onPress={HaveBuyerList}>
@@ -363,7 +355,7 @@ const PostActions = ({
                     color={'red'}
                   />
                 </TouchableOpacity>
-                <ZText type={'R16'}>{item.raisedPostBuyerHand}</ZText>
+                <ZText type={'R16'}>{item.buyers}</ZText>
               </HStack>
             </VStack>
           )}

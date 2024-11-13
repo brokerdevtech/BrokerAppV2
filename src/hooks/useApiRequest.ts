@@ -39,6 +39,7 @@ export const useApiRequest = <T, P extends any[]>(
         setData(response.data || null);
         setStatus(response.status || 200);
       }
+      return response.data ;
     } catch (error: any) {
       if (setLoading) {
         setLoading(false);
@@ -50,8 +51,9 @@ export const useApiRequest = <T, P extends any[]>(
       if (setLoading) {
         setLoading(false);
       }
+     
     }
   };
-  // console.log(status, 'request');
+
   return {data, status, error, execute};
 };

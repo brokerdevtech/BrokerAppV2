@@ -361,7 +361,7 @@ const RealEstateFilterScreen: React.FC = ({
     if (item) {
       item.records = newRecords;
     } else {
-      console.log(`No item found with name: ${name}`);
+
     }
 
     // Return the modified filters array
@@ -370,11 +370,15 @@ const RealEstateFilterScreen: React.FC = ({
   const SelectItem = async item => {
     // Create a copy of the selected filters object
     let updatedSelectedFilters = {...selectedFilters};
-    updatedSelectedFilters[selectedItem.name] = [item];
+    if(item!=null){
+    updatedSelectedFilters[selectedItem.name] = [item];}
+    else{
+    delete updatedSelectedFilters[selectedItem.name]}
+
     setSelectedFilters(updatedSelectedFilters);
   
 
-    if (selectedItem.dependsOn) {
+    if (selectedItem.dependsOn && item!=null) {
       try {
         // Fetch the cascaded filters for the dependent item
         const result = await getCascadedFilters(
@@ -404,6 +408,15 @@ const RealEstateFilterScreen: React.FC = ({
       } catch (error) {
         console.error('Error fetching cascaded filters:', error);
       }
+    }
+    else{
+
+      const updatedFilters = await updateRecordsByName(
+        filtersState,
+        selectedItem.dependsOn,
+        [],
+      );
+      setfiltersState(updatedFilters);
     }
   };
 

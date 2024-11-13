@@ -155,11 +155,7 @@ const Recommend = React.memo(categoryIds => {
     <RenderBrokerItem item={item} />
   ));
 
-  //   if (brokerList === null) {
-  //     return <CarouselCardSkeleton />;
-  //   }
-  console.log(brokerList, 'BrokerList');
-  // console.log(brokersdata);
+  
   return (
     <View style={localStyles.container}>
       <View style={localStyles.storiesHeaderWrapper}>

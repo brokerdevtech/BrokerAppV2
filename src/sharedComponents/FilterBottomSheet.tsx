@@ -135,6 +135,7 @@ const FilterBottomSheet = forwardRef(
     );
 
     const onApply = item => {
+
       setSelectedFilters(item);
       bottomSheetModalRef.current?.dismiss();
     };

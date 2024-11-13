@@ -18,6 +18,9 @@ import flex from '@/themes/flex';
 const AppFastImage = ({uri}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false); // New state to control modal visibility
+  const [containerWidth, setContainerWidth] = useState(0);
+  const [containerheight, setContainerheight] = useState(0);
+  const [containeraspectRatio, setcontaineraspectRatio] = useState(0);
 
   return (
     <View
@@ -27,7 +30,18 @@ const AppFastImage = ({uri}) => {
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-      }}>
+      }}
+      onLayout={(event) => {
+        const {width,height} = event.nativeEvent.layout;
+        setContainerWidth(width)
+        setContainerheight(height)
+        setcontaineraspectRatio(width/height);
+        console.log(width);
+        console.log(height);
+      //  setContainerWidth(width); 
+        // Set container width based on layout
+      }}
+      >
       {/* {isLoading && (
         <></>
         // <VStack
@@ -48,7 +62,8 @@ const AppFastImage = ({uri}) => {
           source={{uri}}
           onLoadEnd={() => setIsLoading(false)}
           style={styles.vertical}
-          resizeMode={FastImage.resizeMode.cover}
+         resizeMode={FastImage.resizeMode.cover}
+        // style={styles.newImage}
         />
       </TouchableOpacity>
 
@@ -69,7 +84,7 @@ const AppFastImage = ({uri}) => {
           <FastImage
             source={{uri}}
             style={styles.fullscreenImage}
-            resizeMode={FastImage.resizeMode.contain}
+            resizeMode={FastImage.resizeMode.cover}
           />
         </View>
       </Modal>
@@ -84,6 +99,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     display: 'flex',
     justifyContent: 'center',
+ //   backgroundColor:'red'
+  },
+  newImage:{
+    flex: 1,
+    width: 380,
+    height: 200,
+     resizeMode: 'cover',  
+    // aspectRatio: 1, 
   },
   fullscreenContainer: {
     flex: 1,

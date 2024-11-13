@@ -69,6 +69,7 @@ const CustomHeader = () => {
     await marqueeExecute('Marqueue', request);
   };
   const handlePlaceSelected = (place: any) => {
+
     store.dispatch(setAppLocation(place));
   };
   const userPermissions = useSelector(
@@ -91,7 +92,7 @@ const CustomHeader = () => {
   };
   // console.log('marqueeText', marqueeText);
   //onPress={() => navigation.toggleDrawer()}
-  console.log(dashboard);
+
   const permissionGrantedNotification = checkPermission(
     userPermissions,
     PermissionKey.AllowViewNotification,

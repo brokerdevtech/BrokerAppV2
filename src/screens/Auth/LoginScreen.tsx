@@ -40,13 +40,23 @@ import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
 import {handleApiError} from '../../../BrokerAppCore/services/new/ApiResponse';
 
 // Configure Google Sign-In
+// GoogleSignin.configure({
+//   webClientId:
+//     '291590546828-c6i0jsih7jphgfoe3ej1tgvangloc5h5.apps.googleusercontent.com', // From the Google Developer Console
+//   offlineAccess: true,
+
+ 
+//   // iosClientId:'291590546828-ll1pnno0vmbog94lkhfvkoda38lf93sg.apps.googleusercontent.com',
+// });
+
+// Configure Google Sign-In
 GoogleSignin.configure({
   webClientId:
     '291590546828-c6i0jsih7jphgfoe3ej1tgvangloc5h5.apps.googleusercontent.com', // From the Google Developer Console
   offlineAccess: true,
+  forceCodeForRefreshToken:true
   // iosClientId:'291590546828-ll1pnno0vmbog94lkhfvkoda38lf93sg.apps.googleusercontent.com',
 });
-
 // Validation schema using Yup
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -105,19 +115,23 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       await GoogleSignin.hasPlayServices();
 
       // Try to clear cache but don't let it block sign in if it fails
-      await clearGoogleSignInCache().catch(console.error);
+   await clearGoogleSignInCache().catch(console.error);
+
+
+
 
       const userInfo = await GoogleSignin.signIn();
+
       const fcmToken = await getfcmToken();
 
-      if (!userInfo.user || !userInfo.user.email) {
-        throw new Error('Failed to get user email from Google Sign In');
-      }
+      // if (!userInfo.data?.user ) {
+      //   throw new Error('Failed to get user email from Google Sign In');
+      // }
 
       await SocialLoginexecute(
-        userInfo.user.email,
+        userInfo.data?.user.email,
         'Google',
-        userInfo.idToken,
+        userInfo.data?.idToken,
         fcmToken?.toString(),
         AppLocation.City,
         AppLocation.State,
@@ -132,6 +146,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         AppLocation.viewportSouthWestLng,
       );
     } catch (error) {
+      console.error( error);
       setLoading(false);
       console.error('Google Sign In Error:', error);
 
@@ -289,7 +304,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   useEffect(() => {
     if (SocialLoginerror) {
       setLoading(false);
-      console.log(SocialLoginerror);
+
       if (!toast.isActive(toastId)) {
         const newId = Math.random();
         setToastId(newId);
@@ -431,7 +446,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         <Text
           style={styles.signUpText}
           onPress={() => {
-            console.log('ww');
+      
             navigation.navigate('Register');
           }}>
           Sign Up

@@ -18,8 +18,7 @@ const Stories: React.FC = () => {
     {image: require('../assets/images/face.jpeg'), name: 'Arneo'},
   ];
   const renderStories = () => {
-    // console.log("============stories");
-    // console.log(stories);
+
     return stories.map((story, index) => (
       <TouchableOpacity
         key={index}

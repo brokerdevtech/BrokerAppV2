@@ -81,6 +81,7 @@ const FilterTagsScreen: React.FC = ({
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const [loading, setLoading] = useState(false);
   const [dependCascade, setDependCascade] = useState(null);
+  const [selectedPropertySize, setselectedPropertySize] = useState(route.params?.selectedPropertySize);
   const {
     data: filterdata,
     status: filterstatus,
@@ -423,6 +424,7 @@ const FilterTagsScreen: React.FC = ({
         Isvideo: Isvideo,
         localities: localities,
         formValue: formValue,
+        selectedPropertySize:selectedPropertySize,
       });
     }
 

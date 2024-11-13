@@ -76,7 +76,7 @@ const OtherProfileScreen: React.FC = ({
   toastMessage,
 }) => {
   const userId = route.params.userId;
-  console.log(user);
+
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
@@ -321,7 +321,7 @@ const OtherProfileScreen: React.FC = ({
       }
 
       const result = await addToMyNetwork(InUserId, userId);
-      console.log(result);
+
       if (result?.status === 'success') {
         toastMessage(result.statusMessage);
 
@@ -347,7 +347,7 @@ const OtherProfileScreen: React.FC = ({
     );
   };
   // clg;
-  console.log(ProfileData);
+
   const PostHeader = () => {
     return (
       <>

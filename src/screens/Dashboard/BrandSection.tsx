@@ -66,7 +66,7 @@ const BrandSection = (props: BrandSectionProps) => {
   useEffect(() => {
     if (status == 200) {
       // setBrandData()
-      console.log(data, 'hh');
+
     }
   }, [status]);
   // console.log(status);

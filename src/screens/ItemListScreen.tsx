@@ -74,12 +74,13 @@ import {concat} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
 import RecentSearchSection from './Dashboard/RecentSearchSection';
 import {formatNumberToIndianSystem} from '../utils/helpers';
+import { useFocusEffect } from '@react-navigation/native';
 const SkeletonPlaceholder = () => {
   return (
     <HStack space={10} style={styles.skeletonContainer}>
-      {Array.from({length: 6}).map((_, index) => (
-        <ListingCardSkeleton size={60} />
-      ))}
+      {/* {Array.from({length: 6}).map((_, index) => (
+        <ListingCardSkeleton   key={index} size={60} />
+      ))} */}
     </HStack>
   );
 };
@@ -129,9 +130,10 @@ const RederListHeader = React.memo(
 //   </>
 // ));
 
-const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
+const ProductItem = React.memo(({item, listTypeData, User, navigation,updateItem}) => {
+  
   const MediaGalleryRef = useRef(null);
-  // console.log(item, 'item');
+
   const openWhatsApp = useCallback((phoneNumber, message) => {
     const url = `whatsapp://send?text=${encodeURIComponent(
       message,
@@ -233,6 +235,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('ItemDetailScreen', {
+              onGoBack: updateItem, 
               postId: item.postId,
               postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post',
             })
@@ -333,7 +336,18 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation}) => {
       </View>
     </View>
   );
-});
+},
+
+  (prevProps, nextProps) => {
+    // Perform shallow comparison on key props
+    return (
+      prevProps.item === nextProps.item &&
+      prevProps.listTypeData === nextProps.listTypeData &&
+      prevProps.User === nextProps.User &&
+      prevProps.updateItem === nextProps.updateItem
+    );
+  }
+);
 
 const ItemListScreen: React.FC<any> = ({
   isPageSkeleton,
@@ -349,11 +363,12 @@ const ItemListScreen: React.FC<any> = ({
   isLoading,
   listType,
 }) => {
+  console.log("ok");
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
   const [brandfilters, setbrandfilters] = useState(route.params.brandfilters);
-
+  const [isrest, setisrest] = useState(false);
   const [listApiobj, setlistApiobj] = useState({});
   const [ApppageTitle, setApppageTitle] = useState('');
   const [searchKeyword, setsearchKeyword] = useState('');
@@ -388,6 +403,24 @@ const ItemListScreen: React.FC<any> = ({
     },
     [searchKeyword],
   );
+
+  const flatListRef = useRef(null);
+  const updateItem = (updatedItem) => {
+  //   console.log("updatedItem");
+  //  console.log(updatedItem);
+  //  console.log(data);
+  //  let newd=  data.map((item) =>
+  //     item.postId === updatedItem?.postId ? updatedItem : item
+  //   )
+
+  //   data=[...newd]
+  //   console.log(data);
+  //   // setData(newd);
+  flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+   setisrest(!isrest);
+  
+  };
+
 
   const getTags = (name, Item) => {
     return {
@@ -428,6 +461,7 @@ const ItemListScreen: React.FC<any> = ({
           // Add more cases as needed
           default:
             // Default case if key doesn't match any predefined cases
+  
             values = getTags(key, input[key]);
             break;
         }
@@ -450,7 +484,7 @@ const ItemListScreen: React.FC<any> = ({
     };
 
     if (input.hasOwnProperty('Location')) {
-      console.log(input.Location);
+
 
       obj.cityName = input.Location[0].place.City;
       obj.placeID = input.Location[0].place.placeID;
@@ -490,7 +524,7 @@ const ItemListScreen: React.FC<any> = ({
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
-  const {
+  let {
     data,
     status,
     error,
@@ -501,6 +535,7 @@ const ItemListScreen: React.FC<any> = ({
     hasMore_Set,
     totalPages,
     recordCount,
+    setData_Set
   } = useApiPagingWithtotalRequest(fetchItemList, setInfiniteLoading, 5);
   //const {data, status, error, execute} = useApiPagingRequest5(fetchItemList);
   const renderItem = useCallback(
@@ -510,9 +545,10 @@ const ItemListScreen: React.FC<any> = ({
         listTypeData={listTypeData}
         User={user}
         navigation={navigation}
+        updateItem={updateItem}
       />
     ),
-    [],
+    [data],
   );
   async function set_FilterChipsData(obj) {
     let FilterChipsData = [];
@@ -625,6 +661,7 @@ const ItemListScreen: React.FC<any> = ({
   };
 
   useEffect(() => {
+ 
     setLoading(true);
     if (listTypeData == 'RealEstate') {
       pageTitle('Property');
@@ -652,7 +689,7 @@ const ItemListScreen: React.FC<any> = ({
       obj.filters = brandfilters;
 
       BraandPopUPFilter = convertTagsToNewFormat(brandfilters.tags);
-      console.log('brandfilters', BraandPopUPFilter);
+  
     }
 
     setlistApiobj(obj);
@@ -774,6 +811,8 @@ const ItemListScreen: React.FC<any> = ({
             <SkeletonPlaceholder />
           ) : (
             <FlatList
+            ref={flatListRef}
+            extraData={isrest}
               data={data}
               getItemLayout={getItemLayout}
               renderItem={renderItem}

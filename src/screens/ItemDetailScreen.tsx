@@ -34,7 +34,7 @@ import {
   Whatsapp_Icon,
   Share_Icon,
 } from '../assets/svg';
-import {imagesBucketcloudfrontPath, moderateScale} from '../config/constants';
+import {imagesBucketcloudfrontPath, moderateScale, PermissionKey} from '../config/constants';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {fetchPostByID} from '@/BrokerAppCore/services/new/dashboardService';
 import {Icon, ShareIcon, TrashIcon} from '../../components/ui/icon';
@@ -52,6 +52,10 @@ import ZAvatarInitials from '../sharedComponents/ZAvatarInitials';
 import {useNavigation} from '@react-navigation/native';
 import {colors} from '../themes';
 import {formatNumberToIndianSystem} from '../utils/helpers';
+import TouchableOpacityWithPermissionCheck from '../sharedComponents/TouchableOpacityWithPermissionCheck';
+import { deleteMyPost } from '../../BrokerAppCore/services/postService';
+import { Toast, ToastDescription, useToast } from '../../components/ui/toast';
+import { delay } from 'lodash';
 
 const propertyDetails = (data: any, user: any, navigation: any) => {
   const onPressUser = (userId, userName, userImage) => {
@@ -104,7 +108,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
         User={user}
         listTypeData={'RealEstate'}
         onUpdateLikeCount={newCount => {
-          console.log(newCount);
+        
         }}
       />
       {/* Car Details */}
@@ -383,9 +387,70 @@ const carDetails = (data: any, user: any, navigation: any) => {
 const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
+  const toast = useToast();
+  const { onGoBack } = route.params; // Retrieve item and callback function
+  const [toastId, setToastId] = React.useState(0);
+  const userPermissions = useSelector(
+    (state: RootState) => state.user.user.userPermissions,
+  );
   const MediaGalleryRef = useRef(null);
 
   const {data, status, error, execute} = useApiRequest(fetchPostByID);
+  const showToast = (TextMSG:any) => {
+    if (!toast.isActive(toastId)) {
+      const newId = Math.random();
+      setToastId(newId);
+      toast.show({
+        id: newId,
+        placement: 'bottom',
+        duration: 3000,
+        render: ({id}) => {
+          const uniqueToastId = 'toast-' + id;
+          return (
+            <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+              <ToastDescription>
+                {TextMSG}
+              </ToastDescription>
+            </Toast>
+          );
+        },
+      });
+    }
+  };
+
+  const deletePost = () => {
+    // Show an alert to confirm deletion
+    Alert.alert(
+      'Confirm Deletion',
+      'Are you sure you want to delete this post?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: async () => {
+            try {
+              if (data.postId) {
+                const result = await deleteMyPost(user.userId, data.postId);
+                showToast(result.statusMessage);
+                
+                navigation.goBack();
+                 // navigation.navigate("ProfileScreen");
+                } else {
+                  showToast(result.error);
+                 
+                }
+              }
+             catch (error) {}
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
 
   const callItemDetail = async () => {
     // console.log(route, route.params.postType, 'route');
@@ -446,7 +511,17 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
   useEffect(() => {
     callItemDetail();
   }, []);
-  console.log(user.userId, 'detaisl');
+  const handleUpdate = async () => {
+    
+    if (onGoBack) {
+    // await execute();
+    // await new Promise(resolve => setTimeout(resolve, 100));
+    // console.log("execute");
+    //   console.log(data);
+      onGoBack(data); // Call the callback function with updated data
+    }
+    navigation.goBack(); // Go back to FirstScreen
+  };
   return (
     <BottomSheetModalProvider>
       <View style={styles.listContainer}>
@@ -463,13 +538,25 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
                     borderColor: '#E5E5E5',
                     borderRadius: 40,
                   }}>
-                  <ArrowLeftIcon onPress={() => navigation.goBack()} />
+                  <ArrowLeftIcon onPress={handleUpdate} />
                 </View>
                 <ZText type={'R18'}>{data?.title}</ZText>
               </View>
               {user.userId == data?.userId && (
+
+                
                 <View style={styles.IconButton}>
-                  <Icon as={TrashIcon} size="xl" />
+        <TouchableOpacityWithPermissionCheck
+          permissionsArray={userPermissions}
+          permissionEnum={PermissionKey.AllowDeletePost}
+          tagNames={[Icon]}
+          onPress={deletePost}>
+       <Icon as={TrashIcon} size="xl" />
+
+          </TouchableOpacityWithPermissionCheck>
+
+
+                  {/* <Icon as={TrashIcon} size="xl" /> */}
                 </View>
               )}
             </View>

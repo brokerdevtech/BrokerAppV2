@@ -49,16 +49,21 @@ export default function DashboradScreen() {
     (state: RootState) => state.user.user.userPermissions,
   );
   const [toastId, setToastId] = React.useState(0);
-  const permissionGrantedPodacast = checkPermission(
-    userPermissions,
-    PermissionKey.AllowViewPodcast,
-  );
-  const permissionGrantedDashPost = checkPermission(
-    userPermissions,
-    PermissionKey.AllowViewDashboardPost,
-  );
+  // const permissionGrantedPodacast = checkPermission(
+  //   userPermissions,
+  //   PermissionKey.AllowViewPodcast,
+  // );
+  // const permissionGrantedDashPost = checkPermission(
+  //   userPermissions,
+  //   PermissionKey.AllowViewDashboardPost,
+  // );
+
+
+  const permissionGrantedPodacast = true
+  const permissionGrantedDashPost = true
+
   const toast = useToast();
-  console.log(user);
+
   const {data, status, error, execute} = useApiRequest(fetchPodcastList);
   //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
   const cityToShow = AppLocation.City;
@@ -211,7 +216,7 @@ export default function DashboradScreen() {
             <GridItem
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => {
                   permissionGrantedDashPost
                     ? navigation.navigate('ItemListScreen', {
@@ -219,6 +224,15 @@ export default function DashboradScreen() {
                         categoryId: 1,
                       })
                     : showToast();
+                }}> */}
+                   <TouchableOpacity
+                onPress={() => {
+                  console.log('onPress');
+                  navigation.navigate('ItemListScreen', {
+                        listType: 'RealEstate',
+                        categoryId: 1,
+                      })
+                 
                 }}>
                 <View style={styles.tabItemContainer}>
                   <TABTravel />

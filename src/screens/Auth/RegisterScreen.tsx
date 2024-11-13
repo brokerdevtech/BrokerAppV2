@@ -211,7 +211,7 @@ export default function RegisterScreen({setLoggedIn}) {
         isOrg: values.organizationType == '1' ? false : true,
       };
 
-      console.log(user);
+
 
       await registerexecute(user);
     } catch (error) {
@@ -252,7 +252,7 @@ export default function RegisterScreen({setLoggedIn}) {
   }, [registerdata]);
   useEffect(() => {
     if (registererror) {
-      console.log(registererror);
+   
 
       if (!toast.isActive(toastId)) {
         const newId = Math.random();

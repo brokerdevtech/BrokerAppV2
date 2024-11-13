@@ -211,7 +211,7 @@ setColorMode(state.isConnected);
           latitude,
           longitude,
         );
-
+     
         store.dispatch(setAppLocation(resultAddress));
       }
     }
@@ -224,7 +224,7 @@ setColorMode(state.isConnected);
         latitude,
         longitude,
       );
-    
+  
       store.dispatch(setAppLocation(resultAddress));
     }
   };
@@ -232,12 +232,12 @@ setColorMode(state.isConnected);
 
     if (appState.match(/inactive|background/) && nextAppState === 'active') {
       // Check permission status when the app comes back to the foreground
-    
+
       if(alertShown.current==false)
       { 
      let granted = await checkPermission();
     
-     let UserLocation = await getUserLocation(granted);
+   //  let UserLocation = await getUserLocation(granted);
     }
     }
     setAppState(nextAppState);

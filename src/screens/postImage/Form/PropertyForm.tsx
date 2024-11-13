@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import {Formik} from 'formik';
 
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import * as Yup from 'yup';
 import {colors, styles} from '../../../themes';
@@ -61,7 +61,7 @@ const genericvalidationSchema = Yup.object().shape({
 });
 //const AVATAR_URL = "https://www.realmenrealstyle.com/wp-content/uploads/2023/03/The-Side-Part.jpg";
 const devicewidth = Dimensions.get('window').width;
-const PropertyForm = ({formikRef}) => {
+const PropertyForm = ({formikRef,onPropertySizeData}) => {
   const [localities, setLocalities] = useState({});
   const [selectedPropertySize, setselectedPropertySize] = useState('Sq. Ft.');
   const [PropertySizeData, setPropertySize] = useState([
@@ -69,6 +69,14 @@ const PropertyForm = ({formikRef}) => {
     {id: '2', value: 'Sq. Mtr.'},
     {id: '3', value: 'Sq Yd.'},
   ]);
+
+
+  useEffect(() => {
+    if (onPropertySizeData) {
+      onPropertySizeData(selectedPropertySize);
+    }
+  }, [selectedPropertySize, onPropertySizeData]);
+
   const PropertyinitialValues = {
     title: '',
     propDescription: '',
@@ -205,7 +213,7 @@ const PropertyForm = ({formikRef}) => {
                           <SelectDragIndicator />
                         </SelectDragIndicatorWrapper>
                         {PropertySizeData.map((data, index) => (
-                          <SelectItem label={data.value} value={data.id} />
+                          <SelectItem label={data.value} value={data.value} />
                         ))}
                       </SelectContent>
                     </SelectPortal>

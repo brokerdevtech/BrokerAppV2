@@ -73,9 +73,9 @@ import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleto
 const SkeletonPlaceholder = () => {
   return (
     <HStack space={10} style={styles.skeletonContainer}>
-      {Array.from({length: 6}).map((_, index) => (
+      {/* {Array.from({length: 6}).map((_, index) => (
         <ListingCardSkeleton size={60} />
-      ))}
+      ))} */}
     </HStack>
   );
 };
@@ -380,6 +380,7 @@ const ItemFilterListScreen: React.FC<any> = ({
           // Add more cases as needed
           default:
             // Default case if key doesn't match any predefined cases
+      
             values = getTags(key, input[key]);
             break;
         }
@@ -542,7 +543,7 @@ const ItemFilterListScreen: React.FC<any> = ({
     // hasMore_Set(true);
     set_FilterChipsData(APiobj);
     //     console.log("=APiobj");
-    console.log(APiobj);
+
     // console.log(user);
 
     //  execute(listTypeData, {

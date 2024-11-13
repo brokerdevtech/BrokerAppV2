@@ -11,7 +11,7 @@ import {Icon} from '../../components/ui/icon';
 import {filter_icon} from '../assets/svg';
 import ZText from './ZText';
 import padding from '@/themes/padding';
-import {SkeletonText} from '../../components/ui/skeleton';
+
 import {colors} from '../themes';
 import {Color} from '../styles/GlobalStyles';
 
@@ -19,7 +19,7 @@ const FilterChips = ({filters, recordsCount, OnPressfilters}) => {
   return (
     <>
       {filters === undefined ? (
-        <SkeletonText _lines={2} gap={1} style={{width: '90%', height: 24}} />
+        <></>
       ) : (
         <View style={styles.Outercontainer}>
           <View style={styles.container}>

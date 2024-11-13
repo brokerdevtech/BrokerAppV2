@@ -19,11 +19,21 @@ const SelectableFlatList = ({
     }
   }, [preselectedItem, numColumn]);
   const handleItemPress = item => {
+    if (selectedItem?.key === item.key) {
+      setSelectedItem(null); // Deselect if already selected
+      if (onSelectItem) {
+        onSelectItem(null); // Optionally pass null to indicate deselection
+      }
+
+    }
+    else{
+
     setSelectedItem(item);
     if (onSelectItem) {
       onSelectItem(item);
-      console.log(item);
+
     }
+  }
   };
 
   const renderItem = ({item}) => {

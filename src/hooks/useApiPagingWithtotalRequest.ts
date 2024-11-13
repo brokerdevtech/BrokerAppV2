@@ -60,6 +60,9 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
     }
   }, [apiFunction, pageSize, setLoading]);
 
+
+
+
   const loadMore  = useCallback(async (...params: P) => {
     if (hasMore) {
       if (setLoading) {
@@ -124,5 +127,16 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
       if (setLoading) setLoading(false); // Reset loading state when unmounted
     };
   }, [setLoading]);
-  return {data, status, error, execute,loadMore,pageSize_Set,currentPage_Set,hasMore_Set,totalPages,recordCount,hasMore};
+  const setData_Set  = (newData: T | null) => {
+   
+    // console.log('oldData');
+    // console.log(data);
+    // let newd=  data.map((item) =>
+    //   item.postId === newData?.postId ? newData : item
+    // )
+    // setData(newd);
+    // console.log(newd);
+
+  };
+  return {data, status, error, execute,loadMore,pageSize_Set,currentPage_Set,hasMore_Set,totalPages,recordCount,hasMore,setData_Set};
 };
