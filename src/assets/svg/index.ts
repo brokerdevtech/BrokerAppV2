@@ -48,6 +48,7 @@ import Virtual from './virtual.svg';
 import AppleIcon from './appleIcon.svg';
 import LocationFetchIcon from './fetch.svg';
 import CloseIcon from './crossIcon.svg';
+import CloseBlack from './close_black.svg';
 import Follower_Icon from './Follower.svg';
 import Ads_Icon from './Ads.svg';
 import Network_icon from './Network.svg';
@@ -94,7 +95,9 @@ import propertySize from './propertyIcon/propertySize.svg';
 import ComingSoon from './ComingSoon.svg';
 import Buyer from './buyer.svg';
 import BuyerActive from './buyer-fill.svg';
-export {Buyer,BuyerActive,
+export {
+  Buyer,
+  BuyerActive,
   balconyType,
   ComingSoon,
   bathroomType,
@@ -141,6 +144,7 @@ export {Buyer,BuyerActive,
   Notification_Icon,
   Chat_icon,
   Back,
+  CloseBlack,
   GoogleIcon,
   FBIcon,
   AppleIcon,

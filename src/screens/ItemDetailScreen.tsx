@@ -34,7 +34,11 @@ import {
   Whatsapp_Icon,
   Share_Icon,
 } from '../assets/svg';
-import {imagesBucketcloudfrontPath, moderateScale, PermissionKey} from '../config/constants';
+import {
+  imagesBucketcloudfrontPath,
+  moderateScale,
+  PermissionKey,
+} from '../config/constants';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {fetchPostByID} from '@/BrokerAppCore/services/new/dashboardService';
 import {Icon, ShareIcon, TrashIcon} from '../../components/ui/icon';
@@ -53,9 +57,9 @@ import {useNavigation} from '@react-navigation/native';
 import {colors} from '../themes';
 import {formatNumberToIndianSystem} from '../utils/helpers';
 import TouchableOpacityWithPermissionCheck from '../sharedComponents/TouchableOpacityWithPermissionCheck';
-import { deleteMyPost } from '../../BrokerAppCore/services/postService';
-import { Toast, ToastDescription, useToast } from '../../components/ui/toast';
-import { delay } from 'lodash';
+import {deleteMyPost} from '../../BrokerAppCore/services/postService';
+import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
+import {delay} from 'lodash';
 
 const propertyDetails = (data: any, user: any, navigation: any) => {
   const onPressUser = (userId, userName, userImage) => {
@@ -107,9 +111,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
         item={data}
         User={user}
         listTypeData={'RealEstate'}
-        onUpdateLikeCount={newCount => {
-        
-        }}
+        onUpdateLikeCount={newCount => {}}
       />
       {/* Car Details */}
       <VStack space="xs" style={styles.detailsContainetop}>
@@ -173,24 +175,37 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
               {data.propDescription}
             </ZTextMore>
           </VStack>
-          <Divider className="my-0.5" />
-          <KeyValueRow
-            label="Amenities"
-            values={data.postPropertyAmenities}
-            valueKey="propertyAmenity"
-          />
-          <Divider className="my-0.5" />
-          <KeyValueRow
-            label="Near By Facilities"
-            values={data.postNearbyFacilities}
-            valueKey="nearbyFacility"
-          />
-          <Divider className="my-0.5" />
-          <KeyValueRow
-            label="Property Type"
-            values={data.postPropertyTypes}
-            valueKey="propertyType"
-          />
+          {data.postPropertyAmenities > 0 && (
+            <>
+              <Divider className="my-0.5" />
+              <KeyValueRow
+                label="Amenities"
+                values={data.postPropertyAmenities}
+                valueKey="propertyAmenity"
+              />
+            </>
+          )}
+          {data.postNearbyFacilities > 0 && (
+            <>
+              <Divider className="my-0.5" />
+              <KeyValueRow
+                label="Near By Facilities"
+                values={data.postNearbyFacilities}
+                valueKey="nearbyFacility"
+              />
+            </>
+          )}
+          {data.postPropertyTypes && (
+            <>
+              <Divider className="my-0.5" />
+              <KeyValueRow
+                label="Property Type"
+                values={data.postPropertyTypes}
+                valueKey="propertyType"
+              />
+            </>
+          )}
+
           {data.location && (
             <VStack space="md" style={{paddingVertical: 10}}>
               <Divider className="my-0.5" />
@@ -388,7 +403,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
   const toast = useToast();
-  const { onGoBack } = route.params; // Retrieve item and callback function
+  const {onGoBack} = route.params; // Retrieve item and callback function
   const [toastId, setToastId] = React.useState(0);
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
@@ -396,7 +411,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
   const MediaGalleryRef = useRef(null);
 
   const {data, status, error, execute} = useApiRequest(fetchPostByID);
-  const showToast = (TextMSG:any) => {
+  const showToast = (TextMSG: any) => {
     if (!toast.isActive(toastId)) {
       const newId = Math.random();
       setToastId(newId);
@@ -408,9 +423,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
           const uniqueToastId = 'toast-' + id;
           return (
             <Toast nativeID={uniqueToastId} action="muted" variant="solid">
-              <ToastDescription>
-                {TextMSG}
-              </ToastDescription>
+              <ToastDescription>{TextMSG}</ToastDescription>
             </Toast>
           );
         },
@@ -443,14 +456,13 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
                  
                 }
               }
-             catch (error) {}
+            } catch (error) {}
           },
         },
       ],
       {cancelable: false},
     );
   };
-
 
   const callItemDetail = async () => {
     // console.log(route, route.params.postType, 'route');
@@ -512,12 +524,11 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
     callItemDetail();
   }, []);
   const handleUpdate = async () => {
-    
     if (onGoBack) {
-    // await execute();
-    // await new Promise(resolve => setTimeout(resolve, 100));
-    // console.log("execute");
-    //   console.log(data);
+      // await execute();
+      // await new Promise(resolve => setTimeout(resolve, 100));
+      // console.log("execute");
+      //   console.log(data);
       onGoBack(data); // Call the callback function with updated data
     }
     navigation.goBack(); // Go back to FirstScreen
@@ -543,18 +554,14 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
                 <ZText type={'R18'}>{data?.title}</ZText>
               </View>
               {user.userId == data?.userId && (
-
-                
                 <View style={styles.IconButton}>
-        <TouchableOpacityWithPermissionCheck
-          permissionsArray={userPermissions}
-          permissionEnum={PermissionKey.AllowDeletePost}
-          tagNames={[Icon]}
-          onPress={deletePost}>
-       <Icon as={TrashIcon} size="xl" />
-
-          </TouchableOpacityWithPermissionCheck>
-
+                  <TouchableOpacityWithPermissionCheck
+                    permissionsArray={userPermissions}
+                    permissionEnum={PermissionKey.AllowDeletePost}
+                    tagNames={[Icon]}
+                    onPress={deletePost}>
+                    <Icon as={TrashIcon} size="xl" />
+                  </TouchableOpacityWithPermissionCheck>
 
                   {/* <Icon as={TrashIcon} size="xl" /> */}
                 </View>
