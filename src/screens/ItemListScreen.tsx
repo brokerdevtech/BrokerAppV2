@@ -90,8 +90,8 @@ const RederListHeader = React.memo(
       <>
         <UserStories />
 
-        {/* <Recommend categoryId={categoryId} /> */}
-        {/* <ProductSection
+        <Recommend categoryId={categoryId} />
+        <ProductSection
           heading={'Newly Launch'}
           background={'#FFFFFF'}
           endpoint={'Newin'}
@@ -102,7 +102,7 @@ const RederListHeader = React.memo(
             cityName: AppLocation.City,
             categoryId: categoryId,
           }}
-        /> */}
+        />
 
         <RecentSearchSection
           heading={'Recent Search'}
@@ -817,14 +817,16 @@ const ItemListScreen: React.FC<any> = ({
           {data === null ? (
             <SkeletonPlaceholder />
           ) : (
-            <FlatList
+            <FlashList
             ref={flatListRef}
+            estimatedItemSize={560}
             extraData={isrest}
               data={data}
-              getItemLayout={getItemLayout}
+               getItemLayout={560}
               renderItem={renderItem}
               initialNumToRender={2}
-              maxToRenderPerBatch={2}
+              maxToRenderPerBatch={4}
+              windowSize ={4}
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
               ListHeaderComponent={
@@ -839,7 +841,7 @@ const ItemListScreen: React.FC<any> = ({
               keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.6}
               onEndReached={loadMorepage}
-              contentContainerStyle={{paddingBottom: 100, gap: 20}}
+              contentContainerStyle={{paddingBottom: 100}}
               ListFooterComponent={
                 isInfiniteLoading ? (
                   <ActivityIndicator
@@ -849,7 +851,7 @@ const ItemListScreen: React.FC<any> = ({
                   />
                 ) : null
               }
-              removeClippedSubviews={true}
+              removeClippedSubviews={false}
               ListEmptyComponent={() =>
                 data === undefined ? (
                   <ActivityIndicator
@@ -1019,6 +1021,7 @@ const styles = StyleSheet.create({
   },
   WrapcardContainer: {
     paddingHorizontal: 20,
+    marginBottom:20
   },
   cardContainer: {
     width: '100%',
