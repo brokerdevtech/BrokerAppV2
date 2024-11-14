@@ -31,7 +31,13 @@ import store from './BrokerAppCore/redux/store';
 import MainNavigation from './src/navigation/MainNavigation';
 import {GluestackUIProvider} from '@/components/ui/gluestack-ui-provider';
 import PermissionService from './src/utils/PermissionService';
-import {openSettings, PERMISSIONS, request} from 'react-native-permissions';
+import {
+  check,
+  openSettings,
+  PERMISSIONS,
+  request,
+  RESULTS,
+} from 'react-native-permissions';
 import {
   getAddressFromCoordinates,
   getAddressFromCoordinatesNew,
@@ -44,8 +50,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {setAppLocation} from './BrokerAppCore/redux/store/AppLocation/appLocation';
 import {S3Provider} from './src/Context/S3Context';
-import NetInfo from "@react-native-community/netinfo";
-
+import NetInfo from '@react-native-community/netinfo';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -137,20 +142,19 @@ function App(): React.JSX.Element {
   //     Animated.timing(opacityAnim, {
   //       toValue: 1,
   //       duration: 1000,
-  //       easing: Easing.out(Easing.quad), 
+  //       easing: Easing.out(Easing.quad),
   //       useNativeDriver: true,
   //     }),
   //     Animated.spring(scaleAnim, {
   //       toValue: 1,
-  //       friction: 3, 
+  //       friction: 3,
   //       useNativeDriver: true,
   //     }),
   //   ]).start();
 
-   
   //   // setTimeout(() => {
   //   //   setIsSplashVisible(false);
-  //   // }, 3000); 
+  //   // }, 3000);
   // }, []);
 
   const retryAction = async () => {
@@ -161,11 +165,9 @@ function App(): React.JSX.Element {
     // If not, you can display an error message or handle it as needed
     const state = await NetInfo.fetch();
 
-setColorMode(state.isConnected);
+    setColorMode(state.isConnected);
   };
   const checkUser = async () => {
-   
-   
     const keys = await AsyncStorage.getAllKeys();
     const AsyncStoragedata = await AsyncStorage.multiGet(keys);
 
@@ -196,13 +198,11 @@ setColorMode(state.isConnected);
     });
   };
   const getUserLocation = async (granted: any) => {
-   
     if (Platform.OS === 'android') {
       if (
         granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] ===
         PermissionsAndroid.RESULTS.GRANTED
       ) {
-      
         let relustGeolocation: any = await getCurrentPositionAsync();
 
         const {latitude, longitude} = relustGeolocation.coords;
@@ -211,7 +211,7 @@ setColorMode(state.isConnected);
           latitude,
           longitude,
         );
-     
+
         store.dispatch(setAppLocation(resultAddress));
       }
     }
@@ -224,21 +224,19 @@ setColorMode(state.isConnected);
         latitude,
         longitude,
       );
-  
+
       store.dispatch(setAppLocation(resultAddress));
     }
   };
-  const handleAppStateChange = async (nextAppState) => {
-
+  const handleAppStateChange = async nextAppState => {
     if (appState.match(/inactive|background/) && nextAppState === 'active') {
       // Check permission status when the app comes back to the foreground
 
-      if(alertShown.current==false)
-      { 
-     let granted = await checkPermission();
-    
-   //  let UserLocation = await getUserLocation(granted);
-    }
+      if (alertShown.current == false) {
+        let granted = await checkPermission();
+
+        //  let UserLocation = await getUserLocation(granted);
+      }
     }
     setAppState(nextAppState);
   };
@@ -271,7 +269,7 @@ setColorMode(state.isConnected);
   //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
   //         PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
   //       ];
-        
+
   //       const granted = await PermissionsAndroid.check(permissions[0]) && await PermissionsAndroid.check(permissions[1]);
   //       console.log("===============granted")
   //       console.log(granted)
@@ -286,7 +284,7 @@ setColorMode(state.isConnected);
   //   } else if (Platform.OS === 'ios') {
   //     try {
   //       const locationPermissionStatus = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-  
+
   //       if (locationPermissionStatus !== RESULTS.GRANTED) {
   //         const locationPermission = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
   //         return locationPermission;
@@ -305,72 +303,78 @@ setColorMode(state.isConnected);
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
         ];
-        
+
         const permissionStatusesArray = await Promise.all(
-          permissions.map((permission) => PermissionsAndroid.check(permission))
+          permissions.map(permission => PermissionsAndroid.check(permission)),
         );
-  
+
         // Creating an object with permission names as keys and their statuses as values
         const permissionStatuses = Object.fromEntries(
           permissions.map((permission, index) => [
             permission,
             permissionStatusesArray[index] ? 'granted' : 'denied',
-          ])
+          ]),
         );
-  
+
         // Filter permissions that need to be requested
         const permissionsToRequest = permissions.filter(
-          (_, index) => !permissionStatusesArray[index]
+          (_, index) => !permissionStatusesArray[index],
         );
-  
+
         if (permissionsToRequest.length > 0) {
-          const requestResults = await PermissionsAndroid.requestMultiple(permissionsToRequest);
-  
+          const requestResults = await PermissionsAndroid.requestMultiple(
+            permissionsToRequest,
+          );
+
           // Update permissionStatuses with results of requested permissions
           Object.entries(requestResults).forEach(([key, value]) => {
             permissionStatuses[key] = value;
-  
+
             // Show alert if permission is permanently denied
             if (value === 'never_ask_again') {
               showBlockedPermissionAlert(key);
             }
           });
-  
+
           return permissionStatuses;
         }
-  
+
         return permissionStatuses;
       } catch (err) {
         console.warn(err);
       }
     } else if (Platform.OS === 'ios') {
       try {
-        const locationPermissionStatus = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-  
+        const locationPermissionStatus = await check(
+          PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+        );
+
         const permissionStatuses = {
           'ios.location_permission': locationPermissionStatus,
         };
-  
+
         if (locationPermissionStatus === RESULTS.BLOCKED) {
           await showBlockedPermissionAlert('Location');
         } else if (locationPermissionStatus !== RESULTS.GRANTED) {
-          const locationPermission = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+          const locationPermission = await request(
+            PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+          );
           permissionStatuses['ios.location_permission'] = locationPermission;
         }
-  
+
         return permissionStatuses;
       } catch (err) {
         console.warn(err);
       }
     }
   };
-  const showBlockedPermissionAlert = (permissionName) => {
-//    const alertShown = useRef(false); // Use a ref to track alert display status
-  
-    return new Promise((resolve) => {
+  const showBlockedPermissionAlert = permissionName => {
+    //    const alertShown = useRef(false); // Use a ref to track alert display status
+
+    return new Promise(resolve => {
       if (!alertShown.current) {
         alertShown.current = true; // Set the alert shown flag
-  
+
         Alert.alert(
           `LOCATION Permission Blocked`,
           `It looks like you have blocked the ${permissionName} permission. To enable it, go to your app settings.`,
@@ -387,7 +391,7 @@ setColorMode(state.isConnected);
               text: 'Open Settings',
               onPress: async () => {
                 try {
-                  alertShown.current=false;
+                  alertShown.current = false;
                   await openSettings();
                   resolve('settings');
                 } catch (error) {
@@ -399,7 +403,7 @@ setColorMode(state.isConnected);
               },
             },
           ],
-          { cancelable: false }
+          {cancelable: false},
         );
       } else {
         resolve('already_shown'); // Return a different response if the alert was already shown
@@ -439,12 +443,12 @@ setColorMode(state.isConnected);
   //     Animated.timing(opacityAnim, {
   //       toValue: 1,
   //       duration: 1000,
-  //       easing: Easing.out(Easing.quad), 
+  //       easing: Easing.out(Easing.quad),
   //       useNativeDriver: true,
   //     }),
   //     Animated.spring(scaleAnim, {
   //       toValue: 1,
-  //       friction: 3, 
+  //       friction: 3,
   //       useNativeDriver: true,
   //     }),
   //   ]).start();
@@ -459,12 +463,13 @@ setColorMode(state.isConnected);
   // }, []);
 
   useEffect(() => {
-  
-    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
 
     return () => {
       subscription.remove();
-    
     };
   }, [appState]);
   useEffect(() => {
@@ -474,10 +479,10 @@ setColorMode(state.isConnected);
         await checkUser();
         setIsSplashVisible(false);
       } catch (error) {
-        console.error("Error in permission or user check:", error);
+        console.error('Error in permission or user check:', error);
       }
     };
-  
+
     // Run animations in parallel
     Animated.parallel([
       Animated.timing(opacityAnim, {
@@ -492,19 +497,21 @@ setColorMode(state.isConnected);
         useNativeDriver: true,
       }),
     ]).start();
-  
+
     // Execute async functions
     runAsyncFunctions();
-    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
     // Subscribe to network state changes
     const unsubscribe = NetInfo.addEventListener(state => {
-      setIsConnected(state.isConnected  && state.isInternetReachable);
-      
+      setIsConnected(state.isConnected && state.isInternetReachable);
     });
-  
+
     // Set splash visibility
-   // setIsSplashVisible(false);
-  
+    // setIsSplashVisible(false);
+
     // Cleanup on unmount
     return () => {
       subscription.remove();
@@ -512,7 +519,7 @@ setColorMode(state.isConnected);
     };
   }, []);
   return (
-      <>
+    <>
       {isConnected ? (
         isSplashVisible ? (
           <View style={styles.splashContainer}>
@@ -522,7 +529,7 @@ setColorMode(state.isConnected);
                 styles.logo,
                 {
                   opacity: opacityAnim,
-                  transform: [{ scale: scaleAnim }],
+                  transform: [{scale: scaleAnim}],
                 },
               ]}
               resizeMode="contain"
@@ -530,18 +537,23 @@ setColorMode(state.isConnected);
           </View>
         ) : (
           <Provider store={store}>
-                 <S3Provider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <GluestackUIProvider>
-                <MainNavigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-              </GluestackUIProvider>
-            </GestureHandlerRootView>
+            <S3Provider>
+              <GestureHandlerRootView style={{flex: 1}}>
+                <GluestackUIProvider>
+                  <MainNavigation
+                    loggedIn={loggedIn}
+                    setLoggedIn={setLoggedIn}
+                  />
+                </GluestackUIProvider>
+              </GestureHandlerRootView>
             </S3Provider>
-          </Provider> 
+          </Provider>
         )
       ) : (
         <View style={styles.container}>
-          <Text style={styles.text}>You are not connected to the internet.</Text>
+          <Text style={styles.text}>
+            You are not connected to the internet.
+          </Text>
           <Button title="Retry" onPress={retryAction} />
         </View>
       )}
