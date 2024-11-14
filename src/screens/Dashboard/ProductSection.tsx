@@ -138,12 +138,13 @@ const ProductSection = (props: ProductSectionProps) => {
 
   return (
     <>
+ 
       {data == null ? (
-        // <ProductSectionSkeleton
-        //   heading={props.heading}
-        //   isShowAll={props.isShowAll}
-        // />
-        <></>
+        <ProductSectionSkeleton
+          heading={props.heading}
+          isShowAll={props.isShowAll}
+        />
+        // <></>
       ) : (
         <View
           style={{

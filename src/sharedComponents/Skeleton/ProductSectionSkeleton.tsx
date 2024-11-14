@@ -4,32 +4,13 @@ import {HStack} from '@/components/ui/hstack';
 import ZText from '../../sharedComponents/ZText';
 import {colors} from '../../themes';
 
-const SkeletonLoader = ({style, width, height, borderRadius}) => {
-  const opacity = useRef(new Animated.Value(0.3)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0.3,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, [opacity]);
-
+const SkeletonLoader = ({ style, width, height, borderRadius = 0 }) => {
   return (
-    <Animated.View
+    <View
       style={[
         styles.skeleton,
         style,
-        {opacity, width, height, borderRadius: borderRadius || 0},
+        { width, height, borderRadius },
       ]}
     />
   );
@@ -105,7 +86,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   skeleton: {
-    backgroundColor: '#e0e0e0',
+    backgroundColor: '#e0e0e0', // Light gray to represent loading
+    opacity: 0.5, // Adjust opacity for a subtle effect
   },
   heading: {
     flexDirection: 'row',

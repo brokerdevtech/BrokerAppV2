@@ -87,6 +87,7 @@ const CarForm = ({formikRef}) => {
       },
     ];
     setApplocalities(locationData);
+    formikRef.current.setFieldValue('Location', AppLocation);
   }, [AppLocation]);
 
   const PropertyinitialValues = {

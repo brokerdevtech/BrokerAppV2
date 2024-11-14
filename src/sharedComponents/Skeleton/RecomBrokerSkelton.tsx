@@ -4,36 +4,19 @@ import {HStack} from '@/components/ui/hstack';
 import ZText from '../ZText';
 import {colors} from '../../themes';
 
-const SkeletonLoader = ({style, width, height, borderRadius}) => {
-  const opacity = useRef(new Animated.Value(0.3)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0.3,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, [opacity]);
-
+const SkeletonLoader = ({ style, width, height, borderRadius = 0 }) => {
   return (
-    <Animated.View
+    <View
       style={[
         styles.skeleton,
         style,
-        {opacity, width, height, borderRadius: borderRadius || 0},
+        { width, height, borderRadius },
       ]}
     />
   );
 };
+
+ 
 
 const RecommendedBrokersSkeleton = ({}) => {
   const placeholderData = Array(5).fill({});
@@ -77,12 +60,14 @@ const RecommendedBrokersSkeleton = ({}) => {
 };
 
 const styles = StyleSheet.create({
+  skeleton: {
+    backgroundColor: '#e0e0e0', // Light gray as a placeholder
+    opacity: 0.5, // Adjust this to simulate a subtle shimmer effect
+  },
   skeletonContainer: {
     paddingVertical: 10,
   },
-  skeleton: {
-    backgroundColor: '#e0e0e0',
-  },
+
   heading: {
     flexDirection: 'row',
     justifyContent: 'space-between',

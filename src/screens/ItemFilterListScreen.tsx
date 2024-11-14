@@ -73,9 +73,9 @@ import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleto
 const SkeletonPlaceholder = () => {
   return (
     <HStack space={10} style={styles.skeletonContainer}>
-      {/* {Array.from({length: 6}).map((_, index) => (
-        <ListingCardSkeleton size={60} />
-      ))} */}
+      {Array.from({length: 6}).map((_, index) => (
+        <ListingCardSkeleton key={index} size={60} />
+      ))}
     </HStack>
   );
 };
@@ -670,13 +670,15 @@ const ItemFilterListScreen: React.FC<any> = ({
           {data === null ? (
             <SkeletonPlaceholder />
           ) : (
-            <FlatList
+            <FlashList
               data={data}
+              estimatedItemSize={560}
               ref={flatListRef}
-              getItemLayout={getItemLayout}
+              getItemLayout={560}
               renderItem={renderItem}
               initialNumToRender={2}
               maxToRenderPerBatch={4}
+              windowSize ={4}
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
               // ListHeaderComponent={
@@ -690,7 +692,7 @@ const ItemFilterListScreen: React.FC<any> = ({
               keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.6}
               onEndReached={loadMorepage}
-              contentContainerStyle={{paddingBottom: 100, gap: 20}}
+              contentContainerStyle={{paddingBottom: 100}}
               ListFooterComponent={
                 isInfiniteLoading ? (
                   <ActivityIndicator
@@ -700,7 +702,7 @@ const ItemFilterListScreen: React.FC<any> = ({
                   />
                 ) : null
               }
-              removeClippedSubviews={true}
+              removeClippedSubviews={false}
               ListEmptyComponent={() =>
                 data === undefined ? (
                   <ActivityIndicator
@@ -870,6 +872,7 @@ const styles = StyleSheet.create({
   },
   WrapcardContainer: {
     paddingHorizontal: 20,
+    marginBottom:20
   },
   cardContainer: {
     width: '100%',

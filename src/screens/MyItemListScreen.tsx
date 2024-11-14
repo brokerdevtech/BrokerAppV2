@@ -405,14 +405,18 @@ const MyItemListScreen: React.FC<any> = ({
       <BottomSheetModalProvider>
         <View style={{flex: 1}}>
           {data && (
-            <FlatList
+            <FlashList
               data={data}
               ref={flatListRef}
-              getItemLayout={getItemLayout}
+              estimatedItemSize={560}
+              getItemLayout={560}
+              initialNumToRender={2}
+              maxToRenderPerBatch={4}
+              windowSize ={4}
               renderItem={renderItem}
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{paddingBottom: 100, gap: 20}}
+              contentContainerStyle={{paddingBottom: 100}}
               keyExtractor={(item, index) => index.toString()}
               onEndReachedThreshold={0.8}
               onEndReached={loadMorepage}
@@ -578,6 +582,7 @@ const styles = StyleSheet.create({
   },
   WrapcardContainer: {
     paddingHorizontal: 20,
+    marginBottom:20
   },
   cardContainer: {
     width: '100%',

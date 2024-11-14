@@ -147,8 +147,8 @@ const UserStories = React.memo(() => {
       </ZText> */}
       <HStack>
         {StoryData === null || loading ? (
-          <></>
-          // <SkeletonPlaceholder />
+          // <></>
+          <SkeletonPlaceholder />
         ) : (
           <FlatList
             data={StoryData}
