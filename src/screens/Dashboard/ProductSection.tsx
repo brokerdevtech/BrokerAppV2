@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     // shadowColor: 'rgba(0, 0, 0, 0.8)', // shadow color
     shadowOffset: {width: 0, height: 4}, // shadow offset
     shadowOpacity: 1, // shadow opacity
-    shadowRadius: 64, // blur radius (64px)
+    // shadowRadius: 64, // blur radius (64px)
     elevation: 8,
     marginHorizontal: 8,
   },
@@ -328,9 +328,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     // paddingBottom: 10,
     // shadowColor: 'rgba(0, 0, 0, 0.8)',
-    // shadowOffset: {width: 0, height: 4},
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.5,
-    shadowRadius: 5,
+    // shadowRadius: 5,
     elevation: 4,
   },
   carImage: {

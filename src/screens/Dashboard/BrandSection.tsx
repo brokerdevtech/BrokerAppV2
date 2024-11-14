@@ -66,7 +66,6 @@ const BrandSection = (props: BrandSectionProps) => {
   useEffect(() => {
     if (status == 200) {
       // setBrandData()
-
     }
   }, [status]);
   // console.log(status);
@@ -171,6 +170,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 10,
     paddingHorizontal: 20,
+    marginTop: 10,
   },
   headingTitle: {
     color: '#263238',
@@ -218,11 +218,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     margin: 10,
     paddingBottom: 10,
-    shadowColor: 'rgba(0, 0, 0, 0.8)',
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 1,
-    shadowRadius: 20,
-    elevation: 4,
+    shadowOffset: {width: 0, height: 4}, // shadow offset
+    shadowOpacity: 0.5, // shadow opacity
+    // shadowRadius: 5, // blur radius (64px)
+    elevation: 5,
   },
   carImage: {
     width: 132,

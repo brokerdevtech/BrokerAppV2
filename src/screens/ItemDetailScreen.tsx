@@ -60,6 +60,7 @@ import TouchableOpacityWithPermissionCheck from '../sharedComponents/TouchableOp
 import {deleteMyPost} from '../../BrokerAppCore/services/postService';
 import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 import {delay} from 'lodash';
+import AppBaseContainer from '../hoc/AppBaseContainer_old';
 
 const propertyDetails = (data: any, user: any, navigation: any) => {
   const onPressUser = (userId, userName, userImage) => {
@@ -448,14 +449,12 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
               if (data.postId) {
                 const result = await deleteMyPost(user.userId, data.postId);
                 showToast(result.statusMessage);
-                handleUpdate("Delete");
-              //  navigation.goBack();
-                 // navigation.navigate("ProfileScreen");
-                } else {
-                  showToast(result.error);
-                 
-                }
-              
+                handleUpdate('Delete');
+                //  navigation.goBack();
+                // navigation.navigate("ProfileScreen");
+              } else {
+                showToast(result.error);
+              }
             } catch (error) {}
           },
         },
@@ -523,15 +522,13 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
   useEffect(() => {
     callItemDetail();
   }, []);
-  const handleUpdate = async (Action:any="Back") => {
-
+  const handleUpdate = async (Action: any = 'Back') => {
     if (onGoBack) {
-
       // await execute();
       // await new Promise(resolve => setTimeout(resolve, 100));
       // console.log("execute");
       //   console.log(data);
-      onGoBack({Action:Action,Data:data}); // Call the callback function with updated data
+      onGoBack({Action: Action, Data: data}); // Call the callback function with updated data
     }
     navigation.goBack(); // Go back to FirstScreen
   };
@@ -835,4 +832,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ItemDetailScreen;
+export default AppBaseContainer(ItemDetailScreen, false, false);
