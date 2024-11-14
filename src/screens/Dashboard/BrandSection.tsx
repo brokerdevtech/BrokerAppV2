@@ -71,15 +71,15 @@ const BrandSection = (props: BrandSectionProps) => {
   }, [status]);
   // console.log(status);
   const renderProductItems = ({item, index}) => {
-    // console.log('item =====>', item);
+     console.log('item =====>', item);
     const handlePress = () => {
       if (props.isGuest) {
         setShowAlertDialog(true); // Show alert dialog if user is a guest
       } else {
         navigation.navigate('ItemListScreen', {
-          listType: item.hasOwnProperty('fuelType') ? 'Car' : 'RealEstate',
-          categoryId: item.hasOwnProperty('fuelType') ? 2 : 1,
-          brandName: item.searchText ?? '',
+          listType:item.categoryId==2 ? 'Car' : 'RealEstate',
+          categoryId: item.categoryId,
+          brandfilters:item.filters
         });
       }
     };
@@ -94,7 +94,7 @@ const BrandSection = (props: BrandSectionProps) => {
           />
           <View style={styles.detailsContainer}>
             <ZText type={'R14'} numberOfLines={1} style={styles.carBrand}>
-              {item.title}
+              {item.searchText}
             </ZText>
           </View>
         </TouchableOpacity>
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   },
   carImage: {
     width: 132,
-    height: 100,
+    height: 130,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
   },
