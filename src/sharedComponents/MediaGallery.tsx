@@ -1,100 +1,84 @@
-
-
 import React, {
-    useState,
-    useRef,
-    useEffect,
-    forwardRef,
-    useImperativeHandle,
-    memo,
-    useCallback,
-  } from 'react';
-  import { View, StyleSheet, Dimensions,Text, FlatList } from 'react-native';
+  useState,
+  useRef,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+  memo,
+  useCallback,
+} from 'react';
+import {View, StyleSheet, Dimensions, Text, FlatList} from 'react-native';
 
+import VideoPlayer from './common/VideoPlayer';
 
-  import VideoPlayer from './common/VideoPlayer';
+import AppFastImage from './AppFastImage';
+import {
+  imagesBucketPath,
+  imagesBucketcloudfrontPath,
+} from '../config/constants';
 
-  import AppFastImage from './AppFastImage';
-  import { imagesBucketPath, imagesBucketcloudfrontPath } from '../config/constants';
+//const { width: screenWidth } = Dimensions.get('window');
 
+const MediaGallery = forwardRef((props, ref) => {
+  const {mediaItems} = props;
+  const screenWidth = 375;
 
+  const playerRef = useRef(null);
+  const carouselRef = useRef(null);
+  const [parentWidth, setParentWidth] = useState(0);
 
-  //const { width: screenWidth } = Dimensions.get('window');
+  const [activeIndex, setActiveIndex] = useState(0);
+  const flatListRef = useRef(null);
 
-  const MediaGallery = forwardRef((props, ref) => {
-    const { mediaItems } = props;
-    const screenWidth  =375;
-  
-    const playerRef = useRef(null);
-    const carouselRef = useRef(null);
-    const [parentWidth, setParentWidth] = useState(0);
+  const onScroll = event => {
+    const slideIndex = Math.ceil(
+      event.nativeEvent.contentOffset.x / screenWidth,
+    );
 
-  
+    setActiveIndex(slideIndex);
+  };
 
-    const [activeIndex, setActiveIndex] = useState(0);
-    const flatListRef = useRef(null);
-  
+  const getExtension = useCallback(filename => {
+    if (!filename) return '';
+    return filename.slice(filename.lastIndexOf('.') + 1).toLowerCase();
+  }, []);
 
-    const onScroll = (event) => {
- 
-      const slideIndex = Math.ceil(event.nativeEvent.contentOffset.x / screenWidth);
- 
-      setActiveIndex(slideIndex);
-    };
-  
+  const renderCarouselItem = useCallback(
+    ({item}) => {
+      const extension = getExtension(item?.mediaBlob || item?.mediaBlobId);
+      const sourceUri = `${imagesBucketcloudfrontPath}${
+        item?.mediaBlob || item?.mediaBlobId
+      }`;
 
-
-
-
-
-
-  
-  
-  
-    const getExtension = useCallback((filename) => {
-      if (!filename) return '';
-      return filename.slice(filename.lastIndexOf('.') + 1).toLowerCase();
-    }, []);
-  
-    const renderCarouselItem = useCallback(
-      ({ item }) => {
-        const extension = getExtension(item?.mediaBlob || item?.mediaBlobId);
-        const sourceUri = `${imagesBucketcloudfrontPath}${item?.mediaBlob || item?.mediaBlobId}`;
-        
-        if (extension !== 'mp4') {
-          return (    
-            <View style={[styles.card, { width: parentWidth }]}>
-         
-            <AppFastImage
-              uri={sourceUri}
-            
-            /></View>
-          );
-        }
+      if (extension !== 'mp4') {
         return (
-          <View  style={[styles.card, { width: parentWidth }]}>
+          <View style={[styles.card, {width: parentWidth}]}>
+            <AppFastImage uri={sourceUri} />
+          </View>
+        );
+      }
+      return (
+        <View style={[styles.card, {width: parentWidth}]}>
           <VideoPlayer
             ref={playerRef}
             sourceUri={sourceUri}
             vidStyle={styles.videoStyle}
             defaultPaused={false}
-          /></View>
-        );
-      },
-      [getExtension,parentWidth]
-    );
+          />
+        </View>
+      );
+    },
+    [getExtension, parentWidth],
+  );
 
-
-
-    return (
-   
-      <View style={styles.container}
-      onLayout={(event) => {
-        const { width } = event.nativeEvent.layout;
+  return (
+    <View
+      style={styles.container}
+      onLayout={event => {
+        const {width} = event.nativeEvent.layout;
         setParentWidth(width); // Capture the parent component's width
-      }}
-      >
- <FlatList
+      }}>
+      <FlatList
         data={mediaItems}
         horizontal
         pagingEnabled
@@ -102,15 +86,13 @@ import React, {
         onScroll={onScroll}
         renderItem={renderCarouselItem}
         keyExtractor={(item, index) => {
-          if(item?.mediaBlobId === undefined) {
-              return index.toString()
+          if (item?.mediaBlobId === undefined) {
+            return index.toString();
           }
-          return item?.mediaBlobId.toString()
+          return item?.mediaBlobId.toString();
         }}
         showsHorizontalScrollIndicator={false}
         bounces={false}
-    
-
         scrollEventThrottle={16}
         snapToInterval={parentWidth}
         snapToAlignment="center"
@@ -126,80 +108,78 @@ import React, {
       />
       {/* Pagination */}
       <View style={styles.paginationContainer}>
-      <Text style={styles.paginationText}>
+        <Text style={styles.paginationText}>
           {activeIndex + 1} / {mediaItems.length}
         </Text>
       </View>
+    </View>
+  );
+});
 
+const styles = StyleSheet.create({
+  paginationContainer: {
+    flexDirection: 'row',
+    position: 'absolute',
+    bottom: 16,
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    borderRadius: 8,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    display: 'flex',
+    justifyContent: 'center',
+  },
 
-      </View>
-    );
-  });
-  
-  const styles = StyleSheet.create({
-    paginationContainer: {
-      flexDirection: 'row',
-      position: 'absolute',
-      bottom: 16,
-      alignSelf: 'center',
-       backgroundColor: 'rgba(0,0,0,0.8)',
-       borderRadius:8,
-       paddingHorizontal:5,
-       paddingVertical:2,
-       display:'flex',
-       justifyContent: 'center',
-    },
- 
-    paginationText: {
-      color: 'white',
-      fontSize: 14,
-    },
-CenterBox:{
-  backgroundColor: 'rgba(0,0,0,0.5)',
-  position:'absolute',
-  bottom:10,
-  left:2,
-  borderRadius:8,
-  paddingHorizontal:3,
-  paddingVertical:2,
-  display:'flex',
-  justifyContent: 'center',
-},
+  paginationText: {
+    color: 'white',
+    fontSize: 14,
+  },
+  CenterBox: {
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    position: 'absolute',
+    bottom: 10,
+    left: 2,
+    borderRadius: 8,
+    paddingHorizontal: 3,
+    paddingVertical: 2,
+    display: 'flex',
+    justifyContent: 'center',
+  },
 
+  card: {
+    display: 'flex',
 
-    card: {
-      display: 'flex',
-      
-  //    backgroundColor: '#764ABC',
-  borderRadius: 12,
-     // padding: 10,
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: "100%",
-      // marginHorizontal: 20 ,
-      height:200
-    },
-    container: {
-      width: '100%',
-      position: 'relative',
-    },
-    media: {
-      width: '100%',
-      height: '100%',
-    },
-    // videoStyle: {
-    //   width: 375,
-    //   // marginHorizontal: 20 ,borderRadius: 12,
-    //  // padding: 10,
-    //   justifyContent: 'center',
-    //   alignItems: 'center',
-    //   height:200
-    // },
-    videoStyle: {
-      width: '100%',
-      height: '100%',
-    },
-  });
-  
-  export default memo(MediaGallery);
-  
+    //    backgroundColor: '#764ABC',
+    borderRadius: 12,
+
+    // padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    // marginHorizontal: 20 ,
+    height: 200,
+  },
+  container: {
+    width: '100%',
+    position: 'relative',
+  },
+  media: {
+    width: '100%',
+    height: '100%',
+  },
+  // videoStyle: {
+  //   width: 375,
+  //   // marginHorizontal: 20 ,borderRadius: 12,
+  //  // padding: 10,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   height:200
+  // },
+  videoStyle: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 12,
+  },
+});
+
+export default memo(MediaGallery);

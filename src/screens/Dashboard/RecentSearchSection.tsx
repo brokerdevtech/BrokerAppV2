@@ -24,7 +24,7 @@ import {
   imagesBucketcloudfrontPath,
   postsImagesBucketPath,
 } from '../../config/constants';
-import { RecentSearchSData } from '../../../BrokerAppCore/services/new/dashboardService';
+import {RecentSearchSData} from '../../../BrokerAppCore/services/new/dashboardService';
 
 interface BrandSectionProps {
   heading: string;
@@ -39,55 +39,52 @@ const RecentSearchSection = (props: BrandSectionProps) => {
   const navigation = useNavigation();
 
   const callBrandList = async () => {
-     execute(props.endpoint, props.request);
-
+    execute(props.endpoint, props.request);
   };
-  useEffect(() => {
-
-  }, [data]);
+  useEffect(() => {}, [data]);
   useEffect(() => {
     callBrandList();
   }, [props]);
 
-  const renderProductItems = ({ item, index }) => {
+  const renderProductItems = ({item, index}) => {
     if (!item || !item.requestJson || !item.frontendFilters) {
-     // console.warn('Invalid item structure:', item);
+      // console.warn('Invalid item structure:', item);
       return null; // Return null if item structure is invalid
     }
-  //   console.log("renderProductItems")
-  // console.log(item)
+    //   console.log("renderProductItems")
+    // console.log(item)
     let parsedItem;
     let frontendFilters;
-  
+
     try {
       parsedItem = JSON.parse(item.requestJson);
       frontendFilters = JSON.parse(item.frontendFilters);
 
-      console.log(parsedItem)
-      console.log(frontendFilters)
+      console.log(parsedItem);
+      console.log(frontendFilters);
     } catch (error) {
       console.error('Error parsing JSON:', error);
       return null; // Return null if JSON parsing fails
     }
-  
+
     const callFilterListScreen = async () => {
       if (!parsedItem) {
         console.warn('Parsed item is invalid');
         return;
       }
-  
+
       let obj = {
         ...parsedItem,
         frontendFilters: item.frontendFilters || [],
         isSearch: false,
       };
-  
-      let listTypeData = "RealEstate";
-  
+
+      let listTypeData = 'RealEstate';
+
       if (item.categoryId === 2) {
-        listTypeData = "car";
+        listTypeData = 'car';
       }
-  
+
       navigation.navigate('ItemFilterListScreen', {
         listType: listTypeData,
         categoryId: item.categoryId,
@@ -96,7 +93,7 @@ const RecentSearchSection = (props: BrandSectionProps) => {
         searchText: parsedItem.keyWord || '',
       });
     };
-  
+
     return (
       <View style={styles.cardContainer}>
         <TouchableOpacity onPress={callFilterListScreen}>
@@ -112,35 +109,34 @@ const RecentSearchSection = (props: BrandSectionProps) => {
       </View>
     );
   };
-  
 
   return (
-<>
-    {/* { data!= null && data.length > 0 && */}
-<View
-          style={{
-            backgroundColor: props.background,
-            paddingVertical: 10,
-            flex: 1,
-          }}>
-      <HStack space="md" reversed={false} style={styles.heading}>
-        <ZText type={'R18'}>{props.heading}</ZText>
-        <ZText type={'R14'} style={styles.link} />
-      </HStack>
-      <HStack space="md" reversed={false} style={{paddingHorizontal: 10}}>
-        <FlatList
-          data={data}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderProductItems}
-          initialNumToRender={3}
-          showsHorizontalScrollIndicator={false}
-          horizontal
-          onEndReachedThreshold={0.8}
-          // ItemSeparatorComponent={() => <View style={styles.separator} />}
-        />
-      </HStack>
-    </View>
-    {/* } */}
+    <>
+      {/* { data!= null && data.length > 0 && */}
+      <View
+        style={{
+          backgroundColor: props.background,
+          paddingVertical: 10,
+          flex: 1,
+        }}>
+        <HStack space="md" reversed={false} style={styles.heading}>
+          <ZText type={'R18'}>{props.heading}</ZText>
+          <ZText type={'R14'} style={styles.link} />
+        </HStack>
+        <HStack space="md" reversed={false} style={{paddingHorizontal: 10}}>
+          <FlatList
+            data={data}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderProductItems}
+            initialNumToRender={3}
+            showsHorizontalScrollIndicator={false}
+            horizontal
+            onEndReachedThreshold={0.8}
+            // ItemSeparatorComponent={() => <View style={styles.separator} />}
+          />
+        </HStack>
+      </View>
+      {/* } */}
     </>
   );
 };
@@ -196,20 +192,18 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   cardContainer: {
-   
     borderRadius: 12,
     backgroundColor: '#FFF',
     margin: 10,
     paddingBottom: 10,
     shadowColor: 'rgba(0, 0, 0, 0.8)',
     shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 1,
-    shadowRadius: 20,
+    shadowOpacity: 0.5,
+    // shadowRadius: 20,
     elevation: 4,
     width: 120,
     height: 109,
-    alignContent:'center',
-    
+    alignContent: 'center',
   },
   carImage: {
     width: 132,
@@ -238,11 +232,11 @@ const styles = StyleSheet.create({
   detailsContainer: {
     paddingHorizontal: 10,
     paddingTop: 10,
-    alignContent:'center',
-    height:"100%",
-   // backgroundColor:'red',
-    display:'flex',
-    justifyContent:'center'
+    alignContent: 'center',
+    height: '100%',
+    // backgroundColor:'red',
+    display: 'flex',
+    justifyContent: 'center',
   },
   price: {
     fontSize: 16,
@@ -259,8 +253,6 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   carBrand: {
-   
-   
     color: '#000',
     marginTop: 15,
   },
