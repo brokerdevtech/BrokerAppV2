@@ -8,6 +8,9 @@ import {
   StyleSheet,
   ActivityIndicator,
   Modal,
+  ScrollView,
+  KeyboardAvoidingView,
+  SafeAreaView,
 } from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -45,7 +48,6 @@ import {handleApiError} from '../../../BrokerAppCore/services/new/ApiResponse';
 //     '291590546828-c6i0jsih7jphgfoe3ej1tgvangloc5h5.apps.googleusercontent.com', // From the Google Developer Console
 //   offlineAccess: true,
 
- 
 //   // iosClientId:'291590546828-ll1pnno0vmbog94lkhfvkoda38lf93sg.apps.googleusercontent.com',
 // });
 
@@ -54,7 +56,7 @@ GoogleSignin.configure({
   webClientId:
     '291590546828-c6i0jsih7jphgfoe3ej1tgvangloc5h5.apps.googleusercontent.com', // From the Google Developer Console
   offlineAccess: true,
-  forceCodeForRefreshToken:true
+  forceCodeForRefreshToken: true,
   // iosClientId:'291590546828-ll1pnno0vmbog94lkhfvkoda38lf93sg.apps.googleusercontent.com',
 });
 // Validation schema using Yup
@@ -115,10 +117,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       await GoogleSignin.hasPlayServices();
 
       // Try to clear cache but don't let it block sign in if it fails
-   await clearGoogleSignInCache().catch(console.error);
-
-
-
+      await clearGoogleSignInCache().catch(console.error);
 
       const userInfo = await GoogleSignin.signIn();
 
@@ -146,7 +145,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         AppLocation.viewportSouthWestLng,
       );
     } catch (error) {
-      console.error( error);
+      console.error(error);
       setLoading(false);
       console.error('Google Sign In Error:', error);
 
@@ -185,7 +184,6 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     setLoading(true);
     await execute(email, password);
     setLoading(false);
-   
   };
   useEffect(() => {
     if (error) {
@@ -329,141 +327,146 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   }, [SocialLoginerror]);
   // console.log(SocialLoginstatus, 'jdk');
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Login Account</Text>
-      <Text style={styles.subHeader}>
-        Please enter your credentials to access your account and details
-      </Text>
+    // <View style={{flex: 1}}>
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={{flexGrow: 1}}>
+      <View style={styles.container}>
+        <Text style={styles.header}>Login Account</Text>
+        <Text style={styles.subHeader}>
+          Please enter your credentials to access your account and details
+        </Text>
 
-      <Formik
-        initialValues={{email: '', password: ''}}
-        validationSchema={LoginSchema}
-        validateOnMount={true}
-        onSubmit={values => {
-          handleLogin(values); // Handle login logic here
-        }}>
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          isValid,
-        }) => (
-          <View>
-            <Text style={styles.label}>Email</Text>
-            <Input style={styles.input}>
-              <InputField
-                type="text"
-                placeholder="Enter your email"
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </Input>
-            {errors.email && touched.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
-            )}
-
-            {/* Password Input */}
-            <Text style={styles.label}>Password</Text>
-
-            <Input style={styles.input}>
-              <InputField
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Enter Password"
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                value={values.password}
-              />
-              <InputSlot style={{paddingRight: 10}} onPress={handleState}>
-                {/* EyeIcon, EyeOffIcon are both imported from 'lucide-react-native' */}
-                <InputIcon
-                  as={showPassword ? EyeIcon : EyeOffIcon}
-                  className="text-darkBlue-500"
-                  stroke="#000"
+        <Formik
+          initialValues={{email: '', password: ''}}
+          validationSchema={LoginSchema}
+          validateOnMount={true}
+          onSubmit={values => {
+            handleLogin(values); // Handle login logic here
+          }}>
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+            isValid,
+          }) => (
+            <View>
+              <Text style={styles.label}>Email</Text>
+              <Input style={styles.input}>
+                <InputField
+                  type="text"
+                  placeholder="Enter your email"
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  value={values.email}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
                 />
-              </InputSlot>
-            </Input>
-            {errors.password && touched.password && (
-              <Text style={styles.errorText}>{errors.password}</Text>
-            )}
+              </Input>
+              {errors.email && touched.email && (
+                <Text style={styles.errorText}>{errors.email}</Text>
+              )}
 
-            {/* Forgot Password */}
-            <TouchableOpacity
-              onPress={() => navigation.navigate('ForgotPassword')}>
-              <Text style={styles.forgotPassword}>Forgot Password?</Text>
-            </TouchableOpacity>
+              {/* Password Input */}
+              <Text style={styles.label}>Password</Text>
 
-            <TouchableOpacity
-              style={[
-                styles.signInButton,
-                !isValid ? styles.disabledButton : null,
-              ]}
-              disabled={!isValid}
-              onPress={handleSubmit}>
-              <Text style={styles.signInText}>Sign In</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </Formik>
-      <TouchableOpacity
-        style={[styles.signInButton]}
-        onPress={() => {
-          navigation.navigate('GuestHome');
-        }}>
-        <Text style={styles.signInText}>Continue As Guest</Text>
-      </TouchableOpacity>
-      {/* Social Media Sign In Options */}
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          marginBottom: 30,
-        }}>
-        <View style={styles.frameChild} />
-        <Text style={styles.textTypo}>Or sign in with</Text>
-        <View style={styles.frameChild} />
-      </View>
+              <Input style={styles.input}>
+                <InputField
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter Password"
+                  onChangeText={handleChange('password')}
+                  onBlur={handleBlur('password')}
+                  value={values.password}
+                />
+                <InputSlot style={{paddingRight: 10}} onPress={handleState}>
+                  {/* EyeIcon, EyeOffIcon are both imported from 'lucide-react-native' */}
+                  <InputIcon
+                    as={showPassword ? EyeIcon : EyeOffIcon}
+                    className="text-darkBlue-500"
+                    stroke="#000"
+                  />
+                </InputSlot>
+              </Input>
+              {errors.password && touched.password && (
+                <Text style={styles.errorText}>{errors.password}</Text>
+              )}
 
-      <View style={styles.socialContainer}>
-        {/* <TouchableOpacity style={styles.socialButton}>
+              {/* Forgot Password */}
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ForgotPassword')}>
+                <Text style={styles.forgotPassword}>Forgot Password?</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.signInButton,
+                  !isValid ? styles.disabledButton : null,
+                ]}
+                disabled={!isValid}
+                onPress={handleSubmit}>
+                <Text style={styles.signInText}>Sign In</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </Formik>
+        <TouchableOpacity
+          style={[styles.signInButton]}
+          onPress={() => {
+            navigation.navigate('GuestHome');
+          }}>
+          <Text style={styles.signInText}>Continue As Guest</Text>
+        </TouchableOpacity>
+        {/* Social Media Sign In Options */}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            marginBottom: 30,
+          }}>
+          <View style={styles.frameChild} />
+          <Text style={styles.textTypo}>Or sign in with</Text>
+          <View style={styles.frameChild} />
+        </View>
+
+        <View style={styles.socialContainer}>
+          {/* <TouchableOpacity style={styles.socialButton}>
           <Icon as={AppleIcon} stroke="#000" />
         </TouchableOpacity> */}
-        <TouchableOpacity
-          style={styles.socialButton}
-          onPress={signInWithGoogle}>
-          <Icon as={GoogleIcon} />
-        </TouchableOpacity>
-        {/* <TouchableOpacity style={styles.socialButton}>
+          <TouchableOpacity
+            style={styles.socialButton}
+            onPress={signInWithGoogle}>
+            <Icon as={GoogleIcon} />
+          </TouchableOpacity>
+          {/* <TouchableOpacity style={styles.socialButton}>
           <Icon as={FBIcon} />
         </TouchableOpacity> */}
-      </View>
+        </View>
 
-      {/* Sign Up Option */}
-      <Text style={styles.footerText}>
-        Don't have an account?{' '}
-        <Text
-          style={styles.signUpText}
-          onPress={() => {
-      
-            navigation.navigate('Register');
-          }}>
-          Sign Up
+        {/* Sign Up Option */}
+        <Text style={styles.footerText}>
+          Don't have an account?{' '}
+          <Text
+            style={styles.signUpText}
+            onPress={() => {
+              navigation.navigate('Register');
+            }}>
+            Sign Up
+          </Text>
         </Text>
-      </Text>
 
-      {loading && (
-        <Modal transparent={true} animationType="fade">
-          <View style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color={Color.primary} />
-          </View>
-        </Modal>
-      )}
-    </View>
+        {loading && (
+          <Modal transparent={true} animationType="fade">
+            <View style={styles.loaderContainer}>
+              <ActivityIndicator size="large" color={Color.primary} />
+            </View>
+          </Modal>
+        )}
+      </View>
+    </ScrollView>
+    // </View>
   );
 };
 

@@ -211,8 +211,6 @@ export default function RegisterScreen({setLoggedIn}) {
         isOrg: values.organizationType == '1' ? false : true,
       };
 
-
-
       await registerexecute(user);
     } catch (error) {
       console.error('Error in handleSubmit:', error);
@@ -252,8 +250,6 @@ export default function RegisterScreen({setLoggedIn}) {
   }, [registerdata]);
   useEffect(() => {
     if (registererror) {
-   
-
       if (!toast.isActive(toastId)) {
         const newId = Math.random();
         setToastId(newId);
@@ -274,7 +270,10 @@ export default function RegisterScreen({setLoggedIn}) {
     }
   }, [registererror]);
   return (
-    <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.container}>
+    <ScrollView
+      contentContainerStyle={{flexGrow: 1}}
+      style={styles.container}
+      keyboardShouldPersistTaps="handled">
       <Text style={styles.header}>Create An Account</Text>
       <Text style={styles.subHeader}>
         Please enter your credentials to access your account and details

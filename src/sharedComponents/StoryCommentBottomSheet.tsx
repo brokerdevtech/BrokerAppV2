@@ -16,6 +16,8 @@ import {
   TextInput,
   FlatList,
   ActivityIndicator,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {SetPostLikeUnLike} from '../../BrokerAppCore/services/new/dashboardService';
 import {HStack} from '../../components/ui/hstack';
@@ -384,36 +386,42 @@ module="Post"
       handleAddComment();
     };
     const renderFooter = () => (
-      <View style={styles.footerContainer}>
-        <HStack style={{justifyContent: 'center'}}>
-          <TextInput
-            style={{flex: 1}}
-            placeholder="Add a comment..."
-            value={newComment}
-            onChangeText={text => setNewComment(text)}
-            returnKeyType="go"
-            returnKeyLabel="post"
-            onSubmitEditing={handleAddComment}
-            multiline={true}
-          />
-          <Box style={{justifyContent: 'center'}}>
-            <TouchableOpacityWithPermissionCheck
-              permissionsArray={userPermissions}
-              permissionEnum={PermissionKey.AllowAddStoryReaction}
-              tagNames={[View, Send]}
-              onPress={handleSendPress}
-              type="comment"
-              disabled={isInfiniteLoading}>
-              <View>
-                <Send />
-              </View>
-            </TouchableOpacityWithPermissionCheck>
-            {/* <Button size="lg" style={{ backgroundColor: 'red' }} onPress={handleSendPress}>
+      <KeyboardAvoidingView>
+        <View style={styles.footerContainer}>
+          <HStack
+            style={{
+              justifyContent: 'center',
+              marginBottom: Platform.OS == 'ios' ? 30 : 0,
+            }}>
+            <TextInput
+              style={{flex: 1}}
+              placeholder="Add a comment..."
+              value={newComment}
+              onChangeText={text => setNewComment(text)}
+              returnKeyType="go"
+              returnKeyLabel="post"
+              onSubmitEditing={handleAddComment}
+              multiline={true}
+            />
+            <Box style={{justifyContent: 'center'}}>
+              <TouchableOpacityWithPermissionCheck
+                permissionsArray={userPermissions}
+                permissionEnum={PermissionKey.AllowAddStoryReaction}
+                tagNames={[View, Send]}
+                onPress={handleSendPress}
+                type="comment"
+                disabled={isInfiniteLoading}>
+                <View>
+                  <Send />
+                </View>
+              </TouchableOpacityWithPermissionCheck>
+              {/* <Button size="lg" style={{ backgroundColor: 'red' }} onPress={handleSendPress}>
                 <ButtonIcon as={ArrowUpIcon} color="white" stroke="white" />
               </Button> */}
-          </Box>
-        </HStack>
-      </View>
+            </Box>
+          </HStack>
+        </View>
+      </KeyboardAvoidingView>
     );
 
     const handleAddComment = async () => {
