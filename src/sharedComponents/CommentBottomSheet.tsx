@@ -71,6 +71,7 @@ const CommentBottomSheet = forwardRef(
   ({postItem, User, listTypeData, userPermissions, onClose}, ref) => {
     const navigation = useNavigation();
     const bottomSheetModalRef = useRef(null);
+    const inputRef = useRef(null);
     const snapPoints = useMemo(() => ['60%'], []);
     const [newComment, setNewComment] = useState('');
     const [replyCommentId, setreplyCommentId] = useState(0);
@@ -411,7 +412,7 @@ const CommentBottomSheet = forwardRef(
       handleAddComment();
     };
     const renderFooter = () => (
-      <KeyboardAvoidingView>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : ''}>
         <View style={styles.footerContainer}>
           <HStack
             style={{
@@ -420,14 +421,19 @@ const CommentBottomSheet = forwardRef(
             }}>
             <TextInput
               style={{flex: 1}}
+              ref={inputRef}
               placeholder="Add a comment..."
-              value={newComment}
-              onChangeText={text => setNewComment(text)}
+              defaultValue={newComment}
+              onChangeText={text => {
+                console.log(text), setNewComment(text);
+              }}
               returnKeyType="go"
               returnKeyLabel="post"
               onSubmitEditing={handleAddComment}
               multiline={true}
+              scrollEnabled={true}
             />
+
             <Box style={{justifyContent: 'center'}}>
               <TouchableOpacityWithPermissionCheck
                 permissionsArray={userPermissions}

@@ -63,9 +63,7 @@ const HomePageStack = () => {
 const PlaceholderScreen = () => (
   <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
     <Image
-      source={{
-        uri: 'https://drive.google.com/file/d/1bzuBl0xKBEqE4ubucK3T194hMC7Htu2k/view?usp=sharing',
-      }}
+      source={require('../assets/images/ComingSoon.png')}
       style={{height: 150, width: 150, marginBottom: 20}}
     />
     <ZText type={'S20'} style={{marginBottom: 20}}>

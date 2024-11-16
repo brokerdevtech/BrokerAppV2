@@ -539,7 +539,8 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
           <View style={styles.headerContainer}>
             <View style={styles.header}>
               <View style={styles.IconButton}>
-                <View
+                <TouchableOpacity
+                  onPress={handleUpdate}
                   style={{
                     // ...styles.appTitleMain,
                     // color: '#007acc',
@@ -549,7 +550,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
                     borderRadius: 40,
                   }}>
                   <ArrowLeftIcon onPress={handleUpdate} />
-                </View>
+                </TouchableOpacity>
                 <ZText type={'R18'}>{data?.title}</ZText>
               </View>
               {user.userId == data?.userId && (

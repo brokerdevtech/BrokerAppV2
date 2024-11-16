@@ -396,7 +396,7 @@ module="Post"
             <TextInput
               style={{flex: 1}}
               placeholder="Add a comment..."
-              value={newComment}
+              defaultValue={newComment}
               onChangeText={text => setNewComment(text)}
               returnKeyType="go"
               returnKeyLabel="post"
