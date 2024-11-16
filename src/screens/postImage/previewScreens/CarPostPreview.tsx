@@ -367,8 +367,8 @@ const CarPostPreview: React.FC = ({
         filter.hasOwnProperty('SeatingCapacity') &&
         Array.isArray(filter.SeatingCapacity)
       ) {
-        requestOption.seatingCapacityId = filter['Ownership'][0].key;
-        requestOption.seatingCapacity = filter['Ownership'][0].value;
+        requestOption.seatingCapacityId = filter['SeatingCapacity'][0].key;
+        requestOption.seatingCapacity = filter['SeatingCapacity'][0].value;
       }
       if (
         filter.hasOwnProperty('RegistrationState') &&

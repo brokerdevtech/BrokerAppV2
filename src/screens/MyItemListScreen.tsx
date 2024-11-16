@@ -78,8 +78,9 @@ const ProductItem = React.memo(
     const MediaGalleryRef = useRef(null);
     const [isrefresh, setisrefresh] = useState(0);
     const ProductItemOnGoBack = item => {
-      console.log('ProductItemOnGoBack');
-      setisrefresh(isrefresh + 1);
+      if (item.Action != 'Delete') {
+        setisrefresh(isrefresh + 1);
+      }
       OnGoBack(item);
     };
     const openWhatsApp = useCallback((phoneNumber, message) => {
@@ -343,7 +344,8 @@ const MyItemListScreen: React.FC<any> = ({
   }
 
   const OnGoBack = updatedItem => {
-    //  console.log(data);
+    console.log('OnGoBackOnGoBackOnGoBackOnGoBack');
+    console.log(updatedItem);
     //  let newd=  data.map((item) =>
     //     item.postId === updatedItem?.postId ? updatedItem : item
     //   )
@@ -360,10 +362,8 @@ const MyItemListScreen: React.FC<any> = ({
     pageSize_Set(5);
     currentPage_Set(1);
     hasMore_Set(true);
-
-    await execute(listTypeData, PageuserId).then(result => {
-      setLoading(false);
-    });
+    setLoading(true);
+    await execute(listTypeData, PageuserId);
 
     setLoading(false);
   }
