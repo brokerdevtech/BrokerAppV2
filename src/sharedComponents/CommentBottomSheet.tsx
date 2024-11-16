@@ -18,6 +18,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
 } from 'react-native';
 import {SetPostLikeUnLike} from '../../BrokerAppCore/services/new/dashboardService';
 import {HStack} from '../../components/ui/hstack';
@@ -72,7 +73,7 @@ const CommentBottomSheet = forwardRef(
     const navigation = useNavigation();
     const bottomSheetModalRef = useRef(null);
     const inputRef = useRef(null);
-    const snapPoints = useMemo(() => ['60%'], []);
+    // const snapPoints = useMemo(() => ['60%'], []);
     const [newComment, setNewComment] = useState('');
     const [replyCommentId, setreplyCommentId] = useState(0);
     const [postId, setpostId] = useState(postItem.postId);
@@ -84,6 +85,7 @@ const CommentBottomSheet = forwardRef(
     const [replyCommentIndex, setreplyCommentIndex] = useState(0);
     const [isDataRef, setisDataRef] = useState(false);
     const [newReplyName, setnewReplyName] = useState('');
+    const snapPoints = useMemo(() => ['50%'], []);
     const {
       data,
       status,
@@ -410,6 +412,7 @@ const CommentBottomSheet = forwardRef(
     };
     const handleSendPress = () => {
       handleAddComment();
+      // Keyboard.dismiss();
     };
     const renderFooter = () => (
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : ''}>
@@ -419,7 +422,7 @@ const CommentBottomSheet = forwardRef(
               justifyContent: 'center',
               marginBottom: Platform.OS == 'ios' ? 30 : 0,
             }}>
-            <TextInput
+            <BottomSheetTextInput
               style={{flex: 1}}
               ref={inputRef}
               placeholder="Add a comment..."
@@ -427,9 +430,9 @@ const CommentBottomSheet = forwardRef(
               onChangeText={text => {
                 console.log(text), setNewComment(text);
               }}
-              returnKeyType="go"
-              returnKeyLabel="post"
-              onSubmitEditing={handleAddComment}
+              // returnKeyType="go"
+              // returnKeyLabel="post"
+              // onSubmitEditing={handleAddComment}
               multiline={true}
               scrollEnabled={true}
             />
@@ -530,6 +533,7 @@ const CommentBottomSheet = forwardRef(
     return (
       <BottomSheetModal
         ref={bottomSheetModalRef}
+        // snapPoints={snapPoints}
         index={0}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}

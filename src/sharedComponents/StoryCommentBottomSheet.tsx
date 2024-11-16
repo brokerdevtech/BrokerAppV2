@@ -77,7 +77,7 @@ const StoryCommentBottomSheet = forwardRef(
   ) => {
     const navigation = useNavigation();
     const bottomSheetModalRef = useRef(null);
-    const snapPoints = useMemo(() => ['60%'], []);
+    const snapPoints = useMemo(() => ['50%'], []);
     const [newComment, setNewComment] = useState('');
     const [replyCommentId, setreplyCommentId] = useState(0);
     const [StoryState, setStoryState] = useState(StoryStateParam);
@@ -393,7 +393,7 @@ module="Post"
               justifyContent: 'center',
               marginBottom: Platform.OS == 'ios' ? 30 : 0,
             }}>
-            <TextInput
+            <BottomSheetTextInput
               style={{flex: 1}}
               placeholder="Add a comment..."
               defaultValue={newComment}
