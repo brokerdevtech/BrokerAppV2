@@ -1,10 +1,11 @@
 import React, {useEffect} from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   StyleSheet,
   TouchableOpacity,
-  View,
+  View,Text
 } from 'react-native';
 import {HStack} from '@/components/ui/hstack';
 import {VStack} from '@/components/ui/vstack';
@@ -132,6 +133,19 @@ const RecentSearchSection = (props: BrandSectionProps) => {
             showsHorizontalScrollIndicator={false}
             horizontal
             onEndReachedThreshold={0.8}
+            ListEmptyComponent={() =>
+              data === undefined ? (
+                <ActivityIndicator
+                  size="large"
+                  color="#0000ff"
+                  style={styles.loader}
+                />
+              ) : (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>No data found </Text>
+                </View>
+              )
+            }
             // ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
         </HStack>
@@ -141,6 +155,22 @@ const RecentSearchSection = (props: BrandSectionProps) => {
   );
 };
 const styles = StyleSheet.create({
+
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+    width: '100%',
+
+    display: 'flex',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#555', // Use a subtle color to match your design
+    textAlign: 'center',
+  },
   footerContainer: {
     backgroundColor: '#FFF',
   },

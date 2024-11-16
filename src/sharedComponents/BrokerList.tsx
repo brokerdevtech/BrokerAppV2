@@ -85,7 +85,7 @@ const BrokerList: React.FC = ({
 
     setSearch(text);
 
-    await getList();
+    await getList(text);
   };
 
   const onHighlightInput = () => {
@@ -96,12 +96,12 @@ const BrokerList: React.FC = ({
     setSearchInputStyle(BlurredStyle);
     setSearchIconStyle(BlurredIconStyle);
   };
-  const getList = async () => {
+  const getList = async (text) => {
     try {
       currentPage_Set(1);
       hasMore_Set(true);
 
-      await execute(user.userId, searchText);
+      await execute(user.userId, text);
 
       pageTitle(`Brokers`);
     } catch (error) {}

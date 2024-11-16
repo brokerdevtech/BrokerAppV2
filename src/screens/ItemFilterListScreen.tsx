@@ -117,8 +117,10 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation,OnGoBack})
   const MediaGalleryRef = useRef(null);
   const [isrefresh, setisrefresh] = useState(0);
   const ProductItemOnGoBack =(item)=>{
-    console.log("ProductItemOnGoBack");
-    setisrefresh(isrefresh+1)
+
+    if(item.Action!="Delete")
+      {   
+      setisrefresh(isrefresh+1)}
     OnGoBack(item);
   }
   const openWhatsApp = useCallback((phoneNumber, message) => {
@@ -551,6 +553,7 @@ const ItemFilterListScreen: React.FC<any> = ({
     // pageSize_Set(5);
     // currentPage_Set(1);
     // hasMore_Set(true);
+    setLoading(true);
     set_FilterChipsData(APiobj);
     //     console.log("=APiobj");
 
@@ -567,7 +570,7 @@ const ItemFilterListScreen: React.FC<any> = ({
     //   isSearch:false
     // });
 
-    execute(listTypeData, APiobj);
+  await  execute(listTypeData, APiobj);
     setLoading(false);
   }
   const flatListRef = useRef(null);

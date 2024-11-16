@@ -3,6 +3,7 @@ import { View, StyleSheet, Dimensions } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 const { width, height } = Dimensions.get('window');
 const LocationMap = ({ locationData }) => {
+
   const mapRef = useRef(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
@@ -58,7 +59,7 @@ const LocationMap = ({ locationData }) => {
             longitude: locationData.geoLocationLongitude,
           }}
           title={locationData.placeName}
-          description={`${locationData.City}, ${locationData.State}, ${locationData.Country}`}
+          description={`${locationData?.cityName}, ${locationData?.stateName}, ${locationData?.countryName}`}
         />
       </MapView>
       </View>

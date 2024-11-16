@@ -33,6 +33,8 @@ import {
 } from '../../../components/ui/alert-dialog';
 import {Button} from '../../../components/ui/button';
 import {Color} from '../../styles/GlobalStyles';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../BrokerAppCore/redux/store/reducers';
 
 interface BrandSectionProps {
   heading: string;
@@ -45,6 +47,8 @@ interface BrandSectionProps {
 
 const BrandSection = (props: BrandSectionProps) => {
   const {data, status, error, execute} = useApiRequest(fetchDashboardData);
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
+  const user = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
   const [showAlertDialog, setShowAlertDialog] = React.useState(false);
   const handleClose = () => setShowAlertDialog(false);
@@ -68,18 +72,107 @@ const BrandSection = (props: BrandSectionProps) => {
       // setBrandData()
     }
   }, [status]);
+  const convertTagsToNewFormat = tags => {
+    // console.log('tags');
+    // console.log(tags);
+    return tags.reduce((acc, tag) => {
+      const transformedValues = tag.values.map(item => ({
+        key: item.key, // Assign the new key value
+
+        value: item.value, // Set the new value
+      }));
+      acc[tag.name] = transformedValues;
+      return acc;
+    }, {});
+  };
   // console.log(status);
   const renderProductItems = ({item, index}) => {
-     console.log('item =====>', item);
+    //  console.log('item =====>', item);
     const handlePress = () => {
       if (props.isGuest) {
         setShowAlertDialog(true); // Show alert dialog if user is a guest
       } else {
-        navigation.navigate('ItemListScreen', {
-          listType:item.categoryId==2 ? 'Car' : 'RealEstate',
-          categoryId: item.categoryId,
-          brandfilters:item.filters
-        });
+
+        let obj: any = {
+          keyWord: '',
+          cityName: AppLocation.City,
+          userId: user.userId,
+          placeID: AppLocation.placeID,
+          placeName: AppLocation.placeName,
+          geoLocationLatitude: AppLocation.geoLocationLatitude,
+          geoLocationLongitude: AppLocation.geoLocationLongitude,
+          isSearch: false,
+        };
+
+        let BraandPopUPFilter = null;
+        if (item.filters) {
+          obj.filters = item.filters;
+    
+          BraandPopUPFilter = convertTagsToNewFormat(item.filters.tags);
+        }
+
+        console.log(obj);
+
+        const locationData = [
+          {
+            place: {
+              ...AppLocation,
+            },
+          },
+        ];
+
+        if (item.categoryId==2 ) {
+          // Uncomment if you need to set additional selected filters
+          let updatedPopUPFilter = {
+            Location: locationData,
+            Budget: {minValue: 20000, maxValue: 500000000, isDefault: true},
+          };
+          if (BraandPopUPFilter != null) {
+            updatedPopUPFilter = {...updatedPopUPFilter, ...BraandPopUPFilter};
+          }
+          console.log(updatedPopUPFilter);
+
+          navigation.navigate('ItemFilterListScreen', {
+            listType: 'Car',
+            categoryId: item.categoryId,
+            Filters: updatedPopUPFilter,
+            listApiobj: obj,
+            searchText: '',
+          });
+
+
+       //   setPopUPFilter(updatedPopUPFilter);
+        }
+    
+        if (item.categoryId==1) {
+          // Uncomment if you need to set additional selected filters
+          let updatedPopUPFilter = {
+            Location: locationData,
+            Budget: {minValue: 20000, maxValue: 500000000, isDefault: true},
+            Area: {minValue: 0, maxValue: 5000, isDefault: true},
+          };
+          if (BraandPopUPFilter != null) {
+            updatedPopUPFilter = {...updatedPopUPFilter, ...BraandPopUPFilter};
+          }
+          console.log(updatedPopUPFilter);
+
+
+          navigation.navigate('ItemFilterListScreen', {
+            listType: 'RealEstate',
+            categoryId: item.categoryId,
+            Filters: updatedPopUPFilter,
+            listApiobj: obj,
+            searchText: '',
+          });
+        // setPopUPFilter(updatedPopUPFilter);
+        }
+
+
+        // navigation.navigate('ItemListScreen', {
+        //   listType:item.categoryId==2 ? 'Car' : 'RealEstate',
+        //   categoryId: item.categoryId,
+        //   brandfilters:item.filters
+        // });
       }
     };
     return (
@@ -127,7 +220,7 @@ const BrandSection = (props: BrandSectionProps) => {
               Discover endless premium listing with BrokerApp
             </ZText>
             <ZText type="R16" style={{marginBottom: 20, textAlign: 'center'}}>
-              your trusted partner for properties, cars, and loans. Join us and
+              your trusted partner for properties and cars.Join us and
               turn your dreams into reality!
             </ZText>
           </AlertDialogBody>

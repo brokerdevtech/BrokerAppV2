@@ -61,6 +61,8 @@ import {deleteMyPost} from '../../BrokerAppCore/services/postService';
 import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 import {delay} from 'lodash';
 import AppBaseContainer from '../hoc/AppBaseContainer_old';
+import NoDataFoundScreen from '../sharedComponents/NoDataFoundScreen';
+import OopsScreen from '../sharedComponents/OopsScreen';
 
 const propertyDetails = (data: any, user: any, navigation: any) => {
   const onPressUser = (userId, userName, userImage) => {
@@ -400,7 +402,7 @@ const carDetails = (data: any, user: any, navigation: any) => {
   );
 };
 
-const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
+const ItemDetailScreen: React.FC<any> = ({route, navigation,  setLoading,isLoading}) => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
   const toast = useToast();
@@ -411,7 +413,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
   );
   const MediaGalleryRef = useRef(null);
 
-  const {data, status, error, execute} = useApiRequest(fetchPostByID);
+  const {data, status, error, execute} = useApiRequest(fetchPostByID,setLoading);
   const showToast = (TextMSG: any) => {
     if (!toast.isActive(toastId)) {
       const newId = Math.random();
@@ -447,7 +449,8 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
           onPress: async () => {
             try {
               if (data.postId) {
-                const result = await deleteMyPost(user.userId, data.postId);
+                console.log(data);
+                const result = await deleteMyPost(user.userId, data.postId,route.params.postType);
                 showToast(result.statusMessage);
                 handleUpdate('Delete');
                 //  navigation.goBack();
@@ -467,6 +470,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
     // console.log(route, route.params.postType, 'route');
 
     await execute(route.params.postType, route.params.postId);
+    
   };
   const chatProfilePress = useCallback(async () => {
     if (user.userId.toString() == data.userId.toString()) {
@@ -520,6 +524,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
     }
   }, []);
   useEffect(() => {
+  
     callItemDetail();
   }, []);
   const handleUpdate = async (Action: any = 'Back') => {
@@ -534,6 +539,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
   };
   return (
     <BottomSheetModalProvider>
+    
       <View style={styles.listContainer}>
         <ScrollView>
           <View style={styles.headerContainer}>
@@ -567,9 +573,13 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation}) => {
               )}
             </View>
           </View>
+          
           <View>
             <HStack space="md" reversed={false} style={{paddingHorizontal: 20}}>
-              {/* Start */}
+            {error!=null &&
+          <OopsScreen></OopsScreen>}   
+            {data==null && isLoading==false &&
+          <NoDataFoundScreen></NoDataFoundScreen>}
               {data !== null && (
                 <View style={styles.cardContainer}>
                   <MediaGallery

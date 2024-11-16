@@ -506,7 +506,8 @@ function App(): React.JSX.Element {
     );
     // Subscribe to network state changes
     const unsubscribe = NetInfo.addEventListener(state => {
-      setIsConnected(state.isConnected && state.isInternetReachable);
+      // setIsConnected(state.isConnected && state.isInternetReachable);
+      setIsConnected(state.isInternetReachable === true);
     });
 
     // Set splash visibility

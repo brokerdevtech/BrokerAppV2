@@ -99,9 +99,9 @@ const PostActions = ({
         let k = await GetPostInsights(listTypeData,item.postId);
         console.log(k)
         setisraisedPostBuyerHand(k.data?.raisedPostBuyerHand === 0 ? false : true)
-        SetPostLike(k.data.userLiked === 1)
-        SetPostlikesCount(k.data.likes);
-        setCardComment(k.data.comments);
+        SetPostLike(k.data?.userLiked === 1)
+        SetPostlikesCount(k.data?.likes);
+        setCardComment(k.data?.comments);
         // You can use the value of k here, e.g., set state with it
       }
     };

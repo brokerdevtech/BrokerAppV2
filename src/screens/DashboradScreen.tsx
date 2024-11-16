@@ -26,7 +26,7 @@ import TABInsurance from '../assets/svg/Tabicon/tab_insurance.svg';
 import TABLoan from '../assets/svg/Tabicon/tab_loan.svg';
 import TABTravel from '../assets/svg/Tabicon/tab_travel.svg';
 import TABWealth from '../assets/svg/Tabicon/tab_wealth.svg';
-
+import TABHome from '../assets/svg/Tabicon/tab_home.svg';
 import Footer from './Dashboard/Footer';
 import BrandSection from './Dashboard/BrandSection';
 import ProductSection from './Dashboard/ProductSection';
@@ -120,6 +120,27 @@ export default function DashboradScreen() {
             <Toast nativeID={uniqueToastId} action="muted" variant="solid">
               <ToastDescription>
                 {'You do not have permission.Contact dev@brokerapp.com.'}
+              </ToastDescription>
+            </Toast>
+          );
+        },
+      });
+    }
+  };
+  const showToastComingSoon= () => {
+    if (!toast.isActive(toastId)) {
+      const newId = Math.random();
+      setToastId(newId);
+      toast.show({
+        id: newId,
+        placement: 'top',
+        duration: 3000,
+        render: ({id}) => {
+          const uniqueToastId = 'toast-' + id;
+          return (
+            <Toast nativeID={uniqueToastId} action="muted" variant="solid">
+              <ToastDescription>
+                {'This category will be available soon'}
               </ToastDescription>
             </Toast>
           );
@@ -236,8 +257,8 @@ export default function DashboradScreen() {
                  
                 }}>
                 <View style={styles.tabItemContainer}>
-                  <TABTravel />
-                  <ZText type={'R16'} style={styles.tabItemTitle}>
+                  <TABHome />
+                  <ZText type={'S16'} style={styles.tabItemTitle}>
                     Property
                   </ZText>
                 </View>
@@ -257,7 +278,7 @@ export default function DashboradScreen() {
                 }}>
                 <View style={styles.tabItemContainer}>
                   <TABCard />
-                  <ZText type={'R16'} style={styles.tabItemTitle}>
+                  <ZText type={'S16'} style={styles.tabItemTitle}>
                     Car
                   </ZText>
                 </View>
@@ -266,42 +287,56 @@ export default function DashboradScreen() {
             <GridItem
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
+                 <TouchableOpacity
+                onPress={showToastComingSoon}>
               <View style={styles.tabItemContainer}>
                 <TABLoan />
-                <ZText type={'R16'} style={styles.tabItemTitle}>
+               
+                <ZText type={'S16'} style={styles.tabItemTitle}>
                   Loan
                 </ZText>
+                
               </View>
+              </TouchableOpacity>
             </GridItem>
             <GridItem
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
+                   <TouchableOpacity
+                onPress={showToastComingSoon}>
               <View style={styles.tabItemContainer}>
                 <TABInsurance />
-                <ZText type={'R16'} style={styles.tabItemTitle}>
+                <ZText type={'S16'} style={styles.tabItemTitle}>
                   Insurance
                 </ZText>
               </View>
+              </TouchableOpacity>
             </GridItem>
             <GridItem
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
+                   <TouchableOpacity
+                onPress={showToastComingSoon}>
               <View style={styles.tabItemContainer}>
                 <TABTravel />
-                <ZText type={'R16'} style={styles.tabItemTitle}>
+                <ZText type={'S16'} style={styles.tabItemTitle}>
                   Travel
                 </ZText>
-              </View>
+              </View></TouchableOpacity>
             </GridItem>
             <GridItem
               className="bg-background-0 p-4 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
+                       <TouchableOpacity
+                onPress={showToastComingSoon}>
               <View style={styles.tabItemContainer}>
                 <TABWealth />
-                <ZText type={'R16'} style={styles.tabItemTitle}>
+                <ZText type={'S16'} style={styles.tabItemTitle}>
                   Wealth
                 </ZText>
+              
               </View>
+              </TouchableOpacity>
             </GridItem>
           </Grid>
           <ProductSection
@@ -385,6 +420,14 @@ export default function DashboradScreen() {
 }
 
 const styles = StyleSheet.create({
+  badge: {
+    position: "absolute",
+     top: 5,
+     right: 5,
+     backgroundColor:"#ff0000",
+    borderRadius:12
+
+  },
   subHeaderSection: {
     paddingBottom: 20,
     backgroundColor: '#fff',
