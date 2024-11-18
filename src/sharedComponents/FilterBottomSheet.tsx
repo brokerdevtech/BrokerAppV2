@@ -70,6 +70,8 @@ import CarFilterScreen from './AppFilters/CarFilterScreen';
 
 const FilterBottomSheet = forwardRef(
   ({User, listTypeData, userPermissions, PopUPFilter, onClose}, ref) => {
+console.log(listTypeData);
+console.log(PopUPFilter);
     const navigation = useNavigation();
     const bottomSheetModalRef = useRef(null);
     const snapPoints = useMemo(() => ['90%'], []);

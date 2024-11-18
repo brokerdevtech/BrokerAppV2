@@ -70,6 +70,7 @@ import FilterBottomSheet from '../sharedComponents/FilterBottomSheet';
 import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
 import {concat, filter} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
+import { formatNumberToIndianSystem } from '../utils/helpers';
 const SkeletonPlaceholder = () => {
   return (
     <HStack space={10} style={styles.skeletonContainer}>
@@ -155,7 +156,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation,OnGoBack})
         if (supported) {
           Linking.openURL(url);
         } else {
-          Alert.alert('Error', 'Your device does not support phone calls');
+          Alert.alert('Oops! ', 'No contact info available for this post. Try reaching out through other channels!');
         }
       })
       .catch(err => console.error('Error opening dialer', err));
@@ -214,7 +215,7 @@ const ProductItem = React.memo(({item, listTypeData, User, navigation,OnGoBack})
               </Box>
               <Box>
                 <ZText type={'M16'} style={{color: colors.light.appred}}>
-                  {item.price}
+                {formatNumberToIndianSystem(item.price)}
                 </ZText>
               </Box>
             </HStack>
@@ -316,6 +317,7 @@ const ItemFilterListScreen: React.FC<any> = ({
   isLoading,
   listType,
 }) => {
+  
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);

@@ -175,7 +175,7 @@ const CustomDrawerContent = props => {
           </ZText>
         </TouchableOpacity>
         <CustomDrawerItem
-          label="Followers"
+          label={`Followers (${dashboard?.followers})`}
           onPress={() => {
             if (FollowerpermissionGranted) {
               viewFollower('Followers');
@@ -187,7 +187,8 @@ const CustomDrawerContent = props => {
           rightIcon={ChevronRightIcon}
         />
         <CustomDrawerItem
-          label="Following"
+        label={`Following (${dashboard?.followings})`}
+        
           onPress={() => {
             if (FollowingpermissionGranted) {
               viewFollower('Following');

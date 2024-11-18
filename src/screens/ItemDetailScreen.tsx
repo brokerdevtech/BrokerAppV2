@@ -517,7 +517,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation,  setLoading,isLoadi
           if (supported) {
             Linking.openURL(url);
           } else {
-            Alert.alert('Error', 'Your device does not support phone calls');
+            Alert.alert('Oops! ', 'No contact info available for this post. Try reaching out through other channels!');
           }
         })
         .catch(err => console.error('Error opening dialer', err));

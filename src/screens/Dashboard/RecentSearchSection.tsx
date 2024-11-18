@@ -83,7 +83,7 @@ const RecentSearchSection = (props: BrandSectionProps) => {
       let listTypeData = 'RealEstate';
 
       if (item.categoryId === 2) {
-        listTypeData = 'car';
+        listTypeData = 'Car';
       }
 
       navigation.navigate('ItemFilterListScreen', {
