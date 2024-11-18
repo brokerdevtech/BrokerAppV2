@@ -12,7 +12,8 @@
 		091C00372CA28E1500230001 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 091C00362CA28E1500230001 /* GoogleService-Info.plist */; };
 		0922763C2CB2BDC4004A4E74 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0922763B2CB2BDC3004A4E74 /* Assets.xcassets */; };
 		09A91A2A2CC378B500429EF8 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09A91A292CC378B500429EF8 /* Launch Screen.storyboard */; };
-		09DB82512CD245120027FD67 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 09DB82502CD245120027FD67 /* main.jsbundle */; };
+		09AE397C2CE71C22003E86A0 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 09AE397B2CE71C17003E86A0 /* main.jsbundle */; };
+		09AE3A4C2CE79ED2003E86A0 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 09AE3A4B2CE79ED2003E86A0 /* assets */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -60,7 +61,8 @@
 		0922763B2CB2BDC3004A4E74 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0922763D2CBA892F004A4E74 /* BrokerApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BrokerApp.entitlements; path = BrokerApp/BrokerApp.entitlements; sourceTree = "<group>"; };
 		09A91A292CC378B500429EF8 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
-		09DB82502CD245120027FD67 /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
+		09AE397B2CE71C17003E86A0 /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
+		09AE3A4B2CE79ED2003E86A0 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
 		0A0FE20E8EA9F09F74412CED /* Pods-BrokerApp-BrokerAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BrokerApp-BrokerAppTests.debug.xcconfig"; path = "Target Support Files/Pods-BrokerApp-BrokerAppTests/Pods-BrokerApp-BrokerAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		0A1315034E5546BD99E22C53 /* Gilroy ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy ExtraBoldItalic.ttf"; path = "../assets/font/Gilroy ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		0E707A858D706A6E096E4509 /* Pods-BrokerApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BrokerApp.debug.xcconfig"; path = "Target Support Files/Pods-BrokerApp/Pods-BrokerApp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 		13B07FAE1A68108700A75B9A /* BrokerApp */ = {
 			isa = PBXGroup;
 			children = (
+				09AE397B2CE71C17003E86A0 /* main.jsbundle */,
 				0922763D2CBA892F004A4E74 /* BrokerApp.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -145,7 +148,6 @@
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				E693FE0A6F9D45406D8A1325 /* PrivacyInfo.xcprivacy */,
 				09A91A292CC378B500429EF8 /* Launch Screen.storyboard */,
-				09DB82502CD245120027FD67 /* main.jsbundle */,
 			);
 			name = BrokerApp;
 			sourceTree = "<group>";
@@ -170,6 +172,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				09AE3A4B2CE79ED2003E86A0 /* assets */,
 				0922763B2CB2BDC3004A4E74 /* Assets.xcassets */,
 				091C00362CA28E1500230001 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* BrokerApp */,
@@ -326,6 +329,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				09AE3A4C2CE79ED2003E86A0 /* assets in Resources */,
 				091C00372CA28E1500230001 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				52533493C986C664D152FD10 /* PrivacyInfo.xcprivacy in Resources */,
@@ -337,7 +341,7 @@
 				386A0AF05DCE412C9DC5A465 /* Gilroy ExtraBold.ttf in Resources */,
 				60577A986F434CBBB003BE65 /* Gilroy ExtraBoldItalic.ttf in Resources */,
 				D9470C4DEF8149B9871CD846 /* Gilroy Heavy.ttf in Resources */,
-				09DB82512CD245120027FD67 /* main.jsbundle in Resources */,
+				09AE397C2CE71C22003E86A0 /* main.jsbundle in Resources */,
 				527B804EC2854B2BBA95EAE5 /* Gilroy HeavyItalic.ttf in Resources */,
 				48BCEE04B8364C118ADAD98D /* Gilroy Light.ttf in Resources */,
 				6A2332E485614FF8A23D0A90 /* Gilroy LightItalic.ttf in Resources */,

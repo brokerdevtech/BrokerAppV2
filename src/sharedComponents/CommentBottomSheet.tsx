@@ -16,6 +16,9 @@ import {
   TextInput,
   FlatList,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
 } from 'react-native';
 import {SetPostLikeUnLike} from '../../BrokerAppCore/services/new/dashboardService';
 import {HStack} from '../../components/ui/hstack';
@@ -69,7 +72,8 @@ const CommentBottomSheet = forwardRef(
   ({postItem, User, listTypeData, userPermissions, onClose}, ref) => {
     const navigation = useNavigation();
     const bottomSheetModalRef = useRef(null);
-    const snapPoints = useMemo(() => ['60%'], []);
+    const inputRef = useRef(null);
+    // const snapPoints = useMemo(() => ['60%'], []);
     const [newComment, setNewComment] = useState('');
     const [replyCommentId, setreplyCommentId] = useState(0);
     const [postId, setpostId] = useState(postItem.postId);
@@ -81,6 +85,7 @@ const CommentBottomSheet = forwardRef(
     const [replyCommentIndex, setreplyCommentIndex] = useState(0);
     const [isDataRef, setisDataRef] = useState(false);
     const [newReplyName, setnewReplyName] = useState('');
+    const snapPoints = useMemo(() => ['50%'], []);
     const {
       data,
       status,
@@ -130,7 +135,6 @@ const CommentBottomSheet = forwardRef(
     }
     const loadMorepage = async () => {
       if (!isInfiniteLoading) {
-
         let endpoint = '';
 
         if (listTypeData == 'RealEstate') {
@@ -185,7 +189,6 @@ const CommentBottomSheet = forwardRef(
 
     const handleSheetChanges = useCallback(
       index => {
-
         setIsOpen(index >= 0);
         if (index - 1) {
           onClose(recordCount);
@@ -409,38 +412,50 @@ const CommentBottomSheet = forwardRef(
     };
     const handleSendPress = () => {
       handleAddComment();
+      // Keyboard.dismiss();
     };
     const renderFooter = () => (
-      <View style={styles.footerContainer}>
-        <HStack style={{justifyContent: 'center'}}>
-          <TextInput
-            style={{flex: 1}}
-            placeholder="Add a comment..."
-            value={newComment}
-            onChangeText={text => setNewComment(text)}
-            returnKeyType="go"
-            returnKeyLabel="post"
-            onSubmitEditing={handleAddComment}
-            multiline={true}
-          />
-          <Box style={{justifyContent: 'center'}}>
-            <TouchableOpacityWithPermissionCheck
-              permissionsArray={userPermissions}
-              permissionEnum={PermissionKey.AllowCommentOnPost}
-              tagNames={[View, Send]}
-              onPress={handleSendPress}
-              type="comment"
-              disabled={isInfiniteLoading}>
-              <View>
-                <Send />
-              </View>
-            </TouchableOpacityWithPermissionCheck>
-            {/* <Button size="lg" style={{ backgroundColor: 'red' }} onPress={handleSendPress}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : ''}>
+        <View style={styles.footerContainer}>
+          <HStack
+            style={{
+              justifyContent: 'center',
+              marginBottom: Platform.OS == 'ios' ? 30 : 0,
+            }}>
+            <BottomSheetTextInput
+              style={{flex: 1}}
+              ref={inputRef}
+              placeholder="Add a comment..."
+              defaultValue={newComment}
+              onChangeText={text => {
+                console.log(text), setNewComment(text);
+              }}
+              // returnKeyType="go"
+              // returnKeyLabel="post"
+              // onSubmitEditing={handleAddComment}
+              multiline={true}
+              scrollEnabled={true}
+            />
+
+            <Box style={{justifyContent: 'center'}}>
+              <TouchableOpacityWithPermissionCheck
+                permissionsArray={userPermissions}
+                permissionEnum={PermissionKey.AllowCommentOnPost}
+                tagNames={[View, Send]}
+                onPress={handleSendPress}
+                type="comment"
+                disabled={isInfiniteLoading}>
+                <View>
+                  <Send />
+                </View>
+              </TouchableOpacityWithPermissionCheck>
+              {/* <Button size="lg" style={{ backgroundColor: 'red' }} onPress={handleSendPress}>
                 <ButtonIcon as={ArrowUpIcon} color="white" stroke="white" />
               </Button> */}
-          </Box>
-        </HStack>
-      </View>
+            </Box>
+          </HStack>
+        </View>
+      </KeyboardAvoidingView>
     );
 
     const handleAddComment = async () => {
@@ -518,6 +533,7 @@ const CommentBottomSheet = forwardRef(
     return (
       <BottomSheetModal
         ref={bottomSheetModalRef}
+        // snapPoints={snapPoints}
         index={0}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}

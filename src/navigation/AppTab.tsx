@@ -76,6 +76,7 @@ const AppTab: React.FC = () => {
   const navigation = useNavigation();
   const userP = useSelector((state: RootState) => state.user.user);
   const toast = useToast();
+  console.log(require('../assets/images/ComingSoon.png'));
   const [toastId, setToastId] = React.useState(0);
   const userPermissions = useSelector(
     (state: RootState) => state.user.user?.userPermissions,

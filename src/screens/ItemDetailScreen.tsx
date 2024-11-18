@@ -402,7 +402,12 @@ const carDetails = (data: any, user: any, navigation: any) => {
   );
 };
 
-const ItemDetailScreen: React.FC<any> = ({route, navigation,  setLoading,isLoading}) => {
+const ItemDetailScreen: React.FC<any> = ({
+  route,
+  navigation,
+  setLoading,
+  isLoading,
+}) => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
   const toast = useToast();
@@ -413,7 +418,10 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation,  setLoading,isLoadi
   );
   const MediaGalleryRef = useRef(null);
 
-  const {data, status, error, execute} = useApiRequest(fetchPostByID,setLoading);
+  const {data, status, error, execute} = useApiRequest(
+    fetchPostByID,
+    setLoading,
+  );
   const showToast = (TextMSG: any) => {
     if (!toast.isActive(toastId)) {
       const newId = Math.random();
@@ -450,7 +458,11 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation,  setLoading,isLoadi
             try {
               if (data.postId) {
                 console.log(data);
-                const result = await deleteMyPost(user.userId, data.postId,route.params.postType);
+                const result = await deleteMyPost(
+                  user.userId,
+                  data.postId,
+                  route.params.postType,
+                );
                 showToast(result.statusMessage);
                 handleUpdate('Delete');
                 //  navigation.goBack();
@@ -470,7 +482,6 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation,  setLoading,isLoadi
     // console.log(route, route.params.postType, 'route');
 
     await execute(route.params.postType, route.params.postId);
-    
   };
   const chatProfilePress = useCallback(async () => {
     if (user.userId.toString() == data.userId.toString()) {
@@ -524,7 +535,6 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation,  setLoading,isLoadi
     }
   }, []);
   useEffect(() => {
-  
     callItemDetail();
   }, []);
   const handleUpdate = async (Action: any = 'Back') => {
@@ -537,15 +547,16 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation,  setLoading,isLoadi
     }
     navigation.goBack(); // Go back to FirstScreen
   };
+  console.log(data?.postMedia, 'j');
   return (
     <BottomSheetModalProvider>
-    
       <View style={styles.listContainer}>
         <ScrollView>
           <View style={styles.headerContainer}>
             <View style={styles.header}>
               <View style={styles.IconButton}>
-                <View
+                <TouchableOpacity
+                  onPress={handleUpdate}
                   style={{
                     // ...styles.appTitleMain,
                     // color: '#007acc',
@@ -555,7 +566,7 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation,  setLoading,isLoadi
                     borderRadius: 40,
                   }}>
                   <ArrowLeftIcon onPress={handleUpdate} />
-                </View>
+                </TouchableOpacity>
                 <ZText type={'R18'}>{data?.title}</ZText>
               </View>
               {user.userId == data?.userId && (
@@ -573,13 +584,13 @@ const ItemDetailScreen: React.FC<any> = ({route, navigation,  setLoading,isLoadi
               )}
             </View>
           </View>
-          
+
           <View>
             <HStack space="md" reversed={false} style={{paddingHorizontal: 20}}>
-            {error!=null &&
-          <OopsScreen></OopsScreen>}   
-            {data==null && isLoading==false &&
-          <NoDataFoundScreen></NoDataFoundScreen>}
+              {error != null && <OopsScreen></OopsScreen>}
+              {data == null && isLoading == false && (
+                <NoDataFoundScreen></NoDataFoundScreen>
+              )}
               {data !== null && (
                 <View style={styles.cardContainer}>
                   <MediaGallery

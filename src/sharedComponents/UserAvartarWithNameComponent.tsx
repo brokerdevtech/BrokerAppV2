@@ -91,10 +91,11 @@ function UserAvartarWithNameComponent({
         <MenuItem
           key="Add account"
           textValue="Add account"
+          style={{justifyContent: 'center', alignItem: 'center'}}
           onPress={handleRemovePress}>
           <TextWithPermissionCheck
             permissionsArray={userPermissions}
-            style={{padding: 10}}
+            style={{padding: 5}}
             type="r14"
             permissionEnum={PermissionKey.AllowDeleteConnection}
             onPress={handleRemovePress}>
