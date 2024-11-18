@@ -33,8 +33,8 @@ import {
 } from '../../../components/ui/alert-dialog';
 import {Button} from '../../../components/ui/button';
 import {Color} from '../../styles/GlobalStyles';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../BrokerAppCore/redux/store/reducers';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
 
 interface BrandSectionProps {
   heading: string;
@@ -92,7 +92,6 @@ const BrandSection = (props: BrandSectionProps) => {
       if (props.isGuest) {
         setShowAlertDialog(true); // Show alert dialog if user is a guest
       } else {
-
         let obj: any = {
           keyWord: '',
           cityName: AppLocation.City,
@@ -107,7 +106,7 @@ const BrandSection = (props: BrandSectionProps) => {
         let BraandPopUPFilter = null;
         if (item.filters) {
           obj.filters = item.filters;
-    
+
           BraandPopUPFilter = convertTagsToNewFormat(item.filters.tags);
         }
 
@@ -121,7 +120,7 @@ const BrandSection = (props: BrandSectionProps) => {
           },
         ];
 
-        if (item.categoryId==2 ) {
+        if (item.categoryId == 2) {
           // Uncomment if you need to set additional selected filters
           let updatedPopUPFilter = {
             Location: locationData,
@@ -140,11 +139,10 @@ const BrandSection = (props: BrandSectionProps) => {
             searchText: '',
           });
 
-
-       //   setPopUPFilter(updatedPopUPFilter);
+          //   setPopUPFilter(updatedPopUPFilter);
         }
-    
-        if (item.categoryId==1) {
+
+        if (item.categoryId == 1) {
           // Uncomment if you need to set additional selected filters
           let updatedPopUPFilter = {
             Location: locationData,
@@ -156,7 +154,6 @@ const BrandSection = (props: BrandSectionProps) => {
           }
           console.log(updatedPopUPFilter);
 
-
           navigation.navigate('ItemFilterListScreen', {
             listType: 'RealEstate',
             categoryId: item.categoryId,
@@ -164,9 +161,8 @@ const BrandSection = (props: BrandSectionProps) => {
             listApiobj: obj,
             searchText: '',
           });
-        // setPopUPFilter(updatedPopUPFilter);
+          // setPopUPFilter(updatedPopUPFilter);
         }
-
 
         // navigation.navigate('ItemListScreen', {
         //   listType:item.categoryId==2 ? 'Car' : 'RealEstate',
@@ -175,15 +171,52 @@ const BrandSection = (props: BrandSectionProps) => {
         // });
       }
     };
+    let mediaContent = null;
+
+    if (item.postMedias && item.postMedias.length > 0) {
+      const media = item.postMedias[0]; // Assuming the first media is the main one
+
+      if (media.mediaBlobId) {
+        // Check if the file is a video (.mp4)
+        if (media.mediaBlobId.endsWith('.mp4')) {
+          mediaContent = (
+            <Image
+              source={require('../../assets/images/default-placeholder-image.png')}
+              style={styles.carImage}
+            />
+          );
+        } else {
+          mediaContent = (
+            <Image
+              source={{
+                uri: `${imagesBucketcloudfrontPath}${media.mediaBlobId}`,
+              }}
+              style={styles.carImage}
+            />
+          );
+        }
+      }
+    }
+
+    // Fallback for when there is no media
+    if (!mediaContent) {
+      mediaContent = (
+        <Image
+          source={require('../../assets/images/default-placeholder-image.png')}
+          style={styles.carImage}
+        />
+      );
+    }
     return (
       <View style={styles.cardContainer}>
         <TouchableOpacity onPress={handlePress}>
-          <Image
+          {/* <Image
             source={{
               uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
             }}
             style={styles.carImage}
-          />
+          /> */}
+          {mediaContent}
           <View style={styles.detailsContainer}>
             <ZText type={'R14'} numberOfLines={1} style={styles.carBrand}>
               {item.searchText}
@@ -220,8 +253,8 @@ const BrandSection = (props: BrandSectionProps) => {
               Discover endless premium listing with BrokerApp
             </ZText>
             <ZText type="R16" style={{marginBottom: 20, textAlign: 'center'}}>
-              your trusted partner for properties and cars.Join us and
-              turn your dreams into reality!
+              your trusted partner for properties and cars.Join us and turn your
+              dreams into reality!
             </ZText>
           </AlertDialogBody>
           <AlertDialogFooter

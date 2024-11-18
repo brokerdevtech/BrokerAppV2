@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Modal,
+  ScrollView,
 } from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -108,95 +109,101 @@ const ForgotPasswordScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     await execute(values.email, values.phone);
   };
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Forgot Password</Text>
-      <Text style={styles.subHeader}>
-        Please enter your credentials to access your account and details
-      </Text>
+    <View style={{flex: 1}}>
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{flexGrow: 1}}>
+        <View style={styles.container}>
+          <Text style={styles.header}>Forgot Password</Text>
+          <Text style={styles.subHeader}>
+            Please enter your credentials to access your account and details
+          </Text>
 
-      <Formik
-        initialValues={{
-          email: '',
-          phone: '',
-        }}
-        validationSchema={validationSchema}
-        onSubmit={values => {
-          handleSubmit(values);
-        }}>
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          isValid,
-        }) => (
-          <View>
-            {/* Email Input */}
-            <Text style={styles.label}>Email</Text>
-            <Input style={styles.input}>
-              <InputField
-                type="text"
-                placeholder="Enter your email"
-                value={values.email}
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-              />
-            </Input>
-            {errors.email && touched.email && (
-              <Box>
-                <ZText type="R12" style={styles.errorText}>
-                  {errors.email}
-                </ZText>
-              </Box>
+          <Formik
+            initialValues={{
+              email: '',
+              phone: '',
+            }}
+            validationSchema={validationSchema}
+            onSubmit={values => {
+              handleSubmit(values);
+            }}>
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              errors,
+              touched,
+              isValid,
+            }) => (
+              <View>
+                {/* Email Input */}
+                <Text style={styles.label}>Email</Text>
+                <Input style={styles.input}>
+                  <InputField
+                    type="text"
+                    placeholder="Enter your email"
+                    value={values.email}
+                    onChangeText={handleChange('email')}
+                    onBlur={handleBlur('email')}
+                  />
+                </Input>
+                {errors.email && touched.email && (
+                  <Box>
+                    <ZText type="R12" style={styles.errorText}>
+                      {errors.email}
+                    </ZText>
+                  </Box>
+                )}
+
+                {/* Phone Input */}
+                <Text style={styles.label}>Mobile</Text>
+                <Input style={styles.input}>
+                  <InputField
+                    placeholder="Enter your phone number"
+                    onChangeText={handleChange('phone')}
+                    onBlur={handleBlur('phone')}
+                    value={values.phone}
+                    keyboardType="phone-pad"
+                  />
+                </Input>
+                {errors.phone && touched.phone && (
+                  <Text style={styles.errorText}>{errors.phone}</Text>
+                )}
+
+                {/* Submit Button */}
+                <TouchableOpacity
+                  style={[
+                    styles.signInButton,
+                    !isValid ? styles.disabledButton : null,
+                  ]}
+                  disabled={!isValid}
+                  onPress={handleSubmit}>
+                  <Text style={styles.signInText}>Submit</Text>
+                </TouchableOpacity>
+              </View>
             )}
+          </Formik>
 
-            {/* Phone Input */}
-            <Text style={styles.label}>Mobile</Text>
-            <Input style={styles.input}>
-              <InputField
-                placeholder="Enter your phone number"
-                onChangeText={handleChange('phone')}
-                onBlur={handleBlur('phone')}
-                value={values.phone}
-                keyboardType="phone-pad"
-              />
-            </Input>
-            {errors.phone && touched.phone && (
-              <Text style={styles.errorText}>{errors.phone}</Text>
-            )}
+          <Text style={styles.footerText}>
+            Already have an account?{' '}
+            <Text
+              style={styles.signUpText}
+              onPress={() => navigation.navigate('Login')}>
+              Sign In
+            </Text>
+          </Text>
 
-            {/* Submit Button */}
-            <TouchableOpacity
-              style={[
-                styles.signInButton,
-                !isValid ? styles.disabledButton : null,
-              ]}
-              disabled={!isValid}
-              onPress={handleSubmit}>
-              <Text style={styles.signInText}>Submit</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </Formik>
-
-      <Text style={styles.footerText}>
-        Already have an account?{' '}
-        <Text
-          style={styles.signUpText}
-          onPress={() => navigation.navigate('Login')}>
-          Sign In
-        </Text>
-      </Text>
-
-      {loading && (
-        <Modal transparent={true} animationType="fade">
-          <View style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color={Color.primary} />
-          </View>
-        </Modal>
-      )}
+          {loading && (
+            <Modal transparent={true} animationType="fade">
+              <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color={Color.primary} />
+              </View>
+            </Modal>
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 };
