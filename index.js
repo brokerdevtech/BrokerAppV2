@@ -24,6 +24,7 @@ messaging().getInitialNotification(async remoteMessage => {});
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log(remoteMessage);
+
   if (Object.keys(remoteMessage.data).length === 0) {
     const channelId = await notifee.createChannel({
       id: 'app-messages',
@@ -31,7 +32,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
     });
 
     const data = {};
-
+    console.log("setBackgroundMessageHandler");
     await notifee.displayNotification({
       android: {
         channelId,
@@ -55,7 +56,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 
     await chatClient._setToken(user, token);
     const message = await chatClient.getMessage(messageId);
-
+    console.log("setBackgroundMessageHandler");
     const channelId = await notifee.createChannel({
       id: 'chat-messages',
       name: 'Chat Messages',
@@ -67,6 +68,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
         ...rest,
         ...(stream ?? {}), // extract and merge stream object if present
       };
+      console.log("setBackgroundMessageHandler");
       await notifee.displayNotification({
         android: {
           channelId,
@@ -76,7 +78,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
         },
 
         body: message.message.text,
-        data: payload,
+        data: data,
         title: 'New message from ' + message.message.user.name,
 
         sound: 'default',

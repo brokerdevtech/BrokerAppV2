@@ -200,7 +200,7 @@ const CarFilterScreen: React.FC = ({
 
           // console.log("PopUPFilter");
           // console.log(PopUPFilter);
-
+console.log(filtersWithoutPostedSince);
           if (PopUPFilter) {
             // Fetch filters based on Developer and localities.City
             setfilterlocalities(PopUPFilter.Location);
@@ -672,6 +672,22 @@ const CarFilterScreen: React.FC = ({
           />
         );
       }
+
+      if (selectedItem.name == 'PostedSince') {
+        let items = selectedFilters[selectedItem.name]
+          ? selectedFilters[selectedItem.name][0]
+          : null;
+
+        ComponentToRender = (
+          <SelectableFlatList
+            data={selectedItem.records}
+            numColumn="2"
+            onSelectItem={SelectItem}
+            preselectedItem={items}
+          />
+        );
+      }
+
       if (selectedItem.name == 'InsuranceStatus') {
         let items = selectedFilters[selectedItem.name]
           ? selectedFilters[selectedItem.name][0]

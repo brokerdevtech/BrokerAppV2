@@ -6,14 +6,24 @@ import HomeNavigation from './HomeNavigation';
 import AuthStackNavigation from './AuthStackNavigation';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
-
+import notifee, {EventType} from '@notifee/react-native';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 interface MainNavigationProps {
   loggedIn: boolean;
   setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const navigationContainerRef = React.createRef<NavigationContainerRef>();
-
+notifee.onBackgroundEvent(async ({detail, type}) => {
+  if (type === EventType.PRESS) {
+    if (Object.keys(detail.notification.data).length === 0) {
+      navigationContainerRef.current?.navigate('Notification');
+    } else {
+      const channelId = detail.notification?.data?.channel_id;
+      navigationContainerRef.current?.navigate('AppChat');
+    }
+    await Promise.resolve();
+  }
+});
 const linking = {
   prefixes: [
     'brokerapp://',

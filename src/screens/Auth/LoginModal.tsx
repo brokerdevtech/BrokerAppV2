@@ -24,6 +24,8 @@ import {storeTokens, storeUser} from '@/src/utils/utilTokens';
 import store from '@/BrokerAppCore/redux/store';
 import {setUser} from '@/BrokerAppCore/redux/store/user/userSlice';
 import {setTokens} from '@/BrokerAppCore/redux/store/authentication/authenticationSlice';
+import { clearTokensfcmToken, getfcmToken } from '../../utils/utilTokens';
+import { NewDeviceUpdate } from '../../../BrokerAppCore/services/authService';
 
 export default function LoginModal({
   showActionsheet,
@@ -37,12 +39,25 @@ export default function LoginModal({
 
   const {data, status, error, execute} = useApiRequest(login);
 
+
+  const updateDevice = async (userId: any) => {
+    //
+    console.log('updateDevice')
+    console.log(userId)
+    await clearTokensfcmToken();
+    const fcmToken: any = await getfcmToken();
+    console.log('fcmToken===================')
+    console.log(fcmToken);
+    const updateDevice = await NewDeviceUpdate(userId, fcmToken.toString());
+  };
+
   const handleLogin = async () => {
     await execute(username, password);
  
   };
   const afterhandleLogin = async () => {
     if (data) {
+   await   updateDevice(data.data.userId);
       const storeUserresult = await storeUser(JSON.stringify(data.data));
       const storeTokensresult = await storeTokens(
         data.data.accessToken,

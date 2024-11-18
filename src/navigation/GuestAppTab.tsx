@@ -291,7 +291,7 @@ const GuestAppTab: React.FC = () => {
               onPress={onPressSignUp}
               style={{backgroundColor: Color.primary, marginLeft: 10}}>
               <ZText type="R16" style={{color: 'white', textAlign: 'center'}}>
-                Sign Up
+              Login
               </ZText>
             </Button>
           </AlertDialogFooter>

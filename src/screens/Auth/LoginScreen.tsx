@@ -20,7 +20,7 @@ import {
 } from '../../../components/ui/input';
 import {EyeIcon, EyeOffIcon, Icon} from '../../../components/ui/icon';
 import {AppleIcon, FBIcon, GoogleIcon} from '../../assets/svg';
-import {getfcmToken, storeTokens, storeUser} from '../../utils/utilTokens';
+import {clearTokensfcmToken, getfcmToken, storeTokens, storeUser} from '../../utils/utilTokens';
 import {setUser} from '../../../BrokerAppCore/redux/store/user/userSlice';
 import store from '../../../BrokerAppCore/redux/store';
 import {setTokens} from '../../../BrokerAppCore/redux/store/authentication/authenticationSlice';
@@ -38,6 +38,7 @@ import {
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
 import {handleApiError} from '../../../BrokerAppCore/services/new/ApiResponse';
+import { NewDeviceUpdate } from '../../../BrokerAppCore/services/authService';
 
 // Configure Google Sign-In
 // GoogleSignin.configure({
@@ -187,6 +188,16 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     setLoading(false);
    
   };
+  const updateDevice = async (userId: any) => {
+    //
+    console.log('updateDevice')
+    console.log(userId)
+    await clearTokensfcmToken();
+    const fcmToken: any = await getfcmToken();
+    console.log('fcmToken===================')
+    console.log(fcmToken);
+    const updateDevice = await NewDeviceUpdate(userId, fcmToken.toString());
+  };
   useEffect(() => {
     if (error) {
       if (!toast.isActive(toastId)) {
@@ -213,6 +224,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   const afterhandleLogin = async () => {
     setLoading(true);
     if (data) {
+    
       const storeUserresult = await storeUser(JSON.stringify(data.data));
       const storeTokensresult = await storeTokens(
         data.data.accessToken,
@@ -227,7 +239,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
           getStreamAccessToken: data.data.getStreamAccessToken,
         }),
       );
-
+      await   updateDevice(data.data.userId);
       setLoggedIn(true);
       setLoading(false);
       navigation.navigate('Home');
