@@ -31,16 +31,15 @@ const AppFastImage = ({uri}) => {
         justifyContent: 'center',
         alignItems: 'center',
       }}
-      onLayout={(event) => {
-        const {width,height} = event.nativeEvent.layout;
-        setContainerWidth(width)
-        setContainerheight(height)
-        setcontaineraspectRatio(width/height);
+      onLayout={event => {
+        const {width, height} = event.nativeEvent.layout;
+        setContainerWidth(width);
+        setContainerheight(height);
+        setcontaineraspectRatio(width / height);
 
-      //  setContainerWidth(width); 
+        //  setContainerWidth(width);
         // Set container width based on layout
-      }}
-      >
+      }}>
       {/* {isLoading && (
         <></>
         // <VStack
@@ -58,11 +57,15 @@ const AppFastImage = ({uri}) => {
       >
         <FastImage
           onLoadStart={() => setIsLoading(true)}
-          source={{uri}}
+          source={
+            uri
+              ? {uri}
+              : require('../assets/images/default-placeholder-image.png')
+          }
           onLoadEnd={() => setIsLoading(false)}
           style={styles.vertical}
-         resizeMode={FastImage.resizeMode.cover}
-        // style={styles.newImage}
+          resizeMode={FastImage.resizeMode.cover}
+          // style={styles.newImage}
         />
       </TouchableOpacity>
 
@@ -98,14 +101,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     display: 'flex',
     justifyContent: 'center',
- //   backgroundColor:'red'
+    //   backgroundColor:'red'
   },
-  newImage:{
+  newImage: {
     flex: 1,
     width: 380,
     height: 200,
-     resizeMode: 'cover',  
-    // aspectRatio: 1, 
+    resizeMode: 'cover',
+    // aspectRatio: 1,
   },
   fullscreenContainer: {
     flex: 1,

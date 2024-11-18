@@ -87,15 +87,56 @@ const ProductSection = (props: ProductSectionProps) => {
         });
       }
     };
-    return (
-      <View style={styles.cardContainer}>
+    let mediaContent = null;
+
+    if (item.postMedias && item.postMedias.length > 0) {
+      const media = item.postMedias[0]; // Assuming the first media is the main one
+
+      if (media.mediaBlobId) {
+        // Check if the file is a video (.mp4)
+        if (media.mediaBlobId.endsWith('.mp4')) {
+          mediaContent = (
+            <Image
+              source={require('../../assets/images/default-placeholder-image.png')}
+              style={styles.carImage}
+            />
+          );
+        } else {
+          mediaContent = (
+            <Image
+              source={{
+                uri: `${imagesBucketcloudfrontPath}${media.mediaBlobId}`,
+              }}
+              style={styles.carImage}
+            />
+          );
+        }
+      }
+    }
+
+    // Fallback for when there is no media
+    if (!mediaContent) {
+      mediaContent = (
         <Image
-          source={{
-            uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
-          }}
+          source={require('../../assets/images/default-placeholder-image.png')}
           style={styles.carImage}
         />
-
+      );
+    }
+    console.log(item.postMedias);
+    return (
+      <View style={styles.cardContainer}>
+        {/* <Image
+          source={
+            item.postMedias[0].mediaBlobId
+              ? {
+                  uri: `${imagesBucketcloudfrontPath}${item.postMedias[0].mediaBlobId}`,
+                }
+              : require('../../assets/images/default-placeholder-image.png')
+          }
+          style={styles.carImage}
+        /> */}
+        {mediaContent}
         {/* Check and Heart Icons */}
         <View style={styles.iconContainer}>
           <View style={styles.checkIcon}>
@@ -138,14 +179,13 @@ const ProductSection = (props: ProductSectionProps) => {
 
   return (
     <>
- 
       {data == null ? (
         <ProductSectionSkeleton
           heading={props.heading}
           isShowAll={props.isShowAll}
         />
-        // <></>
       ) : (
+        // <></>
         <View
           style={{
             backgroundColor: props.background,
@@ -216,8 +256,8 @@ const ProductSection = (props: ProductSectionProps) => {
                 <ZText
                   type="R16"
                   style={{marginBottom: 20, textAlign: 'center'}}>
-                  your trusted partner for properties and cars.Join us
-                  and turn your dreams into reality!
+                  your trusted partner for properties and cars.Join us and turn
+                  your dreams into reality!
                 </ZText>
               </AlertDialogBody>
               <AlertDialogFooter
