@@ -422,21 +422,39 @@ const CommentBottomSheet = forwardRef(
               justifyContent: 'center',
               marginBottom: Platform.OS == 'ios' ? 30 : 0,
             }}>
-            <BottomSheetTextInput
-              style={{flex: 1}}
-              // android_keyboardInputMode="adjustResize"
-              ref={inputRef}
-              placeholder="Add a comment..."
-              defaultValue={newComment}
-              onChangeText={text => {
-                console.log(text), setNewComment(text);
-              }}
-              // returnKeyType="go"
-              // returnKeyLabel="post"
-              // onSubmitEditing={handleAddComment}
-              multiline={true}
-              scrollEnabled={true}
-            />
+            {Platform.OS == 'ios' ? (
+              <BottomSheetTextInput
+                style={{flex: 1}}
+                // android_keyboardInputMode="adjustResize"
+                ref={inputRef}
+                placeholder="Add a comment..."
+                defaultValue={newComment}
+                onChangeText={text => {
+                  console.log(text), setNewComment(text);
+                }}
+                // returnKeyType="go"
+                // returnKeyLabel="post"
+                // onSubmitEditing={handleAddComment}
+                multiline={true}
+                scrollEnabled={true}
+              />
+            ) : (
+              <TextInput
+                style={{flex: 1}}
+                // android_keyboardInputMode="adjustResize"
+                ref={inputRef}
+                placeholder="Add a comment..."
+                defaultValue={newComment}
+                onChangeText={text => {
+                  console.log(text), setNewComment(text);
+                }}
+                returnKeyType="go"
+                returnKeyLabel="post"
+                onSubmitEditing={handleAddComment}
+                multiline={true}
+                scrollEnabled={true}
+              />
+            )}
 
             <Box style={{justifyContent: 'center'}}>
               <TouchableOpacityWithPermissionCheck
