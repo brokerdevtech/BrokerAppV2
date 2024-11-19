@@ -131,28 +131,31 @@ const ProductItem = React.memo(
         }
       };
 
-    if (Platform.OS === 'android') {
-      await checkPermissionAndOpen();
-    } else {
-      Linking.canOpenURL(url)
-        .then(supported => {
-          if (supported) {
-            Linking.openURL(url);
-          } else {
-            Alert.alert('Oops! ', 'No contact info available for this post. Try reaching out through other channels!');
-          }
-        })
-        .catch(err => console.error('Error opening dialer', err));
-    }
-  }, []);
-  return (
-    <View style={styles.WrapcardContainer}>
-      <View style={styles.cardContainer}>
-        <MediaGallery
-          ref={MediaGalleryRef}
-          mediaItems={item.postMedias}
-          paused={false}
-        />
+      if (Platform.OS === 'android') {
+        await checkPermissionAndOpen();
+      } else {
+        Linking.canOpenURL(url)
+          .then(supported => {
+            if (supported) {
+              Linking.openURL(url);
+            } else {
+              Alert.alert(
+                'Oops! ',
+                'No contact info available for this post. Try reaching out through other channels!',
+              );
+            }
+          })
+          .catch(err => console.error('Error opening dialer', err));
+      }
+    }, []);
+    return (
+      <View style={styles.WrapcardContainer}>
+        <View style={styles.cardContainer}>
+          <MediaGallery
+            ref={MediaGalleryRef}
+            mediaItems={item.postMedias}
+            paused={false}
+          />
 
           {/* <Image
       source={{
@@ -240,48 +243,50 @@ const ProductItem = React.memo(
           {/* <Divider  className="my-0.5" /> */}
 
           <View style={styles.detailsContainerBottom}>
-            <HStack
-            // space="md"
-            >
+            {item.userId !== User.userId && (
               <HStack
-                style={{
-                  alignItems: 'center',
-                  width: '50%',
-                  justifyContent: 'center',
-                }}>
-                <TouchableOpacity
-                  style={styles.callbtn}
-                  onPress={() => makeCall('+919910199761')}>
-                  <View style={{alignItems: 'center'}}>
-                    <Icon
-                      as={Telephone_Icon}
-                      color={colors.light.appred}
-                      size={'xxl'}
-                    />
-                  </View>
-                  <View style={{alignItems: 'center', paddingVertical: 10}}>
-                    <ZText type={'M14'}>Call</ZText>
-                  </View>
-                </TouchableOpacity>
+              // space="md"
+              >
+                <HStack
+                  style={{
+                    alignItems: 'center',
+                    width: '50%',
+                    justifyContent: 'center',
+                  }}>
+                  <TouchableOpacity
+                    style={styles.callbtn}
+                    onPress={() => makeCall('+919910199761')}>
+                    <View style={{alignItems: 'center'}}>
+                      <Icon
+                        as={Telephone_Icon}
+                        color={colors.light.appred}
+                        size={'xxl'}
+                      />
+                    </View>
+                    <View style={{alignItems: 'center', paddingVertical: 10}}>
+                      <ZText type={'M14'}>Call</ZText>
+                    </View>
+                  </TouchableOpacity>
+                </HStack>
+                <HStack
+                  style={{
+                    alignItems: 'center',
+                    width: '50%',
+                    justifyContent: 'center',
+                  }}>
+                  <TouchableOpacity
+                    style={styles.Chatbtn}
+                    onPress={() => chatProfilePress()}>
+                    <View style={{alignItems: 'center', marginRight: 10}}>
+                      <Icon as={Chat_Icon} color={'#0F5DC4'} size={'xxl'} />
+                    </View>
+                    <View style={{alignItems: 'center', paddingVertical: 10}}>
+                      <ZText type={'M14'}>Chat</ZText>
+                    </View>
+                  </TouchableOpacity>
+                </HStack>
               </HStack>
-              <HStack
-                style={{
-                  alignItems: 'center',
-                  width: '50%',
-                  justifyContent: 'center',
-                }}>
-                <TouchableOpacity
-                  style={styles.Chatbtn}
-                  onPress={() => chatProfilePress()}>
-                  <View style={{alignItems: 'center', marginRight: 10}}>
-                    <Icon as={Chat_Icon} color={'#0F5DC4'} size={'xxl'} />
-                  </View>
-                  <View style={{alignItems: 'center', paddingVertical: 10}}>
-                    <ZText type={'M14'}>Chat</ZText>
-                  </View>
-                </TouchableOpacity>
-              </HStack>
-            </HStack>
+            )}
           </View>
         </View>
       </View>

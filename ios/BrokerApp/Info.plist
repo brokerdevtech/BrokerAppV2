@@ -20,6 +20,15 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.291590546828-sq554qt1cr52ng0g2amdd1q8gt0pmrqi</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -44,11 +53,10 @@
 	<string>This app requires access to your location to help you find nearby properties.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs access to your location while in use to display nearby property listings</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need access to the microphone for recording audio for posts and video calls.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to the photo library to allow you to upload property photos, documents, and other media.</string>
-	<key>NSMicrophoneUsageDescription</key>
-<string>We need access to the microphone for recording audio for posts and video calls.</string>
-
 	<key>UIAppFonts</key>
 	<array>
 		<string>Gilroy Black.ttf</string>
@@ -77,30 +85,23 @@
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
-	
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arm64</string>
 	</array>
-	<key>CFBundleURLTypes</key>
-<array>
-  <dict>
-    <key>CFBundleURLSchemes</key>
-    <array>
-      <string>com.googleusercontent.apps.291590546828-sq554qt1cr52ng0g2amdd1q8gt0pmrqi</string>
-    </array>
-  </dict>
-</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-
 </dict>
 </plist>

@@ -424,6 +424,7 @@ const CommentBottomSheet = forwardRef(
             }}>
             <BottomSheetTextInput
               style={{flex: 1}}
+              // android_keyboardInputMode="adjustResize"
               ref={inputRef}
               placeholder="Add a comment..."
               defaultValue={newComment}
@@ -534,6 +535,8 @@ const CommentBottomSheet = forwardRef(
       <BottomSheetModal
         ref={bottomSheetModalRef}
         // snapPoints={snapPoints}
+        keyboardBehavior="fillParent"
+        android_keyboardInputMode="adjustResize"
         index={0}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
