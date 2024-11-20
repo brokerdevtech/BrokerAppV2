@@ -174,7 +174,7 @@ const CarFilterScreen: React.FC = ({
     if (item) {
       item.records = newRecords;
     } else {
-      console.log(`No item found with name: ${name}`);
+   //   console.log(`No item found with name: ${name}`);
     }
 
     // Return the modified filters array

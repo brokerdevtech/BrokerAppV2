@@ -307,7 +307,7 @@ const carDetails = (data: any, user: any, navigation: any) => {
         User={user}
         listTypeData={'Car'}
         onUpdateLikeCount={newCount => {
-          console.log(newCount);
+       //   console.log(newCount);
         }}
       />
       {/* Car Details */}
@@ -457,7 +457,7 @@ const ItemDetailScreen: React.FC<any> = ({
           onPress: async () => {
             try {
               if (data.postId) {
-                console.log(data);
+            //    console.log(data);
                 const result = await deleteMyPost(
                   user.userId,
                   data.postId,
@@ -550,7 +550,7 @@ const ItemDetailScreen: React.FC<any> = ({
     }
     navigation.goBack(); // Go back to FirstScreen
   };
-  console.log(data, 'j');
+ // console.log(data, 'j');
   return (
     <BottomSheetModalProvider>
       <View style={styles.listContainer}>

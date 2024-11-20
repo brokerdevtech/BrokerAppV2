@@ -21,7 +21,7 @@ const IconValueDisplay = ({ IconKey, value }) => {
 
   // If the icon is not found in the mapping, do not render
   if (!IconComponent) {
-    console.warn(`Icon for key "${IconKey}" not found`);
+  //  console.warn(`Icon for key "${IconKey}" not found`);
     return null;
   }
   return (

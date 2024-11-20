@@ -15,7 +15,7 @@ import {
   fetchDashboardData,
   ListDashboardPostRequest,
 } from '@/BrokerAppCore/services/new/dashboardService';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 import ZText from '../../sharedComponents/ZText';
 import c1 from '../../assets/images/c1.png';
@@ -43,10 +43,19 @@ const RecentSearchSection = (props: BrandSectionProps) => {
     execute(props.endpoint, props.request);
   };
   useEffect(() => {}, [data]);
-  useEffect(() => {
-    callBrandList();
-  }, [props]);
-
+  // useEffect(() => {
+  //   callBrandList();
+  // }, [props]);
+  useFocusEffect(
+    React.useCallback(() => {
+      callBrandList();
+  
+      // Cleanup logic, if needed
+      return () => {
+        // Cleanup code here, if necessary
+      };
+    }, [props]) // Add dependencies here
+  );
   const renderProductItems = ({item, index}) => {
     if (!item || !item.requestJson || !item.frontendFilters) {
       // console.warn('Invalid item structure:', item);
@@ -61,8 +70,8 @@ const RecentSearchSection = (props: BrandSectionProps) => {
       parsedItem = JSON.parse(item.requestJson);
       frontendFilters = JSON.parse(item.frontendFilters);
 
-      console.log(parsedItem);
-      console.log(frontendFilters);
+    //  console.log(parsedItem);
+    //  console.log(frontendFilters);
     } catch (error) {
       console.error('Error parsing JSON:', error);
       return null; // Return null if JSON parsing fails

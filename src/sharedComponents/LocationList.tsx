@@ -59,7 +59,7 @@ function LocationList(props: any) {
       } catch (error) {
         setLoading(false);
         setuserLists([]);
-        console.error('Error fetching data:', error);
+      //  console.error('Error fetching data:', error);
       }
     };
 

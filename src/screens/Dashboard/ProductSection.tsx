@@ -18,7 +18,7 @@ import {
   fetchDashboardData,
   ListDashboardPostRequest,
 } from '@/BrokerAppCore/services/new/dashboardService';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 import ZText from '../../sharedComponents/ZText';
 import c1 from '../../assets/images/c1.png';
@@ -70,10 +70,18 @@ const ProductSection = (props: ProductSectionProps) => {
     //console.log('status :-', status);
     //console.log('error :-', error);
   };
-
-  useEffect(() => {
-    callPodcastList();
-  }, [props]);
+  useFocusEffect(
+    React.useCallback(() => {
+      callPodcastList();
+      // Optionally return a cleanup function if needed
+      return () => {
+        // Cleanup logic, if required
+      };
+    }, [props]) // dependencies go here
+  );
+  // useEffect(() => {
+  //   callPodcastList();
+  // }, [props]);
 
   const renderProductItems = ({item, index}) => {
     // console.log(item, 'media');

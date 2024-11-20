@@ -200,7 +200,7 @@ const CarFilterScreen: React.FC = ({
 
           // console.log("PopUPFilter");
           // console.log(PopUPFilter);
-console.log(filtersWithoutPostedSince);
+//console.log(filtersWithoutPostedSince);
           if (PopUPFilter) {
             // Fetch filters based on Developer and localities.City
             setfilterlocalities(PopUPFilter.Location);
@@ -430,7 +430,7 @@ console.log(filtersWithoutPostedSince);
     }
   };
   const handleRangeChange = range => {
-    console.log('Range changed:', range);
+  //  console.log('Range changed:', range);
   };
   const handleRangeBudgetChange = range => {
     const updatedSelectedFilters = {

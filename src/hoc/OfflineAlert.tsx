@@ -22,7 +22,7 @@ const OfflineAlert = () => {
 
   // Function to manually check connectivity
   const checkConnectivity = async () => {
-    console.log('checkConnectivity');
+    //console.log('checkConnectivity');
     const state = await NetInfo.fetch();
     console.log(state.isConnected);
     if (state.isConnected) {
@@ -41,9 +41,9 @@ const OfflineAlert = () => {
   }, []);
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
-      console.log('================state===========');
-      console.log(state);
-      console.log(bottomSheetRef.current);
+      // console.log('================state===========');
+      // console.log(state);
+      // console.log(bottomSheetRef.current);
       setIsOffline(!state.isConnected);
       if (!state.isConnected) {
         bottomSheetRef.current?.present();

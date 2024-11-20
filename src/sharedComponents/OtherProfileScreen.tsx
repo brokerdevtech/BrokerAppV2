@@ -335,7 +335,7 @@ const OtherProfileScreen: React.FC = ({
       toast.show({
         description: 'Oops something went wrong, please try after sometime.',
       });
-      console.error('Error fetching data:', error);
+    //  console.error('Error fetching data:', error);
     }
   };
 

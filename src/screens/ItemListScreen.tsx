@@ -137,7 +137,7 @@ const ProductItem = React.memo(
     const MediaGalleryRef = useRef(null);
 
     const ProductItemOnGoBack = item => {
-      console.log('ProductItemOnGoBack');
+    //  console.log('ProductItemOnGoBack');
       if(item.Action!="Delete")
         {   
         setisrefresh(isrefresh+1)}

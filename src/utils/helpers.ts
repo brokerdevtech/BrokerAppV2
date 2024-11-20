@@ -158,6 +158,9 @@ function uriToBlobRFNS(uri) {
   });
 }
 function formatNumberToIndianSystem(number) {
+  if (number === 0) {
+    return '0'; // Explicitly handle zero
+  }
   if (number) {
     if (number >= 10000000) {
       // Convert to Crores (1 Cr = 10,000,000)

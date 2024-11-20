@@ -349,8 +349,8 @@ const MyItemListScreen: React.FC<any> = ({
   }
 
   const OnGoBack = updatedItem => {
-    console.log('OnGoBackOnGoBackOnGoBackOnGoBack');
-    console.log(updatedItem);
+  //  console.log('OnGoBackOnGoBackOnGoBackOnGoBack');
+  //  console.log(updatedItem);
     //  let newd=  data.map((item) =>
     //     item.postId === updatedItem?.postId ? updatedItem : item
     //   )

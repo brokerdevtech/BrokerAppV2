@@ -25,7 +25,7 @@ export const clearlogoutUser = async () => {
       routes: [{name: 'Login'}],
     });
   } catch (error) {
-    console.error('Failed to log out:', error);
+   // console.error('Failed to log out:', error);
     // Handle errors, for example, by showing an alert to the user
     // alert('Logout failed. Please try again.');
   }

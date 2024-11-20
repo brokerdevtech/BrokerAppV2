@@ -83,10 +83,23 @@ export default function DashboradScreen() {
     error: marqueeError,
     execute: marqueeExecute,
   } = useApiRequest(fetchDashboardData);
-  useEffect(() => {
-    callPodcastList();
-    callmarList();
-  }, [AppLocation]);
+  // useEffect(() => {
+  //   callPodcastList();
+  //   callmarList();
+  // }, [AppLocation]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Call the functions when the screen comes into focus
+      callPodcastList();
+      callmarList();
+  
+      // Optional cleanup logic
+      return () => {
+        // Add any cleanup code if necessary
+      };
+    }, [AppLocation]) // Add dependencies here
+  );
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
@@ -98,7 +111,7 @@ export default function DashboradScreen() {
             })
             .catch(error => {});
         } catch (error) {
-          console.error('Error fetching posts:', error);
+       //   console.error('Error fetching posts:', error);
         }
       };
       fetchData();

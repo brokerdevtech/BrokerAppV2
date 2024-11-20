@@ -95,9 +95,9 @@ const PostActions = ({
   useEffect(() => {
     const fetchData = async () => {
       if (isrefresh > 0) {
-        console.log('isrefresh', item);
+      //  console.log('isrefresh', item);
         let k = await GetPostInsights(listTypeData,item.postId);
-        console.log(k)
+     //   console.log(k)
         setisraisedPostBuyerHand(k.data?.raisedPostBuyerHand === 0 ? false : true)
         SetPostLike(k.data?.userLiked === 1)
         SetPostlikesCount(k.data?.likes);

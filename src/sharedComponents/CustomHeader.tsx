@@ -54,7 +54,7 @@ import {checkPermission} from '../utils/helpers';
 const CustomHeader = () => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-  console.log(user);
+//  console.log(user);
   let cityToShow = AppLocation.City;
   const navigation = useNavigation();
   const {

@@ -43,7 +43,7 @@ export const useInfiniteScrollWithData = (fetchDataFunction, pageSize,Data,curre
         setHasMore(false); // Set flag when no more data is available
       }
     } catch (error) {
-      console.error('Error fetching more data:', error);
+    //  console.error('Error fetching more data:', error);
     } finally {
       setLoading(false); // Reset loading state
     }

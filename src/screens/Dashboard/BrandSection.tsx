@@ -110,7 +110,7 @@ const BrandSection = (props: BrandSectionProps) => {
           BraandPopUPFilter = convertTagsToNewFormat(item.filters.tags);
         }
 
-        console.log(obj);
+     //   console.log(obj);
 
         const locationData = [
           {
@@ -129,7 +129,7 @@ const BrandSection = (props: BrandSectionProps) => {
           if (BraandPopUPFilter != null) {
             updatedPopUPFilter = {...updatedPopUPFilter, ...BraandPopUPFilter};
           }
-          console.log(updatedPopUPFilter);
+        //  console.log(updatedPopUPFilter);
 
           navigation.navigate('ItemFilterListScreen', {
             listType: 'Car',
@@ -152,7 +152,7 @@ const BrandSection = (props: BrandSectionProps) => {
           if (BraandPopUPFilter != null) {
             updatedPopUPFilter = {...updatedPopUPFilter, ...BraandPopUPFilter};
           }
-          console.log(updatedPopUPFilter);
+      //    console.log(updatedPopUPFilter);
 
           navigation.navigate('ItemFilterListScreen', {
             listType: 'RealEstate',

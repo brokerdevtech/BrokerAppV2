@@ -425,7 +425,7 @@ const StoryView: React.FC = ({route}) => {
                 navigation.goBack();
               }
             } catch (error) {
-              console.error('Error deleting connection:', error);
+            //  console.error('Error deleting connection:', error);
             }
           },
         },

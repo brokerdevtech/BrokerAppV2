@@ -38,7 +38,7 @@ const MyConnectionScreen: React.FC = ({route}) => {
       try {
         await connectionexecute(userId);
       } catch (error) {
-        console.error('Error fetching connection data:', error);
+     //   console.error('Error fetching connection data:', error);
       }
     };
     apiCallConnection();
