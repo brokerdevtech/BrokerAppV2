@@ -51,7 +51,8 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {setAppLocation} from './BrokerAppCore/redux/store/AppLocation/appLocation';
 import {S3Provider} from './src/Context/S3Context';
 import NetInfo from '@react-native-community/netinfo';
-
+import OfflineAlert from './src/hoc/OfflineAlert';
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -526,22 +527,8 @@ function App(): React.JSX.Element {
   }, []);
   return (
     <>
-      {isConnected === null ? (
-        <View style={styles.splashContainer}>
-          <Animated.Image
-            source={require('./src/assets/images/BA.png')}
-            style={[
-              styles.logo,
-              {
-                opacity: opacityAnim,
-                transform: [{scale: scaleAnim}],
-              },
-            ]}
-            resizeMode="contain"
-          />
-        </View>
-      ) : isConnected ? (
-        isSplashVisible ? (
+   
+        {isSplashVisible ? (
           <View style={styles.splashContainer}>
             <Animated.Image
               source={require('./src/assets/images/BA.png')}
@@ -559,24 +546,21 @@ function App(): React.JSX.Element {
           <Provider store={store}>
             <S3Provider>
               <GestureHandlerRootView style={{flex: 1}}>
+              <BottomSheetModalProvider>
+              <OfflineAlert></OfflineAlert>
+              
                 <GluestackUIProvider>
                   <MainNavigation
                     loggedIn={loggedIn}
                     setLoggedIn={setLoggedIn}
                   />
                 </GluestackUIProvider>
+                </BottomSheetModalProvider>
               </GestureHandlerRootView>
             </S3Provider>
           </Provider>
         )
-      ) : (
-        <View style={styles.container}>
-          <Text style={styles.text}>
-            You are not connected to the internet.
-          </Text>
-          <Button title="Retry" onPress={retryAction} />
-        </View>
-      )}
+}
     </>
   );
 }

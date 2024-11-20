@@ -136,7 +136,7 @@ const AppTab: React.FC = () => {
       <Tab.Navigator
         initialRouteName="AppTabHome"
         screenOptions={({route}) => ({
-          //  unmountOnBlur: true,
+           unmountOnBlur: true,
           headerShown: false,
           headerTitle: '',
           tabBarStyle: [
