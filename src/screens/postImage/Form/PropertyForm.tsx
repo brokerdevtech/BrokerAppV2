@@ -42,12 +42,12 @@ const PropertyvalidationSchema = Yup.object().shape({
     .typeError('Property Size must be a number')
     .required('Property size is required')
     .min(100, 'Number must be greater than or equal to 100')
-    .max(50000, 'Number must be less than or equal to50000'),
+    .max(50000, 'Number must be less than or equal to 50000'),
   price: Yup.number()
     .noWhitespace()
     .typeError('Amount must be a number')
     .required('Amount is required')
-    .min(0, 'Number must be greater than or equal to 0')
+    .min(100, 'Number must be greater than or equal to 100')
     .max(500000000, 'Number must be less than or equal to 500,000,000'),
   isVirtualTour: Yup.boolean(),
   isBrokerAppVerified: Yup.boolean(),
