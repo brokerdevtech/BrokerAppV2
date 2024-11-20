@@ -484,7 +484,7 @@ function App(): React.JSX.Element {
         console.error('Error in permission or user check:', error);
       }
     };
-
+   // runAsyncFunctions();
     // Run animations in parallel
     Animated.parallel([
       Animated.timing(opacityAnim, {

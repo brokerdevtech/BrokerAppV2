@@ -130,7 +130,7 @@ const CustomDrawerContent = props => {
   const [showAlertDialog, setShowAlertDialog] = React.useState(false);
   const handleClose = () => setShowAlertDialog(false);
   const dashboard = useSelector((state: RootState) => state.dashboard);
-  console.log("dashboard",dashboard);
+ // console.log("dashboard",dashboard);
   const LogoutProceed = async () => {
     setIsloading(true);
     await logoutExecute();

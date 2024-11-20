@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   StyleSheet,
   TouchableOpacity,
-  View,
+  View,Text
 } from 'react-native';
 import {HStack} from '@/components/ui/hstack';
 import {VStack} from '@/components/ui/vstack';
@@ -14,7 +15,7 @@ import {
   fetchDashboardData,
   ListDashboardPostRequest,
 } from '@/BrokerAppCore/services/new/dashboardService';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 import ZText from '../../sharedComponents/ZText';
 import c1 from '../../assets/images/c1.png';
@@ -63,10 +64,19 @@ const BrandSection = (props: BrandSectionProps) => {
     // console.log(props.heading, 'data :-', data);
   };
   // console.log(data);
-  useEffect(() => {
-    callBrandList();
-  }, [props]);
-
+  // useEffect(() => {
+  //   callBrandList();
+  // }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+     // console.log(props);
+   //  callBrandList();
+      // Optionally return a cleanup function if needed
+      return () => {
+        // Cleanup logic, if required
+      };
+    }, []) // dependencies go here
+  );
   useEffect(() => {
     if (status == 200) {
       // setBrandData()
@@ -241,7 +251,21 @@ const BrandSection = (props: BrandSectionProps) => {
           initialNumToRender={3}
           showsHorizontalScrollIndicator={false}
           horizontal
+          contentContainerStyle={{flexGrow: 1}}
           onEndReachedThreshold={0.8}
+          ListEmptyComponent={() =>
+            data === undefined ? (
+              <ActivityIndicator
+                size="large"
+                color="#0000ff"
+                style={styles.loader}
+              />
+            ) : (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No data found </Text>
+              </View>
+            )
+          }
           // ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
       </HStack>
@@ -287,6 +311,23 @@ const BrandSection = (props: BrandSectionProps) => {
   );
 };
 const styles = StyleSheet.create({
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+    width: '100%',
+
+    display: 'flex',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#555', // Use a subtle color to match your design
+    textAlign: 'center',
+  },
+  loader: {
+    marginVertical: 20,
+  },
   footerContainer: {
     backgroundColor: '#FFF',
   },

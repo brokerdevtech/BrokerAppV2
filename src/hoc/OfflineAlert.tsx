@@ -24,7 +24,7 @@ const OfflineAlert = () => {
   const checkConnectivity = async () => {
     //console.log('checkConnectivity');
     const state = await NetInfo.fetch();
-    console.log(state.isConnected);
+   // console.log(state.isConnected);
     if (state.isConnected) {
       setIsOffline(false);
       bottomSheetRef.current?.close();

@@ -243,7 +243,7 @@ export default function RegisterScreen({setLoggedIn}) {
           showToast(registerdata.statusMessage);
         }
       } catch (error) {
-        console.log(error);
+    //    console.log(error);
       }
     };
     createuser();

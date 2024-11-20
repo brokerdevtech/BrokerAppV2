@@ -345,8 +345,8 @@ const FilterTagsScreen: React.FC = ({
   };
 
   const onFiltersLocalityChange = Localitys => {
-    console.log("Localitys");
-    console.log(Localitys);
+   // console.log("Localitys");
+ //   console.log(Localitys);
     setLocalities(Localitys);
 
     let DeveloperData = {

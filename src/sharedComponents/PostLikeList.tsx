@@ -100,7 +100,7 @@ const PostLikeList: React.FC = ({
   hasMore_Set(true);
         await execute(listType,ActionId,route.params.userId);
     
-      pageTitle(`${listType}`);
+      pageTitle("Likes");
     } catch (error) {}
   };
 
@@ -207,4 +207,4 @@ const localStyles = StyleSheet.create({
     ...styles.ph15,
   },
 });
-export default AppBaseContainer(PostLikeList, '', true);
+export default AppBaseContainer(PostLikeList, 'Likes', true);

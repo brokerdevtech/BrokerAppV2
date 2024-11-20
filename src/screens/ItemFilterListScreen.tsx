@@ -192,7 +192,7 @@ const ProductItem = React.memo(
             listTypeData={listTypeData}
             isrefresh={isrefresh}
             onUpdateLikeCount={newCount => {
-              console.log(newCount);
+         //     console.log(newCount);
             }}
           />
         </View>

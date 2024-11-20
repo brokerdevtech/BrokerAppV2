@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {
   View,
   Text,
@@ -88,28 +88,31 @@ export default function DashboradScreen() {
   //   callmarList();
   // }, [AppLocation]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      // Call the functions when the screen comes into focus
-      callPodcastList();
-      callmarList();
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     // Call the functions when the screen comes into focus
+  //     callPodcastList();
+  //     callmarList();
   
-      // Optional cleanup logic
-      return () => {
-        // Add any cleanup code if necessary
-      };
-    }, [AppLocation]) // Add dependencies here
-  );
+  //     // Optional cleanup logic
+  //     return () => {
+  //       // Add any cleanup code if necessary
+  //     };
+  //   }, [AppLocation]) // Add dependencies here
+  // );
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
         try {
+          callmarList();
           GetDashboardData(user.userId)
             .then(data => {
        
               store.dispatch(setDashboard(data.data));
             })
             .catch(error => {});
+           callPodcastList();
+   
         } catch (error) {
        //   console.error('Error fetching posts:', error);
         }
@@ -117,7 +120,7 @@ export default function DashboradScreen() {
       fetchData();
 
       return () => {};
-    }, []),
+    }, [AppLocation]),
   );
   const showToast = () => {
     if (!toast.isActive(toastId)) {
@@ -172,7 +175,10 @@ export default function DashboradScreen() {
         })
       : showToast();
   };
-
+  const request = useMemo(
+    () => ({ pageNo: 1, pageSize: 10, cityName: AppLocation.City }),
+    [AppLocation.City]
+  );
   const RenderPodcastItems = React.memo(({item, index}) => {
     return (
       <TouchableOpacity
@@ -357,7 +363,7 @@ export default function DashboradScreen() {
             background={'#FFFFFF'}
             endpoint={`NewlyLaunch`}
             isShowAll={false}
-            request={{pageNo: 1, pageSize: 10, cityName: AppLocation.City}}
+            request={request}
           />
           <RecentSearchSection
             heading={'Recent Search'}

@@ -54,7 +54,7 @@ const RecentSearchSection = (props: BrandSectionProps) => {
       return () => {
         // Cleanup code here, if necessary
       };
-    }, [props]) // Add dependencies here
+    }, []) // Add dependencies here
   );
   const renderProductItems = ({item, index}) => {
     if (!item || !item.requestJson || !item.frontendFilters) {

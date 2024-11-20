@@ -72,12 +72,13 @@ const ProductSection = (props: ProductSectionProps) => {
   };
   useFocusEffect(
     React.useCallback(() => {
+     // console.log(props);
       callPodcastList();
       // Optionally return a cleanup function if needed
       return () => {
         // Cleanup logic, if required
       };
-    }, [props]) // dependencies go here
+    }, []) // dependencies go here
   );
   // useEffect(() => {
   //   callPodcastList();
@@ -131,7 +132,7 @@ const ProductSection = (props: ProductSectionProps) => {
         />
       );
     }
-    console.log(item.postMedias);
+  
     return (
       <View style={styles.cardContainer}>
         {/* <Image
@@ -230,7 +231,7 @@ const ProductSection = (props: ProductSectionProps) => {
               data={data}
               keyExtractor={(item, index) => index.toString()}
               renderItem={renderProductItems}
-              contentContainerStyle={{paddingVertical: 20}}
+              contentContainerStyle={{paddingVertical: 20,flexGrow: 1}}
               initialNumToRender={3}
               showsHorizontalScrollIndicator={true}
               horizontal
@@ -435,4 +436,5 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
 });
-export default ProductSection;
+//export default ProductSection;
+export default React.memo(ProductSection);

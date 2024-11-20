@@ -65,10 +65,10 @@ const CustomHeader = () => {
   } = useApiRequest(fetchDashboardData);
   const [modalVisible, setModalVisible] = useState(false);
   const dashboard = useSelector((state: RootState) => state.dashboard);
-  const callPodcastList = async (cityToShow: any) => {
-    const request = {pageNo: 1, pageSize: 10, cityName: cityToShow};
-    await marqueeExecute('Marqueue', request);
-  };
+  // const callPodcastList = async (cityToShow: any) => {
+  //   const request = {pageNo: 1, pageSize: 10, cityName: cityToShow};
+  //   await marqueeExecute('Marqueue', request);
+  // };
   const handlePlaceSelected = (place: any) => {
 
     store.dispatch(setAppLocation(place));
@@ -85,7 +85,7 @@ const CustomHeader = () => {
   useEffect(() => {
     // console.log("AppLocation");
     // console.log(AppLocation);
-    callPodcastList(AppLocation.City);
+    //callPodcastList(AppLocation.City);
     cityToShow = AppLocation.City;
   }, [AppLocation]);
   const onPressUser = () => {
