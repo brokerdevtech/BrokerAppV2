@@ -50,7 +50,7 @@ const OfflineAlert = () => {
       } else {
         bottomSheetRef.current?.close();
       }
-      bottomSheetRef.current?.present();
+   //   bottomSheetRef.current?.present();
     });
 
     return () => unsubscribe();
