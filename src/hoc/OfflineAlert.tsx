@@ -82,10 +82,10 @@ const OfflineAlert = () => {
           source={require('../assets/images/No_net.png')}
           style={{height: 150, width: 150, marginBottom: 20}}
         />
-        {/* <Text style={styles.alertText}>No Internet Connection</Text>
+        <Text style={styles.alertText}>No Internet Connection</Text>
         <Text style={styles.subText}>
           Please check your internet settings and try again.
-        </Text> */}
+        </Text>
         <TouchableOpacity
           style={styles.retryButton}
           onPress={checkConnectivity}>
