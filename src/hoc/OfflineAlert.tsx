@@ -1,17 +1,18 @@
-import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, {useEffect, useState, useMemo, useRef, useCallback} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {
-    BottomSheetModal,
-    BottomSheetView,
-    BottomSheetModalProvider,
-    BottomSheetBackdrop,
-    BottomSheetFooter,
-    BottomSheetTextInput,
-    BottomSheetFlatList,
-    BottomSheetScrollView,
-  } from '@gorhom/bottom-sheet';
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+  BottomSheetBackdrop,
+  BottomSheetFooter,
+  BottomSheetTextInput,
+  BottomSheetFlatList,
+  BottomSheetScrollView,
+} from '@gorhom/bottom-sheet';
+import {Color} from '../styles/GlobalStyles';
 const OfflineAlert = () => {
   const [isOffline, setIsOffline] = useState(false);
   const bottomSheetRef = useRef(null);
@@ -21,7 +22,7 @@ const OfflineAlert = () => {
 
   // Function to manually check connectivity
   const checkConnectivity = async () => {
-    console.log("checkConnectivity");
+    console.log('checkConnectivity');
     const state = await NetInfo.fetch();
     console.log(state.isConnected);
     if (state.isConnected) {
@@ -32,21 +33,17 @@ const OfflineAlert = () => {
       bottomSheetRef.current?.present();
     }
   };
-  const handleSheetChanges = useCallback(
-    index => {
-     
-      setIsOpen(index >= 0);
-      if (index == -1) {
-       // onClose(selectedFilters);
-      }
-    },
-    [],
-  );
+  const handleSheetChanges = useCallback(index => {
+    setIsOpen(index >= 0);
+    if (index == -1) {
+      // onClose(selectedFilters);
+    }
+  }, []);
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-        console.log("================state===========");
-        console.log(state);
-        console.log(  bottomSheetRef.current);
+    const unsubscribe = NetInfo.addEventListener(state => {
+      console.log('================state===========');
+      console.log(state);
+      console.log(bottomSheetRef.current);
       setIsOffline(!state.isConnected);
       if (!state.isConnected) {
         bottomSheetRef.current?.present();
@@ -62,7 +59,7 @@ const OfflineAlert = () => {
     props => (
       <BottomSheetBackdrop
         {...props}
-        pressBehavior="none" 
+        pressBehavior="none"
         disappearsOnIndex={-1}
         appearsOnIndex={0}
       />
@@ -70,34 +67,32 @@ const OfflineAlert = () => {
     [],
   );
   return (
-
     <BottomSheetModal
-    ref={bottomSheetRef}
-    index={0}
-    snapPoints={snapPoints}
-    onChange={handleSheetChanges}
-    enableOverDrag={false}
-    enablePanDownToClose={false}
-    backdropComponent={renderBackdrop}
- 
-    // footerComponent={renderFooter}
-    enableDynamicSizing={false}>
-     <View style={styles.alertContainer}>
-        <Text style={styles.alertText}>No Internet Connection</Text>
+      ref={bottomSheetRef}
+      index={0}
+      snapPoints={snapPoints}
+      onChange={handleSheetChanges}
+      enableOverDrag={false}
+      enablePanDownToClose={false}
+      backdropComponent={renderBackdrop}
+      // footerComponent={renderFooter}
+      enableDynamicSizing={false}>
+      <View style={styles.alertContainer}>
+        <Image
+          source={require('../assets/images/No_net.png')}
+          style={{height: 150, width: 150, marginBottom: 20}}
+        />
+        {/* <Text style={styles.alertText}>No Internet Connection</Text>
         <Text style={styles.subText}>
           Please check your internet settings and try again.
-        </Text>
+        </Text> */}
         <TouchableOpacity
           style={styles.retryButton}
-          onPress={checkConnectivity}
-        >
+          onPress={checkConnectivity}>
           <Text style={styles.retryButtonText}>Retry</Text>
         </TouchableOpacity>
       </View>
-  </BottomSheetModal>
-
-
-
+    </BottomSheetModal>
   );
 };
 
@@ -123,12 +118,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   retryButton: {
-    backgroundColor: '#007bff', // Primary color
+    backgroundColor: Color.primary, // Primary color
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 25,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 5,
