@@ -528,7 +528,10 @@ const ItemDetailScreen: React.FC<any> = ({
           if (supported) {
             Linking.openURL(url);
           } else {
-            Alert.alert('Oops! ', 'No contact info available for this post. Try reaching out through other channels!');
+            Alert.alert(
+              'Oops! ',
+              'No contact info available for this post. Try reaching out through other channels!',
+            );
           }
         })
         .catch(err => console.error('Error opening dialer', err));
@@ -547,7 +550,7 @@ const ItemDetailScreen: React.FC<any> = ({
     }
     navigation.goBack(); // Go back to FirstScreen
   };
-  console.log(data?.postMedia, 'j');
+  console.log(data, 'j');
   return (
     <BottomSheetModalProvider>
       <View style={styles.listContainer}>
@@ -607,50 +610,52 @@ const ItemDetailScreen: React.FC<any> = ({
             </HStack>
           </View>
         </ScrollView>
-        <View style={styles.footer}>
-          <HStack
-          // space="md"
-          >
+        {data?.userId !== user.userId && (
+          <View style={styles.footer}>
             <HStack
-              style={{
-                alignItems: 'center',
-                width: '50%',
-                justifyContent: 'center',
-              }}>
-              <TouchableOpacity
-                style={styles.callbtn}
-                onPress={() => makeCall(data.contactNo)}>
-                <View style={{alignItems: 'center'}}>
-                  <Icon
-                    as={Telephone_Icon}
-                    color={colors.light.appred}
-                    size={'xxl'}
-                  />
-                </View>
-                <View style={{alignItems: 'center', paddingVertical: 10}}>
-                  <ZText type={'M14'}>Call</ZText>
-                </View>
-              </TouchableOpacity>
+            // space="md"
+            >
+              <HStack
+                style={{
+                  alignItems: 'center',
+                  width: '50%',
+                  justifyContent: 'center',
+                }}>
+                <TouchableOpacity
+                  style={styles.callbtn}
+                  onPress={() => makeCall(data.contactNo)}>
+                  <View style={{alignItems: 'center'}}>
+                    <Icon
+                      as={Telephone_Icon}
+                      color={colors.light.appred}
+                      size={'xxl'}
+                    />
+                  </View>
+                  <View style={{alignItems: 'center', paddingVertical: 10}}>
+                    <ZText type={'M14'}>Call</ZText>
+                  </View>
+                </TouchableOpacity>
+              </HStack>
+              <HStack
+                style={{
+                  alignItems: 'center',
+                  width: '50%',
+                  justifyContent: 'center',
+                }}>
+                <TouchableOpacity
+                  style={styles.Chatbtn}
+                  onPress={() => chatProfilePress()}>
+                  <View style={{alignItems: 'center', marginRight: 10}}>
+                    <Icon as={Chat_Icon} color={'#0F5DC4'} size={'xxl'} />
+                  </View>
+                  <View style={{alignItems: 'center', paddingVertical: 10}}>
+                    <ZText type={'M14'}>Chat</ZText>
+                  </View>
+                </TouchableOpacity>
+              </HStack>
             </HStack>
-            <HStack
-              style={{
-                alignItems: 'center',
-                width: '50%',
-                justifyContent: 'center',
-              }}>
-              <TouchableOpacity
-                style={styles.Chatbtn}
-                onPress={() => chatProfilePress()}>
-                <View style={{alignItems: 'center', marginRight: 10}}>
-                  <Icon as={Chat_Icon} color={'#0F5DC4'} size={'xxl'} />
-                </View>
-                <View style={{alignItems: 'center', paddingVertical: 10}}>
-                  <ZText type={'M14'}>Chat</ZText>
-                </View>
-              </TouchableOpacity>
-            </HStack>
-          </HStack>
-        </View>
+          </View>
+        )}
       </View>
     </BottomSheetModalProvider>
   );

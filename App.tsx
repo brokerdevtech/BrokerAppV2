@@ -92,7 +92,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 
 function App(): React.JSX.Element {
   //  NativeModules.DevSettings.setIsDebuggingRemotely(true);
-  const [isConnected, setIsConnected] = useState(true);
+  const [isConnected, setIsConnected] = useState<null | boolean>(null);
   const isDarkMode = useColorScheme() === 'dark';
   const [loggedIn, setLoggedIn] = useState(false);
   const [isSplashVisible, setIsSplashVisible] = useState(true);
@@ -302,6 +302,7 @@ function App(): React.JSX.Element {
         const permissions = [
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+          PERMISSIONS.ANDROID.POST_NOTIFICATIONS,
         ];
 
         const permissionStatusesArray = await Promise.all(
@@ -505,11 +506,15 @@ function App(): React.JSX.Element {
       handleAppStateChange,
     );
     // Subscribe to network state changes
+    // const unsubscribe = NetInfo.addEventListener(state => {
+    //   // setIsConnected(state.isConnected && state.isInternetReachable);
+    //   setIsConnected(state.isInternetReachable === true);
+    // });
     const unsubscribe = NetInfo.addEventListener(state => {
-      // setIsConnected(state.isConnected && state.isInternetReachable);
-      setIsConnected(state.isInternetReachable === true);
+      if (state.isInternetReachable !== null) {
+        setIsConnected(state.isInternetReachable);
+      }
     });
-
     // Set splash visibility
     // setIsSplashVisible(false);
 
@@ -521,11 +526,25 @@ function App(): React.JSX.Element {
   }, []);
   return (
     <>
-      {isConnected ? (
+      {isConnected === null ? (
+        <View style={styles.splashContainer}>
+          <Animated.Image
+            source={require('./src/assets/images/BA.png')}
+            style={[
+              styles.logo,
+              {
+                opacity: opacityAnim,
+                transform: [{scale: scaleAnim}],
+              },
+            ]}
+            resizeMode="contain"
+          />
+        </View>
+      ) : isConnected ? (
         isSplashVisible ? (
           <View style={styles.splashContainer}>
             <Animated.Image
-              source={require('./src/assets/images/BA.png')} // Replace with your logo path
+              source={require('./src/assets/images/BA.png')}
               style={[
                 styles.logo,
                 {

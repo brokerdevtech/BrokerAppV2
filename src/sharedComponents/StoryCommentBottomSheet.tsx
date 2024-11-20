@@ -393,16 +393,30 @@ module="Post"
               justifyContent: 'center',
               marginBottom: Platform.OS == 'ios' ? 30 : 0,
             }}>
-            <BottomSheetTextInput
-              style={{flex: 1}}
-              placeholder="Add a comment..."
-              defaultValue={newComment}
-              onChangeText={text => setNewComment(text)}
-              returnKeyType="go"
-              returnKeyLabel="post"
-              onSubmitEditing={handleAddComment}
-              multiline={true}
-            />
+            {Platform.OS == 'ios' ? (
+              <BottomSheetTextInput
+                style={{flex: 1}}
+                placeholder="Add a comment..."
+                defaultValue={newComment}
+                onChangeText={text => setNewComment(text)}
+                returnKeyType="go"
+                returnKeyLabel="post"
+                onSubmitEditing={handleAddComment}
+                multiline={true}
+              />
+            ) : (
+              <TextInput
+                style={{flex: 1}}
+                placeholder="Add a comment..."
+                defaultValue={newComment}
+                onChangeText={text => setNewComment(text)}
+                returnKeyType="go"
+                returnKeyLabel="post"
+                onSubmitEditing={handleAddComment}
+                multiline={true}
+              />
+            )}
+
             <Box style={{justifyContent: 'center'}}>
               <TouchableOpacityWithPermissionCheck
                 permissionsArray={userPermissions}
