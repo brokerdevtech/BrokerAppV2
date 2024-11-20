@@ -70,7 +70,7 @@ const BrandSection = (props: BrandSectionProps) => {
   useFocusEffect(
     React.useCallback(() => {
      // console.log(props);
-   //  callBrandList();
+     callBrandList();
       // Optionally return a cleanup function if needed
       return () => {
         // Cleanup logic, if required
