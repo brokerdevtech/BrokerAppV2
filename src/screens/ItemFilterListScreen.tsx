@@ -13,6 +13,8 @@ import {
   Linking,
   Alert,
   ActivityIndicator,
+  Platform,
+  PermissionsAndroid,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
@@ -70,7 +72,7 @@ import FilterBottomSheet from '../sharedComponents/FilterBottomSheet';
 import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
 import {concat, filter} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
-import { formatNumberToIndianSystem } from '../utils/helpers';
+import {formatNumberToIndianSystem} from '../utils/helpers';
 const SkeletonPlaceholder = () => {
   return (
     <HStack space={10} style={styles.skeletonContainer}>
@@ -148,27 +150,56 @@ const ProductItem = React.memo(
         defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
       });
     }, []);
-    const makeCall = useCallback(phoneNumber => {
+    const makeCall = useCallback(async phoneNumber => {
+      // console.log(phoneNumber, 'phone');
       const url = `tel:${phoneNumber}`;
 
-    Linking.canOpenURL(url)
-      .then(supported => {
-        if (supported) {
+      const checkPermissionAndOpen = async () => {
+        const hasPermission = await PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+        );
+        if (hasPermission) {
           Linking.openURL(url);
         } else {
-          Alert.alert('Oops! ', 'No contact info available for this post. Try reaching out through other channels!');
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            Linking.openURL(url);
+          } else {
+            Alert.alert(
+              'Permission Denied',
+              'You need to enable call permissions to use this feature',
+            );
+          }
         }
-      })
-      .catch(err => console.error('Error opening dialer', err));
-  }, []);
-  return (
-    <View style={styles.WrapcardContainer}>
-      <View style={styles.cardContainer}>
-        <MediaGallery
-          ref={MediaGalleryRef}
-          mediaItems={item.postMedias}
-          paused={false}
-        />
+      };
+
+      if (Platform.OS === 'android') {
+        await checkPermissionAndOpen();
+      } else {
+        Linking.canOpenURL(url)
+          .then(supported => {
+            if (supported) {
+              Linking.openURL(url);
+            } else {
+              Alert.alert(
+                'Oops! ',
+                'No contact info available for this post. Try reaching out through other channels!',
+              );
+            }
+          })
+          .catch(err => console.error('Error opening dialer', err));
+      }
+    }, []);
+    return (
+      <View style={styles.WrapcardContainer}>
+        <View style={styles.cardContainer}>
+          <MediaGallery
+            ref={MediaGalleryRef}
+            mediaItems={item.postMedias}
+            paused={false}
+          />
 
           {/* <Image
         source={{
@@ -177,48 +208,47 @@ const ProductItem = React.memo(
         style={styles.carImage}
       /> */}
 
-        {/* Check and Heart Icons */}
-        {item.isBrokerAppVerified && (
-          <View style={styles.iconContainer}>
-            <View style={styles.checkIcon}>
-              <Card_check_icon />
+          {/* Check and Heart Icons */}
+          {item.isBrokerAppVerified && (
+            <View style={styles.iconContainer}>
+              <View style={styles.checkIcon}>
+                <Card_check_icon />
+              </View>
             </View>
+          )}
+          <View style={{marginLeft: 20}}>
+            <PostActions
+              item={item}
+              User={User}
+              listTypeData={listTypeData}
+              isrefresh={isrefresh}
+              onUpdateLikeCount={newCount => {
+                //     console.log(newCount);
+              }}
+            />
           </View>
-        )}
-        <View style={{marginLeft: 20}}>
-          <PostActions
-            item={item}
-            User={User}
-            listTypeData={listTypeData}
-            isrefresh={isrefresh}
-            onUpdateLikeCount={newCount => {
-         //     console.log(newCount);
-            }}
-          />
-        </View>
-        {/* Car Details */}
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('ItemDetailScreen', {
-              onGoBack: ProductItemOnGoBack, 
-              postId: item.postId,
-              postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post',
-            
-            })
-          }>
-          <VStack space="xs" style={styles.detailsContainer}>
-            <HStack>
-              <Box style={{marginLeft: 4}}>
-                <ZText type={'M16'} style={{color: colors.light.appred}}>
-                  {'\u20B9'}{' '}
-                </ZText>
-              </Box>
-              <Box>
-                <ZText type={'M16'} style={{color: colors.light.appred}}>
-                {formatNumberToIndianSystem(item.price)}
-                </ZText>
-              </Box>
-            </HStack>
+          {/* Car Details */}
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('ItemDetailScreen', {
+                onGoBack: ProductItemOnGoBack,
+                postId: item.postId,
+                postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post',
+              })
+            }>
+            <VStack space="xs" style={styles.detailsContainer}>
+              <HStack>
+                <Box style={{marginLeft: 4}}>
+                  <ZText type={'M16'} style={{color: colors.light.appred}}>
+                    {'\u20B9'}{' '}
+                  </ZText>
+                </Box>
+                <Box>
+                  <ZText type={'M16'} style={{color: colors.light.appred}}>
+                    {formatNumberToIndianSystem(item.price)}
+                  </ZText>
+                </Box>
+              </HStack>
 
               {item.location?.cityName && (
                 <HStack>
@@ -318,7 +348,6 @@ const ItemFilterListScreen: React.FC<any> = ({
   isLoading,
   listType,
 }) => {
-  
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
