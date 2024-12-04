@@ -53,6 +53,9 @@ import {S3Provider} from './src/Context/S3Context';
 import NetInfo from '@react-native-community/netinfo';
 import OfflineAlert from './src/hoc/OfflineAlert';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import useSessionTracker  from './src/hooks/Analytics/useSessionTracker';
+import useUserAnalytics from './src/hooks/Analytics/useUserAnalytics';
+import analytics from '@react-native-firebase/analytics';
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -92,6 +95,8 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 }
 
 function App(): React.JSX.Element {
+  //useSessionTracker(); 
+
   //  NativeModules.DevSettings.setIsDebuggingRemotely(true);
   const [isConnected, setIsConnected] = useState<null | boolean>(null);
   const isDarkMode = useColorScheme() === 'dark';
@@ -177,7 +182,8 @@ function App(): React.JSX.Element {
 
     if (storedUser) {
       const user = JSON.parse(storedUser);
-
+     
+   //   await analytics().setUserId( String(user.userId) );
       await store.dispatch(
         setTokens({
           accessToken: storeTokensresult?.accessToken!,

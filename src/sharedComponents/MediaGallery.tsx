@@ -17,7 +17,7 @@ import {
   imagesBucketcloudfrontPath,
 } from '../config/constants';
 
-//const { width: screenWidth } = Dimensions.get('window');
+const { width: screenWidths } = Dimensions.get('window');
 
 const MediaGallery = forwardRef((props, ref) => {
   const {mediaItems} = props;
@@ -155,9 +155,9 @@ const styles = StyleSheet.create({
     // padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
+    width: screenWidths,
     // marginHorizontal: 20 ,
-    height: 200,
+    height: screenWidths,
   },
   container: {
     width: '100%',

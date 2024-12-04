@@ -41,10 +41,14 @@ import {setDashboard} from '../../BrokerAppCore/redux/store/Dashboard/dashboardS
 import store from '../../BrokerAppCore/redux/store';
 import {checkPermission} from '../utils/helpers';
 import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
+import useUserAnalytics from '../hooks/Analytics/useUserAnalytics';
+import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
+  const { setUser_Analytics } = useUserAnalytics();
+  const { logButtonClick } = useUserJourneyTracker('Dashborad');
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
@@ -83,10 +87,17 @@ export default function DashboradScreen() {
     error: marqueeError,
     execute: marqueeExecute,
   } = useApiRequest(fetchDashboardData);
-  // useEffect(() => {
-  //   callPodcastList();
-  //   callmarList();
-  // }, [AppLocation]);
+  useEffect(() => {
+    console.log("setUser_Analytics");
+      // console.log(user);
+      const userS = {
+        id: String(user.userId),
+        firstName: String(user.firstName),
+        lastName: String(user.lastName)
+      };
+      // console.log(userS);
+        setUser_Analytics(userS);
+  }, []);
 
   // useFocusEffect(
   //   React.useCallback(() => {

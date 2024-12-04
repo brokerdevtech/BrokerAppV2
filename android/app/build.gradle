@@ -84,8 +84,8 @@ android {
         applicationId "com.brokerapp.broker"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 83
-        versionName "2.1.1"
+        versionCode 84
+        versionName "2.1.2"
         vectorDrawables.useSupportLibrary = true // use support library for the react-native-image-crop-picker
        
     }

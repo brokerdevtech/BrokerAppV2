@@ -63,6 +63,7 @@ import {delay} from 'lodash';
 import AppBaseContainer from '../hoc/AppBaseContainer_old';
 import NoDataFoundScreen from '../sharedComponents/NoDataFoundScreen';
 import OopsScreen from '../sharedComponents/OopsScreen';
+import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 
 const propertyDetails = (data: any, user: any, navigation: any) => {
   const onPressUser = (userId, userName, userImage) => {
@@ -416,8 +417,9 @@ const ItemDetailScreen: React.FC<any> = ({
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
+  console.log(route.params);
   const MediaGalleryRef = useRef(null);
-
+  const { logButtonClick } = useUserJourneyTracker(`${route.params.postType} Detail Page`);
   const {data, status, error, execute} = useApiRequest(
     fetchPostByID,
     setLoading,

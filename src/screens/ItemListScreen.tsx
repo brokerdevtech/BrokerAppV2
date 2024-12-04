@@ -76,6 +76,7 @@ import RecentSearchSection from './Dashboard/RecentSearchSection';
 import {formatNumberToIndianSystem} from '../utils/helpers';
 import {useFocusEffect} from '@react-navigation/native';
 import NoDataFoundScreen from '../sharedComponents/NoDataFoundScreen';
+import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 const SkeletonPlaceholder = () => {
   return (
     <HStack space={10} style={styles.skeletonContainer}>
@@ -388,6 +389,7 @@ const ItemListScreen: React.FC<any> = ({
   const brandName =
     route.params.brandName !== undefined ? route.params.brandName : '';
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
+  const { logButtonClick } = useUserJourneyTracker(`${route.params.listType} Page`);
   // console.log('=============user=============');
   // console.log(user);
   const FilterSheetRef = useRef(null);
