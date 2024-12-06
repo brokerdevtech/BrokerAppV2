@@ -95,8 +95,9 @@ import propertySize from './propertyIcon/propertySize.svg';
 import ComingSoon from './ComingSoon.svg';
 import Buyer from './buyer.svg';
 import BuyerActive from './buyer-fill.svg';
+import filter from './filter.svg';
 export {
-  Buyer,
+  Buyer,filter,
   BuyerActive,
   balconyType,
   ComingSoon,

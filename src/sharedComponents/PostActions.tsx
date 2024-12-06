@@ -47,7 +47,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import {moderateScale, PermissionKey} from '../config/constants';
 import TouchableOpacityWithPermissionCheck from './TouchableOpacityWithPermissionCheck';
-import {Like, UnLike, Send, CloseIcon, BuyerActive, Buyer} from '../assets/svg';
+import {Like, UnLike, Send, CloseIcon, BuyerActive, Buyer,filter} from '../assets/svg';
 import CommentBottomSheet from './CommentBottomSheet';
 import {useNavigation} from '@react-navigation/native';
 import {
@@ -62,7 +62,7 @@ const PostActions = ({
   PageName = 'ItemList',
   isrefresh=0,
 }) => {
- 
+ console.log(item);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const {
     data,
@@ -234,7 +234,15 @@ const PostActions = ({
       userId: User.userId,
     });
   };
-
+  const HaveLeadsList = async () => {
+    //
+    //
+    navigation.navigate('PostLeads', {
+      listTypeData:listTypeData,
+      postId:item.postId,
+      userId: User.userId,
+    });
+  };
   const postHaveBuyer = async () => {
 
     if (item?.raisedPostBuyerHand && item?.raisedPostBuyerHand == 1) {
@@ -376,6 +384,29 @@ const PostActions = ({
               </HStack>
             </VStack>
           )}
+
+
+{PageName == 'MyItemList' &&
+   
+          User.userId == item.userId &&
+        (
+            <VStack style={{marginRight: 10}}>
+              <HStack style={{justifyContent: 'center', alignItems: 'center'}}>
+                <TouchableOpacity onPress={HaveLeadsList}>
+                  <Icon
+                    as={filter}
+                    size="xxxl"
+                    style={{marginRight: 5}}
+               
+                    color={'red'}
+                  />
+                </TouchableOpacity>
+              
+              </HStack>
+            </VStack>
+          )}
+
+
 
         {/* <VStack style={{ marginLeft: 'auto' }}>
         <Icon as={bookmark_icon} />

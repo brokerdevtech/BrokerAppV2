@@ -17,3 +17,7 @@
 -keep class com.facebook.fresco.** { *; }
 -dontwarn com.facebook.fresco.**
 -dontwarn com.facebook.imagepipeline.**
+
+-keep class com.facebook.** { *; }
+-keep class com.facebook.internal.** { *; }
+-dontwarn com.facebook.**

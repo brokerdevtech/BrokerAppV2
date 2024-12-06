@@ -165,7 +165,7 @@ const CustomDrawerContent = props => {
       </View>
 
       <View style={styles.drawerItemsContainer}>
-        <TouchableOpacity style={[styles.drawerItem, styles.bottomBorder]}>
+        <TouchableOpacity style={[styles.drawerItem, styles.bottomBorder]} onPress={() => navigation.navigate('ProfileViewerList')}>
           <ZText type={'S16'} style={styles.drawerLabel}>
             {dashboard?.profileViews}
             <ZText type={'R16'} style={styles.viewProfileText}>

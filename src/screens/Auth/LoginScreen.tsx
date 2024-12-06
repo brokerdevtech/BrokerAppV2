@@ -11,6 +11,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -42,7 +43,8 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
 import {handleApiError} from '../../../BrokerAppCore/services/new/ApiResponse';
 import { NewDeviceUpdate } from '../../../BrokerAppCore/services/authService';
-
+import {LoginManager, AccessToken,Profile, GraphRequest, GraphRequestManager } from 'react-native-fbsdk-next';
+import { AnyArn } from 'aws-sdk/clients/groundstation';
 // Configure Google Sign-In
 // GoogleSignin.configure({
 //   webClientId:
@@ -171,7 +173,78 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       });
     }
   };
+  const signInWithFacebook = async () => {
+    try {
+      //setLoading(true);
+      console.log("logInWithPermissions");
+      const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
+      console.log("logInWithPermissions");
+      console.log(result);
 
+      if (result.isCancelled) {
+        Alert.alert('Login cancelled');
+        return;
+      }
+
+      // Get the access token
+      const data:any = await AccessToken.getCurrentAccessToken();
+      console.log(data);
+      const currentProfile:any = await Profile.getCurrentProfile();
+      const userInfo:any = await fetchFacebookUser(data.accessToken.toString());
+      console.log(currentProfile);
+      console.log(userInfo);
+      const fcmToken:any = await getfcmToken();
+      console.log("getfcmToken");
+
+      await SocialLoginexecute(
+        userInfo.email,
+        'Facebook',
+        data.accessToken.toString(),
+        fcmToken?.toString(),
+        AppLocation.City,
+        AppLocation.State,
+        AppLocation.Country,
+        AppLocation.placeID,
+        AppLocation.placeName,
+        AppLocation.geoLocationLatitude,
+        AppLocation.geoLocationLongitude,
+        AppLocation.viewportNorthEastLat,
+        AppLocation.viewportNorthEastLng,
+        AppLocation.viewportSouthWestLat,
+        AppLocation.viewportSouthWestLng,
+      );
+
+
+
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+   
+    }
+  };
+  const fetchFacebookUser = async (accessToken) => {
+    return new Promise((resolve, reject) => {
+      const request = new GraphRequest(
+        '/me',
+        {
+          accessToken,
+          parameters: {
+            fields: {
+              string: 'id, name, email',
+            },
+          },
+        },
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        }
+      );
+      new GraphRequestManager().addRequest(request).start();
+    });
+  };
   const {data, status, error, execute} = useApiRequest(login, setLoading);
   const {
     data: SocialLogindata,
@@ -450,6 +523,19 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
           <TouchableOpacity
             style={styles.socialButton}
             onPress={signInWithGoogle}>
+            <Icon as={GoogleIcon} />
+          </TouchableOpacity>
+          {/* <TouchableOpacity style={styles.socialButton}>
+          <Icon as={FBIcon} />
+        </TouchableOpacity> */}
+        </View>
+        <View style={styles.socialContainer}>
+          {/* <TouchableOpacity style={styles.socialButton}>
+          <Icon as={AppleIcon} stroke="#000" />
+        </TouchableOpacity> */}
+          <TouchableOpacity
+            style={styles.socialButton}
+            onPress={signInWithFacebook}>
             <Icon as={GoogleIcon} />
           </TouchableOpacity>
           {/* <TouchableOpacity style={styles.socialButton}>

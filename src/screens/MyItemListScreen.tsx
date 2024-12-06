@@ -75,6 +75,7 @@ import {formatNumberToIndianSystem} from '../utils/helpers';
 
 const ProductItem = React.memo(
   ({item, listTypeData, User, navigation, OnGoBack}) => {
+    
     const MediaGalleryRef = useRef(null);
     const [isrefresh, setisrefresh] = useState(0);
     const ProductItemOnGoBack = item => {
