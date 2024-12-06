@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useMemo} from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 import {
   View,
   Text,
@@ -43,15 +43,18 @@ import {checkPermission} from '../utils/helpers';
 import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 import useUserAnalytics from '../hooks/Analytics/useUserAnalytics';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
+import AutoscrollAds from '../sharedComponents/AutoscrollAds';
+import EnquiryBottomSheet from '../sharedComponents/EnquiryForm';
 
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-  const { setUser_Analytics } = useUserAnalytics();
-  const { logButtonClick } = useUserJourneyTracker('Dashborad');
+  const {setUser_Analytics} = useUserAnalytics();
+  const {logButtonClick} = useUserJourneyTracker('Dashborad');
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
+  const bottomSheetRef = useRef(null);
   const [toastId, setToastId] = React.useState(0);
   // const permissionGrantedPodacast = checkPermission(
   //   userPermissions,
@@ -62,9 +65,8 @@ export default function DashboradScreen() {
   //   PermissionKey.AllowViewDashboardPost,
   // );
 
-
-  const permissionGrantedPodacast = true
-  const permissionGrantedDashPost = true
+  const permissionGrantedPodacast = true;
+  const permissionGrantedDashPost = true;
 
   const toast = useToast();
 
@@ -88,15 +90,15 @@ export default function DashboradScreen() {
     execute: marqueeExecute,
   } = useApiRequest(fetchDashboardData);
   useEffect(() => {
-    console.log("setUser_Analytics");
-      // console.log(user);
-      const userS = {
-        id: String(user.userId),
-        firstName: String(user.firstName),
-        lastName: String(user.lastName)
-      };
-      // console.log(userS);
-        setUser_Analytics(userS);
+    console.log('setUser_Analytics');
+    // console.log(user);
+    const userS = {
+      id: String(user.userId),
+      firstName: String(user.firstName),
+      lastName: String(user.lastName),
+    };
+    // console.log(userS);
+    setUser_Analytics(userS);
   }, []);
 
   // useFocusEffect(
@@ -104,7 +106,7 @@ export default function DashboradScreen() {
   //     // Call the functions when the screen comes into focus
   //     callPodcastList();
   //     callmarList();
-  
+
   //     // Optional cleanup logic
   //     return () => {
   //       // Add any cleanup code if necessary
@@ -115,17 +117,15 @@ export default function DashboradScreen() {
     React.useCallback(() => {
       const fetchData = async () => {
         try {
-          callmarList();
+          // callmarList();
           GetDashboardData(user.userId)
             .then(data => {
-       
               store.dispatch(setDashboard(data.data));
             })
             .catch(error => {});
-           callPodcastList();
-   
+          callPodcastList();
         } catch (error) {
-       //   console.error('Error fetching posts:', error);
+          //   console.error('Error fetching posts:', error);
         }
       };
       fetchData();
@@ -154,7 +154,7 @@ export default function DashboradScreen() {
       });
     }
   };
-  const showToastComingSoon= () => {
+  const showToastComingSoon = () => {
     if (!toast.isActive(toastId)) {
       const newId = Math.random();
       setToastId(newId);
@@ -187,8 +187,8 @@ export default function DashboradScreen() {
       : showToast();
   };
   const request = useMemo(
-    () => ({ pageNo: 1, pageSize: 10, cityName: AppLocation.City }),
-    [AppLocation.City]
+    () => ({pageNo: 1, pageSize: 10, cityName: AppLocation.City}),
+    [AppLocation.City],
   );
   const RenderPodcastItems = React.memo(({item, index}) => {
     return (
@@ -255,10 +255,11 @@ export default function DashboradScreen() {
                 }))}
               />
             )} */}
-            {marqueeText?.length > 0 && (
+            {/* {marqueeText?.length > 0 && (
               <MarqueeScreen marqueeTextList={marqueeText} />
-            )}
+            )} */}
           </View>
+
           <Grid className="gap-3 p-4" _extra={{className: 'grid-cols-9'}}>
             <GridItem
               className="bg-background-50 p-2 rounded-md text-center"
@@ -266,7 +267,8 @@ export default function DashboradScreen() {
               <ZText type={'R18'}>Find what you are looking for</ZText>
             </GridItem>
             <GridItem
-              className="bg-background-0 p-4 rounded-md text-center"
+              style={styles.gridcontainer}
+              className="bg-background-0 p-2 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
               {/* <TouchableOpacity
                 onPress={() => {
@@ -277,14 +279,12 @@ export default function DashboradScreen() {
                       })
                     : showToast();
                 }}> */}
-                   <TouchableOpacity
+              <TouchableOpacity
                 onPress={() => {
-                 
                   navigation.navigate('ItemListScreen', {
-                        listType: 'RealEstate',
-                        categoryId: 1,
-                      })
-                 
+                    listType: 'RealEstate',
+                    categoryId: 1,
+                  });
                 }}>
                 <View style={styles.tabItemContainer}>
                   <TABHome />
@@ -295,7 +295,8 @@ export default function DashboradScreen() {
               </TouchableOpacity>
             </GridItem>
             <GridItem
-              className="bg-background-0 p-4 rounded-md text-center"
+              style={styles.gridcontainer}
+              className="bg-background-0 p-2 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
               <TouchableOpacity
                 onPress={() => {
@@ -315,60 +316,62 @@ export default function DashboradScreen() {
               </TouchableOpacity>
             </GridItem>
             <GridItem
-              className="bg-background-0 p-4 rounded-md text-center"
+              style={styles.gridcontainer}
+              className="bg-background-0 p-2 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
-                 <TouchableOpacity
-                onPress={showToastComingSoon}>
-              <View style={styles.tabItemContainer}>
-                <TABLoan />
-               
-                <ZText type={'S16'} style={styles.tabItemTitle}>
-                  Loan
-                </ZText>
-                
-              </View>
+              <TouchableOpacity onPress={showToastComingSoon}>
+                <View style={styles.tabItemContainer}>
+                  <TABLoan />
+
+                  <ZText type={'S16'} style={styles.tabItemTitle}>
+                    Loan
+                  </ZText>
+                </View>
               </TouchableOpacity>
             </GridItem>
             <GridItem
-              className="bg-background-0 p-4 rounded-md text-center"
+              style={styles.gridcontainer}
+              className="bg-background-0 p-2 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
-                   <TouchableOpacity
-                onPress={showToastComingSoon}>
-              <View style={styles.tabItemContainer}>
-                <TABInsurance />
-                <ZText type={'S16'} style={styles.tabItemTitle}>
-                  Insurance
-                </ZText>
-              </View>
+              <TouchableOpacity onPress={showToastComingSoon}>
+                <View style={styles.tabItemContainer}>
+                  <TABInsurance />
+                  <ZText type={'S16'} style={styles.tabItemTitle}>
+                    Insurance
+                  </ZText>
+                </View>
               </TouchableOpacity>
             </GridItem>
             <GridItem
-              className="bg-background-0 p-4 rounded-md text-center"
+              style={styles.gridcontainer}
+              className="bg-background-0 p-2 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
-                   <TouchableOpacity
-                onPress={showToastComingSoon}>
-              <View style={styles.tabItemContainer}>
-                <TABTravel />
-                <ZText type={'S16'} style={styles.tabItemTitle}>
-                  Travel
-                </ZText>
-              </View></TouchableOpacity>
+              <TouchableOpacity onPress={showToastComingSoon}>
+                <View style={styles.tabItemContainer}>
+                  <TABTravel />
+                  <ZText type={'S16'} style={styles.tabItemTitle}>
+                    Travel
+                  </ZText>
+                </View>
+              </TouchableOpacity>
             </GridItem>
             <GridItem
-              className="bg-background-0 p-4 rounded-md text-center"
+              style={styles.gridcontainer}
+              className="bg-background-0 p-2 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
-                       <TouchableOpacity
-                onPress={showToastComingSoon}>
-              <View style={styles.tabItemContainer}>
-                <TABWealth />
-                <ZText type={'S16'} style={styles.tabItemTitle}>
-                  Wealth
-                </ZText>
-              
-              </View>
+              <TouchableOpacity onPress={showToastComingSoon}>
+                <View style={styles.tabItemContainer}>
+                  <TABWealth />
+                  <ZText type={'S16'} style={styles.tabItemTitle}>
+                    Wealth
+                  </ZText>
+                </View>
               </TouchableOpacity>
             </GridItem>
           </Grid>
+          <AutoscrollAds
+            onPressBottomSheet={() => bottomSheetRef.current?.expand()}
+          />
           <ProductSection
             heading={'Newly Launch'}
             background={'#FFFFFF'}
@@ -451,12 +454,11 @@ export default function DashboradScreen() {
 
 const styles = StyleSheet.create({
   badge: {
-    position: "absolute",
-     top: 5,
-     right: 5,
-     backgroundColor:"#ff0000",
-    borderRadius:12
-
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: '#ff0000',
+    borderRadius: 12,
   },
   subHeaderSection: {
     paddingBottom: 20,
@@ -470,7 +472,13 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   tabItemTitle: {
-    marginTop: 10,
+    marginTop: 5,
+  },
+  gridcontainer: {
+    shadowOffset: {width: 0, height: 10}, // shadow offset
+    shadowOpacity: 1, // shadow opacity
+    // shadowRadius: 64, // blur radius (64px)
+    elevation: 2,
   },
   tabItemContainer: {
     flexDirection: 'column',

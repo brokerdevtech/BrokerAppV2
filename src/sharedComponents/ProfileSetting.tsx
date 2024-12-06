@@ -72,6 +72,7 @@ import {
   DeactivateUser,
   Logout,
 } from '../../BrokerAppCore/services/new/authService';
+import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 
 const validationSchema = yup.object().shape({
   oldpassword: yup
@@ -105,7 +106,7 @@ const ProfileSetting: React.FC = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [resetModal, setResetModal] = useState(false);
-
+  const {logButtonClick} = useUserJourneyTracker(`Profile Settings`);
   const handleModalOpen = () => {
     setModalVisible(true);
   };

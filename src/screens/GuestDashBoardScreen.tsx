@@ -46,6 +46,7 @@ import {
 } from '../../components/ui/alert-dialog';
 import {Button} from '../../components/ui/button';
 import {Color} from '../styles/GlobalStyles';
+import useUserJourneyTracker from '@/hooks/Analytics/useUserJourneyTracker';
 
 export default function GuestDashboardScreen({isGuest = false}) {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -341,8 +342,8 @@ export default function GuestDashboardScreen({isGuest = false}) {
                 Discover endless premium listing with BrokerApp
               </ZText>
               <ZText type="R16" style={{marginBottom: 20, textAlign: 'center'}}>
-                your trusted partner for properties and cars.Join us
-                and turn your dreams into reality!
+                your trusted partner for properties and cars.Join us and turn
+                your dreams into reality!
               </ZText>
             </AlertDialogBody>
             <AlertDialogFooter

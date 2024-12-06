@@ -21,6 +21,7 @@ import {
 } from '../../BrokerAppCore/services/new/profileServices';
 import {useApiPagingRequest} from '../hooks/useApiPagingRequest';
 import ZText from './ZText';
+import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 
 const DEBOUNCE_DELAY = 300;
 const staticData = [
@@ -53,6 +54,9 @@ const FollowerList: React.FC = ({
   const [searchText, setSearch] = useState('');
   const [userLists, setuserLists] = useState();
   const listType = route.params?.type;
+  const {logButtonClick} = useUserJourneyTracker(
+    `My ${route.params.listType} Page`,
+  );
   const {
     data: followerdata,
     status: followerstatus,
