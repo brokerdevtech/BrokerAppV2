@@ -37,6 +37,7 @@ import {getList, updateNestedObject} from '../utils/helpers';
 import {Toast, ToastDescription} from '../../components/ui/toast';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../BrokerAppCore/redux/store/reducers';
+import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required('First Name is required'),
@@ -88,6 +89,7 @@ const PersonalDetailsForm = ({
   const [selectedCountry, setSelectedCountry] = useState(
     Profiledata?.countryId,
   );
+  const {logButtonClick} = useUserJourneyTracker(`Manage Personal Details`);
   const [localities, setLocalities] = useState({});
   const [officeLocalities, setOfficeLocalities] = useState({});
   const [date, setDate] = useState(new Date());
@@ -156,7 +158,6 @@ const PersonalDetailsForm = ({
   );
   const handleSubmit = async values => {
     try {
-    
       Keyboard.dismiss();
       const year = selectDate.getFullYear().toString();
       const month = (selectDate.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-based, so add 1
@@ -165,7 +166,7 @@ const PersonalDetailsForm = ({
 
       // Create the formatted date string as "yyyy-mm-dd"
       const formattedDate = `${year}-${month}-${day}`;
-   
+
       // const mappedIndustries = values.industry.map(id => {
       //   const matchedIndustry = IndustryDataForSelect.find(
       //     industry => industry.value === id,
@@ -216,8 +217,7 @@ const PersonalDetailsForm = ({
       delete Result['location'];
       delete Result['officeLocation'];
       delete Result['userPermissions'];
-   
-    
+
       await profileUpdateexecute(Result);
 
       if (profileUpdatestatus == 200) {
@@ -225,7 +225,6 @@ const PersonalDetailsForm = ({
       }
     } catch (error) {}
   };
-
 
   const AlreadySelectIndustry = Profiledata.industries.map(industry => {
     return industry.industryId;
@@ -424,9 +423,9 @@ const PersonalDetailsForm = ({
                 </ZText>
               )}
               <Box mb="5" style={localStyles.BoxStyles}>
-              <ZText type={'R15'} style={localStyles.label}>
-                Your Location
-              </ZText>
+                <ZText type={'R15'} style={localStyles.label}>
+                  Your Location
+                </ZText>
                 <LocalityTag
                   screenType="personal"
                   selectedLocation={locationData}
@@ -435,9 +434,9 @@ const PersonalDetailsForm = ({
                 />
               </Box>
               <Box mb="5" style={localStyles.BoxStyles}>
-              <ZText type={'R15'} style={localStyles.label}>
-              Office Location
-              </ZText>
+                <ZText type={'R15'} style={localStyles.label}>
+                  Office Location
+                </ZText>
                 <LocalityTag
                   screenType="personal"
                   selectedLocation={OfficeLocationData}
@@ -451,13 +450,13 @@ const PersonalDetailsForm = ({
                 onPress={() => {
                   setShowDatePicker(true);
                 }}
-                style={{justifyContent:'space-between' ,flexDirection :'row'}}>
+                style={{justifyContent: 'space-between', flexDirection: 'row'}}>
                 <ZText type={'R16'} style={localStyles.label}>
                   Rera Expiry Date:
                   {selectDate != '' ? selectDate.toDateString() : ''}
                 </ZText>
 
-                <Icon as={Calender_Icon} size='xl'/>
+                <Icon as={Calender_Icon} size="xl" />
               </TouchableOpacity>
 
               <DatePicker

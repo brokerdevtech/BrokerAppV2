@@ -5,7 +5,8 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  View,Text
+  View,
+  Text,
 } from 'react-native';
 import {HStack} from '@/components/ui/hstack';
 import {VStack} from '@/components/ui/vstack';
@@ -36,6 +37,7 @@ import {Button} from '../../../components/ui/button';
 import {Color} from '../../styles/GlobalStyles';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
+import useUserJourneyTracker from '../../hooks/Analytics/useUserJourneyTracker';
 
 interface BrandSectionProps {
   heading: string;
@@ -51,6 +53,7 @@ const BrandSection = (props: BrandSectionProps) => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
+  const {logButtonClick} = useUserJourneyTracker(`Brand Assosiated`);
   const [showAlertDialog, setShowAlertDialog] = React.useState(false);
   const handleClose = () => setShowAlertDialog(false);
   const [brandData, setBrandData] = useState(null);
@@ -69,13 +72,13 @@ const BrandSection = (props: BrandSectionProps) => {
   // }, []);
   useFocusEffect(
     React.useCallback(() => {
-     // console.log(props);
-     callBrandList();
+      // console.log(props);
+      callBrandList();
       // Optionally return a cleanup function if needed
       return () => {
         // Cleanup logic, if required
       };
-    }, []) // dependencies go here
+    }, []), // dependencies go here
   );
   useEffect(() => {
     if (status == 200) {
@@ -120,7 +123,7 @@ const BrandSection = (props: BrandSectionProps) => {
           BraandPopUPFilter = convertTagsToNewFormat(item.filters.tags);
         }
 
-     //   console.log(obj);
+        //   console.log(obj);
 
         const locationData = [
           {
@@ -139,7 +142,7 @@ const BrandSection = (props: BrandSectionProps) => {
           if (BraandPopUPFilter != null) {
             updatedPopUPFilter = {...updatedPopUPFilter, ...BraandPopUPFilter};
           }
-        //  console.log(updatedPopUPFilter);
+          //  console.log(updatedPopUPFilter);
 
           navigation.navigate('ItemFilterListScreen', {
             listType: 'Car',
@@ -162,7 +165,7 @@ const BrandSection = (props: BrandSectionProps) => {
           if (BraandPopUPFilter != null) {
             updatedPopUPFilter = {...updatedPopUPFilter, ...BraandPopUPFilter};
           }
-      //    console.log(updatedPopUPFilter);
+          //    console.log(updatedPopUPFilter);
 
           navigation.navigate('ItemFilterListScreen', {
             listType: 'RealEstate',

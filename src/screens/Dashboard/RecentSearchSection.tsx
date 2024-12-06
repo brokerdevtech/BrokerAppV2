@@ -5,7 +5,8 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  View,Text
+  View,
+  Text,
 } from 'react-native';
 import {HStack} from '@/components/ui/hstack';
 import {VStack} from '@/components/ui/vstack';
@@ -26,6 +27,7 @@ import {
   postsImagesBucketPath,
 } from '../../config/constants';
 import {RecentSearchSData} from '../../../BrokerAppCore/services/new/dashboardService';
+import useUserJourneyTracker from '../../hooks/Analytics/useUserJourneyTracker';
 
 interface BrandSectionProps {
   heading: string;
@@ -38,7 +40,7 @@ interface BrandSectionProps {
 const RecentSearchSection = (props: BrandSectionProps) => {
   const {data, status, error, execute} = useApiRequest(RecentSearchSData);
   const navigation = useNavigation();
-
+  const {logButtonClick} = useUserJourneyTracker(`Recent Search`);
   const callBrandList = async () => {
     execute(props.endpoint, props.request);
   };
@@ -49,12 +51,12 @@ const RecentSearchSection = (props: BrandSectionProps) => {
   useFocusEffect(
     React.useCallback(() => {
       callBrandList();
-  
+
       // Cleanup logic, if needed
       return () => {
         // Cleanup code here, if necessary
       };
-    }, []) // Add dependencies here
+    }, []), // Add dependencies here
   );
   const renderProductItems = ({item, index}) => {
     if (!item || !item.requestJson || !item.frontendFilters) {
@@ -70,8 +72,8 @@ const RecentSearchSection = (props: BrandSectionProps) => {
       parsedItem = JSON.parse(item.requestJson);
       frontendFilters = JSON.parse(item.frontendFilters);
 
-    //  console.log(parsedItem);
-    //  console.log(frontendFilters);
+      //  console.log(parsedItem);
+      //  console.log(frontendFilters);
     } catch (error) {
       console.error('Error parsing JSON:', error);
       return null; // Return null if JSON parsing fails
@@ -164,8 +166,6 @@ const RecentSearchSection = (props: BrandSectionProps) => {
   );
 };
 const styles = StyleSheet.create({
-
-
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',

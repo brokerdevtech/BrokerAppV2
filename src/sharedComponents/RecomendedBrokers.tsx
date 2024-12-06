@@ -39,6 +39,7 @@ import ZAvatarInitials from './ZAvatarInitials';
 import {Color} from '../styles/GlobalStyles';
 import RectangularCardSkeleton from './Skeleton/RectangularCardSkeleton';
 import RecommendedBrokersSkeleton from './Skeleton/RecomBrokerSkelton';
+import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 
 const RenderBrokerItem = React.memo(({item}) => {
   const navigation = useNavigation();
@@ -97,6 +98,9 @@ const RenderBrokerItem = React.memo(({item}) => {
 const Recommend = React.memo(categoryIds => {
   const navigation = useNavigation();
   const route = useRoute();
+  const {logButtonClick} = useUserJourneyTracker(
+    `${route.params.categoryId == 1 ? 'Properties' : 'Cars'}Recomended Broker`,
+  );
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector(state => state.user.user, shallowEqual);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
@@ -122,9 +126,7 @@ const Recommend = React.memo(categoryIds => {
       brokerscurrentPage_Set(1);
       brokershasMore_Set(true);
       brokersexecute(user.userId, categoryId, AppLocation.City);
-    } catch (error) {
- 
-    }
+    } catch (error) {}
   };
 
   // useFocusEffect(
@@ -132,7 +134,9 @@ const Recommend = React.memo(categoryIds => {
   //     getList();
   //   }, []),
   // );
-  useEffect(() => { getList(); }, []);
+  useEffect(() => {
+    getList();
+  }, []);
   useEffect(() => {
     // Bind data to the state when the data fetch is successful
     // console.log(brokersstatus, 'redf');
@@ -155,7 +159,6 @@ const Recommend = React.memo(categoryIds => {
     <RenderBrokerItem item={item} />
   ));
 
-  
   return (
     <View style={localStyles.container}>
       <View style={localStyles.storiesHeaderWrapper}>

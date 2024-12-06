@@ -75,9 +75,11 @@ const PropertyPostPreview: React.FC = ({
   const [formValue, setformValue] = useState<any>(route.params?.formValue);
   const [localities, setlocalities] = useState<any>(route.params?.localities);
   // const isLast = index === filter.length - 1;
- // const [selectedPropertySize, setselectedPropertySize] = useState('1');
+  // const [selectedPropertySize, setselectedPropertySize] = useState('1');
 
-  const [selectedPropertySize, setselectedPropertySize] = useState<any>(route.params?.selectedPropertySize);
+  const [selectedPropertySize, setselectedPropertySize] = useState<any>(
+    route.params?.selectedPropertySize,
+  );
   const [loading, setLoading] = useState(false);
   const [toastId, setToastId] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -450,7 +452,6 @@ const PropertyPostPreview: React.FC = ({
                       setActiveIndex(index);
                     }}
                     contentContainerStyle={localStyles.listContainer}
-                    x
                     // contentContainerStyle={
                     //   imagesArray.length > 1 && localStyles.listContainer
                     // }

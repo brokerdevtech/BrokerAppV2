@@ -9,6 +9,7 @@ import {Color} from '../styles/GlobalStyles';
 import {useApiRequest} from '../hooks/useApiRequest';
 import {getConnections} from '../../BrokerAppCore/services/new/connection';
 import ZText from './ZText';
+import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 
 const MyConnectionScreen: React.FC = ({route}) => {
   const [connectionData, setConnectionData] = useState(null);
@@ -16,7 +17,7 @@ const MyConnectionScreen: React.FC = ({route}) => {
   const user = useSelector((state: RootState) => state.user.user);
   const [refresh, setRefresh] = useState(false);
   const [activeTab, setActiveTab] = useState('network'); // To track active tab
-
+  const {logButtonClick} = useUserJourneyTracker(`My Connections Page`);
   const activeUserId = route?.params?.activeUserId;
   const activeUserName = route?.params?.activeUserName;
   const userId = activeUserId === undefined ? user.userId : activeUserId;
@@ -38,7 +39,7 @@ const MyConnectionScreen: React.FC = ({route}) => {
       try {
         await connectionexecute(userId);
       } catch (error) {
-     //   console.error('Error fetching connection data:', error);
+        //   console.error('Error fetching connection data:', error);
       }
     };
     apiCallConnection();
@@ -63,7 +64,7 @@ const MyConnectionScreen: React.FC = ({route}) => {
               style={{
                 borderBottomColor: Color.borderColor,
                 borderBottomWidth: 1,
-                paddingVertical:10,
+                paddingVertical: 10,
               }}>
               <UserAvartarWithNameComponent
                 userName={item.firstName + ' ' + item?.lastName}

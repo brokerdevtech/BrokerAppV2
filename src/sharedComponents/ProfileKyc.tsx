@@ -14,6 +14,7 @@ import FileUpload from './FileUpload';
 import AppBaseContainer from '../hoc/AppBaseContainer_old';
 import {styles} from '../themes';
 import {useApiRequest} from '../hooks/useApiRequest';
+import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 
 const ProfileKyc: React.FC = ({
   isPageSkeleton,
@@ -29,6 +30,7 @@ const ProfileKyc: React.FC = ({
 }) => {
   const [panName, setPanName] = useState('');
   const [panNumber, setPanNumber] = useState('');
+  const {logButtonClick} = useUserJourneyTracker(`My Kyc Page`);
   const [panCardAttachment, setPanCardAttachment] = useState(null);
   const [visitingCardAttachment, setVisitingCardAttachment] = useState(null);
   const [addressProofAttachment, setAddressProofAttachment] = useState(null);
@@ -76,7 +78,6 @@ const ProfileKyc: React.FC = ({
     if (profileUpdatestatus === 200) {
       toastMessage('Document upoaded');
       setProfiledata(profileUpdatedata.data);
-
     }
   }, [profileUpdatestatus]);
   const handleSubmit = async (docId, fieldName, successMessage) => {

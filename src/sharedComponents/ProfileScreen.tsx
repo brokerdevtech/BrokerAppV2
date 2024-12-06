@@ -74,6 +74,7 @@ import {
   UpdateProfile,
 } from '../../BrokerAppCore/services/new/profileServices';
 import {showRationaleAndRequest} from '../utils/appPermission';
+import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 
 const ProfileScreen: React.FC = ({
   toast,
@@ -93,6 +94,7 @@ const ProfileScreen: React.FC = ({
   const [selectedFile, setSelectedFile] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [userBio, setUserBio] = useState('');
+  const {logButtonClick} = useUserJourneyTracker(`My Profile Page`);
   const [index, setIndex] = useState(0);
   const [ParentUser, setParentUser] = useState([]);
   const [dataLoad, setDataLoad] = useState(false);
@@ -154,6 +156,7 @@ const ProfileScreen: React.FC = ({
       categoryId: '2',
     },
   ];
+  // console.log(ProfileData);
   const renderContent = () => {
     return (
       <>
@@ -596,7 +599,7 @@ const ProfileScreen: React.FC = ({
       </>
     );
   };
- 
+
   const LeftIcon = () => {
     return (
       <TouchableOpacity onPress={() => navigation.goBack()}>

@@ -22,6 +22,7 @@ import {
 } from '../../BrokerAppCore/services/new/profileServices';
 import {useApiPagingRequest} from '../hooks/useApiPagingRequest';
 import {useApiPagingWithtotalRequest} from '../hooks/useApiPagingWithtotalRequest';
+import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 
 const DEBOUNCE_DELAY = 300;
 const staticData = [
@@ -50,7 +51,7 @@ const BrokerList: React.FC = ({
   const [ListType, setlistType] = useState(route.params?.type);
   const [paramsuserId, setparamsuserId] = useState(route.params?.userId);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
-
+  const {logButtonClick} = useUserJourneyTracker(`Search Broker Page`);
   const [searchText, setSearch] = useState('');
   const [userLists, setuserLists] = useState();
   const listType = route.params?.type;
@@ -96,7 +97,7 @@ const BrokerList: React.FC = ({
     setSearchInputStyle(BlurredStyle);
     setSearchIconStyle(BlurredIconStyle);
   };
-  const getList = async (text) => {
+  const getList = async text => {
     try {
       currentPage_Set(1);
       hasMore_Set(true);
@@ -125,7 +126,7 @@ const BrokerList: React.FC = ({
     <ZSafeAreaView>
       <View style={localStyles.rootContainer}>
         <ZInput
-         placeHolder={'Search first/last name'}
+          placeHolder={'Search first/last name'}
           _value={searchText}
           keyBoardType={'default'}
           autoCapitalize={'none'}

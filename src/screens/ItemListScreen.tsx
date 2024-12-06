@@ -136,12 +136,13 @@ const ProductItem = React.memo(
   ({item, listTypeData, User, navigation, OnGoBack}) => {
     const [isrefresh, setisrefresh] = useState(0);
     const MediaGalleryRef = useRef(null);
+    // console.log(listTypeData);
 
     const ProductItemOnGoBack = item => {
-    //  console.log('ProductItemOnGoBack');
-      if(item.Action!="Delete")
-        {   
-        setisrefresh(isrefresh+1)}
+      //  console.log('ProductItemOnGoBack');
+      if (item.Action != 'Delete') {
+        setisrefresh(isrefresh + 1);
+      }
       OnGoBack(item);
     };
 
@@ -202,7 +203,10 @@ const ProductItem = React.memo(
             if (supported) {
               Linking.openURL(url);
             } else {
-              Alert.alert('Oops! ', 'No contact info available for this post. Try reaching out through other channels!');
+              Alert.alert(
+                'Oops! ',
+                'No contact info available for this post. Try reaching out through other channels!',
+              );
             }
           })
           .catch(err => console.error('Error opening dialer', err));
@@ -389,7 +393,9 @@ const ItemListScreen: React.FC<any> = ({
   const brandName =
     route.params.brandName !== undefined ? route.params.brandName : '';
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
-  const { logButtonClick } = useUserJourneyTracker(`${route.params.listType} Page`);
+  const {logButtonClick} = useUserJourneyTracker(
+    `${route.params.listType} Page`,
+  );
   // console.log('=============user=============');
   // console.log(user);
   const FilterSheetRef = useRef(null);
