@@ -181,7 +181,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
             ref={playerRef}
             sourceUri={sourceUri}
             vidStyle={localStyles.videoStyle}
-            defaultPaused={true}
+            defaultPaused={false}
             onPress={() => handleAdsPress(item)}
           />
         </View>
@@ -192,21 +192,31 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
   const renderPaginationDots = () => {
     const progressAnim = useRef(new Animated.Value(0)).current;
-
+  
     useEffect(() => {
+      // Reset animation on every activeIndex change
+      progressAnim.setValue(0);
+  
       Animated.timing(progressAnim, {
-        toValue: 100,
-        duration: 3000,
+        toValue: 1,
+        duration: 6000, // Match the auto-scroll interval (6 seconds)
         useNativeDriver: false,
       }).start();
-
-      return () => progressAnim.setValue(0);
-    }, [activeIndex]);
-
+  
+      return () => {
+        progressAnim.stopAnimation();
+      };
+    }, [activeIndex]); // Re-run animation when the active index changes
+    const visibleDots = Addata?.slice(
+      Math.max(0, activeIndex - 2), // Show 2 dots before the active index
+      Math.min(Addata.length, activeIndex + 3), // Show 2 dots after the active index
+    );
     return (
       <View style={localStyles.paginationContainer}>
-        {Addata?.map((_, index) => {
-          if (index === activeIndex) {
+        {visibleDots?.map((_, index) => {
+          const isActive = index + Math.max(0, activeIndex - 2) === activeIndex; 
+  
+          if (isActive) {
             return (
               <View key={index} style={localStyles.paginationTrack}>
                 <Animated.View
@@ -214,8 +224,8 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
                     localStyles.paginationProgressBar,
                     {
                       width: progressAnim.interpolate({
-                        inputRange: [0, 100],
-                        outputRange: [0, 50],
+                        inputRange: [0, 1],
+                        outputRange: [0, 50], // Animate from 0 to full width
                       }),
                     },
                   ]}
@@ -223,11 +233,16 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
               </View>
             );
           }
-
+  
+          // Inactive dot for non-active items
           return <View key={index} style={localStyles.paginationDotInactive} />;
         })}
       </View>
     );
+  };
+  const onMomentumScrollEnd = (event) => {
+    const newIndex = Math.round(event.nativeEvent.contentOffset.x / screenWidths);
+    setActiveIndex(newIndex);
   };
 
   return (
@@ -251,6 +266,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
           decelerationRate="fast"
           onEndReachedThreshold={0.6}
           onEndReached={loadMorepage}
+          onMomentumScrollEnd={onMomentumScrollEnd}
           ListFooterComponent={
             isInfiniteLoading ? (
               <ActivityIndicator size="large" color="#0000ff" />
