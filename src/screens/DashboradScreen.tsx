@@ -259,13 +259,15 @@ export default function DashboradScreen() {
               <MarqueeScreen marqueeTextList={marqueeText} />
             )} */}
           </View>
-
-          <Grid className="gap-3 p-4" _extra={{className: 'grid-cols-9'}}>
-            <GridItem
+          <AutoscrollAds
+            onPressBottomSheet={() => bottomSheetRef.current?.expand()}
+          />
+          <Grid className="gap-2 p-4" _extra={{className: 'grid-cols-9'}}>
+            {/* <GridItem
               className="bg-background-50 p-2 rounded-md text-center"
               _extra={{className: 'col-span-9'}}>
               <ZText type={'R18'}>Find what you are looking for</ZText>
-            </GridItem>
+            </GridItem> */}
             <GridItem
               style={styles.gridcontainer}
               className="bg-background-0 p-2 rounded-md text-center"
@@ -370,9 +372,6 @@ export default function DashboradScreen() {
             </GridItem>
           </Grid>
 
-          <AutoscrollAds
-            onPressBottomSheet={() => bottomSheetRef.current?.expand()}
-          />
           <ProductSection
             heading={'Newly Launch'}
             background={'#FFFFFF'}

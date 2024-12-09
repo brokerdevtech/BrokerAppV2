@@ -125,23 +125,33 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
       // console.log(item?.mediaBlob);
       if (item?.postMedias[0]?.mediaBlobId === '') {
         return (
-          <TouchableOpacity onPress={() => handleAdsPress(item)}>
+          <TouchableOpacity
+            onPress={() => handleAdsPress(item)}
+            style={{
+              paddingHorizontal: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
             <View
               style={[
                 localStyles.card,
                 {
-                  width: parentWidth,
+                  width: parentWidth - 20,
                   backgroundColor: Color.primary,
                   paddingHorizontal: 25,
                   paddingVertical: 25,
-                  height: 250,
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  height: 200,
+                  alignItems: 'center', // Center children horizontally
+                  justifyContent: 'center', // Center children vertically
+                  flex: 1,
                 },
               ]}>
               <ZText
                 type={'R20'}
-                style={{flex: 1, flexWrap: 'wrap', color: 'white'}}>
+                style={{
+                  color: 'white', // Text color
+                  textAlign: 'center', // Center text horizontally
+                }}>
                 {item.marqueueText || 'Default Text'}
               </ZText>
             </View>
@@ -306,7 +316,9 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: screenWidths,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
+    maxHeight: 200,
+    height: 200,
   },
   paginationText: {
     color: 'white',
