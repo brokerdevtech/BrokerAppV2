@@ -70,22 +70,20 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
   }, [cityToShow]);
 
   useEffect(() => {
-    if (Addata?.posts) {
-      setAdsToshow(prevAds => [...prevAds, ...Addata.posts]);
-    }
+   console.log(Addata);
   }, [Addata]);
 
   useEffect(() => {
-    if (adsToshow?.length > 1) {
+    if (Addata?.length > 1) {
       const interval = setInterval(() => {
-        const nextIndex = (activeIndex + 1) % adsToshow?.length;
+        const nextIndex = (activeIndex + 1) % Addata?.length;
         flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
         setActiveIndex(nextIndex);
       }, 6000);
 
       return () => clearInterval(interval);
     }
-  }, [adsToshow, activeIndex]);
+  }, [Addata, activeIndex]);
 
   const getExtension = useCallback(filename => {
     if (!filename) return '';
@@ -110,14 +108,21 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
     }
   };
 
-  const loadMorePage = async () => {
-    if (!isInfiniteLoading && hasMore) {
-      await AdsloadMore(fetchAdApi, cityToShow, 3);
+  const loadMorepage = async () => {
+    if (!isInfiniteLoading) {
+      await AdsloadMore(cityToShow);
     }
   };
+  // const loadMorePage = async () => {
+  //   if (!isInfiniteLoading && \\\) {
+  //     await AdsloadMore(fetchAdApi, cityToShow, 3);
+  //   }
+  // };
 
   const renderCarouselItem = useCallback(
     ({item}) => {
+      console.log("renderCarouselItem")
+      console.log(item);
       const extension = getExtension(item?.postMedias[0]?.mediaBlobId);
       const sourceUri = `${imagesBucketcloudfrontPath}${
         item?.postMedias[0].mediaBlob || item?.postMedias[0]?.mediaBlobId
@@ -190,7 +195,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
     return (
       <View style={localStyles.paginationContainer}>
-        {adsToshow?.map((_, index) => {
+        {Addata?.map((_, index) => {
           if (index === activeIndex) {
             return (
               <View key={index} style={localStyles.paginationTrack}>
@@ -222,9 +227,9 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
         const {width} = event.nativeEvent.layout;
         setParentWidth(width);
       }}>
-      {adsToshow?.length > 0 ? (
+      {Addata?.length > 0 ? (
         <FlatList
-          data={adsToshow}
+          data={Addata}
           horizontal
           pagingEnabled
           ref={flatListRef}
@@ -234,6 +239,8 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
           snapToInterval={parentWidth}
           snapToAlignment="center"
           decelerationRate="fast"
+          onEndReachedThreshold={0.6}
+          onEndReached={loadMorepage}
           ListFooterComponent={
             isInfiniteLoading ? (
               <ActivityIndicator size="large" color="#0000ff" />
