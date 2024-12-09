@@ -411,7 +411,7 @@ const ItemDetailScreen: React.FC<any> = ({
 }) => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-  console.log(route);
+
 
   const toast = useToast();
   const {onGoBack} = route.params; // Retrieve item and callback function
@@ -419,7 +419,7 @@ const ItemDetailScreen: React.FC<any> = ({
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
-  console.log(route.params);
+
   const MediaGalleryRef = useRef(null);
   const {logButtonClick} = useUserJourneyTracker(
     `${route.params.postType} Detail Page`,

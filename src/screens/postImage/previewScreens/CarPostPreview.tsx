@@ -201,7 +201,7 @@ const CarPostPreview: React.FC = ({
   const savePost = async (FormValue, Formtags, imagesArray) => {
     try {
       setLoading(true);
-
+      let dimensionsuploaded=[]
       const uploadPromises = [];
       let uploadedImageUrls = [];
 
@@ -224,17 +224,36 @@ const CarPostPreview: React.FC = ({
             Bucket: Bucket,
             Key: `${postsImagesBucketPath}${imageName}`,
             Body: responseBlob,
+            Metadata: {
+              width: image.width.toString(),
+              height: image.height.toString(),
+            },
           };
-
+          dimensionsuploaded.push({Key: postsImagesBucketPath + imageName,height:image.height,width:image.width})
           const uploadPromise = s3.upload(params).promise();
           uploadPromises.push(uploadPromise);
         }
 
         const results = await Promise.all(uploadPromises);
 
-        uploadedImageUrls = results.map((result, index) => {
+        const mergedResults = results.map((result) => {
+          const key = result.Key;
+          const mergedEntry = { ...result };
+        
+          // Find matching entry in dimensionsUploaded
+          dimensionsuploaded.forEach((dim) => {
+            if (dim.Key === key) {
+              Object.assign(mergedEntry, dim);
+            }
+          });
+        
+          return mergedEntry;
+        });
+
+
+        uploadedImageUrls = mergedResults.map((result, index) => {
           if (result) {
-            return {mediaBlobId: result.Key};
+            return {mediaBlobId: result.Key,mediaHeight:result.height,mediaWidth:result.width,mediaType:"Image"};
           } else {
             console.error('Error uploading image to S3:', imagesArray[index]);
             return null;
@@ -247,8 +266,9 @@ const CarPostPreview: React.FC = ({
           }
         }
       } else {
-        const responseBlob = await uriToBlob(imagesArray.uri);
 
+        const responseBlob = await uriToBlob(imagesArray.uri);
+ 
         const fileExtension = getFileExtensionFromMimeType(
           responseBlob?._data.type,
         );
@@ -267,14 +287,15 @@ const CarPostPreview: React.FC = ({
 
         uploadedImageUrls = results.map((result, index) => {
           if (result) {
-            return {mediaBlobId: result.Key};
+            return {mediaBlobId: result.Key,mediaHeight:imagesArray.height,mediaWidth:imagesArray.width,mediaType:"video"} 
+      
           } else {
             console.error('Error uploading image to S3:', imagesArray[index]);
             return null;
           }
         });
       }
-
+  
       const successfulUploads = uploadedImageUrls.filter(url => url !== null);
 
       if (successfulUploads.length > 0) {
@@ -295,8 +316,9 @@ const CarPostPreview: React.FC = ({
     //code by Prashant Wrapped this api request in proper try catch
 
     try {
-      setLoading(true);
+     // setLoading(true);
 
+// return;
       let tags = [];
       let localitie = route.params?.localities;
 

@@ -13,7 +13,7 @@ const useUserAnalytics = () => {
         lastName: user.lastName || 'anonymous', // Optional property
       });
     } else {
-      console.log('No user ID provided to setUser');
+  
     }
   }, []);
 

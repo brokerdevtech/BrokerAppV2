@@ -90,7 +90,6 @@ export default function DashboradScreen() {
     execute: marqueeExecute,
   } = useApiRequest(fetchDashboardData);
   useEffect(() => {
-    console.log('setUser_Analytics');
     // console.log(user);
     const userS = {
       id: String(user.userId),

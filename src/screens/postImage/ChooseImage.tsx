@@ -279,11 +279,14 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       const assets = data.edges.map(item => item.node.image);
 
       if (assets.length > 0) {
+        const dimensions:any=await getImageDimensionsAsync(assets[0].uri)
         const photoData1 = {
           uri: assets[0].uri,
           type: assets[0].extension,
           name: assets[0].filename,
           count: 1,
+          width: dimensions.width, 
+          height:dimensions.height
         };
         let photobj = [...thumbnail];
         photobj.push({...photoData1});
@@ -353,8 +356,17 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       fetchPhotosnext(endCursor);
     }
   };
+  const getImageDimensionsAsync = async (fileUri) => {
+    return new Promise((resolve, reject) => {
+      Image.getSize(
+        fileUri,
+        (width, height) => resolve({ width, height }),
+        (error) => reject(error)
+      );
+    });
+  };
+  const onChooseImage = async photo => {
 
-  const onChooseImage = photo => {
     if (isMultiSelect) {
       const isAlreadySelected = thumbnail.some(
         item => item.uri === photo.node.image.uri,
@@ -377,12 +389,18 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
         }
       } else {
         // Select the image
+
+    
+        const dimensions:any=await getImageDimensionsAsync(photo.node.image.uri)
+
         const photoData = {
           uri: photo.node.image.uri,
           name: photo.node.image.fileName,
           type: photo.node.image.extension,
+          width: dimensions.width, 
+          height:dimensions.height
         };
-
+      
         const updatedThumbnail = [...thumbnail, {...photoData}];
 
         // Update the count for all selected images
@@ -393,12 +411,18 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
         setThumbnail(updatedThumbnail);
       }
     } else {
+
+
+      const dimensions:any=await getImageDimensionsAsync(photo.node.image.uri)
+ 
       // In single-select mode, clear the previous selections and select the current image
       setThumbnail([
         {
           uri: photo.node.image.uri,
           name: photo.node.image.fileName,
           type: photo.node.image.extension,
+          width: dimensions.width, 
+          height:dimensions.height,
           count: 1,
         },
       ]);
@@ -424,6 +448,9 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
   };
   const saveStoryPostsPhoto = async (images, mediaType) => {
     try {
+
+      const dimensions:any=await getImageDimensionsAsync(images)
+  
       const uploadPromises = [];
       let uploadedImageUrls: any[] = [];
 
@@ -446,7 +473,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       await deleteFile(images);
       uploadedImageUrls = results.map((result, index) => {
         if (result) {
-          return {mediaBlob: result.Key, caption: '', mediaType: mediaType};
+          return {mediaBlob: result.Key, caption: '', mediaType: mediaType,mediaHeight:dimensions.height,mediaWidth:dimensions.width};
         } else {
           console.error('Error uploading image to S3:', imagesArray[index]);
           return null;
@@ -746,11 +773,14 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       maxFileSize: 30 * 1024 * 1024,
     });
     //
+    console.log(videoAsset);
     let obj = {
       uri: videoAsset.sourceURL || videoAsset.path,
       localFileName: getFileNameFromPath(videoAsset.path),
       mime: videoAsset.mime,
       creationDate: videoAsset.creationDate,
+      width: videoAsset.width, 
+      height:videoAsset.height,
     };
 
     navigation.navigate('PostWizard', {imageData: obj, Isvideo: true});
