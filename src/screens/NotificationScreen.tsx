@@ -40,6 +40,7 @@ import {colors} from '../themes';
 import {Icon} from '../../components/ui/icon';
 import {CloseBlack, CloseIcon} from '../assets/svg';
 import {Color} from '../styles/GlobalStyles';
+import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 const NotificationItem = ({
   item,
   index,
@@ -253,7 +254,7 @@ const NotificationScreen: React.FC = ({
   const [hasMoreData, setHasMoreData] = useState(true);
   const [mediaData, setMediaData] = useState([]);
   const [userData, setUserData] = useState([]);
-
+  const {logButtonClick} = useUserJourneyTracker(`My Notifications`);
   // const gotoDetail = (postId: any, postTitle: string, profileImage: any) => {
   //   navigation.push(StackNav.PostDetailScreen, {
   //     postId: postId,
