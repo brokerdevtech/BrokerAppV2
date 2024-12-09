@@ -72,6 +72,7 @@ import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
 import {concat} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
 import {formatNumberToIndianSystem} from '../utils/helpers';
+import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 
 const ProductItem = React.memo(
   ({item, listTypeData, User, navigation, OnGoBack}) => {
@@ -310,6 +311,10 @@ const MyItemListScreen: React.FC<any> = ({
 }) => {
   //console.log(user);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
+  const {logButtonClick} = useUserJourneyTracker(
+    `My ${route.params.listType} Page`,
+  );
+  console.log(route.params.listType);
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
@@ -350,8 +355,8 @@ const MyItemListScreen: React.FC<any> = ({
   }
 
   const OnGoBack = updatedItem => {
-  //  console.log('OnGoBackOnGoBackOnGoBackOnGoBack');
-  //  console.log(updatedItem);
+    //  console.log('OnGoBackOnGoBackOnGoBackOnGoBack');
+    //  console.log(updatedItem);
     //  let newd=  data.map((item) =>
     //     item.postId === updatedItem?.postId ? updatedItem : item
     //   )

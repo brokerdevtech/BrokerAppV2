@@ -73,6 +73,7 @@ import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
 import {concat, filter} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
 import {formatNumberToIndianSystem} from '../utils/helpers';
+import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 const SkeletonPlaceholder = () => {
   return (
     <HStack space={10} style={styles.skeletonContainer}>
@@ -120,6 +121,7 @@ const ProductItem = React.memo(
   ({item, listTypeData, User, navigation, OnGoBack}) => {
     const MediaGalleryRef = useRef(null);
     const [isrefresh, setisrefresh] = useState(0);
+
     const ProductItemOnGoBack = item => {
       if (item.Action != 'Delete') {
         setisrefresh(isrefresh + 1);
@@ -356,6 +358,9 @@ const ItemFilterListScreen: React.FC<any> = ({
   const [ApppageTitle, setApppageTitle] = useState('');
   const [searchKeyword, setsearchKeyword] = useState(
     route.params.searchText ? route.params.searchText : '',
+  );
+  const {logButtonClick} = useUserJourneyTracker(
+    `${route.params.listType}Filter Search Page`,
   );
   const [Itemslocalities, setItemslocalities] = useState(null);
   const [PopUPFilter, setPopUPFilter] = useState(null);

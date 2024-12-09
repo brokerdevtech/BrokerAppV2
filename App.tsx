@@ -53,7 +53,7 @@ import {S3Provider} from './src/Context/S3Context';
 import NetInfo from '@react-native-community/netinfo';
 import OfflineAlert from './src/hoc/OfflineAlert';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
-import useSessionTracker  from './src/hooks/Analytics/useSessionTracker';
+import useSessionTracker from './src/hooks/Analytics/useSessionTracker';
 import useUserAnalytics from './src/hooks/Analytics/useUserAnalytics';
 import analytics from '@react-native-firebase/analytics';
 type SectionProps = PropsWithChildren<{
@@ -95,7 +95,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 }
 
 function App(): React.JSX.Element {
-  //useSessionTracker(); 
+  //useSessionTracker();
 
   //  NativeModules.DevSettings.setIsDebuggingRemotely(true);
   const [isConnected, setIsConnected] = useState<null | boolean>(null);
@@ -182,8 +182,8 @@ function App(): React.JSX.Element {
 
     if (storedUser) {
       const user = JSON.parse(storedUser);
-     
-   //   await analytics().setUserId( String(user.userId) );
+
+      //   await analytics().setUserId( String(user.userId) );
       await store.dispatch(
         setTokens({
           accessToken: storeTokensresult?.accessToken!,
@@ -490,7 +490,7 @@ function App(): React.JSX.Element {
         console.error('Error in permission or user check:', error);
       }
     };
-   // runAsyncFunctions();
+    // runAsyncFunctions();
     // Run animations in parallel
     Animated.parallel([
       Animated.timing(opacityAnim, {
@@ -533,40 +533,38 @@ function App(): React.JSX.Element {
   }, []);
   return (
     <>
-   
-        {isSplashVisible ? (
-          <View style={styles.splashContainer}>
-            <Animated.Image
-              source={require('./src/assets/images/BA.png')}
-              style={[
-                styles.logo,
-                {
-                  opacity: opacityAnim,
-                  transform: [{scale: scaleAnim}],
-                },
-              ]}
-              resizeMode="contain"
-            />
-          </View>
-        ) : (
-          <Provider store={store}>
-            <S3Provider>
-              <GestureHandlerRootView style={{flex: 1}}>
+      {isSplashVisible ? (
+        <View style={styles.splashContainer}>
+          <Animated.Image
+            source={require('./src/assets/images/BA.png')}
+            style={[
+              styles.logo,
+              {
+                opacity: opacityAnim,
+                transform: [{scale: scaleAnim}],
+              },
+            ]}
+            resizeMode="contain"
+          />
+        </View>
+      ) : (
+        <Provider store={store}>
+          <S3Provider>
+            <GestureHandlerRootView style={{flex: 1}}>
               <BottomSheetModalProvider>
-              <OfflineAlert></OfflineAlert>
-              
+                <OfflineAlert></OfflineAlert>
+
                 <GluestackUIProvider>
                   <MainNavigation
                     loggedIn={loggedIn}
                     setLoggedIn={setLoggedIn}
                   />
                 </GluestackUIProvider>
-                </BottomSheetModalProvider>
-              </GestureHandlerRootView>
-            </S3Provider>
-          </Provider>
-        )
-}
+              </BottomSheetModalProvider>
+            </GestureHandlerRootView>
+          </S3Provider>
+        </Provider>
+      )}
     </>
   );
 }

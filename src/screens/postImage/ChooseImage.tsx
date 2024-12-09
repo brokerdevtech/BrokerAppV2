@@ -60,12 +60,14 @@ import {Toast, ToastDescription} from '../../../components/ui/toast';
 import {Color} from '../../styles/GlobalStyles';
 import TextWithPermissionCheck from '../../sharedComponents/TextWithPermissionCheck';
 import {PermissionKey} from '../../config/constants';
+import useUserJourneyTracker from '../../hooks/Analytics/useUserJourneyTracker';
 const windowWidth = Dimensions.get('window').width;
 const windowheight = Dimensions.get('window').height;
 const Bucket = 'broker2023';
 
 const ChooseImage = ({user, s3, toast, navigation}: any) => {
   // console.log(user, 'from hoc');
+  const {logButtonClick} = useUserJourneyTracker('Post Creation');
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
@@ -262,7 +264,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
         setLoading(false);
         return;
       }
-   
+
       // If photos exist, process them
       if (data.page_info.has_next_page) {
         setEndCursor(data?.page_info?.end_cursor?.toString());
@@ -407,9 +409,6 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
     try {
       if (thumbnail.length > 0) {
         if (page !== 'Story') {
-
-
-
           navigation.navigate('EditImagesScreen', {
             selectedThumbnails: thumbnail,
           });

@@ -308,7 +308,7 @@ const carDetails = (data: any, user: any, navigation: any) => {
         User={user}
         listTypeData={'Car'}
         onUpdateLikeCount={newCount => {
-       //   console.log(newCount);
+          //   console.log(newCount);
         }}
       />
       {/* Car Details */}
@@ -411,6 +411,8 @@ const ItemDetailScreen: React.FC<any> = ({
 }) => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
+  console.log(route);
+
   const toast = useToast();
   const {onGoBack} = route.params; // Retrieve item and callback function
   const [toastId, setToastId] = React.useState(0);
@@ -419,7 +421,9 @@ const ItemDetailScreen: React.FC<any> = ({
   );
   console.log(route.params);
   const MediaGalleryRef = useRef(null);
-  const { logButtonClick } = useUserJourneyTracker(`${route.params.postType} Detail Page`);
+  const {logButtonClick} = useUserJourneyTracker(
+    `${route.params.postType} Detail Page`,
+  );
   const {data, status, error, execute} = useApiRequest(
     fetchPostByID,
     setLoading,
@@ -459,7 +463,7 @@ const ItemDetailScreen: React.FC<any> = ({
           onPress: async () => {
             try {
               if (data.postId) {
-            //    console.log(data);
+                //    console.log(data);
                 const result = await deleteMyPost(
                   user.userId,
                   data.postId,
@@ -552,7 +556,7 @@ const ItemDetailScreen: React.FC<any> = ({
     }
     navigation.goBack(); // Go back to FirstScreen
   };
- // console.log(data, 'j');
+  // console.log(data, 'j');
   return (
     <BottomSheetModalProvider>
       <View style={styles.listContainer}>

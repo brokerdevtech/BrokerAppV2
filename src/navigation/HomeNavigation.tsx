@@ -49,6 +49,8 @@ import ItemFilterListScreen from '../screens/ItemFilterListScreen';
 import BuyerList from '../sharedComponents/BuyerList';
 import ProfileViewerList from '../sharedComponents/ProfileViewerList';
 import PostLeads from '../sharedComponents/PostLeads';
+
+import EnquiryForm from '../sharedComponents/EnquiryForm';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -80,7 +82,7 @@ const HomeNavigation: React.FC = () => {
     // <SafeAreaView style={{flex:1}}>
     <OverlayProvider bottomInset={bottom} value={{style: streamChatTheme}}>
       {/* <Stack.Navigator screenOptions={globalScreenOptions}> */}
-      <Stack.Navigator >
+      <Stack.Navigator>
         <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
           <Stack.Screen name="Home" component={AppDrawer} />
         </Stack.Group>
@@ -155,12 +157,12 @@ const HomeNavigation: React.FC = () => {
           name="PostWizard"
           component={PostWizardScreen}
         />
-          <Stack.Screen
+        <Stack.Screen
           options={{headerShown: false}}
           name="BrokerList"
           component={BrokerList}
         />
-        
+
         <Stack.Screen
           name="FilterTags"
           options={{headerShown: false}}
@@ -170,6 +172,11 @@ const HomeNavigation: React.FC = () => {
           options={{headerShown: false}}
           name="EditImagesScreen"
           component={EditImagesScreen}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="EnquiryForm"
+          component={EnquiryForm}
         />
         <Stack.Screen
           name="PropertyPostPreview"
@@ -197,7 +204,7 @@ const HomeNavigation: React.FC = () => {
           options={{headerShown: false}}
         />
 
-<Stack.Screen
+        <Stack.Screen
           name="ItemFilterListScreen"
           component={ItemFilterListScreen}
           options={{headerShown: false}}
@@ -222,25 +229,23 @@ const HomeNavigation: React.FC = () => {
           component={PodcastLikeList}
           options={{headerShown: false}}
         />
-    <Stack.Screen
+        <Stack.Screen
           name="BuyerList"
           component={BuyerList}
           options={{headerShown: false}}
         />
-
-
 
         <Stack.Screen
           name="PodcastViewList"
           component={PodcastViewList}
           options={{headerShown: false}}
         />
-  <Stack.Screen
+        <Stack.Screen
           name="ProfileViewerList"
           component={ProfileViewerList}
           options={{headerShown: false}}
         />
-  <Stack.Screen
+        <Stack.Screen
           name="PostLeads"
           component={PostLeads}
           options={{headerShown: false}}
