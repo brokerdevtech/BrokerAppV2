@@ -169,16 +169,63 @@ const PropertyPostPreview: React.FC = ({
       // Handle the error scenario
     }
   };
+  const getImageDimensionsAsync = async (fileUri) => {
+    return new Promise((resolve, reject) => {
+      Image.getSize(
+        fileUri,
+        (width, height) => resolve({ width, height }),
+        (error) => reject(error)
+      );
+    });
+  };
+  const getImageDimensions = async (image) => {
+
+    return new Promise(async (resolve, reject) => {
+      const uri =
+        Platform.OS === 'ios' && !image.Edit
+          ? image.uri
+          : image.destinationPath;
+        
+      if (!uri) {
+        reject(new Error('Invalid image URI'));
+        return;
+      }
+  
+      if (uri.startsWith('http') || uri.startsWith('https')) {
+        // For remote images
+        Image.getSize(
+          uri,
+          (width, height) => resolve({ width, height }),
+          (error) => reject(error)
+        );
+      } else {
+        // For local images
+        try { 
+      
+          const dimensions:any = await getImageDimensionsAsync(uri);
+        
+         
+       
+          resolve({width: dimensions.width, height:dimensions.height});
+        } catch (error) {
+          reject(error);
+        }
+      }
+    });
+  };
   // console.log(localitie, 'Formvalues');
   const savePost = async (FormValue, Formtags, imagesArray) => {
     try {
       const uploadPromises = [];
       let uploadedImageUrls = [];
-      setLoading(true);
-
+   //   setLoading(true);
+let dimensionsuploaded=[]
       if (Isvideo === false) {
         for (const image of imagesArray) {
           try {
+        
+
+   
             const responseBlob = await uriToBlob(
               Platform.OS === 'ios' && !image.Edit
                 ? image.uri
@@ -194,8 +241,12 @@ const PropertyPostPreview: React.FC = ({
               Bucket: Bucket,
               Key: postsImagesBucketPath + imageName,
               Body: responseBlob,
+              Metadata: {
+                width: image.width.toString(),
+                height: image.height.toString(),
+              },
             };
-
+            dimensionsuploaded.push({Key: postsImagesBucketPath + imageName,height:image.height,width:image.width})
             uploadPromises.push(s3.upload(params).promise());
           } catch (err) {
             console.error('Error processing image:', err);
@@ -203,10 +254,28 @@ const PropertyPostPreview: React.FC = ({
         }
 
         const results = await Promise.all(uploadPromises);
-        uploadedImageUrls = results.map(result =>
-          result ? {mediaBlobId: result.Key} : null,
-        );
+       
 
+        const mergedResults = results.map((result) => {
+          const key = result.Key;
+          const mergedEntry = { ...result };
+        
+          // Find matching entry in dimensionsUploaded
+          dimensionsuploaded.forEach((dim) => {
+            if (dim.Key === key) {
+              Object.assign(mergedEntry, dim);
+            }
+          });
+        
+          return mergedEntry;
+        });
+     
+
+
+        uploadedImageUrls = mergedResults.map(result =>
+          result ? {mediaBlobId: result.Key,mediaHeight:result.height,mediaWidth:result.width,mediaType:"Image"} : null,
+        );
+      
         imagesArray.forEach(async item => {
           if (item.Edit) {
             await deleteImage(item.destinationPath);
@@ -222,6 +291,10 @@ const PropertyPostPreview: React.FC = ({
             Bucket: Bucket,
             Key: postsVideosBucketPath + imageName,
             Body: responseBlob,
+            Metadata: {
+              width: imagesArray.width.toString(),
+              height: imagesArray.height.toString(),
+            },
           };
 
           uploadPromises.push(s3.upload(params).promise());
@@ -231,14 +304,14 @@ const PropertyPostPreview: React.FC = ({
 
         const results = await Promise.all(uploadPromises);
         uploadedImageUrls = results.map(result =>
-          result ? {mediaBlobId: result.Key} : null,
+          result ? {mediaBlobId: result.Key,mediaHeight:imagesArray.height,mediaWidth:imagesArray.width,mediaType:"video"} : null,
         );
       }
 
       const successfulUploads = uploadedImageUrls.filter(url => url !== null);
 
       if (successfulUploads.length > 0) {
-        requestAPI(successfulUploads, FormValue, Formtags);
+       requestAPI(successfulUploads, FormValue, Formtags);
       } else {
         setLoading(false);
         toast('No images were uploaded to S3.');

@@ -176,10 +176,9 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   const signInWithFacebook = async () => {
     try {
       //setLoading(true);
-      console.log("logInWithPermissions");
+
       const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
-      console.log("logInWithPermissions");
-      console.log(result);
+
 
       if (result.isCancelled) {
         Alert.alert('Login cancelled');
@@ -188,13 +187,13 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
 
       // Get the access token
       const data:any = await AccessToken.getCurrentAccessToken();
-      console.log(data);
+
       const currentProfile:any = await Profile.getCurrentProfile();
       const userInfo:any = await fetchFacebookUser(data.accessToken.toString());
-      console.log(currentProfile);
-      console.log(userInfo);
+
+
       const fcmToken:any = await getfcmToken();
-      console.log("getfcmToken");
+  
 
       await SocialLoginexecute(
         userInfo.email,
@@ -217,7 +216,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
 
 
     } catch (error) {
-      console.log(error);
+
       setLoading(false);
    
     }

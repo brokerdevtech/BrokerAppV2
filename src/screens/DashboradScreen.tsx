@@ -90,7 +90,7 @@ export default function DashboradScreen() {
     execute: marqueeExecute,
   } = useApiRequest(fetchDashboardData);
   useEffect(() => {
-    console.log('setUser_Analytics');
+
     // console.log(user);
     const userS = {
       id: String(user.userId),
@@ -259,7 +259,9 @@ export default function DashboradScreen() {
               <MarqueeScreen marqueeTextList={marqueeText} />
             )} */}
           </View>
-
+          <AutoscrollAds
+            onPressBottomSheet={() => bottomSheetRef.current?.expand()}
+          />
           <Grid className="gap-3 p-4" _extra={{className: 'grid-cols-9'}}>
             <GridItem
               className="bg-background-50 p-2 rounded-md text-center"
@@ -370,9 +372,7 @@ export default function DashboradScreen() {
             </GridItem>
           </Grid>
 
-          <AutoscrollAds
-            onPressBottomSheet={() => bottomSheetRef.current?.expand()}
-          />
+        
           <ProductSection
             heading={'Newly Launch'}
             background={'#FFFFFF'}

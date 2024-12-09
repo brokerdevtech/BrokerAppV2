@@ -94,7 +94,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
   const handleAdsPress = item => {
     if (item?.actionType === 1) {
-      console.log(item);
+ 
       navigation.navigate('ItemDetailScreen', {
         postId: item.postId,
         postType: item.categoryId == 2 ? 'Car/Post' : 'Post',
