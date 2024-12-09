@@ -43,7 +43,7 @@ import Builder from './builder.svg';
 import Calender from './calender.svg';
 import Construction from './construction.svg';
 import Developer from './develop.svg';
-
+import BALogo from './Logo.svg';
 import Virtual from './virtual.svg';
 import AppleIcon from './appleIcon.svg';
 import LocationFetchIcon from './fetch.svg';
@@ -97,8 +97,10 @@ import Buyer from './buyer.svg';
 import BuyerActive from './buyer-fill.svg';
 import filter from './filter.svg';
 export {
-  Buyer,filter,
+  Buyer,
+  filter,
   BuyerActive,
+  BALogo,
   balconyType,
   ComingSoon,
   bathroomType,

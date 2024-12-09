@@ -94,7 +94,6 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
   const handleAdsPress = item => {
     if (item?.actionType === 1) {
- 
       navigation.navigate('ItemDetailScreen', {
         postId: item.postId,
         postType: item.categoryId == 2 ? 'Car/Post' : 'Post',
@@ -140,7 +139,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
                   backgroundColor: Color.primary,
                   paddingHorizontal: 25,
                   paddingVertical: 25,
-                  height: 200,
+                  height: 170,
                   alignItems: 'center', // Center children horizontally
                   justifyContent: 'center', // Center children vertically
                   flex: 1,
