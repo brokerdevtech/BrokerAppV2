@@ -525,18 +525,10 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
             onPress={signInWithGoogle}>
             <Icon as={GoogleIcon} />
           </TouchableOpacity>
-          {/* <TouchableOpacity style={styles.socialButton}>
-          <Icon as={FBIcon} />
-        </TouchableOpacity> */}
-        </View>
-        <View style={styles.socialContainer}>
-          {/* <TouchableOpacity style={styles.socialButton}>
-          <Icon as={AppleIcon} stroke="#000" />
-        </TouchableOpacity> */}
           <TouchableOpacity
             style={styles.socialButton}
             onPress={signInWithFacebook}>
-            <Icon as={GoogleIcon} />
+            <Icon as={FBIcon} />
           </TouchableOpacity>
           {/* <TouchableOpacity style={styles.socialButton}>
           <Icon as={FBIcon} />
