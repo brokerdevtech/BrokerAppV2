@@ -76,7 +76,7 @@ const OtherProfileScreen: React.FC = ({
   toastMessage,
 }) => {
   const userId = route.params.userId;
-
+  console.log(userId, 'jj');
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
@@ -110,7 +110,7 @@ const OtherProfileScreen: React.FC = ({
       return () => {
         // Code to execute when the screen loses focus (optional)
       };
-    }, []),
+    }, [userId]),
   );
   const selectprofilepic = () => {
     // console.log(ProfileData);
@@ -335,7 +335,7 @@ const OtherProfileScreen: React.FC = ({
       toast.show({
         description: 'Oops something went wrong, please try after sometime.',
       });
-    //  console.error('Error fetching data:', error);
+      //  console.error('Error fetching data:', error);
     }
   };
 
@@ -398,7 +398,7 @@ const OtherProfileScreen: React.FC = ({
             <RenderUserDetail
               item={item}
               key={index}
-              ParentUserData={route.params}
+              ParentUserData={ProfileData}
             />
           ))}
         </View>

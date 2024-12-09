@@ -90,7 +90,6 @@ export default function DashboradScreen() {
     execute: marqueeExecute,
   } = useApiRequest(fetchDashboardData);
   useEffect(() => {
-
     // console.log(user);
     const userS = {
       id: String(user.userId),
@@ -262,12 +261,12 @@ export default function DashboradScreen() {
           <AutoscrollAds
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           />
-          <Grid className="gap-3 p-4" _extra={{className: 'grid-cols-9'}}>
-            <GridItem
+          <Grid className="gap-2 p-4" _extra={{className: 'grid-cols-9'}}>
+            {/* <GridItem
               className="bg-background-50 p-2 rounded-md text-center"
               _extra={{className: 'col-span-9'}}>
               <ZText type={'R18'}>Find what you are looking for</ZText>
-            </GridItem>
+            </GridItem> */}
             <GridItem
               style={styles.gridcontainer}
               className="bg-background-0 p-2 rounded-md text-center"
@@ -372,7 +371,6 @@ export default function DashboradScreen() {
             </GridItem>
           </Grid>
 
-        
           <ProductSection
             heading={'Newly Launch'}
             background={'#FFFFFF'}
