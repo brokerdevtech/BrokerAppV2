@@ -59,6 +59,7 @@ function UserAvartarWithNameComponent({
     if (appuser.userId === userId) {
       navigation.navigate('ProfileScreen');
     } else {
+      console.log(userId);
       navigation.navigate('ProfileDetail', {
         userName: userName,
         userImage: userImage,

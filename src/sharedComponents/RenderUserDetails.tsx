@@ -23,6 +23,7 @@ export default function RenderUserDetail({item, ParentUserData}) {
     if (isPressableDisabled) {
       return;
     }
+    console.log(ParentUserData.userId, item.title);
     navigation.navigate('FollowerList', {
       userName: ParentUserData.userName,
       userImage: ParentUserData.userImage,
