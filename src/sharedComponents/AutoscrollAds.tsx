@@ -65,11 +65,9 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      getList();
-    }, []),
-  );
+  useEffect(() => {
+    getList();
+  }, [cityToShow]);
 
   useEffect(() => {
     if (Addata?.posts) {
@@ -83,7 +81,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
         const nextIndex = (activeIndex + 1) % adsToshow?.length;
         flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
         setActiveIndex(nextIndex);
-      }, 3000);
+      }, 6000);
 
       return () => clearInterval(interval);
     }
@@ -95,15 +93,16 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
   }, []);
 
   const handleAdsPress = item => {
-    if (item.actionType === 1) {
+    if (item?.actionType === 1) {
+      console.log(item);
       navigation.navigate('ItemDetailScreen', {
         postId: item.postId,
         postType: item.categoryId == 2 ? 'Car/Post' : 'Post',
       });
-    } else if (item.actionType == 2) {
+    } else if (item?.actionType == 2) {
       navigation.navigate('EnquiryForm', {item});
     } else {
-      if (item.targetUrl) {
+      if (item?.targetUrl) {
         Linking.openURL(item.targetUrl).catch(err =>
           console.error('Error opening URL:', err),
         );
@@ -119,11 +118,11 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
   const renderCarouselItem = useCallback(
     ({item}) => {
-      const extension = getExtension(item?.mediaBlob || item?.mediaBlobId);
+      const extension = getExtension(item?.postMedias[0]?.mediaBlobId);
       const sourceUri = `${imagesBucketcloudfrontPath}${
         item?.postMedias[0].mediaBlob || item?.postMedias[0]?.mediaBlobId
       }`;
-
+      // console.log(item?.mediaBlob);
       if (item?.postMedias[0]?.mediaBlobId === '') {
         return (
           <TouchableOpacity onPress={() => handleAdsPress(item)}>
@@ -135,6 +134,9 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
                   backgroundColor: Color.primary,
                   paddingHorizontal: 25,
                   paddingVertical: 25,
+                  height: 250,
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 },
               ]}>
               <ZText
@@ -164,7 +166,8 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
             ref={playerRef}
             sourceUri={sourceUri}
             vidStyle={localStyles.videoStyle}
-            defaultPaused={false}
+            defaultPaused={true}
+            onPress={() => handleAdsPress(item)}
           />
         </View>
       );
@@ -231,8 +234,6 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
           snapToInterval={parentWidth}
           snapToAlignment="center"
           decelerationRate="fast"
-          onEndReachedThreshold={0.6}
-          onEndReached={loadMorePage}
           ListFooterComponent={
             isInfiniteLoading ? (
               <ActivityIndicator size="large" color="#0000ff" />

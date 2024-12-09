@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   Keyboard,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 
 import {CommentWhite, TrashWhite} from '../../assets/svg';
@@ -81,6 +82,7 @@ const StoryView: React.FC = ({route}) => {
   const navigation = useNavigation();
   const user = useSelector((state: RootState) => state.user.user);
   const colors = useSelector(state => state.theme.theme);
+  const [isLoading, setIsLoading] = useState(true);
   const [storyId, setstoryId] = useState(0);
   const [newComment, setNewComment] = useState('');
   const [StoryState, setStoryState] = useState({
@@ -235,7 +237,7 @@ const StoryView: React.FC = ({route}) => {
 
   const onLoadVideo = status => {
     const videoDuration = secondsToMilliseconds(status.duration);
-
+    setIsLoading(false);
     setEnd(videoDuration); // Set the end based on video duration
     play(videoDuration); // Start playing the story with the correct duration
   };
@@ -251,6 +253,7 @@ const StoryView: React.FC = ({route}) => {
     start(duration); // Pass the actual content duration
   }
   const onLoadEndImage = () => {
+    setIsLoading(false);
     progress.setValue(0);
     play(5000); // Default duration for images, adjust as necessary
   };
@@ -294,6 +297,7 @@ const StoryView: React.FC = ({route}) => {
       let data = [...content];
       data[current].finish = 1;
       setContent(data);
+      setIsLoading(true);
       setCurrent(current + 1);
       setLoad(false);
       progress.setValue(0);
@@ -425,7 +429,7 @@ const StoryView: React.FC = ({route}) => {
                 navigation.goBack();
               }
             } catch (error) {
-            //  console.error('Error deleting connection:', error);
+              //  console.error('Error deleting connection:', error);
             }
           },
         },
@@ -462,7 +466,13 @@ const StoryView: React.FC = ({route}) => {
         <StatusBar backgroundColor="black" barStyle="light-content" />
 
         <View style={localStyles.backgroundContainer}>
-          {reversedContent[current] &&
+          {isLoading && (
+            <View style={localStyles.loaderContainer}>
+              <ActivityIndicator size="large" color="white" />
+            </View>
+          )}
+          {!isLoading &&
+          reversedContent[current] &&
           reversedContent[current].mediaType == 'video' ? (
             <Video
               source={{
@@ -583,24 +593,27 @@ const StoryView: React.FC = ({route}) => {
               {StoryState.likeCount}
             </TextWithPermissionCheck>
           </Box>
-          <Box
-            display="flex"
-            alignItems="center"
-            style={localStyles.likeBtnStyle}>
-            <TouchableOpacityWithPermissionCheck
-              fontColor={colors.white}
-              permissionsArray={userPermissions}
-              tagNames={[Center, OpenEye, ZText]}
-              permissionEnum={PermissionKey.AllowViewStoryViewers}
-              onPress={() => storyviewList(reversedContent[current])}>
-              <Center>
-                <OpenEye accessible={true} accessibilityLabel="open eye" />
-                <ZText type={'L16'} style={{color: colors.white}}>
-                  {StoryState.viewerCount}
-                </ZText>
-              </Center>
-            </TouchableOpacityWithPermissionCheck>
-          </Box>
+          {user.userId === userImage.userId && (
+            <Box
+              display="flex"
+              alignItems="center"
+              style={localStyles.likeBtnStyle}>
+              <TouchableOpacityWithPermissionCheck
+                fontColor={colors.white}
+                permissionsArray={userPermissions}
+                tagNames={[Center, OpenEye, ZText]}
+                permissionEnum={PermissionKey.AllowViewStoryViewers}
+                onPress={() => storyviewList(reversedContent[current])}>
+                <Center>
+                  <OpenEye accessible={true} accessibilityLabel="open eye" />
+                  <ZText type={'L16'} style={{color: colors.white}}>
+                    {StoryState.viewerCount}
+                  </ZText>
+                </Center>
+              </TouchableOpacityWithPermissionCheck>
+            </Box>
+          )}
+
           <Box
             display="flex"
             alignItems="center"
@@ -789,6 +802,17 @@ const localStyles = StyleSheet.create({
     position: 'absolute',
     left: 30,
     bottom: 30,
+    zIndex: 1,
+  },
+  loaderContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Optional dimming effect
     zIndex: 1,
   },
 });

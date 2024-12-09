@@ -16,9 +16,9 @@ PODS:
     - FirebaseAuth (~> 10.29.0)
   - Firebase/CoreOnly (10.29.0):
     - FirebaseCore (= 10.29.0)
-  - Firebase/DynamicLinks (10.29.0):
+  - Firebase/DynamicLinks (11.4.0):
     - Firebase/CoreOnly
-    - FirebaseDynamicLinks (~> 10.29.0)
+    - FirebaseDynamicLinks (~> 11.4.0)
   - Firebase/Messaging (10.29.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 10.29.0)
@@ -38,8 +38,8 @@ PODS:
     - FirebaseCore (~> 10.0)
   - FirebaseCoreInternal (10.29.0):
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
-  - FirebaseDynamicLinks (10.29.0):
-    - FirebaseCore (~> 10.0)
+  - FirebaseDynamicLinks (11.4.0):
+    - FirebaseCore (~> 11.0)
   - FirebaseInstallations (10.29.0):
     - FirebaseCore (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)

@@ -20,7 +20,7 @@ import {imagesBucketcloudfrontPath, PermissionKey} from '../config/constants';
 import ZText from '../sharedComponents/ZText';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {fetchPodcastList} from '@/BrokerAppCore/services/new/podcastService';
-
+import LottieView from 'lottie-react-native';
 import TABCard from '../assets/svg/Tabicon/tab_card.svg';
 import TABInsurance from '../assets/svg/Tabicon/tab_insurance.svg';
 import TABLoan from '../assets/svg/Tabicon/tab_loan.svg';
@@ -369,6 +369,7 @@ export default function DashboradScreen() {
               </TouchableOpacity>
             </GridItem>
           </Grid>
+
           <AutoscrollAds
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           />
@@ -435,6 +436,7 @@ export default function DashboradScreen() {
               />
             </HStack>
           </View>
+
           <BrandSection
             heading={'Brands Associated'}
             background={'#FFFFFF'}
