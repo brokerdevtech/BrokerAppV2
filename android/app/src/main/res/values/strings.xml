@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BrokerApp</string>
+    <string name="facebook_app_id">558060476716214</string>
+<string name="facebook_client_token">9bc1ca924a822bc59bb434ce6bcf5f52</string>
 </resources>

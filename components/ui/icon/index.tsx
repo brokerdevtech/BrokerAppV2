@@ -79,6 +79,7 @@ const iconStyle = tva({
       'lg': 'h-5 w-5',
       'xl': 'h-6 w-6',
       'xxl': 'h-8 w-8',
+      'xxxl': 'h-10 w-10',
     },
   },
 });

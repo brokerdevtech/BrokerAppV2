@@ -47,6 +47,8 @@ import StoryViewList from '../sharedComponents/StoryViewList';
 import BrokerList from '../sharedComponents/BrokerList';
 import ItemFilterListScreen from '../screens/ItemFilterListScreen';
 import BuyerList from '../sharedComponents/BuyerList';
+import ProfileViewerList from '../sharedComponents/ProfileViewerList';
+import PostLeads from '../sharedComponents/PostLeads';
 
 import EnquiryForm from '../sharedComponents/EnquiryForm';
 const Stack = createStackNavigator();
@@ -238,6 +240,17 @@ const HomeNavigation: React.FC = () => {
           component={PodcastViewList}
           options={{headerShown: false}}
         />
+        <Stack.Screen
+          name="ProfileViewerList"
+          component={ProfileViewerList}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="PostLeads"
+          component={PostLeads}
+          options={{headerShown: false}}
+        />
+
         <Stack.Screen
           name="PostCommentLikeList"
           component={PostCommentLikeList}
