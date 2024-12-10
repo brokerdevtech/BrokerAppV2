@@ -5,6 +5,7 @@ import React, {
   useEffect,
   forwardRef,
   useImperativeHandle,
+  useCallback,
 } from 'react';
 import Video from 'react-native-video';
 import {
@@ -21,6 +22,7 @@ import {
 import PlayIcon from '../../assets/svg/icons/iconsplay.svg';
 
 import {Progress} from '../../../components/ui/progress';
+import { useFocusEffect } from '@react-navigation/native';
 const AdsVideoPlayer = forwardRef((props, ref) => {
   const {sourceUri, vidStyle, onPress} = props;
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -52,20 +54,31 @@ const AdsVideoPlayer = forwardRef((props, ref) => {
     },
     // Add other controls you might need
   }));
-
-  useEffect(() => {
-    // console.log('VideoPlayer:',defaultPaused);
-    setvpaused(true);
-    setHasEnded(false);
-    return () => {
-      //  console.log('clear');
-      // Cleanup actions when the component unmounts or props change
-      // Ensure the video is paused
-      if (videoRef.current) {
-        setvpaused(true);
-      }
-    };
-  }, [props]);
+  useFocusEffect(
+    useCallback(() => {
+      setvpaused(true);
+      setHasEnded(false);
+  
+      return () => {
+        if (videoRef.current) {
+          setvpaused(true);
+        }
+      };
+    }, [props])
+  );
+  // useEffect(() => {
+  //   // console.log('VideoPlayer:',defaultPaused);
+  //   setvpaused(true);
+  //   setHasEnded(false);
+  //   return () => {
+  //     //  console.log('clear');
+  //     // Cleanup actions when the component unmounts or props change
+  //     // Ensure the video is paused
+  //     if (videoRef.current) {
+  //       setvpaused(true);
+  //     }
+  //   };
+  // }, [props]);
 
   const handleProgress = data => {
     setCurrentTime(data.currentTime);
@@ -100,19 +113,27 @@ const AdsVideoPlayer = forwardRef((props, ref) => {
       style={{
         flex: 1,
         width: '100%',
-        borderRadius: 10,
+        borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 10,
+        // padding: 10,
       }}
       onPress={() => onPress()}>
+        <View
+      style={{
+        flex: 1,
+        width: '100%',
+        borderRadius: 12, // Apply rounded corners
+        overflow: 'hidden', // Ensure content (video) respects the borderRadius
+      }}
+    >
       <Video
         ref={videoRef}
         source={{uri: sourceUri}}
         playInBackground={false}
         style={vidStyle}
         controls={false}
-        repeat={false}
+        repeat={true}
         playWhenInactive={false}
         autoplay={true}
         resizeMode={'cover'}
@@ -129,7 +150,7 @@ const AdsVideoPlayer = forwardRef((props, ref) => {
           bufferForPlaybackAfterRebufferMs: 3000, // After a rebuffer, require 3 seconds of content to resume playback
         }}
       />
-
+</View>
       {/* {vpaused && (
         <TouchableOpacity
           style={styles.playButtonContainer}
@@ -138,63 +159,8 @@ const AdsVideoPlayer = forwardRef((props, ref) => {
         </TouchableOpacity>
       )} */}
 
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={isFullscreen}
-        onRequestClose={() => setIsFullscreen(false)}>
-        <View style={styles.fullscreenContainer}>
-          {/* Close Button */}
+   
 
-          <Video
-            source={{uri: sourceUri}}
-            playInBackground={false}
-            style={vidStyle}
-            controls={true}
-            repeat={false}
-            paused={false}
-            playWhenInactive={false}
-            autoplay={false}
-            resizeMode={'container'}
-            focusable={true}
-            disableFocus={true}
-            reportBandwidth={true}
-            // onBandwidthUpdate={({bitrate}) =>
-
-            // }
-            muted={false}
-            bufferConfig={{
-              minBufferMs: 5000, // Aim for at least 5 seconds of buffered content
-              maxBufferMs: 20000, // Cap the buffer at 20 seconds to avoid overloading memory with unwatched content
-              bufferForPlaybackMs: 1000, // Require at least 1 second of content to start playback
-              bufferForPlaybackAfterRebufferMs: 3000, // After a rebuffer, require 3 seconds of content to resume playback
-            }}
-          />
-
-          <TouchableOpacity
-            onPress={() => setIsFullscreen(false)}
-            style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-      <View style={styles.controls}>
-        {/* <TouchableOpacity onPress={handlePlayPause}>
-              <Icon name={vpaused ? 'play' : 'pause'} size={24} color="white" />
-          
-          </TouchableOpacity> */}
-        <View style={styles.progressBar}>
-          <Progress
-            value={progress * 100}
-            colorScheme="primary"
-            h="100%"
-            bg="white"
-            w="100%"
-          />
-          {/* <View style={{ width: `${(currentTime / duration) * 100}%`, backgroundColor:"white" }} /> */}
-        </View>
-        {/* <Text style={{color:"white"}}>{Math.floor(currentTime)} / {Math.floor(duration)}</Text> */}
-      </View>
     </TouchableOpacity>
   );
 });
