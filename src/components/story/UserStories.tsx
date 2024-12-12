@@ -29,6 +29,7 @@ import CircularSkeleton from '../../sharedComponents/Skeleton/CircularSkeleton';
 import {getDashboardStory} from '../../../BrokerAppCore/services/new/story';
 import {useApiRequest} from '../../hooks/useApiRequest';
 import {useApiPagingRequest} from '../../hooks/useApiPagingRequest';
+import { useApiPagingWithDataRequest } from '../../hooks/useApiPagingWithDataRequest';
 
 const SkeletonPlaceholder = () => {
   return (
@@ -43,7 +44,9 @@ const SkeletonPlaceholder = () => {
   );
 };
 
-const UserStories = React.memo(() => {
+const UserStories = React.memo((Data) => {
+  console.log("UserStories");
+  console.log(Data);
   const user = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
@@ -58,11 +61,11 @@ const UserStories = React.memo(() => {
     userPermissions,
     PermissionKey.AllowViewMyStory,
   );
-  const [StoryData, setStoryData]: any[] = useState(null);
+  const [StoryData, setStoryData]: any[] = useState(Data);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const {
+  let {
     data: Storiesdata,
     status: Storiesstatus,
     error: Storieserror,
@@ -71,19 +74,25 @@ const UserStories = React.memo(() => {
     pageSize_Set: StoriespageSize_Set,
     currentPage_Set: StoriescurrentPage_Set,
     hasMore_Set: StorieshasMore_Set,
-  } = useApiPagingRequest(getDashboardStory, setInfiniteLoading);
+  } = useApiPagingWithDataRequest(getDashboardStory, setInfiniteLoading,Data);
   const getList = async () => {
     try {
       StoriescurrentPage_Set(1);
       StorieshasMore_Set(true);
-      Storiesexecute(user.userId);
+
     } catch (error) {}
   };
 
   useFocusEffect(
     React.useCallback(() => {
       getList();
-    }, []),
+      if(Data!=null && Data.Data!=null)
+     {
+      console.log("Data sss");
+      console.log(Data.Data);
+       setStoryData(Data.Data.storyList);
+      }
+    }, [Data]),
   );
 
   useEffect(() => {
