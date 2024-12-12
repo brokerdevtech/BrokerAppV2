@@ -120,8 +120,8 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
   const renderCarouselItem = useCallback(
     ({item}) => {
-      console.log("renderCarouselItem")
-      console.log(item);
+    //  console.log("renderCarouselItem")
+     // console.log(item);
       const extension = getExtension(item?.postMedias[0]?.mediaBlobId);
       const sourceUri = `${imagesBucketcloudfrontPath}${
         item?.postMedias[0].mediaBlob || item?.postMedias[0]?.mediaBlobId

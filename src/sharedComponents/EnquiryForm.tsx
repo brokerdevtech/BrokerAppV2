@@ -24,7 +24,7 @@ const EnquiryForm = ({route, toastMessage}) => {
   const user = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
   const handleSheetChanges = useCallback(index => {
-    console.log('handleSheetChanges', index);
+  //  console.log('handleSheetChanges', index);
   }, []);
 
   // console.log(user, 'prop');
