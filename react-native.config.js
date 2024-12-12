@@ -4,5 +4,5 @@ module.exports = {
     android: {
       packageName: 'com.brokerapp.broker',
     },
-  }
+  },
 };

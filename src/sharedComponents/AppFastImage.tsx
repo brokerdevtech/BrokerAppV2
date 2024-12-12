@@ -1,6 +1,6 @@
 //import {Box, HStack, Skeleton, VStack} from 'native-base';
-import React, {useState} from 'react';
-import {Platform} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Dimensions, Platform} from 'react-native';
 import {
   View,
   StyleSheet,
@@ -14,14 +14,51 @@ import {Skeleton} from '../../components/ui/skeleton';
 import FastImage from '@d11/react-native-fast-image';
 import flex from '@/themes/flex';
 //import FastImage from 'react-native-fast-image';
-
-const AppFastImage = ({uri}) => {
+const screenWidth = Dimensions.get('window').width;
+const AppFastImage = ({uri, height, width}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false); // New state to control modal visibility
   const [containerWidth, setContainerWidth] = useState(0);
   const [containerheight, setContainerheight] = useState(0);
   const [containeraspectRatio, setcontaineraspectRatio] = useState(0);
+  const [aspectRatio, setAspectRatio] = useState(1);
+  const screenWidth = Dimensions.get('window').width - 20;
+  const maxHeight = (screenWidth * 5) / 4; // 4:5 ratio
+  const maxWidth = screenWidth * 1.91;
 
+  // Fetch aspect ratio if height or width are not provided
+  const fetchAspectRatio = async uri => {
+    return new Promise(resolve => {
+      Image.getSize(uri, (width, height) => {
+        resolve(width / height);
+      });
+    });
+  };
+
+  useEffect(() => {
+    const loadAspectRatio = async () => {
+      if (!width || width === 0 || !height || height === 0) {
+        const ratio = await fetchAspectRatio(uri);
+        setAspectRatio(ratio);
+      } else {
+        setAspectRatio(width / height);
+      }
+    };
+    loadAspectRatio();
+  }, [uri, width, height]);
+  // console.log(width);
+  let finalWidth = width && width >= 0 ? width : screenWidth - 20;
+  let finalHeight = height && height >= 0 ? height : finalWidth / aspectRatio;
+
+  if ((!width || width >= 0) && (!height || height >= 0)) {
+    if (aspectRatio > 1.91) {
+      finalWidth = maxWidth;
+      finalHeight = maxWidth / aspectRatio;
+    } else if (aspectRatio < 0.8) {
+      finalHeight = maxHeight;
+      finalWidth = maxHeight * aspectRatio;
+    }
+  }
   return (
     <View
       style={{
@@ -55,7 +92,7 @@ const AppFastImage = ({uri}) => {
         style={{...styles.vertical}}
         onPress={() => setIsFullscreen(true)} // Open the image in fullscreen on tap
       >
-        <FastImage
+        {/* <FastImage
           onLoadStart={() => setIsLoading(true)}
           source={
             uri
@@ -66,7 +103,45 @@ const AppFastImage = ({uri}) => {
           style={styles.vertical}
           resizeMode={FastImage.resizeMode.cover}
           // style={styles.newImage}
+        /> */}
+        <Image
+          source={
+            uri
+              ? {uri}
+              : require('../assets/images/default-placeholder-image.png')
+          }
+          style={[
+            {
+              width: finalWidth,
+              height: finalHeight,
+              //   maxHeight: 450,
+              borderRadius: 12,
+            },
+          ]}
+          resizeMode="cover"
         />
+        {/* <FastImage
+          source={
+            uri
+              ? {uri}
+              : require('../assets/images/default-placeholder-image.png')
+          }
+          style={{
+            width: finalWidth,
+            height: finalHeight,
+            //   maxHeight: 450,
+          }} 
+          resizeMode={FastImage.resizeMode.cover} // Ensures the image is not cropped
+        /> */}
+        {/* <FastImage
+        source={{uri}}
+        style={{
+          width: finalWidth,
+          height: finalHeight,
+          //   maxHeight: 450,
+        }}
+        resizeMode="cover"
+      /> */}
       </TouchableOpacity>
 
       {/* Fullscreen Modal */}
@@ -98,7 +173,7 @@ const styles = StyleSheet.create({
   vertical: {
     width: '100%',
     height: '100%',
-    borderRadius: 12,
+
     display: 'flex',
     justifyContent: 'center',
     //   backgroundColor:'red'
@@ -134,6 +209,25 @@ const styles = StyleSheet.create({
   closeButtonText: {
     color: 'black',
     fontWeight: 'bold',
+  },
+  card: {
+    marginBottom: 20,
+    borderRadius: 10,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  image: {
+    width: screenWidth, // Fixed width to match screen width
+  },
+  caption: {
+    padding: 10,
+    fontSize: 14,
+    color: '#555',
   },
 });
 

@@ -17,7 +17,7 @@ import {
   imagesBucketcloudfrontPath,
 } from '../config/constants';
 
-const { width: screenWidths } = Dimensions.get('window');
+const {width: screenWidths} = Dimensions.get('window');
 
 const MediaGallery = forwardRef((props, ref) => {
   const {mediaItems} = props;
@@ -49,11 +49,15 @@ const MediaGallery = forwardRef((props, ref) => {
       const sourceUri = `${imagesBucketcloudfrontPath}${
         item?.mediaBlob || item?.mediaBlobId
       }`;
-
+      console.log(item, 'item');
       if (extension !== 'mp4') {
         return (
           <View style={[styles.card, {width: parentWidth}]}>
-            <AppFastImage uri={sourceUri} />
+            <AppFastImage
+              uri={sourceUri}
+              hieght={item.mediaHeight}
+              width={item.mediaWidth}
+            />
           </View>
         );
       }
