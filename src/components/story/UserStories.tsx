@@ -111,8 +111,13 @@ const UserStories = React.memo(() => {
       navigation.navigate('StoryView', {userImage: item});
     }
   };
-  const renderItem = useCallback(
-    ({item}) => (
+  const renderItem = useCallback(({item}) => {
+    const displayName =
+      item.postedBy.length > 10
+        ? `${item.postedBy.slice(0, 10)}...`
+        : item.postedBy;
+
+    return (
       <Pressable
         style={localStyles.itemContainer}
         onPress={() => onPressStory(item)}>
@@ -128,12 +133,12 @@ const UserStories = React.memo(() => {
           </View>
         </View>
         <ZText type={'r16'} style={localStyles.itemUsername}>
-          {item.postedBy}
+          {displayName}
         </ZText>
       </Pressable>
-    ),
-    [],
-  );
+    );
+  }, []);
+
   const EmptyListComponent = () => (
     <View style={localStyles.emptyContainer}>
       <Text style={localStyles.emptyText}>No Stories available</Text>
