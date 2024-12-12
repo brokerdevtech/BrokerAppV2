@@ -475,9 +475,9 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   gridcontainer: {
-    shadowOffset: {width: 0, height: 10}, // shadow offset
+    shadowOffset: {width: 0, height: 0}, // shadow offset
     shadowOpacity: 1, // shadow opacity
-    // shadowRadius: 64, // blur radius (64px)
+    // shadowRadius: 4, // blur radius (64px)
     elevation: 2,
   },
   tabItemContainer: {
