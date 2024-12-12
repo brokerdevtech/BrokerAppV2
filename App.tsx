@@ -536,7 +536,7 @@ function App(): React.JSX.Element {
       {isSplashVisible ? (
         <View style={styles.splashContainer}>
           <Animated.Image
-            source={require('./src/assets/images/BA.png')}
+            source={require('./src/assets/images/BANew.png')}
             style={[
               styles.logo,
               {
@@ -603,8 +603,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff', // Customize splash background color
   },
   logo: {
-    width: 200, // Adjust size according to your needs
-    height: 200,
+    width: 250, // Adjust size according to your needs
+    height: 250,
   },
 });
 

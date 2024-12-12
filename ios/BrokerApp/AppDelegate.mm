@@ -2,11 +2,15 @@
 #import <Firebase.h>
 #import <React/RCTBundleURLProvider.h>
 #import <GoogleSignIn/GoogleSignIn.h>
+#import <AuthenticationServices/AuthenticationServices.h>
+#import <SafariServices/SafariServices.h>
+#import <FBSDKCoreKit/FBSDKCoreKit-Swift.h>
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-
+[[FBSDKApplicationDelegate sharedInstance] application:application
+                       didFinishLaunchingWithOptions:launchOptions];
   self.moduleName = @"BrokerApp";
      [FIRApp configure];
   // You can add your custom initial props in the dictionary below.
@@ -16,6 +20,9 @@
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 - (BOOL)application:(UIApplication *)application openURL:(nonnull NSURL *)url options:(nonnull NSDictionary<NSString *,id> *)options {
+      if ([[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options]) {
+        return YES;
+    }
   return   [GIDSignIn.sharedInstance handleURL:url];
 }
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
