@@ -498,7 +498,7 @@ const ItemDetailScreen: React.FC<any> = ({
       navigation.navigate('AppChat', {
         defaultScreen: 'ChannelScreen',
         defaultParams: members,
-        defaultchannelSubject: `Hi,i want to connect on ${data.title}`,
+        // defaultchannelSubject: `Hi,i want to connect on ${data.title}`,
       });
     }
   }, [data]);
