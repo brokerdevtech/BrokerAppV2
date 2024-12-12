@@ -7,6 +7,8 @@ export const useApiRequestData = <T, P extends any[]>(
   setLoading?: (loading: boolean) => void, // Loading function passed from outside
   ParamData: T | null = null 
 ) => {
+  console.log("==============props.ParamData");
+  console.log(ParamData);
   const [data, setData] = useState<T | null>(ParamData);
   const [status, setStatus] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -56,5 +58,5 @@ export const useApiRequestData = <T, P extends any[]>(
     }
   };
 
-  return {data, status, error, execute};
+  return {data, status, error, execute,setData};
 };

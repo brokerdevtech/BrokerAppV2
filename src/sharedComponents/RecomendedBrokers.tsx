@@ -40,6 +40,7 @@ import {Color} from '../styles/GlobalStyles';
 import RectangularCardSkeleton from './Skeleton/RectangularCardSkeleton';
 import RecommendedBrokersSkeleton from './Skeleton/RecomBrokerSkelton';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
+import { useApiPagingWithDataRequest } from '../hooks/useApiPagingWithDataRequest';
 
 const RenderBrokerItem = React.memo(({item}) => {
   const navigation = useNavigation();
@@ -95,7 +96,8 @@ const RenderBrokerItem = React.memo(({item}) => {
   );
 });
 
-const Recommend = React.memo(categoryIds => {
+const Recommend = React.memo((props) => {
+  const { categoryIds, Data } = props;
   const navigation = useNavigation();
   const route = useRoute();
   const {logButtonClick} = useUserJourneyTracker(
@@ -120,12 +122,12 @@ const Recommend = React.memo(categoryIds => {
     pageSize_Set: brokerspageSize_Set,
     currentPage_Set: brokerscurrentPage_Set,
     hasMore_Set: brokershasMore_Set,
-  } = useApiPagingRequest(getRecommendedBrokerList, setInfiniteLoading);
+  } = useApiPagingWithDataRequest(getRecommendedBrokerList, setInfiniteLoading,Data);
   const getList = async () => {
     try {
       brokerscurrentPage_Set(1);
       brokershasMore_Set(true);
-      brokersexecute(user.userId, categoryId, AppLocation.City);
+   //   brokersexecute(user.userId, categoryId, AppLocation.City);
     } catch (error) {}
   };
 
@@ -141,13 +143,19 @@ const Recommend = React.memo(categoryIds => {
     // Bind data to the state when the data fetch is successful
     // console.log(brokersstatus, 'redf');
     // console.log("brokersdata",brokersdata.data.records);
-    if (brokersstatus === 200 && brokersdata?.data?.records?.length > 0) {
-      // console.log('brokersdata', brokersdata.data.records);
-      setBrokerList(brokersdata.data.records);
-    } else {
-      setBrokerList([]); // In case there is no data
+    // if (brokersstatus === 200 && brokersdata?.data?.records?.length > 0) {
+    //   // console.log('brokersdata', brokersdata.data.records);
+    //   setBrokerList(brokersdata.data.records);
+    // } else {
+    //   setBrokerList([]); // In case there is no data
+    // }
+    console.log("BrokerList");
+    console.log(props);
+    if(props.Data!=null)
+    {
+      setBrokerList(props.Data.data.records);
     }
-  }, [brokersstatus, brokersdata]);
+  }, [props]);
 
   const loadMore = async () => {
     if (!isInfiniteLoading) {

@@ -129,27 +129,53 @@ export default function DashboradScreen() {
           // callmarList();
 
           
-          const [dashboardData, podcastList,DashboardStory,NewlyLaunch,NewInProperty,NewInCar,BrandAssociate] = await Promise.all([
+          const results = await Promise.allSettled([
             GetDashboardData(user.userId),
             execute(user.userId, 1, 4),
-            getDashboardStory(user.userId,1,10),
-            fetchDashboardData('NewlyLaunch',request),
-            fetchDashboardData('Newin',{
+            getDashboardStory(user.userId, 1, 10),
+            fetchDashboardData('NewlyLaunch', request),
+            fetchDashboardData('Newin', {
               pageNo: 1,
               pageSize: 10,
               cityName: AppLocation.City,
               categoryId: 1,
             }),
-            fetchDashboardData('Newin',{
+            fetchDashboardData('Newin', {
               pageNo: 1,
               pageSize: 10,
               cityName: AppLocation.City,
               categoryId: 2,
             }),
-            fetchDashboardDataBrand('BrandAssociate',{
+            fetchDashboardDataBrand('BrandAssociate', {
               userId: user.userId,
             }),
           ]);
+          
+          const [dashboardData, podcastList, DashboardStory, NewlyLaunch, NewInProperty, NewInCar, BrandAssociate] = results.map(
+            result => (result.status === 'fulfilled' ? result.value : null)
+          );
+
+          // const [dashboardData, podcastList,DashboardStory,NewlyLaunch,NewInProperty,NewInCar,BrandAssociate] = await Promise.all([
+          //   GetDashboardData(user.userId),
+          //   execute(user.userId, 1, 4),
+          //   getDashboardStory(user.userId,1,10),
+          //   fetchDashboardData('NewlyLaunch',request),
+          //   fetchDashboardData('Newin',{
+          //     pageNo: 1,
+          //     pageSize: 10,
+          //     cityName: AppLocation.City,
+          //     categoryId: 1,
+          //   }),
+          //   fetchDashboardData('Newin',{
+          //     pageNo: 1,
+          //     pageSize: 10,
+          //     cityName: AppLocation.City,
+          //     categoryId: 2,
+          //   }),
+          //   fetchDashboardDataBrand('BrandAssociate',{
+          //     userId: user.userId,
+          //   }),
+          // ]);
          
           console.log("NewlyLaunch",NewlyLaunch.data);
           setStoryData(DashboardStory.data)

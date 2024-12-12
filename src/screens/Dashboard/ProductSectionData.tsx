@@ -55,7 +55,9 @@ interface ProductSectionDataProps {
 }
 
 const ProductSectionData = (props: ProductSectionDataProps) => {
-  const {data, status, error, execute} = useApiRequestData(fetchDashboardData,props.Data);
+  console.log("========ProductSectionDataProps");
+  console.log(props.Data);
+  let {data, status, error, execute,setData} = useApiRequestData(fetchDashboardData,props.Data);
   const navigation = useNavigation();
   const [showAlertDialog, setShowAlertDialog] = React.useState(false);
   const handleClose = () => setShowAlertDialog(false);
@@ -66,9 +68,16 @@ const ProductSectionData = (props: ProductSectionDataProps) => {
   };
   const {logButtonClick} = useUserJourneyTracker(` Newly Launched`);
   const callPodcastList = async () => {
+    if(props.Data!=null)
+    {
+      console.log("callPodcastList");
+      console.log(props.Data);
+      setData(props.Data)
+    }
+  
     // console.log("props.request");
     // console.log(props.request);
-    execute(props.endpoint, props.request);
+   // execute(props.endpoint, props.request);
     // console.log(props.heading, 'data :-', data);
 
     //console.log('status :-', status);
@@ -82,7 +91,7 @@ const ProductSectionData = (props: ProductSectionDataProps) => {
       return () => {
         // Cleanup logic, if required
       };
-    }, []), // dependencies go here
+    }, [props]), // dependencies go here
   );
   // useEffect(() => {
   //   callPodcastList();
@@ -233,6 +242,7 @@ const ProductSectionData = (props: ProductSectionDataProps) => {
             }}>
             <FlatList
               data={data}
+              extraData={props.Data}
               keyExtractor={(item, index) => index.toString()}
               renderItem={renderProductItems}
               contentContainerStyle={{paddingVertical: 20, flexGrow: 1}}

@@ -44,6 +44,7 @@ import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {
   fetchDashboardData,
   fetchItemList,
+  RecentSearchSData,
 } from '../../BrokerAppCore/services/new/dashboardService';
 import {FavouriteIcon, Icon, MessageCircleIcon} from '../../components/ui/icon';
 import {Divider} from '@/components/ui/divider';
@@ -77,6 +78,10 @@ import {formatNumberToIndianSystem} from '../utils/helpers';
 import {useFocusEffect} from '@react-navigation/native';
 import NoDataFoundScreen from '../sharedComponents/NoDataFoundScreen';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
+import { getDashboardStory } from '../../BrokerAppCore/services/Story';
+import ProductSectionData from './Dashboard/ProductSectionData';
+import RecentSearchSectionData from './Dashboard/RecentSearchSectionData';
+import { getRecommendedBrokerList } from '../../BrokerAppCore/services/new/recomendedBroker';
 const SkeletonPlaceholder = () => {
   return (
     <HStack space={10} style={styles.skeletonContainer}>
@@ -87,13 +92,15 @@ const SkeletonPlaceholder = () => {
   );
 };
 const RederListHeader = React.memo(
-  ({categoryId, AppLocation, FilterChipsData, recordCount, user}) => {
+  ({categoryId, AppLocation, FilterChipsData, recordCount, user,StoryData,NewIncategoryData,RecentSearchData,RenderBrokerData}) => {
+    console.log("NewIncategoryData");
+    console.log(NewIncategoryData);
     return (
       <>
-        <UserStories />
+           <UserStories  Data={StoryData}/>
 
-        <Recommend categoryId={categoryId} />
-        <ProductSection
+        <Recommend categoryId={categoryId} Data={RenderBrokerData} />
+        <ProductSectionData
           heading={'Newly Launch'}
           background={'#FFFFFF'}
           endpoint={'Newin'}
@@ -104,9 +111,10 @@ const RederListHeader = React.memo(
             cityName: AppLocation.City,
             categoryId: categoryId,
           }}
+          Data={NewIncategoryData}
         />
 
-        <RecentSearchSection
+        <RecentSearchSectionData
           heading={'Recent Search'}
           background={'#F7F8FA'}
           endpoint={`/RecentSearch/Categorywise`}
@@ -115,6 +123,7 @@ const RederListHeader = React.memo(
             userId: user.userId,
             categoryId: categoryId,
           }}
+Data={RecentSearchData}
         />
 
         {/* <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips> */}
@@ -390,6 +399,10 @@ const ItemListScreen: React.FC<any> = ({
   const [Itemslocalities, setItemslocalities] = useState(null);
   const [PopUPFilter, setPopUPFilter] = useState(null);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
+  const [StoryData, setStoryData]: any[] = useState(null);
+   const [NewIncategoryData, setNewIncategoryData]: any[] = useState(null);
+   const [RecentSearchData, setRecentSearchData]: any[] = useState(null);
+   const [RenderBrokerData, setRenderBrokerData]: any[] = useState(null);
   const brandName =
     route.params.brandName !== undefined ? route.params.brandName : '';
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -656,8 +669,31 @@ const ItemListScreen: React.FC<any> = ({
     //   geoLocationLongitude: AppLocation.geoLocationLongitude,
     //   isSearch:false
     // });
+   const results = await Promise.allSettled([
+     execute(listTypeData, APiobj),
+     getDashboardStory(user.userId, 1, 10),
+     fetchDashboardData('Newin', {
+      pageNo: 1,
+      pageSize: 10,
+      cityName: AppLocation.City,
+      categoryId: categoryId,
+    }),
+    RecentSearchSData(`/RecentSearch/Categorywise`,{
+      userId: user.userId,
+      categoryId: categoryId,
+    }),
+    getRecommendedBrokerList(user.userId, categoryId, AppLocation.City,1,10)
 
-    await execute(listTypeData, APiobj);
+          ]);
+          console.log("=============results");
+  console.log(results);
+    const [ListData, DashboardStory, NewIncategory,RecentSearch,RecommendedBroker] = results.map(
+            result => (result.status === 'fulfilled' ? result.value : null)
+          );
+          setStoryData(DashboardStory.data)
+          setNewIncategoryData(NewIncategory.data);     
+          setRecentSearchData(RecentSearch.data);     
+          setRenderBrokerData(RecommendedBroker.data); 
     setLoading(false);
   }
 
@@ -842,6 +878,10 @@ const ItemListScreen: React.FC<any> = ({
                   FilterChipsData={FilterChipsData}
                   recordCount={recordCount}
                   user={user}
+                  StoryData={StoryData}
+                  NewIncategoryData={NewIncategoryData}
+                  RecentSearchData={RecentSearchData}
+                  RenderBrokerData={RenderBrokerData}
                 />
               }
               keyExtractor={(item, index) => index.toString()}
