@@ -62,7 +62,7 @@ const MediaGallery = forwardRef((props, ref) => {
         );
       }
       return (
-        <View style={[styles.card, {width: parentWidth}]}>
+        <View style={[styles.cardV, {width: parentWidth}]}>
           <VideoPlayer
             ref={playerRef}
             sourceUri={sourceUri}
@@ -97,6 +97,7 @@ const MediaGallery = forwardRef((props, ref) => {
         }}
         showsHorizontalScrollIndicator={false}
         bounces={false}
+        contentContainerStyle={{ display: 'flex'}}
         scrollEventThrottle={16}
         snapToInterval={parentWidth}
         snapToAlignment="center"
@@ -161,7 +162,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: screenWidths,
     // marginHorizontal: 20 ,
-    height: screenWidths,
+    // height: screenWidths,
+  },
+  cardV: {
+    display: 'flex',
+
+    //    backgroundColor: '#764ABC',
+    borderRadius: 12,
+
+    // padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: screenWidths,
+    // marginHorizontal: 20 ,
+     height: screenWidths,
   },
   container: {
     width: '100%',

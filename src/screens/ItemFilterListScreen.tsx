@@ -935,7 +935,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 8,
 
-    right: 8,
+    right: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
