@@ -149,7 +149,7 @@ const ProductItem = React.memo(
       navigation.navigate('AppChat', {
         defaultScreen: 'ChannelScreen',
         defaultParams: members,
-        defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
+      //  defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
       });
     }, []);
     const makeCall = useCallback(async phoneNumber => {
@@ -935,7 +935,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 8,
 
-    right: 8,
+    right: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

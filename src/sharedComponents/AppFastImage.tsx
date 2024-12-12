@@ -21,8 +21,10 @@ const AppFastImage = ({uri, height, width}) => {
   const [containerWidth, setContainerWidth] = useState(0);
   const [containerheight, setContainerheight] = useState(0);
   const [containeraspectRatio, setcontaineraspectRatio] = useState(0);
-  const [aspectRatio, setAspectRatio] = useState(1);
-  const screenWidth = Dimensions.get('window').width - 20;
+ const [aspectRatio, setAspectRatio] = useState(1);
+  //const [aspectRatio, setAspectRatio] = useState(4 / 5); // Default to 4:5 ratio
+
+  const screenWidth = containerWidth -20
   const maxHeight = (screenWidth * 5) / 4; // 4:5 ratio
   const maxWidth = screenWidth * 1.91;
 
@@ -46,8 +48,9 @@ const AppFastImage = ({uri, height, width}) => {
     };
     loadAspectRatio();
   }, [uri, width, height]);
+  
   // console.log(width);
-  let finalWidth = width && width >= 0 ? width : screenWidth - 20;
+  let finalWidth = width && width >= 0 ? width : screenWidth ;
   let finalHeight = height && height >= 0 ? height : finalWidth / aspectRatio;
 
   if ((!width || width >= 0) && (!height || height >= 0)) {
@@ -64,9 +67,13 @@ const AppFastImage = ({uri, height, width}) => {
       style={{
         flex: 1,
         width: '100%',
-        borderRadius: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
+        borderRadius: 12,
+  
+padding:10,
+            display: 'flex',
+      
+     
+       
       }}
       onLayout={event => {
         const {width, height} = event.nativeEvent.layout;
@@ -77,17 +84,7 @@ const AppFastImage = ({uri, height, width}) => {
         //  setContainerWidth(width);
         // Set container width based on layout
       }}>
-      {/* {isLoading && (
-        <></>
-        // <VStack
-        //   space={"md"}
-        //   borderWidth="1"
-        //   borderColor="coolGray.200"
-        //   borderRadius="md"
-        //   p="4">
-        //   <Skeleton height="100%" width="100%" />
-        // </VStack>
-      )} */}
+      
       <TouchableOpacity
         style={{...styles.vertical}}
         onPress={() => setIsFullscreen(true)} // Open the image in fullscreen on tap
@@ -114,8 +111,10 @@ const AppFastImage = ({uri, height, width}) => {
             {
               width: finalWidth,
               height: finalHeight,
-              //   maxHeight: 450,
-              borderRadius: 12,
+              
+               borderRadius: 12,
+              // borderColor:'red',
+              // borderWidth: 1,
             },
           ]}
           resizeMode="cover"
@@ -172,12 +171,13 @@ const AppFastImage = ({uri, height, width}) => {
 const styles = StyleSheet.create({
   vertical: {
     width: '100%',
-    height: '100%',
+    borderRadius: 12,
 
     display: 'flex',
-    justifyContent: 'center',
-    //   backgroundColor:'red'
-  },
+// justifyContent: 'center',
+// alignContent: 'center',
+  
+     },
   newImage: {
     flex: 1,
     width: 380,

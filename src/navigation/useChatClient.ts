@@ -29,7 +29,8 @@ export const useChatClient = () => {
     try {
       
       const response = await GetStreamToken(userState.user.userId);
-      
+      // console.log("=================GetStreamToken======================")
+      // console.log(response)
       const streamAccessToken =response.data.getStreamAccessToken;
       return streamAccessToken;
      

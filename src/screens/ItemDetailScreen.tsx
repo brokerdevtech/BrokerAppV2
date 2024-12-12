@@ -501,7 +501,7 @@ const ItemDetailScreen: React.FC<any> = ({
       navigation.navigate('AppChat', {
         defaultScreen: 'ChannelScreen',
         defaultParams: members,
-        defaultchannelSubject: `Hi,i want to connect on ${data.title}`,
+        // defaultchannelSubject: `Hi,i want to connect on ${data.title}`,
       });
     }
   }, [data]);
@@ -823,7 +823,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 8,
     // left: 8,
-    right: 8,
+    right: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

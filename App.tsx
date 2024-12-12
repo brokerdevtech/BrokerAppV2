@@ -308,10 +308,14 @@ function App(): React.JSX.Element {
       try {
         const permissions = [
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-          PERMISSIONS.ANDROID.POST_NOTIFICATIONS,
+       
+        
         ];
 
+        if (Platform.Version >= 33) {
+          permissions.push(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+        }
+  
         const permissionStatusesArray = await Promise.all(
           permissions.map(permission => PermissionsAndroid.check(permission)),
         );

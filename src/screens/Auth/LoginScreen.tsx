@@ -334,6 +334,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   };
   const afterhandleSocialLogin = async () => {
     if (SocialLogindata) {
+      console.log('Social Logindata',SocialLogindata);
       const storeUserresult = await storeUser(
         JSON.stringify(SocialLogindata.data),
       );
