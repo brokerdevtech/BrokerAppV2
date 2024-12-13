@@ -223,7 +223,11 @@ const StoryView: React.FC = ({route}) => {
   }
   function start(duration) {
     // Ensure duration is not zero
-    duration = duration || 5000; // Default duration for images if not set
+    duration = duration || 5000;
+    if (isLoading) {
+      // Do not start progress if loading
+      return;
+    } // Default duration for images if not set
     Animated.timing(progress, {
       toValue: 1,
       duration: duration,

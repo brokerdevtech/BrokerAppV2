@@ -59,7 +59,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
   const getList = async () => {
     try {
-      await Adexecute(cityToShow);
+      await Adexecute(1, cityToShow);
     } catch (error) {
       console.error(error);
     }
@@ -70,7 +70,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
   }, [cityToShow]);
 
   useEffect(() => {
-   console.log(Addata);
+    console.log(Addata);
   }, [Addata]);
 
   useEffect(() => {
@@ -109,7 +109,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
   const loadMorepage = async () => {
     if (!isInfiniteLoading) {
-      await AdsloadMore(cityToShow);
+      await AdsloadMore(1, cityToShow);
     }
   };
   // const loadMorePage = async () => {
@@ -120,48 +120,48 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
   const renderCarouselItem = useCallback(
     ({item}) => {
-    //  console.log("renderCarouselItem")
-     // console.log(item);
+      //  console.log("renderCarouselItem")
+      // console.log(item);
       const extension = getExtension(item?.postMedias[0]?.mediaBlobId);
       const sourceUri = `${imagesBucketcloudfrontPath}${
         item?.postMedias[0].mediaBlob || item?.postMedias[0]?.mediaBlobId
       }`;
       // console.log(item?.mediaBlob);
-      if (item?.postMedias[0]?.mediaBlobId === '') {
-        return (
-          <TouchableOpacity
-            onPress={() => handleAdsPress(item)}
-            style={{
-              paddingHorizontal: 10,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <View
-              style={[
-                localStyles.card,
-                {
-                  width: parentWidth - 20,
-                  backgroundColor: Color.primary,
-                  paddingHorizontal: 25,
-                  paddingVertical: 25,
-                  height: 170,
-                  alignItems: 'center', // Center children horizontally
-                  justifyContent: 'center', // Center children vertically
-                  flex: 1,
-                },
-              ]}>
-              <ZText
-                type={'R20'}
-                style={{
-                  color: 'white', // Text color
-                  textAlign: 'center', // Center text horizontally
-                }}>
-                {item.marqueueText || 'Default Text'}
-              </ZText>
-            </View>
-          </TouchableOpacity>
-        );
-      }
+      // if (item?.postMedias[0]?.mediaBlobId === '') {
+      //   return (
+      //     <TouchableOpacity
+      //       onPress={() => handleAdsPress(item)}
+      //       style={{
+      //         paddingHorizontal: 10,
+      //         alignItems: 'center',
+      //         justifyContent: 'center',
+      //       }}>
+      //       <View
+      //         style={[
+      //           localStyles.card,
+      //           {
+      //             width: parentWidth - 20,
+      //             backgroundColor: Color.primary,
+      //             paddingHorizontal: 25,
+      //             paddingVertical: 25,
+      //             height: 170,
+      //             alignItems: 'center', // Center children horizontally
+      //             justifyContent: 'center', // Center children vertically
+      //             flex: 1,
+      //           },
+      //         ]}>
+      //         <ZText
+      //           type={'R20'}
+      //           style={{
+      //             color: 'white', // Text color
+      //             textAlign: 'center', // Center text horizontally
+      //           }}>
+      //           {item.marqueueText || 'Default Text'}
+      //         </ZText>
+      //       </View>
+      //     </TouchableOpacity>
+      //   );
+      // }
 
       if (extension !== 'mp4') {
         return (
@@ -191,17 +191,17 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
   const renderPaginationDots = () => {
     const progressAnim = useRef(new Animated.Value(0)).current;
-  
+
     useEffect(() => {
       // Reset animation on every activeIndex change
       progressAnim.setValue(0);
-  
+
       Animated.timing(progressAnim, {
         toValue: 1,
         duration: 6000, // Match the auto-scroll interval (6 seconds)
         useNativeDriver: false,
       }).start();
-  
+
       return () => {
         progressAnim.stopAnimation();
       };
@@ -213,8 +213,8 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
     return (
       <View style={localStyles.paginationContainer}>
         {visibleDots?.map((_, index) => {
-          const isActive = index + Math.max(0, activeIndex - 2) === activeIndex; 
-  
+          const isActive = index + Math.max(0, activeIndex - 2) === activeIndex;
+
           if (isActive) {
             return (
               <View key={index} style={localStyles.paginationTrack}>
@@ -232,15 +232,17 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
               </View>
             );
           }
-  
+
           // Inactive dot for non-active items
           return <View key={index} style={localStyles.paginationDotInactive} />;
         })}
       </View>
     );
   };
-  const onMomentumScrollEnd = (event) => {
-    const newIndex = Math.round(event.nativeEvent.contentOffset.x / screenWidths);
+  const onMomentumScrollEnd = event => {
+    const newIndex = Math.round(
+      event.nativeEvent.contentOffset.x / screenWidths,
+    );
     setActiveIndex(newIndex);
   };
 

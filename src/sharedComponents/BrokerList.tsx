@@ -83,7 +83,7 @@ const BrokerList: React.FC = ({
 
   const onSearchInput = async (text: string) => {
     //
-
+    console.log(text);
     setSearch(text);
 
     await getList(text);
@@ -109,11 +109,10 @@ const BrokerList: React.FC = ({
   };
 
   useEffect(() => {
-    // Bind data to the state when the data fetch is successful
-    //console.log(followerdata);
-
-    setuserLists(data);
-    // console.log(followerdata);
+    if (data) {
+      console.log(data);
+      setuserLists(data);
+    }
   }, [data]);
 
   const loadMorefaltlist = async () => {
@@ -149,25 +148,28 @@ const BrokerList: React.FC = ({
             initialNumToRender={5}
             maxToRenderPerBatch={5} // Default is 10
             removeClippedSubviews={true}
-            renderItem={({item, index}) => (
-              <View
-                style={{
-                  paddingVertical: 8,
-                  borderBottomWidth: 1,
-                  borderColor: Color.borderColor,
-                }}>
-                <UserAvartarWithNameComponent
-                  userName={item.fullName}
-                  userImage={item?.profileImg}
-                  userDescription={item?.city}
-                  isFollowed={item?.following}
-                  userId={item.userId}
-                  loggedInUserId={user.userId}
-                  type="search"
-                  key={index}
-                />
-              </View>
-            )}
+            renderItem={({item, index}) => {
+              console.log('Rendering item:', item);
+              return (
+                <View
+                  style={{
+                    paddingVertical: 8,
+                    borderBottomWidth: 1,
+                    borderColor: Color.borderColor,
+                  }}>
+                  <UserAvartarWithNameComponent
+                    userName={item.fullName}
+                    userImage={item?.profileImg}
+                    userDescription={item?.city}
+                    isFollowed={item?.following}
+                    userId={item.userId}
+                    loggedInUserId={user.userId}
+                    type="search"
+                    key={index}
+                  />
+                </View>
+              );
+            }}
             contentContainerStyle={{
               paddingBottom: 50,
               flexGrow: 1,
