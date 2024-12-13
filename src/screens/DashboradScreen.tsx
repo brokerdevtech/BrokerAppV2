@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useMemo, useRef} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -45,10 +45,16 @@ import useUserAnalytics from '../hooks/Analytics/useUserAnalytics';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 import AutoscrollAds from '../sharedComponents/AutoscrollAds';
 import EnquiryBottomSheet from '../sharedComponents/EnquiryForm';
-
+import { getDashboardStory } from '../../BrokerAppCore/services/Story';
+import ProductSectionData from './Dashboard/ProductSectionData';
+import {
+  fetchDashboardData as fetchDashboardDataBrand
+ 
+} from '../../BrokerAppCore/services/new/dashboardService';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
+  
   const {setUser_Analytics} = useUserAnalytics();
   const {logButtonClick} = useUserJourneyTracker('Dashborad');
   const userPermissions = useSelector(
@@ -74,7 +80,11 @@ export default function DashboradScreen() {
   //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
   const cityToShow = AppLocation.City;
   const navigation = useNavigation();
-
+ const [StoryData, setStoryData]: any[] = useState(null);
+ const [NewlyLaunchData, setNewlyLaunchData]: any[] = useState(null);
+ const [NewInPropertyData, setNewInPropertyData]: any[] = useState(null);
+ const [NewInCarData, setNewInCarData]: any[] = useState(null);
+ const [BrandSectionData, setBrandSectionData]: any[] = useState(null);
   const callPodcastList = async () => {
     execute(user.userId, 1, 4);
     //await footerExecute()
@@ -117,12 +127,43 @@ export default function DashboradScreen() {
       const fetchData = async () => {
         try {
           // callmarList();
-          GetDashboardData(user.userId)
-            .then(data => {
-              store.dispatch(setDashboard(data.data));
-            })
-            .catch(error => {});
-          callPodcastList();
+
+          
+          const [dashboardData, podcastList,DashboardStory,NewlyLaunch,NewInProperty,NewInCar,BrandAssociate] = await Promise.all([
+            GetDashboardData(user.userId),
+            execute(user.userId, 1, 4),
+            getDashboardStory(user.userId,1,10),
+            fetchDashboardData('NewlyLaunch',request),
+            fetchDashboardData('Newin',{
+              pageNo: 1,
+              pageSize: 10,
+              cityName: AppLocation.City,
+              categoryId: 1,
+            }),
+            fetchDashboardData('Newin',{
+              pageNo: 1,
+              pageSize: 10,
+              cityName: AppLocation.City,
+              categoryId: 2,
+            }),
+            fetchDashboardDataBrand('BrandAssociate',{
+              userId: user.userId,
+            }),
+          ]);
+         
+          console.log("NewlyLaunch",NewlyLaunch.data);
+          setStoryData(DashboardStory.data)
+          setNewlyLaunchData(NewlyLaunch.data);
+          setNewInPropertyData(NewInProperty.data);
+          setNewInCarData(NewInCar.data);
+          setBrandSectionData(BrandAssociate.data);
+          store.dispatch(setDashboard(dashboardData.data));
+          // GetDashboardData(user.userId)
+          //   .then(data => {
+          //     store.dispatch(setDashboard(data.data));
+          //   })
+          //   .catch(error => {});
+          // callPodcastList();
         } catch (error) {
           //   console.error('Error fetching posts:', error);
         }
@@ -243,7 +284,7 @@ export default function DashboradScreen() {
           <View style={styles.subHeaderSection}>
             {/* <UserProfile /> */}
             {/* <View style={{paddingHorizontal:15}}> */}
-            <UserStories />
+            <UserStories  Data={StoryData}/>
             {/* </View> */}
             {/* {marqueeText?.length > 0 && (
               <MarqueeBanner
@@ -371,12 +412,13 @@ export default function DashboradScreen() {
             </GridItem>
           </Grid>
 
-          <ProductSection
+          <ProductSectionData
             heading={'Newly Launch'}
             background={'#FFFFFF'}
             endpoint={`NewlyLaunch`}
             isShowAll={false}
             request={request}
+            Data={NewlyLaunchData}
           />
           <RecentSearchSection
             heading={'Recent Search'}
@@ -387,7 +429,7 @@ export default function DashboradScreen() {
               userId: user.userId,
             }}
           />
-          <ProductSection
+          <ProductSectionData
             heading={'New In Property'}
             background={'#FFFFFF'}
             endpoint={`Newin`}
@@ -398,8 +440,10 @@ export default function DashboradScreen() {
               cityName: AppLocation.City,
               categoryId: 1,
             }}
+            Data={NewInPropertyData}
+            
           />
-          <ProductSection
+          <ProductSectionData
             heading={'New In Car'}
             background={'#F7F8FA'}
             endpoint={`Newin`}
@@ -410,6 +454,7 @@ export default function DashboradScreen() {
               cityName: AppLocation.City,
               categoryId: 2,
             }}
+            Data={NewInCarData}
           />
           {/* Podcast */}
           <View style={styles.container}>
@@ -444,6 +489,7 @@ export default function DashboradScreen() {
             request={{
               userId: user.userId,
             }}
+           
           />
           <Footer />
         </View>
