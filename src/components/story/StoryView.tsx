@@ -459,7 +459,19 @@ const StoryView: React.FC = ({route}) => {
       setModalVisible(false);
     });
   };
-
+  const handlenavigateToProfile = item => {
+    if (user.userId === item.userId) {
+      navigation.navigate('ProfileScreen');
+    } else {
+      navigation.navigate('ProfileDetail', {
+        userName: item.userName,
+        userImage: item.userImage,
+        userId: item.userId,
+        loggedInUserId: user.userId,
+        connectionId: '',
+      });
+    }
+  };
   return (
     <SafeAreaView style={localStyles.containerModal}>
       <BottomSheetModalProvider>
@@ -523,7 +535,9 @@ const StoryView: React.FC = ({route}) => {
           {/* END OF ANIMATION BARS */}
           <View style={localStyles.header}>
             {/* THE AVATAR AND USERNAME  */}
-            <TouchableOpacity style={localStyles.userAvatarContainer}>
+            <TouchableOpacity
+              style={localStyles.userAvatarContainer}
+              onPress={() => handlenavigateToProfile(userImage)}>
               {!!userImage?.profileImage && (
                 <FastImage
                   style={localStyles.userImage}

@@ -243,7 +243,10 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
                 }
                 style={{marginLeft: 15, justifyContent: 'center'}}>
                 <ZText type={'B16'}>{data.postedBy}</ZText>
-                <ZText type={'R14'}>{formatDate(data.postedOn)}</ZText>
+                <ZText type={'R14'}>
+                  <ZText type={'B14'}>Posted On </ZText> {/* Adds a space */}
+                  {formatDate(data.postedOn)}
+                </ZText>
               </TouchableOpacity>
             </HStack>
           </VStack>
@@ -397,7 +400,10 @@ const carDetails = (data: any, user: any, navigation: any) => {
                 }
                 style={{marginLeft: 15, justifyContent: 'center'}}>
                 <ZText type={'B16'}>{data.postedBy}</ZText>
-                <ZText type={'R14'}>{formatDate(data.postedOn)}</ZText>
+                <ZText type={'R14'}>
+                  <ZText type={'B14'}>Posted On </ZText> {/* Adds a space */}
+                  {formatDate(data.postedOn)}
+                </ZText>
               </TouchableOpacity>
             </HStack>
           </VStack>
