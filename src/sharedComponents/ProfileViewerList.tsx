@@ -1,5 +1,11 @@
 import React, {useState, useEffect, useMemo} from 'react';
-import {FlatList, ScrollView, StyleSheet, View} from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 
 import {useSelector} from 'react-redux';
 import {styles} from '../themes';
@@ -19,9 +25,14 @@ import {
   getFollowerList,
   getFollowingList,
 } from '../../BrokerAppCore/services/new/profileServices';
-import { useApiPagingRequest } from '../hooks/useApiPagingRequest';
-import { getPodcastLikeList, getPodcastViewList, getPostLikeList, getProfileViewerList } from '../../BrokerAppCore/services/new/postServices';
-import { useApiPagingWithtotalRequest } from '../hooks/useApiPagingWithtotalRequest';
+import {useApiPagingRequest} from '../hooks/useApiPagingRequest';
+import {
+  getPodcastLikeList,
+  getPodcastViewList,
+  getPostLikeList,
+  getProfileViewerList,
+} from '../../BrokerAppCore/services/new/postServices';
+import {useApiPagingWithtotalRequest} from '../hooks/useApiPagingWithtotalRequest';
 import UserAvartarWithName from './UserAvartarWithName';
 
 const DEBOUNCE_DELAY = 300;
@@ -48,25 +59,25 @@ const ProfileViewerList: React.FC = ({
 }) => {
   const colors = useSelector(state => state.theme.theme);
   const [issearch, setissearch] = useState(false);
-  
- 
+  const [isPageLoading, setPageLoading] = useState(true);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
-
-
-
   const [userLists, setuserLists] = useState();
- 
+
   const {
     data,
     status,
     error,
     execute,
-    loadMore:executeloadMore,
+    loadMore: executeloadMore,
     pageSize_Set,
     currentPage_Set,
-    hasMore_Set
-  } = useApiPagingWithtotalRequest(getProfileViewerList,setInfiniteLoading,15);
- 
+    hasMore_Set,
+  } = useApiPagingWithtotalRequest(
+    getProfileViewerList,
+    setInfiniteLoading,
+    15,
+  );
+
   const BlurredStyle = {
     backgroundColor: colors.inputBg,
     borderColor: colors.btnColor1,
@@ -80,8 +91,6 @@ const ProfileViewerList: React.FC = ({
   const [searchInputStyle, setSearchInputStyle] = useState(BlurredStyle);
   const [searchIconStyle, setSearchIconStyle] = useState(BlurredIconStyle);
 
-  
-
   const onHighlightInput = () => {
     setSearchInputStyle(FocusedStyle);
     setSearchIconStyle(FocusedIconStyle);
@@ -92,53 +101,57 @@ const ProfileViewerList: React.FC = ({
   };
   const getList = async () => {
     try {
+      currentPage_Set(1);
+      hasMore_Set(true);
+      setPageLoading(true);
+      await execute(user.userId);
 
-  
-      
-   currentPage_Set(1);
-  hasMore_Set(true);
-        await execute(user.userId);
-    
       pageTitle(`Podcast Viewer List`);
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      setPageLoading(false);
+    }
   };
 
   useFocusEffect(
     React.useCallback(() => {
-     
       getList();
-    }, [ user, pageTitle])
+    }, [user, pageTitle]),
   );
-
 
   useEffect(() => {
     // Bind data to the state when the data fetch is successful
-//console.log(followerdata);
+    //console.log(followerdata);
 
     if (status === 200 && data?.length > 0) {
-     // console.log(followerdata);
+      // console.log(followerdata);
       setuserLists(data);
-    } 
-  }, [status,data]);
-
+    }
+  }, [status, data]);
 
   const loadMore = async () => {
-  
-    if(!isInfiniteLoading)
-  {    console.log("loadMore");
-    await executeloadMore(user.userId);
-    
-  }
+    if (!isInfiniteLoading) {
+      console.log('loadMore');
+      await executeloadMore(user.userId);
+    }
   };
-
- 
-
-
+  if (isPageLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: colors.background,
+        }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
   return (
     <ZSafeAreaView>
       <View style={localStyles.rootContainer}>
-     
-     <View style={{ flex: 1 }}>
+        <View style={{flex: 1}}>
           <FlatList
             data={userLists}
             showsVerticalScrollIndicator={false}
@@ -158,6 +171,8 @@ const ProfileViewerList: React.FC = ({
                   userImage={item?.viewerProfileImage}
                   userId={item.viewerUserId}
                   loggedInUserId={user.userId}
+                  isProfileView={true}
+                  Viewon={item?.viewedOn}
                   key={index}
                 />
               </View>

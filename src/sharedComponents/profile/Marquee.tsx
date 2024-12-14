@@ -11,6 +11,7 @@ import {
   FlatList,
   Linking,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -93,8 +94,8 @@ const ChildrenScroller = ({
 };
 
 const Marquee = ({
-  baseSpeed = 200,
-  maxSpeed = 10000,
+  baseSpeed = 2000,
+  maxSpeed = 50000,
   reverse = true,
   children,
   style,
@@ -102,10 +103,15 @@ const Marquee = ({
   const [parentWidth, setParentWidth] = React.useState(0);
   const [childrenWidth, setChildrenWidth] = React.useState(0);
 
+  // Adjust duration dynamically based on childrenWidth
   const duration =
     childrenWidth > 0
       ? Math.min(maxSpeed, Math.max(baseSpeed, childrenWidth * 40))
       : 0;
+
+  // Calculate the effective width for scrolling
+  const effectiveWidth =
+    childrenWidth > parentWidth ? childrenWidth : parentWidth;
 
   return (
     <View
@@ -115,13 +121,15 @@ const Marquee = ({
       }}
       pointerEvents="box-none">
       <View style={marqueeStyles.row} pointerEvents="box-none">
+        {/* Measure the content */}
         <MeasureElement onLayout={setChildrenWidth}>{children}</MeasureElement>
 
+        {/* Render the scroller only if widths are available */}
         {childrenWidth > 0 && parentWidth > 0 && (
           <ChildrenScroller
             duration={duration}
             parentWidth={parentWidth}
-            childrenWidth={childrenWidth}
+            childrenWidth={effectiveWidth} // Use adjusted width
             reverse={reverse}>
             {children}
           </ChildrenScroller>
@@ -155,10 +163,10 @@ function MarqueeScreen() {
     hasMore,
     loadMore: AdsloadMore,
     totalPages,
-  } = useApiPagingWithtotalRequest(fetchAdApi, setInfiniteLoading, 10);
+  } = useApiPagingWithtotalRequest(fetchAdApi, setInfiniteLoading, 1);
   const loadMorepage = async () => {
     if (!isInfiniteLoading) {
-      await AdsloadMore(cityToShow);
+      await AdsloadMore(2, cityToShow);
     }
   };
   const getList = async () => {
@@ -203,7 +211,12 @@ function MarqueeScreen() {
     ({item}) => {
       return (
         <TouchableOpacity key={item.id} onPress={() => handlePress(item)}>
-          <ZText type={'B18'} style={{color: '#fff', paddingHorizontal: 10}}>
+          <ZText
+            type={'B18'}
+            style={{
+              color: '#fff',
+              paddingHorizontal: 10,
+            }}>
             {item.marqueueText}
           </ZText>
         </TouchableOpacity>
@@ -214,9 +227,8 @@ function MarqueeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.safeArea}>
-        <Marquee reverse={true} style={styles.marqueeContainer}>
-          <View style={styles.marqueeContent}>
-            {/* {Addata?.map((item, index) => {
+        <View style={styles.marqueeContent}>
+          {/* {Addata?.map((item, index) => {
               return (
                 <TouchableOpacity
                   key={item.id}
@@ -229,6 +241,7 @@ function MarqueeScreen() {
                 </TouchableOpacity>
               );
             })} */}
+          <Marquee reverse={true} style={styles.marqueeContainer}>
             {Addata?.length > 0 ? (
               <FlatList
                 data={Addata}
@@ -238,23 +251,24 @@ function MarqueeScreen() {
                 renderItem={renderCarouselItem}
                 keyExtractor={(item, index) => index.toString()}
                 showsHorizontalScrollIndicator={false}
-                // snapToInterval={parentWidth}
+                snapToInterval={parentWidth}
                 snapToAlignment="center"
                 decelerationRate="fast"
                 onEndReachedThreshold={0.6}
-                // onEndReached={loadMorepage}
+                onEndReached={loadMorepage}
                 // onMomentumScrollEnd={onMomentumScrollEnd}
-                ListFooterComponent={
-                  isInfiniteLoading ? (
-                    <ActivityIndicator size="large" color="#0000ff" />
-                  ) : null
-                }
+                // ListFooterComponent={
+                //   isInfiniteLoading ? (
+                //     <ActivityIndicator size="large" color="#0000ff" />
+                //   ) : null
+                // }
                 // contentContainerStyle={{marginBottom: 30}}
               />
             ) : (
               <LoadingSpinner />
             )}
-            {/* {marqueeTextList.marqueeTextList.map(item => (
+          </Marquee>
+          {/* {marqueeTextList.marqueeTextList.map(item => (
               <TouchableOpacity
                 key={item.id}
                 onPress={() => handlePress(item.postId, item.categoryId)}>
@@ -265,8 +279,7 @@ function MarqueeScreen() {
                 </ZText>
               </TouchableOpacity>
             ))} */}
-          </View>
-        </Marquee>
+        </View>
       </View>
     </View>
   );
