@@ -64,6 +64,7 @@ import AppBaseContainer from '../hoc/AppBaseContainer_old';
 import NoDataFoundScreen from '../sharedComponents/NoDataFoundScreen';
 import OopsScreen from '../sharedComponents/OopsScreen';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
+import {formatDate} from '../constants/constants';
 
 const propertyDetails = (data: any, user: any, navigation: any) => {
   const onPressUser = (userId, userName, userImage) => {
@@ -102,6 +103,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
       });
     } catch (error) {}
   };
+  console.log(data);
   return (
     <>
       {data.isBrokerAppVerified && (
@@ -241,6 +243,10 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
                 }
                 style={{marginLeft: 15, justifyContent: 'center'}}>
                 <ZText type={'B16'}>{data.postedBy}</ZText>
+                <ZText type={'R14'}>
+                  <ZText type={'B14'}>Posted On </ZText> {/* Adds a space */}
+                  {formatDate(data.postedOn)}
+                </ZText>
               </TouchableOpacity>
             </HStack>
           </VStack>
@@ -394,6 +400,10 @@ const carDetails = (data: any, user: any, navigation: any) => {
                 }
                 style={{marginLeft: 15, justifyContent: 'center'}}>
                 <ZText type={'B16'}>{data.postedBy}</ZText>
+                <ZText type={'R14'}>
+                  <ZText type={'B14'}>Posted On </ZText> {/* Adds a space */}
+                  {formatDate(data.postedOn)}
+                </ZText>
               </TouchableOpacity>
             </HStack>
           </VStack>
@@ -411,7 +421,6 @@ const ItemDetailScreen: React.FC<any> = ({
 }) => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-
 
   const toast = useToast();
   const {onGoBack} = route.params; // Retrieve item and callback function
