@@ -16,6 +16,7 @@ import {
   imagesBucketPath,
   imagesBucketcloudfrontPath,
 } from '../config/constants';
+import { FlashList } from '@shopify/flash-list';
 
 const {width: screenWidths} = Dimensions.get('window');
 
@@ -97,6 +98,7 @@ const MediaGallery = forwardRef((props, ref) => {
         }}
         showsHorizontalScrollIndicator={false}
         bounces={false}
+
         contentContainerStyle={{ display: 'flex'}}
         scrollEventThrottle={16}
         snapToInterval={parentWidth}
@@ -107,7 +109,8 @@ const MediaGallery = forwardRef((props, ref) => {
           offset: parentWidth * index,
           index,
         })}
-        windowSize={3} // Improve performance by limiting render window
+        windowSize={1}// Improve performance by limiting render window
+        maxToRenderPerBatch={1}
         initialNumToRender={1} // Optimize initial load
         removeClippedSubviews={true} // Optimize memory usage
       />
@@ -167,15 +170,16 @@ const styles = StyleSheet.create({
   cardV: {
     display: 'flex',
 
-    //    backgroundColor: '#764ABC',
-    borderRadius: 12,
-
-    // padding: 10,
+      // backgroundColor: '#764ABC',
+    // borderRadius: 16,
+    // borderColor: '#764ABC',
+    // borderWidth:1,
+    //  padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
     width: screenWidths,
     // marginHorizontal: 20 ,
-     height: screenWidths,
+     height: screenWidths/2,
   },
   container: {
     width: '100%',
@@ -196,7 +200,12 @@ const styles = StyleSheet.create({
   videoStyle: {
     width: '100%',
     height: '100%',
-    borderRadius: 12,
+   
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    overflow: 'hidden'
   },
 });
 

@@ -256,7 +256,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     const {email, password} = values;
     setLoading(true);
     await execute(email, password);
-    setLoading(false);
+  
   };
   const updateDevice = async (userId: any) => {
     //

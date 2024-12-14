@@ -51,7 +51,7 @@ import KeyValueDisplay from '../sharedComponents/KeyValueDisplay';
 import KeyValueRow from '../sharedComponents/KeyValueRow';
 import IconValueDisplay from '../sharedComponents/IconValueDisplay';
 import ZTextMore from '../sharedComponents/ZTextMore';
-import LocationMap from '../sharedComponents/LocationMap';
+//import LocationMap from '../sharedComponents/LocationMap';
 import ZAvatarInitials from '../sharedComponents/ZAvatarInitials';
 import {useNavigation} from '@react-navigation/native';
 import {colors} from '../themes';
@@ -65,7 +65,8 @@ import NoDataFoundScreen from '../sharedComponents/NoDataFoundScreen';
 import OopsScreen from '../sharedComponents/OopsScreen';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 import {formatDate} from '../constants/constants';
-
+//const MediaGallery = React.lazy(() => import('../sharedComponents/MediaGallery'));
+const LocationMap = React.lazy(() => import('../sharedComponents/LocationMap'));
 const propertyDetails = (data: any, user: any, navigation: any) => {
   const onPressUser = (userId, userName, userImage) => {
     if (user.userId === userId) {
