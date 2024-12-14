@@ -1,6 +1,6 @@
 import {Color} from '../../styles/GlobalStyles';
 import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Button,
   StyleSheet,
@@ -8,6 +8,9 @@ import {
   Image,
   Text,
   TouchableOpacity,
+  FlatList,
+  Linking,
+  ActivityIndicator,
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -15,6 +18,10 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import ZText from '../ZText';
+import {useSelector} from 'react-redux';
+import {useApiPagingWithtotalRequest} from '../../hooks/useApiPagingWithtotalRequest';
+import {fetchAdApi} from '../../../BrokerAppCore/services/new/dashboardService';
+import LoadingSpinner from '../LoadingSpinner';
 
 const MeasureElement = ({onLayout, children}) => (
   <Animated.ScrollView
@@ -129,22 +136,125 @@ const marqueeStyles = StyleSheet.create({
   row: {flexDirection: 'row', overflow: 'hidden'},
 });
 
-function MarqueeScreen(marqueeTextList: any) {
+function MarqueeScreen() {
   const navigation = useNavigation();
   const [reverse, setReverse] = useState(false);
-
-  const handlePress = (postId, categoryId) => {
-    navigation.navigate('ItemDetailScreen', {
-      postId: postId,
-      postType: categoryId == 2 ? 'Car/Post' : 'Post',
-    });
+  const AppLocation = useSelector((state: RootState) => state.AppLocation);
+  const cityToShow = AppLocation.City;
+  // const navigation = useNavigation();
+  const [isInfiniteLoading, setInfiniteLoading] = useState(false);
+  const [parentWidth, setParentWidth] = useState(0);
+  const [adsToshow, setAdsToshow] = useState([]);
+  const flatListRef = useRef<FlatList>(null);
+  const [indexText, setIndexText] = useState(0);
+  const {
+    data: Addata,
+    status: Adstatus,
+    execute: Adexecute,
+    currentPage,
+    hasMore,
+    loadMore: AdsloadMore,
+    totalPages,
+  } = useApiPagingWithtotalRequest(fetchAdApi, setInfiniteLoading, 10);
+  const loadMorepage = async () => {
+    if (!isInfiniteLoading) {
+      await AdsloadMore(cityToShow);
+    }
   };
+  const getList = async () => {
+    try {
+      await Adexecute(2, cityToShow);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getList();
+  }, [cityToShow]);
+
+  useEffect(() => {
+    console.log(Addata, 'add');
+  }, [Addata]);
+
+  const handlePress = item => {
+    if (item?.actionType === 1) {
+      navigation.navigate('ItemDetailScreen', {
+        postId: item.postId,
+        postType: item.categoryId == 2 ? 'Car/Post' : 'Post',
+      });
+    } else if (item?.actionType == 2) {
+      navigation.navigate('EnquiryForm', {item});
+    } else {
+      if (item?.targetUrl) {
+        Linking.openURL(item.targetUrl).catch(err =>
+          console.error('Error opening URL:', err),
+        );
+      }
+    }
+  };
+  // const onMomentumScrollEnd = event => {
+  //   const newIndex = Math.round(
+  //     event.nativeEvent.contentOffset.x / screenWidths,
+  //   );
+  //   setActiveIndex(newIndex);
+  // };
+  const renderCarouselItem = useCallback(
+    ({item}) => {
+      return (
+        <TouchableOpacity key={item.id} onPress={() => handlePress(item)}>
+          <ZText type={'B18'} style={{color: '#fff', paddingHorizontal: 10}}>
+            {item.marqueueText}
+          </ZText>
+        </TouchableOpacity>
+      );
+    },
+    [parentWidth],
+  );
   return (
     <View style={styles.container}>
       <View style={styles.safeArea}>
         <Marquee reverse={true} style={styles.marqueeContainer}>
           <View style={styles.marqueeContent}>
-            {marqueeTextList.marqueeTextList.map(item => (
+            {/* {Addata?.map((item, index) => {
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  onPress={() => handlePress(item)}>
+                  <ZText
+                    type={'B18'}
+                    style={{color: '#fff', paddingHorizontal: 10}}>
+                    {item.marqueueText}
+                  </ZText>
+                </TouchableOpacity>
+              );
+            })} */}
+            {Addata?.length > 0 ? (
+              <FlatList
+                data={Addata}
+                horizontal
+                // pagingEnabled
+                // ref={flatListRef}
+                renderItem={renderCarouselItem}
+                keyExtractor={(item, index) => index.toString()}
+                showsHorizontalScrollIndicator={false}
+                // snapToInterval={parentWidth}
+                snapToAlignment="center"
+                decelerationRate="fast"
+                onEndReachedThreshold={0.6}
+                // onEndReached={loadMorepage}
+                // onMomentumScrollEnd={onMomentumScrollEnd}
+                ListFooterComponent={
+                  isInfiniteLoading ? (
+                    <ActivityIndicator size="large" color="#0000ff" />
+                  ) : null
+                }
+                // contentContainerStyle={{marginBottom: 30}}
+              />
+            ) : (
+              <LoadingSpinner />
+            )}
+            {/* {marqueeTextList.marqueeTextList.map(item => (
               <TouchableOpacity
                 key={item.id}
                 onPress={() => handlePress(item.postId, item.categoryId)}>
@@ -154,7 +264,7 @@ function MarqueeScreen(marqueeTextList: any) {
                   {item.marqueueText}
                 </ZText>
               </TouchableOpacity>
-            ))}
+            ))} */}
           </View>
         </Marquee>
       </View>

@@ -45,16 +45,13 @@ import useUserAnalytics from '../hooks/Analytics/useUserAnalytics';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 import AutoscrollAds from '../sharedComponents/AutoscrollAds';
 import EnquiryBottomSheet from '../sharedComponents/EnquiryForm';
-import { getDashboardStory } from '../../BrokerAppCore/services/Story';
+import {getDashboardStory} from '../../BrokerAppCore/services/Story';
 import ProductSectionData from './Dashboard/ProductSectionData';
-import {
-  fetchDashboardData as fetchDashboardDataBrand
- 
-} from '../../BrokerAppCore/services/new/dashboardService';
+import {fetchDashboardData as fetchDashboardDataBrand} from '../../BrokerAppCore/services/new/dashboardService';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-  
+
   const {setUser_Analytics} = useUserAnalytics();
   const {logButtonClick} = useUserJourneyTracker('Dashborad');
   const userPermissions = useSelector(
@@ -80,11 +77,11 @@ export default function DashboradScreen() {
   //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
   const cityToShow = AppLocation.City;
   const navigation = useNavigation();
- const [StoryData, setStoryData]: any[] = useState(null);
- const [NewlyLaunchData, setNewlyLaunchData]: any[] = useState(null);
- const [NewInPropertyData, setNewInPropertyData]: any[] = useState(null);
- const [NewInCarData, setNewInCarData]: any[] = useState(null);
- const [BrandSectionData, setBrandSectionData]: any[] = useState(null);
+  const [StoryData, setStoryData]: any[] = useState(null);
+  const [NewlyLaunchData, setNewlyLaunchData]: any[] = useState(null);
+  const [NewInPropertyData, setNewInPropertyData]: any[] = useState(null);
+  const [NewInCarData, setNewInCarData]: any[] = useState(null);
+  const [BrandSectionData, setBrandSectionData]: any[] = useState(null);
   const callPodcastList = async () => {
     execute(user.userId, 1, 4);
     //await footerExecute()
@@ -128,7 +125,6 @@ export default function DashboradScreen() {
         try {
           // callmarList();
 
-          
           const results = await Promise.allSettled([
             GetDashboardData(user.userId),
             execute(user.userId, 1, 4),
@@ -150,9 +146,17 @@ export default function DashboradScreen() {
               userId: user.userId,
             }),
           ]);
-          
-          const [dashboardData, podcastList, DashboardStory, NewlyLaunch, NewInProperty, NewInCar, BrandAssociate] = results.map(
-            result => (result.status === 'fulfilled' ? result.value : null)
+
+          const [
+            dashboardData,
+            podcastList,
+            DashboardStory,
+            NewlyLaunch,
+            NewInProperty,
+            NewInCar,
+            BrandAssociate,
+          ] = results.map(result =>
+            result.status === 'fulfilled' ? result.value : null,
           );
 
           // const [dashboardData, podcastList,DashboardStory,NewlyLaunch,NewInProperty,NewInCar,BrandAssociate] = await Promise.all([
@@ -184,15 +188,7 @@ export default function DashboradScreen() {
           setNewInCarData(NewInCar.data);
           setBrandSectionData(BrandAssociate.data);
           store.dispatch(setDashboard(dashboardData.data));
-          // GetDashboardData(user.userId)
-          //   .then(data => {
-          //     store.dispatch(setDashboard(data.data));
-          //   })
-          //   .catch(error => {});
-          // callPodcastList();
-        } catch (error) {
-          //   console.error('Error fetching posts:', error);
-        }
+        } catch (error) {}
       };
       fetchData();
 
@@ -308,22 +304,9 @@ export default function DashboradScreen() {
       <ScrollView style={styles.scrollView}>
         <View>
           <View style={styles.subHeaderSection}>
-            {/* <UserProfile /> */}
-            {/* <View style={{paddingHorizontal:15}}> */}
-            <UserStories  Data={StoryData}/>
-            {/* </View> */}
-            {/* {marqueeText?.length > 0 && (
-              <MarqueeBanner
-                marqueeTextList={marqueeText.map((item: any) => ({
-                  marqueeText: item.marqueueText,
-                  postId: item.postId,
-                  categoryId: item.categoryId,
-                }))}
-              />
-            )} */}
-            {/* {marqueeText?.length > 0 && (
-              <MarqueeScreen marqueeTextList={marqueeText} />
-            )} */}
+            <UserStories Data={StoryData} />
+            {/* <MarqueeBanner /> */}
+            <MarqueeScreen />
           </View>
           <AutoscrollAds
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
@@ -467,7 +450,6 @@ export default function DashboradScreen() {
               categoryId: 1,
             }}
             Data={NewInPropertyData}
-            
           />
           <ProductSectionData
             heading={'New In Car'}
@@ -515,7 +497,6 @@ export default function DashboradScreen() {
             request={{
               userId: user.userId,
             }}
-           
           />
           <Footer />
         </View>
