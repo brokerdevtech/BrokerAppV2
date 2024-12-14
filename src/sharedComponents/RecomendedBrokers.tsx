@@ -149,8 +149,7 @@ const Recommend = React.memo((props) => {
     // } else {
     //   setBrokerList([]); // In case there is no data
     // }
-    console.log("BrokerList");
-    console.log(props);
+   
     if(props.Data!=null)
     {
       setBrokerList(props.Data.data.records);

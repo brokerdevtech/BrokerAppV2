@@ -772,7 +772,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       maxFileSize: 30 * 1024 * 1024,
     });
     //
-    console.log(videoAsset);
+
     let obj = {
       uri: videoAsset.sourceURL || videoAsset.path,
       localFileName: getFileNameFromPath(videoAsset.path),

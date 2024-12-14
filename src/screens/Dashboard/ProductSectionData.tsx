@@ -55,8 +55,7 @@ interface ProductSectionDataProps {
 }
 
 const ProductSectionData = (props: ProductSectionDataProps) => {
-  console.log("========ProductSectionDataProps");
-  console.log(props.Data);
+
   let {data, status, error, execute,setData} = useApiRequestData(fetchDashboardData,props.Data);
   const navigation = useNavigation();
   const [showAlertDialog, setShowAlertDialog] = React.useState(false);
@@ -70,8 +69,7 @@ const ProductSectionData = (props: ProductSectionDataProps) => {
   const callPodcastList = async () => {
     if(props.Data!=null)
     {
-      console.log("callPodcastList");
-      console.log(props.Data);
+    
       setData(props.Data)
     }
   

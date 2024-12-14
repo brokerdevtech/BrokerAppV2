@@ -45,8 +45,7 @@ const SkeletonPlaceholder = () => {
 };
 
 const UserStories = React.memo((Data) => {
-  console.log("UserStories");
-  console.log(Data);
+
   const user = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
@@ -88,8 +87,7 @@ const UserStories = React.memo((Data) => {
       getList();
       if(Data!=null && Data.Data!=null)
      {
-      console.log("Data sss");
-      console.log(Data.Data);
+    
        setStoryData(Data.Data.storyList);
       }
     }, [Data]),

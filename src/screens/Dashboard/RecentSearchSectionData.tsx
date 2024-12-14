@@ -47,8 +47,7 @@ const RecentSearchSectionData = (props: BrandSectionProps) => {
   
     if(props.Data!=null)
       {
-        console.log("callPodcastList");
-        console.log(props.Data);
+       
         setData(props.Data)
       }
     //  execute(props.endpoint, props.request);

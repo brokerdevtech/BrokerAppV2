@@ -93,8 +93,7 @@ const SkeletonPlaceholder = () => {
 };
 const RederListHeader = React.memo(
   ({categoryId, AppLocation, FilterChipsData, recordCount, user,StoryData,NewIncategoryData,RecentSearchData,RenderBrokerData}) => {
-    console.log("NewIncategoryData");
-    console.log(NewIncategoryData);
+ 
     return (
       <>
            <UserStories  Data={StoryData}/>
@@ -685,8 +684,7 @@ const ItemListScreen: React.FC<any> = ({
     getRecommendedBrokerList(user.userId, categoryId, AppLocation.City,1,10)
 
           ]);
-          console.log("=============results");
-  console.log(results);
+     
     const [ListData, DashboardStory, NewIncategory,RecentSearch,RecommendedBroker] = results.map(
             result => (result.status === 'fulfilled' ? result.value : null)
           );

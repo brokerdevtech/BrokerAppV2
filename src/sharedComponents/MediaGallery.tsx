@@ -49,7 +49,7 @@ const MediaGallery = forwardRef((props, ref) => {
       const sourceUri = `${imagesBucketcloudfrontPath}${
         item?.mediaBlob || item?.mediaBlobId
       }`;
-      console.log(item, 'item');
+   
       if (extension !== 'mp4') {
         return (
           <View style={[styles.card, {width: parentWidth}]}>

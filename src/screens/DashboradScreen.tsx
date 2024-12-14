@@ -177,7 +177,7 @@ export default function DashboradScreen() {
           //   }),
           // ]);
          
-          console.log("NewlyLaunch",NewlyLaunch.data);
+
           setStoryData(DashboardStory.data)
           setNewlyLaunchData(NewlyLaunch.data);
           setNewInPropertyData(NewInProperty.data);

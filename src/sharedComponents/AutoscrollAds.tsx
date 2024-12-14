@@ -70,7 +70,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
   }, [cityToShow]);
 
   useEffect(() => {
-   console.log(Addata);
+ 
   }, [Addata]);
 
   useEffect(() => {
