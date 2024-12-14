@@ -193,6 +193,11 @@ function App(): React.JSX.Element {
       );
       await store.dispatch(setUser(user));
       setLoggedIn(true);
+      setIsSplashVisible(false);
+    // setTimeout(() => {
+    //   setLoggedIn(true);
+    //   setIsSplashVisible(false);
+    // }, 5000);  
     }
   };
   const getCurrentPositionAsync = () => {
@@ -487,9 +492,9 @@ function App(): React.JSX.Element {
   useEffect(() => {
     const runAsyncFunctions = async () => {
       try {
-        await allPermission();
+         allPermission();
         await checkUser();
-        setIsSplashVisible(false);
+       
       } catch (error) {
         console.error('Error in permission or user check:', error);
       }
@@ -499,7 +504,7 @@ function App(): React.JSX.Element {
     Animated.parallel([
       Animated.timing(opacityAnim, {
         toValue: 1,
-        duration: 1000,
+        duration: 100,
         easing: Easing.out(Easing.quad),
         useNativeDriver: true,
       }),
@@ -509,7 +514,12 @@ function App(): React.JSX.Element {
         useNativeDriver: true,
       }),
     ]).start();
-
+    // Animated.spring(opacityAnim, {
+    //   toValue: 1, // Final value
+    //   friction: 3, // Resistance to motion
+    //   tension: 40, // How stiff the spring is
+    //   useNativeDriver: true, // Offloads animation to the native thread
+    // }).start();
     // Execute async functions
     runAsyncFunctions();
     const subscription = AppState.addEventListener(
@@ -537,6 +547,7 @@ function App(): React.JSX.Element {
   }, []);
   return (
     <>
+   
       {isSplashVisible ? (
         <View style={styles.splashContainer}>
           <Animated.Image
@@ -604,7 +615,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff', // Customize splash background color
+    backgroundColor: 'red', // Customize splash background color
   },
   logo: {
     width: 250, // Adjust size according to your needs

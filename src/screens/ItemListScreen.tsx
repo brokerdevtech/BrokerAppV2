@@ -4,11 +4,9 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
-  Text,
-  ScrollView,
+ 
   StyleSheet,
-  FlatList,
-  Image,
+
   TouchableOpacity,
   Linking,
   Alert,
@@ -21,67 +19,68 @@ import {RootState} from '@reduxjs/toolkit/query';
 import CustomHeader from '../sharedComponents/CustomHeader';
 import ZText from '../sharedComponents/ZText';
 
-import ShortingIcon from '../assets/svg/icons/sorting.svg';
-import FilterIcon from '../assets/svg/icons/filters.svg';
-import ArrowLeftIcon from '../assets/svg/icons/arrow-left.svg';
-import SearchIcon from '../assets/svg/icons/search.svg';
+
 import {HStack} from '@/components/ui/hstack';
-import UserProfile from '../sharedComponents/profile/UserProfile';
+
 import {
   Card_check_icon,
-  Heart_icon,
+
   Location_Icon,
-  Calender_Icon,
+
   Chat_Icon,
   Telephone_Icon,
-  Whatsapp_Icon,
-  share_PIcon,
-  bookmark_icon,
+ 
   description_icon,
 } from '../assets/svg';
-import {imagesBucketcloudfrontPath} from '../config/constants';
-import {useApiRequest} from '@/src/hooks/useApiRequest';
+
+
 import {
   fetchDashboardData,
   fetchItemList,
   RecentSearchSData,
 } from '../../BrokerAppCore/services/new/dashboardService';
-import {FavouriteIcon, Icon, MessageCircleIcon} from '../../components/ui/icon';
-import {Divider} from '@/components/ui/divider';
+import {Icon} from '../../components/ui/icon';
+
 import {VStack} from '@/components/ui/vstack';
 import MediaGallery from '../sharedComponents/MediaGallery';
 import {useApiPagingWithtotalRequest} from '../../src/hooks/useApiPagingWithtotalRequest';
 import AppBaseContainer from '../../src/hoc/AppBaseContainer_old';
-import LoadingSpinner from '../sharedComponents/LoadingSpinner';
+
 import {Box} from '../../components/ui/box';
 import FilterChips from '../sharedComponents/FilterChips';
-import margin from '@/themes/margin';
-import {SetPostLikeUnLike} from '../../BrokerAppCore/services/new/dashboardService';
+
 import PostActions from '../sharedComponents/PostActions';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import UserStories from '../components/story/UserStories';
 import Recommend from '../sharedComponents/RecomendedBrokers';
-import ProductSection from './Dashboard/ProductSection';
-import flex from '@/themes/flex';
-import padding from '@/themes/padding';
+
+
 import {FlashList} from '@shopify/flash-list';
-import {SafeAreaView} from 'react-native-safe-area-context';
+
 import {colors} from '../themes';
-import {Color} from '@/styles/GlobalStyles';
+
 import ZHeaderFliter from '../sharedComponents/ZHeaderFliter';
-import FilterBottomSheet from '../sharedComponents/FilterBottomSheet';
-import {getFilterTags} from '../../BrokerAppCore/services/filterTags';
-import {concat} from 'lodash';
+//import FilterBottomSheet from '../sharedComponents/FilterBottomSheet';
+
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
-import RecentSearchSection from './Dashboard/RecentSearchSection';
+
 import {formatNumberToIndianSystem} from '../utils/helpers';
-import {useFocusEffect} from '@react-navigation/native';
+
 import NoDataFoundScreen from '../sharedComponents/NoDataFoundScreen';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 import { getDashboardStory } from '../../BrokerAppCore/services/Story';
 import ProductSectionData from './Dashboard/ProductSectionData';
-import RecentSearchSectionData from './Dashboard/RecentSearchSectionData';
+ import RecentSearchSectionData from './Dashboard/RecentSearchSectionData';
 import { getRecommendedBrokerList } from '../../BrokerAppCore/services/new/recomendedBroker';
+
+//const MediaGallery = React.lazy(() => import('../sharedComponents/MediaGallery'));
+//const UserStories = React.lazy(() => import('../components/story/UserStories'));
+//const ProductSectionData = React.lazy(() => import('./Dashboard/ProductSectionData'));
+//const Recommend = React.lazy(() => import('../sharedComponents/RecomendedBrokers'));
+//const RecentSearchSectionData = React.lazy(() => import('./Dashboard/RecentSearchSectionData'));
+const FilterBottomSheet  = React.lazy(() => import('../sharedComponents/FilterBottomSheet'));
+
+
 const SkeletonPlaceholder = () => {
   return (
     <HStack space={10} style={styles.skeletonContainer}>

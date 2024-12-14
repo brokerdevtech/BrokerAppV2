@@ -100,10 +100,11 @@ const VideoPlayer = forwardRef((props, ref) => {
       style={{
         flex: 1,
         width: '100%',
-        borderRadius: 10,
+        borderRadius: 16,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
+        overflow: 'hidden'
       }}>
       <Video
         ref={videoRef}
@@ -178,23 +179,23 @@ const VideoPlayer = forwardRef((props, ref) => {
           </TouchableOpacity>
         </View>
       </Modal>
-      <View style={styles.controls}>
+      {/* <View style={styles.controls}> */}
         {/* <TouchableOpacity onPress={handlePlayPause}>
               <Icon name={vpaused ? 'play' : 'pause'} size={24} color="white" />
           
           </TouchableOpacity> */}
-        <View style={styles.progressBar}>
+        {/* <View style={styles.progressBar}>
           <Progress
             value={progress * 100}
             colorScheme="primary"
             h="100%"
             bg="white"
             w="100%"
-          />
+          /> */}
           {/* <View style={{ width: `${(currentTime / duration) * 100}%`, backgroundColor:"white" }} /> */}
-        </View>
+        {/* </View> */}
         {/* <Text style={{color:"white"}}>{Math.floor(currentTime)} / {Math.floor(duration)}</Text> */}
-      </View>
+      {/* </View> */}
     </View>
   );
 });

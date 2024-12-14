@@ -1,5 +1,10 @@
 import {RootState} from '@/BrokerAppCore/redux/store/reducers';
 import {NavigationContainer, NavigationContainerRef, useNavigation} from '@react-navigation/native';
+import {
+ 
+  Text
+ 
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import HomeNavigation from './HomeNavigation';
@@ -70,6 +75,7 @@ const linking = {
 
 //   return null;
 // };
+const FallbackLoader = () => <ActivityIndicator size="large" color="#007ACC" />;
 const MainNavigation: React.FC<MainNavigationProps> = ({
   loggedIn,
   setLoggedIn,

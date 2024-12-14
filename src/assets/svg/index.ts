@@ -96,7 +96,8 @@ import ComingSoon from './ComingSoon.svg';
 import Buyer from './buyer.svg';
 import BuyerActive from './buyer-fill.svg';
 import filter from './filter.svg';
-export {
+import ImagePlaceholder from './icons/ImagePlaceholder.svg';
+export {ImagePlaceholder,
   Buyer,
   filter,
   BuyerActive,
