@@ -306,9 +306,9 @@ export default function DashboradScreen() {
         <View>
           <View style={styles.subHeaderSection}>
             <UserStories Data={StoryData} />
-            <AutoscrollAdsText
+            {/* <AutoscrollAdsText
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
-          />
+          /> */}
           
           </View>
           

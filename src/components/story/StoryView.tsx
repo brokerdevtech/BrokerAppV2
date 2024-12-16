@@ -129,7 +129,7 @@ const StoryView: React.FC = ({route}) => {
         //setCurrent(0); // Reset current index to initial
         progress.setValue(0); // Reset progress to initial value
         // Reset other states as needed
-        play();
+       // play();
         // const resetContent = route.params.userImage.storyDetails.map((item, index) => {
         //   if (current === index) { // Assuming 'current' is defined somewhere in your scope
         //     return ({
@@ -224,10 +224,10 @@ const StoryView: React.FC = ({route}) => {
   function start(duration) {
     // Ensure duration is not zero
     duration = duration || 5000;
-    if (isLoading) {
-      // Do not start progress if loading
-      return;
-    } // Default duration for images if not set
+    // if (isLoading) {
+    //   // Do not start progress if loading
+    //   return;
+    // } // Default duration for images if not set
     Animated.timing(progress, {
       toValue: 1,
       duration: duration,
@@ -268,10 +268,27 @@ const StoryView: React.FC = ({route}) => {
     });
     start(duration); // Pass the actual content duration
   }
+  function play(duration) {
+    setstoryId(reversedContent[current].storyId);
+    AddStoryViewer(user.userId, reversedContent[current].storyId);
+    setStoryState({
+      likeCount: reversedContent[current].likeCount,
+      reactionCount: reversedContent[current].reactionCount,
+      viewerCount: reversedContent[current].viewerCount,
+      userLiked: reversedContent[current].userLiked,
+    });
+    start(duration); // Pass the actual content duration
+  }
+  const onLoadStartImage=()=>{
+    setIsLoading(true);
+  }
   const onLoadEndImage = () => {
     setIsLoading(false);
     progress.setValue(0);
-    play(5000); // Default duration for images, adjust as necessary
+    setTimeout(() => {
+      play();
+    }, 1000);
+  //  play(); // Default duration for images, adjust as necessary
   };
   const togglePlayPause = () => {
     if (isPlayingRef.current) {
@@ -401,7 +418,7 @@ const StoryView: React.FC = ({route}) => {
 
   const storyLike = async item => {
     //
-
+console.log(user);
     if (StoryState?.userLiked && StoryState?.userLiked == 1) {
       const result = await StoryUnLIke(user.userId, item.storyId);
 
@@ -515,6 +532,7 @@ const StoryView: React.FC = ({route}) => {
             />
           ) : (
             <FastImage
+            onLoadStart={onLoadStartImage}
               onLoadEnd={onLoadEndImage}
               source={{
                 uri: `${imagesBucketcloudfrontPath}${reversedContent[current].mediaBlob}`,
