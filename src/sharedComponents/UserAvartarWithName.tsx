@@ -34,11 +34,53 @@ function UserAvartarWithName({
   userName,
   userImage,
   userId,
-  loggedInUserId
+  loggedInUserId,
+  isProfileView = false,
+  Viewon = '',
 }) {
   const appuser = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
+  const formatTime = timestamp => {
+    const now = new Date();
+    const date = new Date(timestamp);
 
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInHours < 24) {
+      return diffInHours === 0
+        ? `${diffInMinutes}m ago`
+        : `${diffInHours}h ago`;
+    } else if (diffInDays < 7) {
+      return `${diffInDays}d ago`;
+    } else if (diffInDays < 365) {
+      return `${date.getDate()} ${getMonthName(date.getMonth())}`; // e.g., "18 Oct"
+    } else {
+      return `${date.getDate()} ${getMonthName(
+        date.getMonth(),
+      )} ${date.getFullYear()}`; // e.g., "18 Oct 2023"
+    }
+  };
+
+  const getMonthName = monthIndex => {
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    return monthNames[monthIndex];
+  };
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
@@ -54,53 +96,27 @@ function UserAvartarWithName({
         userImage: userImage,
         userId: userId,
         loggedInUserId: loggedInUserId,
-       
       });
     }
   };
 
- 
-
-
-
   return (
     <View style={localStyles.rootContainer}>
-      <TouchableOpacity
-        onPress={onPressUser}
-        style={localStyles.userItem}
->
+      <TouchableOpacity onPress={onPressUser} style={localStyles.userItem}>
         <ZAvatarInitials
           onPress={onPressUser}
           sourceUrl={userImage}
           iconSize="md"
           name={userName}
         />
-        {/* {userImage !== '' && userImage !== null ? (
-          <Avatar
-            source={{
-              uri: `${imagesBucketcloudfrontPath}${userImage}`,
-            }}>
-            <FastImage
-              source={colors.dark ? images.userDark : images.userLight}
-              style={localStyles.userImage}
-            />
-          </Avatar>
-        ) : (
-          <FastImage
-            source={colors.dark ? images.userDark : images.userLight}
-            style={localStyles.userImage}
-          />
-        
-        )} */}
+
         <View style={localStyles.userDescription}>
-          <ZText type="R16" numberOfLines={1}>
+          <ZText type="S16" numberOfLines={1}>
             {userName}
           </ZText>
-      
         </View>
+        {isProfileView && <ZText type="R14">{formatTime(Viewon)}</ZText>}
       </TouchableOpacity>
-    
-     
     </View>
   );
 }

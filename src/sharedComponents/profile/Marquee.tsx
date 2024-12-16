@@ -23,7 +23,7 @@ import {useSelector} from 'react-redux';
 import {useApiPagingWithtotalRequest} from '../../hooks/useApiPagingWithtotalRequest';
 import {fetchAdApi} from '../../../BrokerAppCore/services/new/dashboardService';
 import LoadingSpinner from '../LoadingSpinner';
-const {width: screenWidths} = Dimensions.get('window');
+
 const MeasureElement = ({onLayout, children}) => (
   <Animated.ScrollView
     horizontal
@@ -94,8 +94,8 @@ const ChildrenScroller = ({
 };
 
 const Marquee = ({
-  baseSpeed = 200,
-  maxSpeed = 10000,
+  baseSpeed = 2000,
+  maxSpeed = 50000,
   reverse = true,
   children,
   style,
@@ -103,11 +103,16 @@ const Marquee = ({
   const [parentWidth, setParentWidth] = React.useState(0);
   const [childrenWidth, setChildrenWidth] = React.useState(0);
 
+  // Adjust duration dynamically based on childrenWidth
   const duration =
     childrenWidth > 0
       ? Math.min(maxSpeed, Math.max(baseSpeed, childrenWidth * 40))
       : 0;
 
+  // Calculate the effective width for scrolling
+  const effectiveWidth =
+    childrenWidth > parentWidth ? childrenWidth : parentWidth;
+
   return (
     <View
       style={style}
@@ -116,13 +121,15 @@ const Marquee = ({
       }}
       pointerEvents="box-none">
       <View style={marqueeStyles.row} pointerEvents="box-none">
+        {/* Measure the content */}
         <MeasureElement onLayout={setChildrenWidth}>{children}</MeasureElement>
 
+        {/* Render the scroller only if widths are available */}
         {childrenWidth > 0 && parentWidth > 0 && (
           <ChildrenScroller
             duration={duration}
             parentWidth={parentWidth}
-            childrenWidth={childrenWidth}
+            childrenWidth={effectiveWidth} // Use adjusted width
             reverse={reverse}>
             {children}
           </ChildrenScroller>
@@ -131,37 +138,7 @@ const Marquee = ({
     </View>
   );
 };
-const Marquee2 = ({
-  speed = 100, // Pixels per second
-  reverse = false,
-  children,
-  style,
-}) => {
-  const [parentWidth, setParentWidth] = React.useState(0);
 
-  // Calculate duration based on the width of the viewport and speed
-  const duration = parentWidth > 0 ? (parentWidth / speed) * 1000 : 0; // Convert speed to milliseconds
-
-  return (
-    <View
-      style={style}
-      onLayout={ev => {
-        setParentWidth(ev.nativeEvent.layout.width);
-      }}
-      pointerEvents="box-none">
-      <View style={marqueeStyles.row} pointerEvents="box-none">
-        {parentWidth > 0 && (
-          <ChildrenScroller
-            duration={duration}
-            parentWidth={parentWidth}
-            reverse={reverse}>
-            {children}
-          </ChildrenScroller>
-        )}
-      </View>
-    </View>
-  );
-};
 const marqueeStyles = StyleSheet.create({
   hidden: {opacity: 0, zIndex: -1},
   row: {flexDirection: 'row', overflow: 'hidden'},
@@ -186,11 +163,10 @@ function MarqueeScreen() {
     hasMore,
     loadMore: AdsloadMore,
     totalPages,
-  } = useApiPagingWithtotalRequest(fetchAdApi, setInfiniteLoading, 2);
+  } = useApiPagingWithtotalRequest(fetchAdApi, setInfiniteLoading, 1);
   const loadMorepage = async () => {
     if (!isInfiniteLoading) {
-      console.log("Addata")
-      await AdsloadMore(2,cityToShow);
+      await AdsloadMore(2, cityToShow);
     }
   };
   const getList = async () => {
@@ -234,8 +210,13 @@ function MarqueeScreen() {
   const renderCarouselItem = useCallback(
     ({item}) => {
       return (
-        <TouchableOpacity key={item.id} onPress={() => handlePress(item)} style={{width:screenWidths}}>
-          <ZText type={'B18'} style={{color: '#fff', paddingHorizontal: 10}} >
+        <TouchableOpacity key={item.id} onPress={() => handlePress(item)}>
+          <ZText
+            type={'B18'}
+            style={{
+              color: '#fff',
+              paddingHorizontal: 10,
+            }}>
             {item.marqueueText}
           </ZText>
         </TouchableOpacity>
@@ -246,9 +227,8 @@ function MarqueeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.safeArea}>
-        <Marquee reverse={true} style={styles.marqueeContainer}>
-          <View style={styles.marqueeContent}>
-            {/* {Addata?.map((item, index) => {
+        <View style={styles.marqueeContent}>
+          {/* {Addata?.map((item, index) => {
               return (
                 <TouchableOpacity
                   key={item.id}
@@ -261,6 +241,7 @@ function MarqueeScreen() {
                 </TouchableOpacity>
               );
             })} */}
+          <Marquee reverse={true} style={styles.marqueeContainer}>
             {Addata?.length > 0 ? (
               <FlatList
                 data={Addata}
@@ -270,23 +251,24 @@ function MarqueeScreen() {
                 renderItem={renderCarouselItem}
                 keyExtractor={(item, index) => index.toString()}
                 showsHorizontalScrollIndicator={false}
-                // snapToInterval={parentWidth}
+                snapToInterval={parentWidth}
                 snapToAlignment="center"
                 decelerationRate="fast"
                 onEndReachedThreshold={0.6}
-                 onEndReached={loadMorepage}
+                onEndReached={loadMorepage}
                 // onMomentumScrollEnd={onMomentumScrollEnd}
-                ListFooterComponent={
-                  isInfiniteLoading ? (
-                    <ActivityIndicator size="large" color="#0000ff" />
-                  ) : null
-                }
+                // ListFooterComponent={
+                //   isInfiniteLoading ? (
+                //     <ActivityIndicator size="large" color="#0000ff" />
+                //   ) : null
+                // }
                 // contentContainerStyle={{marginBottom: 30}}
               />
             ) : (
               <LoadingSpinner />
             )}
-            {/* {marqueeTextList.marqueeTextList.map(item => (
+          </Marquee>
+          {/* {marqueeTextList.marqueeTextList.map(item => (
               <TouchableOpacity
                 key={item.id}
                 onPress={() => handlePress(item.postId, item.categoryId)}>
@@ -297,8 +279,7 @@ function MarqueeScreen() {
                 </ZText>
               </TouchableOpacity>
             ))} */}
-          </View>
-        </Marquee>
+        </View>
       </View>
     </View>
   );

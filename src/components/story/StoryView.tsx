@@ -245,6 +245,18 @@ const StoryView: React.FC = ({route}) => {
     setEnd(videoDuration); // Set the end based on video duration
     play(videoDuration); // Start playing the story with the correct duration
   };
+  const handleLongPress = () => {
+    isPlayingRef.current = false; // Pause the play state
+    progress.stopAnimation(currentValue => {
+      lastValueRef.current = currentValue; // Save the current progress value
+    });
+  };
+
+  // Add this handler to resume the story and progress bar
+  const handlePressOut = () => {
+    isPlayingRef.current = true; // Resume the play state
+    start(lastValueRef.current * end); // Resume from the saved progress
+  };
   function play(duration) {
     setstoryId(reversedContent[current].storyId);
     AddStoryViewer(user.userId, reversedContent[current].storyId);
