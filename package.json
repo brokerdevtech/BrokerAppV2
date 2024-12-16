@@ -57,6 +57,7 @@
     "@react-native-firebase/dynamic-links": "^21.6.1",
     "@react-native-firebase/messaging": "^21.6.1",
     "@react-native-google-signin/google-signin": "^13.1.0",
+    "@react-native-oh-tpl/react-native-marquee": "^0.5.0-0.0.1",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/drawer": "^6.7.2",
     "@react-navigation/native": "^6.1.18",

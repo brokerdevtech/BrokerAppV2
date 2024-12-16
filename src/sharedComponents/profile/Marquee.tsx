@@ -138,6 +138,47 @@ const Marquee = ({
     </View>
   );
 };
+const MarqueeNew = ({text, onComplete, reverse = true, duration = 5000}) => {
+  const offset = useSharedValue(0);
+  const containerWidth = useSharedValue(0);
+  const textWidth = useSharedValue(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      onComplete?.();
+    }, duration);
+
+    return () => clearInterval(interval);
+  }, [onComplete, duration]);
+
+  useFrameCallback((frame) => {
+    if (textWidth.value > containerWidth.value) {
+      const distance = frame.timeSincePreviousFrame
+        ? frame.timeSincePreviousFrame * (textWidth.value / duration)
+        : 0;
+
+      offset.value = reverse
+        ? Math.max(offset.value - distance, -(textWidth.value - containerWidth.value))
+        : Math.min(offset.value + distance, textWidth.value - containerWidth.value);
+    }
+  });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{translateX: offset.value}],
+  }));
+
+  return (
+    <View
+      style={styles.marqueeContainer}
+      onLayout={(e) => (containerWidth.value = e.nativeEvent.layout.width)}>
+      <Animated.View
+        style={[styles.marqueeTextContainer, animatedStyle]}
+        onLayout={(e) => (textWidth.value = e.nativeEvent.layout.width)}>
+        <ZText style={styles.marqueeText}>{text}</ZText>
+      </Animated.View>
+    </View>
+  );
+};
 
 const marqueeStyles = StyleSheet.create({
   hidden: {opacity: 0, zIndex: -1},
@@ -201,6 +242,31 @@ function MarqueeScreen() {
       }
     }
   };
+  const handleAdCompletion = (index) => {
+    if (index < Addata.length - 1) {
+      flatListRef.current?.scrollToIndex({index: index + 1, animated: true});
+    }
+  };
+  const renderAdItem = useCallback(
+    ({item, index}) => {
+      console.log('renderAdItem',item); // Log the item to the console
+      return (
+        <TouchableOpacity key={item.id} onPress={() => handlePress(item)}>
+           <ZText
+            type={'B18'}
+            style={{
+              color: '#fff',
+              paddingHorizontal: 10,
+            }}>
+            {item.marqueueText}
+          </ZText>
+          {/* Uncomment the Marquee component if needed */}
+          {/* <MarqueeNew text={item.marqueeText} onComplete={() => handleAdCompletion(index)} /> */}
+        </TouchableOpacity>
+      );
+    },
+    [parentWidth]
+  );
   // const onMomentumScrollEnd = event => {
   //   const newIndex = Math.round(
   //     event.nativeEvent.contentOffset.x / screenWidths,
@@ -226,8 +292,8 @@ function MarqueeScreen() {
   );
   return (
     <View style={styles.container}>
-      <View style={styles.safeArea}>
-        <View style={styles.marqueeContent}>
+   
+  
           {/* {Addata?.map((item, index) => {
               return (
                 <TouchableOpacity
@@ -241,20 +307,20 @@ function MarqueeScreen() {
                 </TouchableOpacity>
               );
             })} */}
-          <Marquee reverse={true} style={styles.marqueeContainer}>
+       
             {Addata?.length > 0 ? (
               <FlatList
                 data={Addata}
                 horizontal
-                // pagingEnabled
-                // ref={flatListRef}
+                 pagingEnabled
+                 ref={flatListRef}
                 renderItem={renderCarouselItem}
                 keyExtractor={(item, index) => index.toString()}
                 showsHorizontalScrollIndicator={false}
-                snapToInterval={parentWidth}
-                snapToAlignment="center"
-                decelerationRate="fast"
-                onEndReachedThreshold={0.6}
+                // snapToInterval={parentWidth}
+                // snapToAlignment="center"
+                // decelerationRate="fast"
+                // onEndReachedThreshold={0.6}
                 onEndReached={loadMorepage}
                 // onMomentumScrollEnd={onMomentumScrollEnd}
                 // ListFooterComponent={
@@ -267,7 +333,7 @@ function MarqueeScreen() {
             ) : (
               <LoadingSpinner />
             )}
-          </Marquee>
+       
           {/* {marqueeTextList.marqueeTextList.map(item => (
               <TouchableOpacity
                 key={item.id}
@@ -279,13 +345,19 @@ function MarqueeScreen() {
                 </ZText>
               </TouchableOpacity>
             ))} */}
-        </View>
-      </View>
+   
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  marqueeTextContainer: {
+    flexDirection: 'row',
+  },
+  marqueeText: {
+    fontSize: 18,
+    color: '#333',
+  },
   horseImage: {
     width: 140,
     height: 80,
@@ -308,8 +380,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-
-    backgroundColor: Color.primary,
+color:Color.black,
+   backgroundColor: Color.gray,
   },
   animatedStyle: {
     position: 'absolute',

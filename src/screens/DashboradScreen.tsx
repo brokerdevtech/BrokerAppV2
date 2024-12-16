@@ -48,6 +48,7 @@ import EnquiryBottomSheet from '../sharedComponents/EnquiryForm';
 import {getDashboardStory} from '../../BrokerAppCore/services/Story';
 import ProductSectionData from './Dashboard/ProductSectionData';
 import {fetchDashboardData as fetchDashboardDataBrand} from '../../BrokerAppCore/services/new/dashboardService';
+import AutoscrollAdsText from '../sharedComponents/AutoscrollAdsText';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
@@ -305,13 +306,16 @@ export default function DashboradScreen() {
         <View>
           <View style={styles.subHeaderSection}>
             <UserStories Data={StoryData} />
-            {/* <MarqueeBanner /> */}
-            <MarqueeScreen />
+            <AutoscrollAdsText
+            onPressBottomSheet={() => bottomSheetRef.current?.expand()}
+          />
+          
           </View>
+          
           <AutoscrollAds
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           />
-          <Grid className="gap-2 p-4" _extra={{className: 'grid-cols-9'}}>
+          <Grid className="gap-2 p-2" _extra={{className: 'grid-cols-9'}}>
             {/* <GridItem
               className="bg-background-50 p-2 rounded-md text-center"
               _extra={{className: 'col-span-9'}}>

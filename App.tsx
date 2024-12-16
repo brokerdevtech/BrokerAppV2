@@ -198,7 +198,7 @@ function App(): React.JSX.Element {
     //   setLoggedIn(true);
     //   setIsSplashVisible(false);
     // }, 5000);  
-    }
+    }  setIsSplashVisible(false);
   };
   const getCurrentPositionAsync = () => {
     return new Promise((resolve, reject) => {

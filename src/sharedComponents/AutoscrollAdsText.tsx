@@ -34,8 +34,47 @@ import AdsVideoPlayer from './common/AdsVideoPLayer';
 import CommentBottomSheet from './CommentBottomSheet';
 import EnquiryBottomSheet from './EnquiryForm';
 import NoDataFoundScreen from './NoDataFoundScreen';
+import { useAnimatedStyle, useFrameCallback, useSharedValue } from 'react-native-reanimated';
 const {width: screenWidths} = Dimensions.get('window');
-const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
+
+const screenWidth = Dimensions.get('window').width;
+
+
+const MarqueeText = ({index, text, duration = 5000, onComplete}) => {
+  const translateX = useRef(new Animated.Value(screenWidth)).current;
+  const [textWidth, setTextWidth] = useState(0);
+
+  useEffect(() => {
+    if (textWidth > 0) {
+      const animation = Animated.timing(translateX, {
+        toValue: -textWidth,
+        duration,
+        useNativeDriver: true,
+      });
+
+      animation.start(() => {
+        onComplete?.(index);
+        translateX.setValue(screenWidth);
+      });
+
+      return () => animation.stop();
+    }
+  }, [textWidth, duration, onComplete, translateX]);
+
+  return (
+    <View style={localStyles.marqueeContainer}>
+      <Animated.Text
+      numberOfLines={1} // Ensures the text stays in one line
+      ellipsizeMode="clip" // Prevents truncation or ellipsis
+        style={[localStyles.marqueeText, {transform: [{translateX}]}]}
+        onLayout={(e) => setTextWidth(e.nativeEvent.layout.width)}>
+        {text}
+      </Animated.Text>
+    </View>
+  );
+};
+
+const AutoscrollAdsText: React.FC = ({onPressBottomSheet}) => {
   const colors = useSelector(state => state.theme.theme);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const cityToShow = AppLocation.City;
@@ -59,7 +98,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
   const getList = async () => {
     try {
-      await Adexecute(1, cityToShow);
+      await Adexecute(2, cityToShow);
     } catch (error) {
       console.error(error);
     }
@@ -75,13 +114,13 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
   useEffect(() => {
     if (Addata?.length > 1) {
-      const interval = setInterval(() => {
-        const nextIndex = (activeIndex + 1) % Addata?.length;
-        flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
-        setActiveIndex(nextIndex);
-      }, 6000);
+      // const interval = setInterval(() => {
+      //   const nextIndex = (activeIndex + 1) % Addata?.length;
+      //   flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
+      //   setActiveIndex(nextIndex);
+      // }, 6000);
 
-      return () => clearInterval(interval);
+      // return () => clearInterval(interval);
     }
   }, [Addata, activeIndex]);
 
@@ -109,7 +148,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
   const loadMorepage = async () => {
     if (!isInfiniteLoading) {
-      await AdsloadMore(3, cityToShow);
+      await AdsloadMore(2, cityToShow);
     }
   };
   // const loadMorePage = async () => {
@@ -117,78 +156,97 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
   //     await AdsloadMore(fetchAdApi, cityToShow, 3);
   //   }
   // };
+  const handleAdCompletion = (index) => {
+    console.log(index);
+    if (index < Addata?.length - 1) {
+    flatListRef.current?.scrollToIndex({index: index + 1, animated: true});
+    setActiveIndex(index + 1);
+  }
+    // if (index < adsToShow.length - 1) {
+    //   flatListRef.current?.scrollToIndex({index: index + 1, animated: true});
+    // } else if (!isFetchingMore) {
+    //   setFetchingMore(true);
+    //   loadMoreAds().finally(() => setFetchingMore(false));
+    // }
+  };
+  // const renderCarouselItem = useCallback(
+  //   ({item,index}) => {
+     
+  //      console.log(index);
+    
+  //       return (
+  //         <TouchableOpacity
+  //           onPress={() => handleAdsPress(item)}
+  //           style={{
+           
+  //             alignItems: 'center',
+  //             justifyContent: 'center',
+  //           }}>
+  //           <View
+  //             style={[
+  //               localStyles.card,
+  //               {
+  //                 width: parentWidth,
+  //                 backgroundColor: Color.primary,
+  //                 // paddingHorizontal: 25,
+  //                 // paddingVertical: 25,
+  //                  height: 50,
+  //                 alignItems: 'center', // Center children horizontally
+  //                 justifyContent: 'center', // Center children vertically
+  //                 flex: 1,
+  //               },
+  //             ]}>
+  //               <MarqueeText index={index} text="This is a sample marquee text scrolling left to right!" duration={3000}  onComplete={() => handleAdCompletion(index)}/>
+  //                 {/* <Marquee text={item.marqueueText} onComplete={() => handleAdCompletion(index)} /> */}
+  //             {/* <ZText
+  //               type={'R20'}
+  //               style={{
+  //                 color: 'white', // Text color
+  //                 textAlign: 'center', // Center text horizontally
+  //               }}>
+  //               {item.marqueueText || 'Default Text'}
+  //             </ZText> */}
+  //           </View>
+  //         </TouchableOpacity>
+  //       );
+  //     }
 
-  const renderCarouselItem = useCallback(
-    ({item}) => {
-      //  console.log("renderCarouselItem")
-      // console.log(item);
-      const extension = getExtension(item?.postMedias[0]?.mediaBlobId);
-      const sourceUri = `${imagesBucketcloudfrontPath}${
-        item?.postMedias[0].mediaBlob || item?.postMedias[0]?.mediaBlobId
-      }`;
-      // console.log(item?.mediaBlob);
-      // if (item?.postMedias[0]?.mediaBlobId === '') {
-      //   return (
-      //     <TouchableOpacity
-      //       onPress={() => handleAdsPress(item)}
-      //       style={{
-      //         paddingHorizontal: 10,
-      //         alignItems: 'center',
-      //         justifyContent: 'center',
-      //       }}>
-      //       <View
-      //         style={[
-      //           localStyles.card,
-      //           {
-      //             width: parentWidth - 20,
-      //             backgroundColor: Color.primary,
-      //             paddingHorizontal: 25,
-      //             paddingVertical: 25,
-      //             height: 170,
-      //             alignItems: 'center', // Center children horizontally
-      //             justifyContent: 'center', // Center children vertically
-      //             flex: 1,
-      //           },
-      //         ]}>
-      //         <ZText
-      //           type={'R20'}
-      //           style={{
-      //             color: 'white', // Text color
-      //             textAlign: 'center', // Center text horizontally
-      //           }}>
-      //           {item.marqueueText || 'Default Text'}
-      //         </ZText>
-      //       </View>
-      //     </TouchableOpacity>
-      //   );
-      // }
-
-      if (extension !== 'mp4') {
-        return (
-          <View style={[localStyles.card, {width: parentWidth}]}>
-            <AdsBannerIMage
-              uri={sourceUri}
-              onPress={() => handleAdsPress(item)}
-            />
-          </View>
-        );
-      }
-
-      return (
-        <View style={[localStyles.card, {width: parentWidth}]}>
-          <AdsVideoPlayer
-            ref={playerRef}
-            sourceUri={sourceUri}
-            vidStyle={localStyles.videoStyle}
-            defaultPaused={false}
-            onPress={() => handleAdsPress(item)}
+    
+  //   ,[parentWidth,index],
+  // );
+  const renderCarouselItem = ({item, index}) => {
+    console.log('Rendering item at index:', index);
+  
+    return (
+      <TouchableOpacity
+        onPress={() => handleAdsPress(item)}
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <View
+          style={[
+            localStyles.card,
+            {
+              width: parentWidth,
+              backgroundColor: Color.primary,
+              
+              alignItems: 'center', // Center children horizontally
+              justifyContent: 'center', // Center children vertically
+              flex: 1,
+              overflow: 'hidden',
+            },
+          ]}>
+          <MarqueeText
+            index={index}
+            text={item.marqueueText}
+            duration={10000}
+            onComplete={() => handleAdCompletion(index)}
           />
         </View>
-      );
-    },
-    [getExtension, parentWidth],
-  );
-
+      </TouchableOpacity>
+    );
+  };
   const renderPaginationDots = () => {
     const progressAnim = useRef(new Animated.Value(0)).current;
 
@@ -273,31 +331,52 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
               <ActivityIndicator size="large" color="#0000ff" />
             ) : null
           }
-          contentContainerStyle={{marginBottom: 20}}
+        
+          showsVerticalScrollIndicator={false}
+         
         />
       ) : (
         <LoadingSpinner />
       )}
 
-      {renderPaginationDots()}
+      {/* {renderPaginationDots()} */}
     </View>
   );
 };
 
-export default AutoscrollAds;
+//export default AutoscrollAdsText;
 
 const localStyles = StyleSheet.create({
+  marqueeContainer: {
+    overflow: 'hidden',
+    width: screenWidth , // Adjust width as needed
+    height: 50,
+    justifyContent: 'center',
+ 
+  },
+  marqueeTextWrapper: {
+    flexDirection: 'row',
+  },
+  marqueeText: {
+    fontSize: 18,
+    color: 'white',
+    fontWeight:400,
+
+  },
   rootContainer: {
     // ...styles.ph10,
     // ...styles.pb10,
-    flex: 0.8,
+  
     width: '100%',
-    // height: 00,
+     height: 50,
+     maxHeight:50,
+    borderColor:'red',
+    borderBottomWidth:1
   },
   header: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: moderateScale(10),
+   
   },
   adItem: {
     width: 200,
@@ -310,7 +389,7 @@ const localStyles = StyleSheet.create({
   paginationContainer: {
     flexDirection: 'row',
     position: 'absolute',
-    bottom: 8,
+    bottom: 16,
     alignSelf: 'center',
     alignItems: 'center',
   },
@@ -334,16 +413,7 @@ const localStyles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
     marginHorizontal: 4,
   },
-  card: {
-    display: 'flex',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: screenWidths,
-    paddingHorizontal: 12,
-    maxHeight: 200,
-    height: 200,
-  },
+ 
   paginationText: {
     color: 'white',
     fontSize: 14,
@@ -361,19 +431,17 @@ const localStyles = StyleSheet.create({
   },
 
   card: {
+   
     display: 'flex',
-
-    // backgroundColor: '#764ABC',
-    borderRadius: 12,
-
-    // padding: 10,
+  
     justifyContent: 'center',
     alignItems: 'center',
     width: screenWidths,
-    // marginHorizontal: 20,
-    // marginLeft: 10,
-    // height: screenWidths - 40,q
-    paddingHorizontal: 10,
+    // backgroundColor: '#764ABC',
+    //borderRadius: 12,
+
+    // padding: 10,
+    
   },
   container: {
     width: '100%',
@@ -398,4 +466,4 @@ const localStyles = StyleSheet.create({
   },
 });
 
-export default AutoscrollAds;
+export default AutoscrollAdsText;
