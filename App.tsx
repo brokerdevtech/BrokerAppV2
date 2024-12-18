@@ -194,11 +194,12 @@ function App(): React.JSX.Element {
       await store.dispatch(setUser(user));
       setLoggedIn(true);
       setIsSplashVisible(false);
-    // setTimeout(() => {
-    //   setLoggedIn(true);
-    //   setIsSplashVisible(false);
-    // }, 5000);  
-    }  setIsSplashVisible(false);
+      // setTimeout(() => {
+      //   setLoggedIn(true);
+      //   setIsSplashVisible(false);
+      // }, 5000);
+    }
+    setIsSplashVisible(false);
   };
   const getCurrentPositionAsync = () => {
     return new Promise((resolve, reject) => {
@@ -313,14 +314,12 @@ function App(): React.JSX.Element {
       try {
         const permissions = [
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-       
-        
         ];
 
         if (Platform.Version >= 33) {
           permissions.push(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
         }
-  
+
         const permissionStatusesArray = await Promise.all(
           permissions.map(permission => PermissionsAndroid.check(permission)),
         );
@@ -492,9 +491,8 @@ function App(): React.JSX.Element {
   useEffect(() => {
     const runAsyncFunctions = async () => {
       try {
-         allPermission();
+        allPermission();
         await checkUser();
-       
       } catch (error) {
         console.error('Error in permission or user check:', error);
       }
@@ -547,7 +545,6 @@ function App(): React.JSX.Element {
   }, []);
   return (
     <>
-   
       {isSplashVisible ? (
         <View style={styles.splashContainer}>
           <Animated.Image
@@ -615,7 +612,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'red', // Customize splash background color
+    // backgroundColor: 'red', // Customize splash background color
   },
   logo: {
     width: 250, // Adjust size according to your needs

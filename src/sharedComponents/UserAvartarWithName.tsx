@@ -63,7 +63,7 @@ function UserAvartarWithName({
       )} ${date.getFullYear()}`; // e.g., "18 Oct 2023"
     }
   };
-
+  console.log(Viewon);
   const getMonthName = monthIndex => {
     const monthNames = [
       'January',
