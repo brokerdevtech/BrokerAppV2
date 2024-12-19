@@ -27,9 +27,9 @@ import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
 import {VStack} from '../../../components/ui/vstack';
 import CircularSkeleton from '../../sharedComponents/Skeleton/CircularSkeleton';
 import {getDashboardStory} from '../../../BrokerAppCore/services/new/story';
-import {useApiRequest} from '../../hooks/useApiRequest';
-import {useApiPagingRequest} from '../../hooks/useApiPagingRequest';
-import { useApiPagingWithDataRequest } from '../../hooks/useApiPagingWithDataRequest';
+
+import {useApiPagingWithDataRequest} from '../../hooks/useApiPagingWithDataRequest';
+import {Color} from '../../styles/GlobalStyles';
 
 const SkeletonPlaceholder = () => {
   return (
@@ -44,8 +44,7 @@ const SkeletonPlaceholder = () => {
   );
 };
 
-const UserStories = React.memo((Data) => {
-
+const UserStories = React.memo(Data => {
   const user = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
@@ -73,22 +72,23 @@ const UserStories = React.memo((Data) => {
     pageSize_Set: StoriespageSize_Set,
     currentPage_Set: StoriescurrentPage_Set,
     hasMore_Set: StorieshasMore_Set,
-  } = useApiPagingWithDataRequest(getDashboardStory, setInfiniteLoading,Data);
+  } = useApiPagingWithDataRequest(getDashboardStory, setInfiniteLoading, Data);
   const getList = async () => {
     try {
+      setLoading(true);
       StoriescurrentPage_Set(1);
       StorieshasMore_Set(true);
-
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   useFocusEffect(
     React.useCallback(() => {
       getList();
-      if(Data!=null && Data.Data!=null)
-     {
-    
-       setStoryData(Data.Data.storyList);
+      if (Data != null && Data.Data != null) {
+        setStoryData(Data.Data.storyList);
       }
     }, [Data]),
   );
@@ -154,32 +154,27 @@ const UserStories = React.memo((Data) => {
 
   return (
     <VStack style={{paddingHorizontal: 20, backgroundColor: 'white'}}>
-      {/* <ZText type="b22" style={{...globalStyles.mt8}}>
-        Stories
-      </ZText> */}
       <HStack>
-        {StoryData === null || loading ? (
-          // <></>
+        {loading ? (
           <SkeletonPlaceholder />
+        ) : StoryData.length === 0 ? (
+          <EmptyListComponent />
         ) : (
           <FlatList
             data={StoryData}
             style={{flex: 1}}
             keyExtractor={item => item.userId}
             renderItem={renderItem}
-            horizontal={true}
+            horizontal
             initialNumToRender={2}
             maxToRenderPerBatch={4}
-            ListEmptyComponent={<EmptyListComponent />}
             showsHorizontalScrollIndicator={false}
-            removeClippedSubviews={true}
+            removeClippedSubviews
             contentContainerStyle={localStyles.mainContainer}
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             ListFooterComponent={
-              loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
-              ) : null
+              isInfiniteLoading ? <SkeletonPlaceholder /> : null
             }
           />
         )}
