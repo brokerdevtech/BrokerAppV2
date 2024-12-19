@@ -38,7 +38,7 @@ import CarPostPreview from '../screens/postImage/previewScreens/CarPostPreview';
 import PostLikeList from '../sharedComponents/PostLikeList';
 import PostCommentLikeList from '../sharedComponents/PostCommentLikeList';
 import PostCommentReplyLikeList from '../sharedComponents/PostCommentReplyLikeList';
-import {ActivityIndicator, Platform} from 'react-native';
+import {ActivityIndicator, Platform,Text} from 'react-native';
 // import MyItemListScreen from '../screens/MyItemListScreen';
 // import PodcastLikeList from '../sharedComponents/PodcastLikeList';
 // import PodcastViewList from '../sharedComponents/PodcastViewList';
@@ -92,7 +92,7 @@ const HomeNavigation: React.FC = () => {
   // console.log('strea============================');
   // console.log(streamChatTheme);
   return (
-    // <SafeAreaView style={{flex:1}}>
+     
     <OverlayProvider bottomInset={bottom} value={{style: streamChatTheme}}>
       {/* <Stack.Navigator screenOptions={globalScreenOptions}> */}
       <Stack.Navigator
@@ -292,7 +292,7 @@ const HomeNavigation: React.FC = () => {
         />
       </Stack.Navigator>
     </OverlayProvider>
-    // </SafeAreaView>
+    
   );
 };
 

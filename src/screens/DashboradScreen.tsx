@@ -29,6 +29,7 @@ import TABWealth from '../assets/svg/Tabicon/tab_wealth.svg';
 import TABHome from '../assets/svg/Tabicon/tab_home.svg';
 import Footer from './Dashboard/Footer';
 import BrandSection from './Dashboard/BrandSection';
+//const BrandSection = React.lazy(() => import('./Dashboard/BrandSection'));
 import ProductSection from './Dashboard/ProductSection';
 import MarqueeBanner from '../sharedComponents/profile/MarqueeBanner';
 import {fetchDashboardData} from '../../BrokerAppCore/services/new/dashboardService';

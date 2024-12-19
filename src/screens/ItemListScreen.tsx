@@ -222,6 +222,7 @@ const ProductItem = React.memo(
     return (
       <View style={styles.WrapcardContainer}>
         <View style={styles.cardContainer}>
+          
           <MediaGallery
             ref={MediaGalleryRef}
             mediaItems={item.postMedias}

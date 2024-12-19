@@ -99,7 +99,7 @@ const MediaGallery = forwardRef((props, ref) => {
         showsHorizontalScrollIndicator={false}
         bounces={false}
 
-        contentContainerStyle={{ display: 'flex'}}
+        contentContainerStyle={{ display: 'flex',paddingTop:0}}
         scrollEventThrottle={16}
         snapToInterval={parentWidth}
         snapToAlignment="center"
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   card: {
     display: 'flex',
 
-    //    backgroundColor: '#764ABC',
+     //  backgroundColor: '#764ABC',
     borderRadius: 12,
 
     // padding: 10,
@@ -165,7 +165,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: screenWidths,
     // marginHorizontal: 20 ,
-    // height: screenWidths,
+    // height: 450,
+    //  maxHeight: 450,
   },
   cardV: {
     display: 'flex',
