@@ -103,7 +103,7 @@ const PostWizardScreen: React.FC = ({
           visualData: visualData,
           Isvideo: Isvideo,
           formValue: PropertyformikRef.current.values,
-          selectedPropertySize:selectedPropertySize
+          selectedPropertySize: selectedPropertySize,
         });
       }
     }
@@ -152,29 +152,34 @@ const PostWizardScreen: React.FC = ({
   const handleCategorySelect = selectedValue => {
     setselectedcategory(selectedValue);
   };
-  const handlePropertySizeData = (data) => {
-
+  const handlePropertySizeData = data => {
     setselectedPropertySize(data);
     // You can now use the PropertySizeData as needed in the parent component
   };
-  const renderItem = ({item, index}) => (
-    <View style={localStyles.card}>
-      {Platform.OS == 'ios' ? (
-        <Image source={{uri: item.destinationPath}} style={localStyles.image} />
-      ) : (
-        <Image
-          source={{
-            uri: item.Edit ? item.destinationPathuri : item.destinationPath,
-          }}
-          style={localStyles.image}
-        />
-      )}
-    </View>
-  );
+  const renderItem = ({item, index}) => {
+    console.log(item);
+    return (
+      <View style={localStyles.card}>
+        {Platform.OS == 'ios' ? (
+          <Image
+            source={{uri: item.destinationPath}}
+            style={localStyles.image}
+          />
+        ) : (
+          <Image
+            source={{
+              uri: item.Edit ? item.destinationPathuri : item.destinationPath,
+            }}
+            style={localStyles.image}
+          />
+        )}
+      </View>
+    );
+  };
 
   const LeftIcon = () => {
     return (
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity onPress={() => navigation.navigate('ChooseImage')}>
         <View
           style={{
             // ...styles.appTitleMain,
@@ -265,7 +270,9 @@ const PostWizardScreen: React.FC = ({
             onSelect={handleCategorySelect}
           />
           {selectedcategory == 'property' && (
-              <PropertyForm formikRef={PropertyformikRef}  onPropertySizeData={handlePropertySizeData}></PropertyForm>
+            <PropertyForm
+              formikRef={PropertyformikRef}
+              onPropertySizeData={handlePropertySizeData}></PropertyForm>
           )}
           {selectedcategory == 'generic' && (
             <GenericForm formikRef={genericformikRef}></GenericForm>

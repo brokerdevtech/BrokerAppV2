@@ -19,7 +19,12 @@ import ZHeader from '../../sharedComponents/ZHeader';
 import ZText from '../../sharedComponents/ZText';
 
 import RNFS from 'react-native-fs';
-
+import {
+  PhotoEditorModal,
+  Configuration,
+  PESDK,
+  ImageFormat,
+} from 'react-native-photoeditorsdk';
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import PhotoEditor from '@baronha/react-native-photo-editor';
 
@@ -43,41 +48,68 @@ const EditImagesScreen = ({route, navigation}: any) => {
   // Function to open the image editing modal
 
   useEffect(() => {
-    const fetchPhotos = async () => {
-      let obj: any = [];
-      selectedThumbnails.forEach(async (item, index) => {
-        let fetchPhoto = await EditfetchPhotos(item);
+    // const fetchPhotos = async () => {
+    //   let obj: any = [];
+    //   selectedThumbnails.forEach(async (item, index) => {
+    //     let fetchPhoto = await EditfetchPhotos(item);
 
-        obj.push({...fetchPhoto});
-      });
-      setdestinationThumbnails(obj);
-    };
+    //     obj.push({...fetchPhoto});
+    //   });
+    //   setdestinationThumbnails(obj);
+    // };
 
-    fetchPhotos();
+    // fetchPhotos();
+    openPhotoFromLocalPathExample(selectedThumbnails[0]);
   }, []);
 
-  const openImageEditor = async (image, index) => {
-    if (Platform.OS === 'ios') {
-      const fileData = await CameraRoll.iosGetImageDataById(
-        image.destinationPath,
-      );
+  // const openImageEditor = async (image, index) => {
+  //   if (Platform.OS === 'ios') {
+  //     const fileData = await CameraRoll.iosGetImageDataById(
+  //       image.destinationPath,
+  //     );
 
-      _onEditStory(fileData.node.image.filepath, index);
-    } else {
-      _onEditStory(image.destinationPath, index);
-    }
-  };
+  //     _onEditStory(fileData.node.image.filepath, index);
+  //   } else {
+  //     _onEditStory(image.destinationPath, index);
+  //   }
+  // };
 
-  const handleNextStepClick = async () => {
-    navigation.navigate('PostWizard', {imageData: destinationThumbnails});
-  };
+  // const handleNextStepClick = async () => {
+  //   navigation.navigate('PostWizard', {imageData: destinationThumbnails});
+  // };
 
-  onsave = item => {
-    let Thumbnails = selectedThumbnails;
+  // onsave = item => {
+  //   let Thumbnails = selectedThumbnails;
 
-    Thumbnails[selectedindex] = item;
-    setselectedThumbnails(Thumbnails);
-    setModalVisible(false);
+  //   Thumbnails[selectedindex] = item;
+  //   setselectedThumbnails(Thumbnails);
+  //   setModalVisible(false);
+  // };
+  const configuration: Configuration = {
+    theme: 'light',
+    transform: {
+      items: [
+        {
+          width: 9,
+          height: 4,
+        },
+        {
+          width: 16,
+          height: 9,
+        },
+      ],
+      allowFreeCrop: false,
+      showResetButton: false,
+    },
+    forceCrop: true,
+    // export: {
+    //   filename:
+    //     FileSystem.cacheDirectory +
+    //     `export${Platform.OS == 'android' ? '.png' : ''}`,
+    //   image: {
+    //     format: ImageFormat.PNG,
+    //   },
+    // },
   };
   // const fetchPhotosbyuri = async uri => {
   //   //console.log(thumbnail);
@@ -87,98 +119,123 @@ const EditImagesScreen = ({route, navigation}: any) => {
 
   //   return destinationPath;
   // };
-  const EditfetchPhotos = async thumbnail => {
-    const destinationPath = thumbnail.uri.replace('file://', '');
+  // const EditfetchPhotos = async thumbnail => {
+  //   const destinationPath = thumbnail.uri.replace('file://', '');
 
-    let destinationPathobj = {
-      ...thumbnail,
-      destinationPath: destinationPath,
-      Edit: false,
-      destinationPathuri: `file://${destinationPath}`,
-    };
+  //   let destinationPathobj = {
+  //     ...thumbnail,
+  //     destinationPath: destinationPath,
+  //     Edit: false,
+  //     destinationPathuri: `file://${destinationPath}`,
+  //   };
 
-    return destinationPathobj;
+  //   return destinationPathobj;
+  // };
+
+  // const _onEditStory = async (destinationPath: any, index) => {
+  //   let path = await PhotoEditor.open({
+  //     path: destinationPath,
+  //   });
+
+  //   let newdestinationThumbnails: any = destinationThumbnails;
+  //   newdestinationThumbnails[index].destinationPath = path.replace(
+  //     'file://',
+  //     '',
+  //   );
+  //   newdestinationThumbnails[index].destinationPathuri = path;
+  //   newdestinationThumbnails[index].Edit = true;
+  //   setdestinationThumbnails(newdestinationThumbnails);
+  //   setrefresh(!refresh);
+  // };
+
+  // const renderItem = ({item, index}) => (
+  //   <View style={locaStyles.card}>
+  //     <Button
+  //       variant="solid"
+  //       style={locaStyles.editTextContainer}
+  //       onPress={() => openImageEditor(item, index)}>
+  //       <ZText numberOfLines={1} color={'#000'} type={'R16'}>
+  //         Edit
+  //       </ZText>
+  //     </Button>
+
+  //     {Platform.OS == 'ios' ? (
+  //       <Image
+  //         source={{uri: item.destinationPath}}
+  //         style={locaStyles.imagecard}
+  //       />
+  //     ) : (
+  //       <Image
+  //         source={{
+  //           uri: item.Edit ? item.destinationPathuri : item.destinationPath,
+  //         }}
+  //         style={locaStyles.imagecard}
+  //       />
+  //     )}
+  //   </View>
+  // );
+
+  // const LeftIcon = () => {
+  //   return (
+  //     <TouchableOpacity onPress={() => navigation.goBack()}>
+  //       <View
+  //         style={{
+  //           // ...styles.appTitleMain,
+  //           // color: '#007acc',
+  //           padding: 8,
+  //           borderWidth: 1,
+  //           borderColor: '#E5E5E5',
+  //           borderRadius: 40,
+  //         }}>
+  //         <Back accessible={true} accessibilityLabel="Back" />
+  //       </View>
+  //     </TouchableOpacity>
+  //   );
+  // };
+  // const RightIcon = () => {
+  //   return (
+  //     <TouchableOpacity style={{marginRight: 15}} onPress={handleNextStepClick}>
+  //       <ZText numberOfLines={1} color={Color.primary} type={'R16'}>
+  //         {'Next'}
+  //       </ZText>
+  //     </TouchableOpacity>
+  //   );
+  // };
+  console.log(destinationThumbnails);
+  const openPhotoFromLocalPathExample = async (photo): Promise<void> => {
+    try {
+      const result = await PESDK.openEditor(photo, configuration);
+
+      if (result != null) {
+        // The user exported a new photo successfully and the newly generated photo is located at `result.image`.
+        const updatedThumbnails = [...destinationThumbnails];
+        updatedThumbnails[selectedindex] = {
+          ...selectedThumbnails[selectedindex],
+          destinationPath: result.image,
+        };
+
+        setdestinationThumbnails(updatedThumbnails);
+
+        // Navigate to the next screen with the updated array
+        navigation.navigate('PostWizard', {imageData: updatedThumbnails});
+      } else {
+        // The user tapped on the cancel button within the editor.
+        return;
+      }
+    } catch (error) {
+      // There was an error generating the photo.
+      console.log(error);
+    }
   };
-
-  const _onEditStory = async (destinationPath: any, index) => {
-    let path = await PhotoEditor.open({
-      path: destinationPath,
-    });
-
-    let newdestinationThumbnails: any = destinationThumbnails;
-    newdestinationThumbnails[index].destinationPath = path.replace(
-      'file://',
-      '',
-    );
-    newdestinationThumbnails[index].destinationPathuri = path;
-    newdestinationThumbnails[index].Edit = true;
-    setdestinationThumbnails(newdestinationThumbnails);
-    setrefresh(!refresh);
-  };
-
-  const renderItem = ({item, index}) => (
-    <View style={locaStyles.card}>
-      <Button
-        variant="solid"
-        style={locaStyles.editTextContainer}
-        onPress={() => openImageEditor(item, index)}>
-        <ZText numberOfLines={1} color={'#000'} type={'R16'}>
-          Edit
-        </ZText>
-      </Button>
-
-      {Platform.OS == 'ios' ? (
-        <Image
-          source={{uri: item.destinationPath}}
-          style={locaStyles.imagecard}
-        />
-      ) : (
-        <Image
-          source={{
-            uri: item.Edit ? item.destinationPathuri : item.destinationPath,
-          }}
-          style={locaStyles.imagecard}
-        />
-      )}
-    </View>
-  );
-
-  const LeftIcon = () => {
-    return (
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <View
-          style={{
-            // ...styles.appTitleMain,
-            // color: '#007acc',
-            padding: 8,
-            borderWidth: 1,
-            borderColor: '#E5E5E5',
-            borderRadius: 40,
-          }}>
-          <Back accessible={true} accessibilityLabel="Back" />
-        </View>
-      </TouchableOpacity>
-    );
-  };
-  const RightIcon = () => {
-    return (
-      <TouchableOpacity style={{marginRight: 15}} onPress={handleNextStepClick}>
-        <ZText numberOfLines={1} color={Color.primary} type={'R16'}>
-          {'Next'}
-        </ZText>
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <>
-      <ZHeader
+      {/* <ZHeader
         title={'Selected Image'}
         rightIcon={<RightIcon />}
         isHideBack={true}
         isLeftIcon={<LeftIcon />}
-      />
-      <FlatList
+      /> */}
+      {/* <FlatList
         data={destinationThumbnails}
         horizontal={true}
         contentContainerStyle={locaStyles.listContainer}
@@ -186,7 +243,26 @@ const EditImagesScreen = ({route, navigation}: any) => {
         showsHorizontalScrollIndicator={false}
         keyExtractor={item => item.id}
         extraData={refresh}
-      />
+      /> */}
+      {/* <PhotoEditorModal
+        image={selectedThumbnails[0]}
+        configuration={configuration}
+        visible={true}
+        onExport={result => {
+          // The user exported a new photo successfully and the newly generated photo is located at `result.image`.
+          console.log(result.image);
+          // onFinish();
+        }}
+        onCancel={() => {
+          // The user tapped on the cancel button within the editor.
+          // onFinish();
+        }}
+        onError={error => {
+          // There was an error generating the photo.
+          console.log(error);
+          // onFinish();
+        }}
+      /> */}
     </>
   );
 };

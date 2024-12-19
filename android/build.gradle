@@ -11,20 +11,33 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-
-     // ADD THIS react-native-image-crop-picker
-      maven { url 'https://maven.google.com' }
-
-      // ADD THIS react-native-image-crop-picker
-      maven { url "https://www.jitpack.io" }
+        maven { url 'https://maven.google.com' } 
+        maven { url "https://www.jitpack.io" } 
+        maven { url "https://artifactory.img.ly/artifactory/imgly" }
 
     }
     dependencies {
-        classpath("com.android.tools.build:gradle")
-        classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
-         classpath('com.google.gms:google-services:4.4.2')
+        // classpath("com.android.tools.build:gradle")
+        // classpath("com.facebook.react:react-native-gradle-plugin")
+        // classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        //  classpath('com.google.gms:google-services:4.4.2')
+        //     // classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0"
+        // classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"// KSP version is depending on your Kotlin version.
+        // classpath 'ly.img.android.sdk:plugin:10.9.0'
+         classpath("com.android.tools.build:gradle:8.1.2") // Updated Gradle plugin
+        classpath("com.facebook.react:react-native-gradle-plugin") 
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin") 
+        classpath "com.google.devtools.ksp:symbol-processing-gradle-plugin:1.9.0-1.0.13"// Keep in sync with Kotlin version
+        classpath('com.google.gms:google-services:4.4.2') 
+        classpath('ly.img.android.sdk:plugin:10.9.0') 
     }
+    allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://artifactory.img.ly/artifactory/imgly" } // Required for PhotoEditor SDK
+    }
+}
 }
 
 apply plugin: "com.facebook.react.rootproject"
