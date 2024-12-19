@@ -19,9 +19,14 @@ import {
   getFollowerList,
   getFollowingList,
 } from '../../BrokerAppCore/services/new/profileServices';
-import { useApiPagingRequest } from '../hooks/useApiPagingRequest';
-import { getPodcastLikeList, getPodcastViewList, getPostLikeList, getStoryViewList } from '../../BrokerAppCore/services/new/postServices';
-import { useApiPagingWithtotalRequest } from '../hooks/useApiPagingWithtotalRequest';
+import {useApiPagingRequest} from '../hooks/useApiPagingRequest';
+import {
+  getPodcastLikeList,
+  getPodcastViewList,
+  getPostLikeList,
+  getStoryViewList,
+} from '../../BrokerAppCore/services/new/postServices';
+import {useApiPagingWithtotalRequest} from '../hooks/useApiPagingWithtotalRequest';
 import UserAvartarWithName from './UserAvartarWithName';
 
 const DEBOUNCE_DELAY = 300;
@@ -48,12 +53,10 @@ const StoryViewList: React.FC = ({
 }) => {
   const colors = useSelector(state => state.theme.theme);
   const [issearch, setissearch] = useState(false);
-  
+
   const [paramsuserId, setparamsuserId] = useState(route.params?.userId);
   const [ActionId, setActionId] = useState(route.params?.ActionId);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
-
-
 
   const [userLists, setuserLists] = useState();
   const listType = route.params?.type;
@@ -62,12 +65,12 @@ const StoryViewList: React.FC = ({
     status,
     error,
     execute,
-    loadMore:executeloadMore,
+    loadMore: executeloadMore,
     pageSize_Set,
     currentPage_Set,
-    hasMore_Set
-  } = useApiPagingWithtotalRequest(getStoryViewList,setInfiniteLoading);
- 
+    hasMore_Set,
+  } = useApiPagingWithtotalRequest(getStoryViewList, setInfiniteLoading);
+
   const BlurredStyle = {
     backgroundColor: colors.inputBg,
     borderColor: colors.btnColor1,
@@ -81,8 +84,6 @@ const StoryViewList: React.FC = ({
   const [searchInputStyle, setSearchInputStyle] = useState(BlurredStyle);
   const [searchIconStyle, setSearchIconStyle] = useState(BlurredIconStyle);
 
-  
-
   const onHighlightInput = () => {
     setSearchInputStyle(FocusedStyle);
     setSearchIconStyle(FocusedIconStyle);
@@ -93,52 +94,40 @@ const StoryViewList: React.FC = ({
   };
   const getList = async () => {
     try {
+      currentPage_Set(1);
+      hasMore_Set(true);
+      await execute(ActionId, paramsuserId);
 
-  
-      
-   currentPage_Set(1);
-  hasMore_Set(true);
-        await execute(ActionId,paramsuserId);
-    
-      pageTitle(`Story Viewer List`);
+      pageTitle(`Viewers`);
     } catch (error) {}
   };
 
   useFocusEffect(
     React.useCallback(() => {
-     
       getList();
-    }, [listType, route.params.userId, pageTitle])
+    }, [listType, route.params.userId, pageTitle]),
   );
-
 
   useEffect(() => {
     // Bind data to the state when the data fetch is successful
-//console.log(followerdata);
+    //console.log(followerdata);
 
     if (status === 200 && data?.length > 0) {
-     // console.log(followerdata);
+      // console.log(followerdata);
       setuserLists(data);
-    } 
-  }, [status,data]);
-
+    }
+  }, [status, data]);
 
   const loadMore = async () => {
-    if(!isInfiniteLoading)
-  {  
-    await executeloadMore(ActionId,paramsuserId);
-    
-  }
+    if (!isInfiniteLoading) {
+      await executeloadMore(ActionId, paramsuserId);
+    }
   };
-
- 
-
 
   return (
     <ZSafeAreaView>
       <View style={localStyles.rootContainer}>
-     
-     <View style={{ flex: 1 }}>
+        <View style={{flex: 1}}>
           <FlatList
             data={userLists}
             showsVerticalScrollIndicator={false}

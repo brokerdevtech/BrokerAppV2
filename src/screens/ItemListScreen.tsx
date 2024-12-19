@@ -4,9 +4,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
- 
   StyleSheet,
-
   TouchableOpacity,
   Linking,
   Alert,
@@ -19,20 +17,15 @@ import {RootState} from '@reduxjs/toolkit/query';
 import CustomHeader from '../sharedComponents/CustomHeader';
 import ZText from '../sharedComponents/ZText';
 
-
 import {HStack} from '@/components/ui/hstack';
 
 import {
   Card_check_icon,
-
   Location_Icon,
-
   Chat_Icon,
   Telephone_Icon,
- 
   description_icon,
 } from '../assets/svg';
-
 
 import {
   fetchDashboardData,
@@ -54,7 +47,6 @@ import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import UserStories from '../components/story/UserStories';
 import Recommend from '../sharedComponents/RecomendedBrokers';
 
-
 import {FlashList} from '@shopify/flash-list';
 
 import {colors} from '../themes';
@@ -68,18 +60,19 @@ import {formatNumberToIndianSystem} from '../utils/helpers';
 
 import NoDataFoundScreen from '../sharedComponents/NoDataFoundScreen';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
-import { getDashboardStory } from '../../BrokerAppCore/services/Story';
+import {getDashboardStory} from '../../BrokerAppCore/services/Story';
 import ProductSectionData from './Dashboard/ProductSectionData';
- import RecentSearchSectionData from './Dashboard/RecentSearchSectionData';
-import { getRecommendedBrokerList } from '../../BrokerAppCore/services/new/recomendedBroker';
+import RecentSearchSectionData from './Dashboard/RecentSearchSectionData';
+import {getRecommendedBrokerList} from '../../BrokerAppCore/services/new/recomendedBroker';
 
 //const MediaGallery = React.lazy(() => import('../sharedComponents/MediaGallery'));
 //const UserStories = React.lazy(() => import('../components/story/UserStories'));
 //const ProductSectionData = React.lazy(() => import('./Dashboard/ProductSectionData'));
 //const Recommend = React.lazy(() => import('../sharedComponents/RecomendedBrokers'));
 //const RecentSearchSectionData = React.lazy(() => import('./Dashboard/RecentSearchSectionData'));
-const FilterBottomSheet  = React.lazy(() => import('../sharedComponents/FilterBottomSheet'));
-
+const FilterBottomSheet = React.lazy(
+  () => import('../sharedComponents/FilterBottomSheet'),
+);
 
 const SkeletonPlaceholder = () => {
   return (
@@ -91,11 +84,20 @@ const SkeletonPlaceholder = () => {
   );
 };
 const RederListHeader = React.memo(
-  ({categoryId, AppLocation, FilterChipsData, recordCount, user,StoryData,NewIncategoryData,RecentSearchData,RenderBrokerData}) => {
- 
+  ({
+    categoryId,
+    AppLocation,
+    FilterChipsData,
+    recordCount,
+    user,
+    StoryData,
+    NewIncategoryData,
+    RecentSearchData,
+    RenderBrokerData,
+  }) => {
     return (
       <>
-           <UserStories  Data={StoryData}/>
+        <UserStories Data={StoryData} />
 
         <Recommend categoryId={categoryId} Data={RenderBrokerData} />
         <ProductSectionData
@@ -121,7 +123,7 @@ const RederListHeader = React.memo(
             userId: user.userId,
             categoryId: categoryId,
           }}
-Data={RecentSearchData}
+          Data={RecentSearchData}
         />
 
         {/* <FilterChips filters={FilterChipsData} recordsCount={recordCount}></FilterChips> */}
@@ -174,7 +176,7 @@ const ProductItem = React.memo(
       navigation.navigate('AppChat', {
         defaultScreen: 'ChannelScreen',
         defaultParams: members,
-      //  defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
+        //  defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
       });
     }, []);
     const makeCall = useCallback(async phoneNumber => {
@@ -398,9 +400,9 @@ const ItemListScreen: React.FC<any> = ({
   const [PopUPFilter, setPopUPFilter] = useState(null);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
   const [StoryData, setStoryData]: any[] = useState(null);
-   const [NewIncategoryData, setNewIncategoryData]: any[] = useState(null);
-   const [RecentSearchData, setRecentSearchData]: any[] = useState(null);
-   const [RenderBrokerData, setRenderBrokerData]: any[] = useState(null);
+  const [NewIncategoryData, setNewIncategoryData]: any[] = useState(null);
+  const [RecentSearchData, setRecentSearchData]: any[] = useState(null);
+  const [RenderBrokerData, setRenderBrokerData]: any[] = useState(null);
   const brandName =
     route.params.brandName !== undefined ? route.params.brandName : '';
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -667,30 +669,41 @@ const ItemListScreen: React.FC<any> = ({
     //   geoLocationLongitude: AppLocation.geoLocationLongitude,
     //   isSearch:false
     // });
-   const results = await Promise.allSettled([
-     execute(listTypeData, APiobj),
-     getDashboardStory(user.userId, 1, 10),
-     fetchDashboardData('Newin', {
-      pageNo: 1,
-      pageSize: 10,
-      cityName: AppLocation.City,
-      categoryId: categoryId,
-    }),
-    RecentSearchSData(`/RecentSearch/Categorywise`,{
-      userId: user.userId,
-      categoryId: categoryId,
-    }),
-    getRecommendedBrokerList(user.userId, categoryId, AppLocation.City,1,10)
+    const results = await Promise.allSettled([
+      execute(listTypeData, APiobj),
+      getDashboardStory(user.userId, 1, 10),
+      fetchDashboardData('Newin', {
+        pageNo: 1,
+        pageSize: 10,
+        cityName: AppLocation.City,
+        categoryId: categoryId,
+      }),
+      RecentSearchSData(`/RecentSearch/Categorywise`, {
+        userId: user.userId,
+        categoryId: categoryId,
+      }),
+      getRecommendedBrokerList(
+        user.userId,
+        categoryId,
+        AppLocation.City,
+        1,
+        10,
+      ),
+    ]);
 
-          ]);
-     
-    const [ListData, DashboardStory, NewIncategory,RecentSearch,RecommendedBroker] = results.map(
-            result => (result.status === 'fulfilled' ? result.value : null)
-          );
-          setStoryData(DashboardStory.data)
-          setNewIncategoryData(NewIncategory.data);     
-          setRecentSearchData(RecentSearch.data);     
-          setRenderBrokerData(RecommendedBroker.data); 
+    const [
+      ListData,
+      DashboardStory,
+      NewIncategory,
+      RecentSearch,
+      RecommendedBroker,
+    ] = results.map(result =>
+      result.status === 'fulfilled' ? result.value : null,
+    );
+    setStoryData(DashboardStory.data);
+    setNewIncategoryData(NewIncategory.data);
+    setRecentSearchData(RecentSearch.data);
+    setRenderBrokerData(RecommendedBroker.data);
     setLoading(false);
   }
 
@@ -711,12 +724,12 @@ const ItemListScreen: React.FC<any> = ({
   useEffect(() => {
     setLoading(true);
     if (listTypeData == 'RealEstate') {
-      pageTitle('Property');
-      setApppageTitle('Property');
+      pageTitle('Properties');
+      setApppageTitle('Properties');
     }
     if (listTypeData == 'Car') {
-      pageTitle('Car');
-      setApppageTitle('Car');
+      pageTitle('Cars');
+      setApppageTitle('Cars');
     }
     setItemslocalities(AppLocation);
 
