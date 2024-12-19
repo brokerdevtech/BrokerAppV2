@@ -40,47 +40,31 @@ function UserAvartarWithName({
 }) {
   const appuser = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
-  const formatTime = timestamp => {
-    const now = new Date();
-    const date = new Date(timestamp);
 
-    const diffInSeconds = Math.floor((now - date) / 1000);
-    const diffInMinutes = Math.floor(diffInSeconds / 60);
-    const diffInHours = Math.floor(diffInMinutes / 60);
-    const diffInDays = Math.floor(diffInHours / 24);
+  const formatDateTime = dateString => {
+    // Convert the timestamp string into a Date object
+    const date = new Date(dateString);
 
-    if (diffInHours < 24) {
-      return diffInHours === 0
-        ? `${diffInMinutes}m ago`
-        : `${diffInHours}h ago`;
-    } else if (diffInDays < 7) {
-      return `${diffInDays}d ago`;
-    } else if (diffInDays < 365) {
-      return `${date.getDate()} ${getMonthName(date.getMonth())}`; // e.g., "18 Oct"
-    } else {
-      return `${date.getDate()} ${getMonthName(
-        date.getMonth(),
-      )} ${date.getFullYear()}`; // e.g., "18 Oct 2023"
-    }
+    // Options for formatting time
+    const timeOptions = {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    };
+
+    const formattedTime = date.toLocaleTimeString('en-IN', timeOptions);
+
+    const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(
+      date.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, '0')}/${date.getFullYear()}`;
+
+    return {formattedTime, formattedDate};
   };
+  const {formattedTime, formattedDate} = formatDateTime(Viewon);
   console.log(Viewon);
-  const getMonthName = monthIndex => {
-    const monthNames = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-    return monthNames[monthIndex];
-  };
+
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
@@ -115,7 +99,16 @@ function UserAvartarWithName({
             {userName}
           </ZText>
         </View>
-        {isProfileView && <ZText type="R14">{formatTime(Viewon)}</ZText>}
+        {isProfileView && (
+          <View
+            style={{
+              flexDirection: 'column',
+              justifyContent: 'flex-end',
+            }}>
+            <ZText type="R14">{formattedTime}</ZText>
+            <ZText type="R12">{formattedDate}</ZText>
+          </View>
+        )}
       </TouchableOpacity>
     </View>
   );
