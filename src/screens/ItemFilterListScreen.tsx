@@ -149,7 +149,7 @@ const ProductItem = React.memo(
       navigation.navigate('AppChat', {
         defaultScreen: 'ChannelScreen',
         defaultParams: members,
-      //  defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
+        //  defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
       });
     }, []);
     const makeCall = useCallback(async phoneNumber => {
@@ -628,12 +628,12 @@ const ItemFilterListScreen: React.FC<any> = ({
   useEffect(() => {
     setLoading(true);
     if (listTypeData == 'RealEstate') {
-      pageTitle('Property List');
-      setApppageTitle('Property List');
+      pageTitle('Properties');
+      setApppageTitle('Properties');
     }
     if (listTypeData == 'Car') {
-      pageTitle('Car List');
-      setApppageTitle('Car List');
+      pageTitle('Cars');
+      setApppageTitle('Cars');
     }
     setItemslocalities(AppLocation);
 

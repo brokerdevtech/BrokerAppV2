@@ -106,7 +106,7 @@ const ProfileViewerList: React.FC = ({
       setPageLoading(true);
       await execute(user.userId);
 
-      pageTitle(`Profile Viewer List`);
+      pageTitle(`Profile Viewers`);
     } catch (error) {
     } finally {
       setPageLoading(false);

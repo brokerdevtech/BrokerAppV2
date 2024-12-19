@@ -139,9 +139,9 @@ const MyConnectionScreen: React.FC = ({route}) => {
         <TouchableOpacity
           style={[styles.tabButton, activeTab === 'under' && styles.activeTab]}
           onPress={() => setActiveTab('under')}>
-          <ZText
-            type={'R16'}
-            style={styles.tabText}>{`${Name} Are Under`}</ZText>
+          <ZText type={'R16'} style={styles.tabText}>
+            Channel
+          </ZText>
         </TouchableOpacity>
       </View>
 
