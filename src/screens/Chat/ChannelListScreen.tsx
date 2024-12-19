@@ -159,7 +159,7 @@ export const ChannelListScreen: React.FC = () => {
             onSubmitEditing={({ nativeEvent: { text } }) => {
               setSearchQuery(text);
             }}
-            placeholder='search people...'
+            placeholder='Search Message'
             placeholderTextColor={grey}
             ref={searchInputRef}
             returnKeyType='search'
