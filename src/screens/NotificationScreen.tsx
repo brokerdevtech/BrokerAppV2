@@ -291,34 +291,34 @@ const NotificationScreen: React.FC = ({
 
     fetchData();
   }, []);
-  //   const fetchMoreData = async () => {
-  //     if (loading || !hasMoreData) return;
+    const fetchMoreData = async () => {
+      if (loading || !hasMoreData) return;
 
-  //     setLoading(true);
-  //     try {
-  //       const nextPage = page + 1;
-  //       const data = await getNotification(nextPage, pageSize);
-  //       // notificationData.data.notifications
-  //       //       console.log("========data");
-  //       //  console.log(data);
-  //       // const apiData = JSON.stringify(data.data.notifications);
-  //       if (data.data.notifications.length > 0) {
-  //         setNotificationData(prevData => [
-  //           ...prevData,
-  //           ...data.data.notifications,
-  //         ]);
-  //         setPage(nextPage);
-  //       } else {
-  //         setHasMoreData(false);
-  //       }
-  //       //
-  //       // setNotificationData(data);
-  //     } catch (error) {
-  //       console.error('Error fetching notification data:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+      setLoading(true);
+      try {
+        const nextPage = page + 1;
+        const data = await getNotification(nextPage, pageSize);
+        // notificationData.data.notifications
+        //       console.log("========data");
+        //  console.log(data);
+        // const apiData = JSON.stringify(data.data.notifications);
+        if (data.data.notifications.length > 0) {
+          setNotificationData(prevData => [
+            ...prevData,
+            ...data.data.notifications,
+          ]);
+          setPage(nextPage);
+        } else {
+          setHasMoreData(false);
+        }
+        //
+        // setNotificationData(data);
+      } catch (error) {
+        console.error('Error fetching notification data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
   const handleNotificationPress = async (notifcationId, currentStatus) => {
     const newStatus = currentStatus === 1 ? 0 : 1;
     setSelectedNotification(notifcationId);
@@ -427,8 +427,8 @@ const NotificationScreen: React.FC = ({
         />
       )}
       initialNumToRender={10}
-      //   onEndReached={fetchMoreData}
-      //   onEndReachedThreshold={0.2}
+        onEndReached={fetchMoreData}
+        onEndReachedThreshold={0.2}
       ListEmptyComponent={() =>
         notificationData && loading ? null : <NoDataFound />
       }

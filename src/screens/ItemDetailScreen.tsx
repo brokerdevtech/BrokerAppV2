@@ -104,7 +104,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
       });
     } catch (error) {}
   };
-  console.log(data);
+  //console.log(data);
   return (
     <>
       {data.isBrokerAppVerified && (
@@ -118,6 +118,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
         item={data}
         User={user}
         listTypeData={'RealEstate'}
+        PageName={'itemDetail'}
         onUpdateLikeCount={newCount => {}}
       />
       {/* Car Details */}
@@ -314,6 +315,7 @@ const carDetails = (data: any, user: any, navigation: any) => {
         item={data}
         User={user}
         listTypeData={'Car'}
+        PageName={'itemDetail'}
         onUpdateLikeCount={newCount => {
           //   console.log(newCount);
         }}
@@ -496,7 +498,7 @@ const ItemDetailScreen: React.FC<any> = ({
 
   const callItemDetail = async () => {
     // console.log(route, route.params.postType, 'route');
-
+console.log("route.params.postId",route.params.postId)
     await execute(route.params.postType, route.params.postId);
   };
   const chatProfilePress = useCallback(async () => {

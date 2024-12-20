@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: screenWidths,
     // marginHorizontal: 20 ,
-     height: screenWidths/2,
+     height: screenWidths/1.9,
   },
   container: {
     width: '100%',
@@ -202,10 +202,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
    
-    borderRadius: 16,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 10,
+    //padding: 10,
     overflow: 'hidden'
   },
 });

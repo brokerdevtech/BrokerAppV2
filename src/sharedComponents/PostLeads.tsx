@@ -141,8 +141,8 @@ const PostLeads: React.FC = ({
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             initialNumToRender={5}
-            maxToRenderPerBatch={5} // Default is 10
-            removeClippedSubviews={true}
+           // maxToRenderPerBatch={5} // Default is 10
+         //   removeClippedSubviews={true}
             renderItem={({item, index}) => (
               <View
                 style={{
@@ -151,9 +151,11 @@ const PostLeads: React.FC = ({
                   borderColor: Color.borderColor,
                 }}>
                 <UserAvartarWithName
-                  userName={item?.userName}
-                  userImage={item?.profileImage}
+                  userName={item?.viewerName}
+                  userImage={item?.viewerProfileImage}
                   userId={item.userId}
+                  Viewon={item?.viewedOn}
+                  isProfileView={true}
                   loggedInUserId={user.userId}
                   key={index}
                 />

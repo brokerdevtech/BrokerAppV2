@@ -494,10 +494,10 @@ function App(): React.JSX.Element {
   useEffect(() => {
     const runAsyncFunctions = async () => {
       try {
-        console.log("checkUser0");
+      //  console.log("checkUser0");
         allPermission();
         await checkUser();
-        console.log("checkUser");
+       // console.log("checkUser");
       } catch (error) {
         console.error('Error in permission or user check:', error);
       }

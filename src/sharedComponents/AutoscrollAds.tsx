@@ -334,16 +334,16 @@ const localStyles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
     marginHorizontal: 4,
   },
-  card: {
-    display: 'flex',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: screenWidths,
-    paddingHorizontal: 12,
-    maxHeight: 200,
-    height: 200,
-  },
+  // card: {
+  //   display: 'flex',
+  //   borderRadius: 12,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   width: screenWidths,
+  //   paddingHorizontal: 12,
+  //   maxHeight: 200,
+  //   height: 200,
+  // },
   paginationText: {
     color: 'white',
     fontSize: 14,
@@ -362,18 +362,16 @@ const localStyles = StyleSheet.create({
 
   card: {
     display: 'flex',
-
-    // backgroundColor: '#764ABC',
     borderRadius: 12,
-
-    // padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
     width: screenWidths,
-    // marginHorizontal: 20,
-    // marginLeft: 10,
-    // height: screenWidths - 40,q
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
+    maxHeight: 200,
+    height: 200,
+    
+
+ 
   },
   container: {
     width: '100%',

@@ -64,6 +64,8 @@ import {getDashboardStory} from '../../BrokerAppCore/services/Story';
 import ProductSectionData from './Dashboard/ProductSectionData';
 import RecentSearchSectionData from './Dashboard/RecentSearchSectionData';
 import {getRecommendedBrokerList} from '../../BrokerAppCore/services/new/recomendedBroker';
+import ZAvatarInitials from '../sharedComponents/ZAvatarInitials';
+import ItemHeader from './ItemHeader';
 
 //const MediaGallery = React.lazy(() => import('../sharedComponents/MediaGallery'));
 //const UserStories = React.lazy(() => import('../components/story/UserStories'));
@@ -145,7 +147,7 @@ const ProductItem = React.memo(
   ({item, listTypeData, User, navigation, OnGoBack}) => {
     const [isrefresh, setisrefresh] = useState(0);
     const MediaGalleryRef = useRef(null);
-    // console.log(listTypeData);
+     console.log(item);
 
     const ProductItemOnGoBack = item => {
       //  console.log('ProductItemOnGoBack');
@@ -224,7 +226,8 @@ const ProductItem = React.memo(
     return (
       <View style={styles.WrapcardContainer}>
         <View style={styles.cardContainer}>
-          
+      
+          <ItemHeader item={item}></ItemHeader>
           <MediaGallery
             ref={MediaGalleryRef}
             mediaItems={item.postMedias}
@@ -954,6 +957,22 @@ const ItemListScreen: React.FC<any> = ({
 };
 
 const styles = StyleSheet.create({
+  cardAvatar: {
+    display: 'flex',
+    flexDirection: 'row',
+ padding:10
+  },
+  cardAvatarImg: {
+    display: 'flex',
+    flexDirection: 'row',
+   
+  },
+  cardAvatarText: {
+    display: 'flex',
+    flexDirection: 'row',
+   marginLeft:10,
+   alignItems: 'center',
+  },
   callbtn: {
     display: 'flex',
     flexDirection: 'row',
