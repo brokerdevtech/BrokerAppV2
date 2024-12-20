@@ -29,6 +29,7 @@ import TextWithPermissionCheck from './TextWithPermissionCheck';
 import ButtonWithPermissionCheck from './ButtonWithPermissionCheck';
 import {AddIcon, Icon, ThreeDotsIcon} from '../../components/ui/icon';
 import {Button, ButtonText} from '../../components/ui/button';
+import { secondsToMilliseconds } from '@/utils/helpers';
 
 function UserAvartarWithName({
   userName,
@@ -47,6 +48,7 @@ function UserAvartarWithName({
 
     // Options for formatting time
     const timeOptions = {
+    second: "2-digit",
       hour: '2-digit',
       minute: '2-digit',
       hour12: true,

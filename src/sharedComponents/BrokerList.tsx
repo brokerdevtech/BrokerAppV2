@@ -83,7 +83,7 @@ const BrokerList: React.FC = ({
 
   const onSearchInput = async (text: string) => {
     //
-    console.log(text);
+  //  console.log(text);
     setSearch(text);
     setInfiniteLoading(true);
     await getList(text);
@@ -110,7 +110,7 @@ const BrokerList: React.FC = ({
 
   useEffect(() => {
     if (data) {
-      console.log(data, 'data broker');
+ //     console.log(data, 'data broker');
       setuserLists(data);
     }
   }, [data]);
@@ -150,7 +150,7 @@ const BrokerList: React.FC = ({
             maxToRenderPerBatch={5} // Default is 10
             // removeClippedSubviews={true}
             renderItem={({item, index}) => {
-              console.log('Rendering item:', item);
+        //      console.log('Rendering item:', item);
               return (
                 <View
                   style={{

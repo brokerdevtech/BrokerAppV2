@@ -126,7 +126,7 @@ export default function DashboradScreen() {
       const fetchData = async () => {
         try {
           // callmarList();
-
+console.log(user);
           const results = await Promise.allSettled([
             GetDashboardData(user.userId),
             execute(user.userId, 1, 4),

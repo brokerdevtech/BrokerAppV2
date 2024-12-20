@@ -73,6 +73,7 @@ import {concat} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
 import {formatNumberToIndianSystem} from '../utils/helpers';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
+import ItemHeader from './ItemHeader';
 
 const ProductItem = React.memo(
   ({item, listTypeData, User, navigation, OnGoBack}) => {
@@ -152,6 +153,7 @@ const ProductItem = React.memo(
     return (
       <View style={styles.WrapcardContainer}>
         <View style={styles.cardContainer}>
+        <ItemHeader item={item}></ItemHeader>
           <MediaGallery
             ref={MediaGalleryRef}
             mediaItems={item.postMedias}

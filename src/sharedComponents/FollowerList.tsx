@@ -182,9 +182,9 @@ const FollowerList: React.FC = ({
             data={userLists}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
-            initialNumToRender={5}
-            maxToRenderPerBatch={5} // Default is 10
-            removeClippedSubviews={true}
+            // initialNumToRender={2}
+            // maxToRenderPerBatch={4} // Default is 10
+          //  removeClippedSubviews={true}
             renderItem={({item, index}) => (
               <View
                 style={{

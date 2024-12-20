@@ -157,7 +157,7 @@ const AutoscrollAdsText: React.FC = ({onPressBottomSheet}) => {
   //   }
   // };
   const handleAdCompletion = (index) => {
-    console.log(index);
+ //   console.log(index);
     if (index < Addata?.length - 1) {
     flatListRef.current?.scrollToIndex({index: index + 1, animated: true});
     setActiveIndex(index + 1);
