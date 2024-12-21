@@ -29,7 +29,7 @@ import TextWithPermissionCheck from './TextWithPermissionCheck';
 import ButtonWithPermissionCheck from './ButtonWithPermissionCheck';
 import {AddIcon, Icon, ThreeDotsIcon} from '../../components/ui/icon';
 import {Button, ButtonText} from '../../components/ui/button';
-import { secondsToMilliseconds } from '@/utils/helpers';
+import {secondsToMilliseconds} from '@/utils/helpers';
 
 function UserAvartarWithName({
   userName,
@@ -48,7 +48,7 @@ function UserAvartarWithName({
 
     // Options for formatting time
     const timeOptions = {
-    second: "2-digit",
+      second: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
       hour12: true,
@@ -73,6 +73,18 @@ function UserAvartarWithName({
   const colors = useSelector(state => state.theme.theme);
   const [isModalVisible, setModalVisible] = useState(false);
 
+  // const onPressUser = () => {
+  //   if (appuser.userId === userId) {
+  //     navigation.navigate('ProfileScreen');
+  //   } else {
+  //     navigation.navigate('ProfileDetail', {
+  //       userName: userName,
+  //       userImage: userImage,
+  //       userId: userId,
+  //       loggedInUserId: loggedInUserId,
+  //     });
+  //   }
+  // };
   const onPressUser = () => {
     if (appuser.userId === userId) {
       navigation.navigate('ProfileScreen');
@@ -82,10 +94,11 @@ function UserAvartarWithName({
         userImage: userImage,
         userId: userId,
         loggedInUserId: loggedInUserId,
+        // connectionId: connectionId,
       });
     }
   };
-
+  console.log(userName, userImage, userId, loggedInUserId);
   return (
     <View style={localStyles.rootContainer}>
       <TouchableOpacity onPress={onPressUser} style={localStyles.userItem}>
