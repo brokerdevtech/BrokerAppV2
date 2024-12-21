@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
 import {Formik} from 'formik';
@@ -18,13 +19,15 @@ import {AddEnquiryApi} from '../../BrokerAppCore/services/new/dashboardService';
 import {useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/dist/query';
 import {useNavigation} from '@react-navigation/native';
+import AnimatedTextInput from './AnimatedTextinput';
+import ZText from './ZText';
 
 const EnquiryForm = ({route, toastMessage}) => {
   const snapPoints = useMemo(() => ['70%'], []);
   const user = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
   const handleSheetChanges = useCallback(index => {
-  //  console.log('handleSheetChanges', index);
+    //  console.log('handleSheetChanges', index);
   }, []);
 
   // console.log(user, 'prop');
@@ -69,88 +72,92 @@ const EnquiryForm = ({route, toastMessage}) => {
   });
 
   return (
-    <ZSafeAreaView>
-      <View
-        style={{
-          paddingHorizontal: 20,
-          flex: 1,
-          justifyContent: 'center',
-        }}>
-        <Formik
-          initialValues={{email: '', contactNumber: '', description: ''}}
-          validationSchema={EnquirySchema}
-          validateOnMount={true}
-          onSubmit={handleSubmit}>
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-            errors,
-            touched,
-            isValid,
-          }) => (
-            <ScrollView>
-              <Text style={styles.label}>Email</Text>
-              <Input style={styles.input}>
-                <InputField
-                  type="text"
-                  placeholder="Enter your email"
-                  onChangeText={handleChange('email')}
-                  onBlur={handleBlur('email')}
-                  value={values.email}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
-              </Input>
-              {errors.email && touched.email && (
-                <Text style={styles.errorText}>{errors.email}</Text>
-              )}
+    <>
+      <ZSafeAreaView>
+        <View style={{flex: 1}}>
+          <Formik
+            initialValues={{email: '', contactNumber: '', description: ''}}
+            validationSchema={EnquirySchema}
+            validateOnMount={true}
+            onSubmit={handleSubmit}>
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              errors,
+              touched,
+              isValid,
+            }) => (
+              <ScrollView contentContainerStyle={styles.formContainer}>
+                <View style={[styles.inputContainer, {alignItems: 'center'}]}>
+                  <ZText type={'S18'} style={{textAlign: 'center'}}>
+                    Please provide your details and we {'\n'} will get back to
+                    you
+                  </ZText>
+                </View>
 
-              <Text style={styles.label}>Contact Number</Text>
-              <Input style={styles.input}>
-                <InputField
-                  type="text"
-                  placeholder="Enter your contact number"
-                  onChangeText={handleChange('contactNumber')}
-                  onBlur={handleBlur('contactNumber')}
-                  value={values.contactNumber}
-                  keyboardType="phone-pad"
-                />
-              </Input>
-              {errors.contactNumber && touched.contactNumber && (
-                <Text style={styles.errorText}>{errors.contactNumber}</Text>
-              )}
+                <View style={styles.inputContainer}>
+                  <AnimatedTextInput
+                    placeholder="Email"
+                    onChangeText={handleChange('email')}
+                    onBlur={handleBlur('email')}
+                    value={values.email}
+                    keyboardType="email-address"
+                  />
+                  {errors.email && touched.email && (
+                    <Text style={styles.errorText}>{errors.email}</Text>
+                  )}
+                </View>
 
-              <Text style={styles.label}>Description</Text>
-              <Input style={[styles.input, {height: 100}]}>
-                <InputField
-                  type="text"
-                  placeholder="Enter a brief description"
-                  onChangeText={handleChange('description')}
-                  onBlur={handleBlur('description')}
-                  value={values.description}
-                  multiline={true}
-                />
-              </Input>
-              {errors.description && touched.description && (
-                <Text style={styles.errorText}>{errors.description}</Text>
-              )}
+                <View style={styles.inputContainer}>
+                  <AnimatedTextInput
+                    placeholder="Contact Number"
+                    onChangeText={handleChange('contactNumber')}
+                    onBlur={handleBlur('contactNumber')}
+                    value={values.contactNumber}
+                    keyboardType="numeric"
+                  />
+                  {errors.contactNumber && touched.contactNumber && (
+                    <Text style={styles.errorText}>{errors.contactNumber}</Text>
+                  )}
+                </View>
 
-              <TouchableOpacity
-                style={[
-                  styles.submitButton,
-                  !isValid ? styles.disabledButton : null,
-                ]}
-                disabled={!isValid}
-                onPress={handleSubmit}>
-                <Text style={styles.submitText}>Submit Enquiry</Text>
-              </TouchableOpacity>
-            </ScrollView>
-          )}
-        </Formik>
-      </View>
-    </ZSafeAreaView>
+                <View style={styles.inputContainer}>
+                  <AnimatedTextInput
+                    multiline={true}
+                    placeholder="Description"
+                    onChangeText={handleChange('description')}
+                    onBlur={handleBlur('description')}
+                    value={values.description}
+                  />
+                  {errors.description && touched.description && (
+                    <Text style={styles.errorText}>{errors.description}</Text>
+                  )}
+                </View>
+
+                <TouchableOpacity
+                  style={[
+                    styles.submitButton,
+                    !isValid ? styles.disabledButton : null,
+                  ]}
+                  disabled={!isValid}
+                  onPress={handleSubmit}>
+                  <Text style={styles.submitText}>Submit Enquiry</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            )}
+          </Formik>
+
+          {/* Loader Overlay */}
+        </View>
+      </ZSafeAreaView>
+      {loading && (
+        <View style={styles.loaderOverlay}>
+          <ActivityIndicator size="large" color={Color.primary} />
+        </View>
+      )}
+    </>
   );
 };
 
@@ -158,6 +165,14 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 10,
+  },
+  inputContainer: {
+    marginBottom: 15,
+    // Equal spacing between fields
+  },
+  formContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   input: {
     borderWidth: 0,
@@ -180,11 +195,19 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 30,
     alignItems: 'center',
+    marginTop: 25,
   },
   submitText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  loaderOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1, // Ensure the loader is above other elements
   },
 });
 
