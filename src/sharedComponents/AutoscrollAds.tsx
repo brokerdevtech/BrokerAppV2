@@ -64,7 +64,12 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
       console.error(error);
     }
   };
+  const [visibleItems, setVisibleItems] = useState(new Set<number>()); // Track visible indices
 
+  const onViewableItemsChanged = useRef(({viewableItems}) => {
+    const newVisibleItems = new Set(viewableItems.map(item => item.index));
+    setVisibleItems(newVisibleItems);
+  }).current;
   useEffect(() => {
     getList();
   }, [cityToShow]);
@@ -79,7 +84,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
         const nextIndex = (activeIndex + 1) % Addata?.length;
         flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
         setActiveIndex(nextIndex);
-      }, 6000);
+      }, 10000);
 
       return () => clearInterval(interval);
     }
@@ -119,9 +124,10 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
   // };
 
   const renderCarouselItem = useCallback(
-    ({item}) => {
+    ({item,index}) => {
       //  console.log("renderCarouselItem")
       // console.log(item);
+      const isVisible = visibleItems.has(index); // Check if the item is visible
       const extension = getExtension(item?.postMedias[0]?.mediaBlobId);
       const sourceUri = `${imagesBucketcloudfrontPath}${
         item?.postMedias[0].mediaBlob || item?.postMedias[0]?.mediaBlobId
@@ -177,16 +183,20 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
       return (
         <View style={[localStyles.card, {width: parentWidth}]}>
           <AdsVideoPlayer
-            ref={playerRef}
             sourceUri={sourceUri}
             vidStyle={localStyles.videoStyle}
-            defaultPaused={false}
+            isVisible={isVisible} // Pass visibility status
             onPress={() => handleAdsPress(item)}
+              onEnd={() => {
+            const nextIndex = (index + 1) % Addata.length;
+            flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
+            setActiveIndex(nextIndex);
+          }}
           />
         </View>
       );
     },
-    [getExtension, parentWidth],
+    [getExtension, parentWidth,visibleItems],
   );
 
   const renderPaginationDots = () => {
@@ -198,7 +208,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
       Animated.timing(progressAnim, {
         toValue: 1,
-        duration: 6000, // Match the auto-scroll interval (6 seconds)
+        duration: 10000, // Match the auto-scroll interval (6 seconds)
         useNativeDriver: false,
       }).start();
 
@@ -267,6 +277,10 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
           decelerationRate="fast"
           onEndReachedThreshold={0.6}
           onEndReached={loadMorepage}
+          onViewableItemsChanged={onViewableItemsChanged} // Detect visible items
+          viewabilityConfig={{
+            itemVisiblePercentThreshold: 80, // Consider item visible if 50% is in view
+          }}
           onMomentumScrollEnd={onMomentumScrollEnd}
           ListFooterComponent={
             isInfiniteLoading ? (

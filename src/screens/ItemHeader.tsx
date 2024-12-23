@@ -9,8 +9,8 @@ import { formatDate } from '../constants/constants';
 import moment from 'moment';
 const useGetTimeDifference = createdAt => {
   const getTimeDifference = useCallback(() => {
-    const now = moment();
-    const created = moment(createdAt);
+    const now = moment.utc();
+    const created = moment.utc(createdAt);
 
     const daysDifference = now.diff(created, 'days');
 
@@ -25,6 +25,7 @@ const useGetTimeDifference = createdAt => {
   return useMemo(() => getTimeDifference(), [getTimeDifference]);
 };
 const ItemHeader = ({ item }) => {
+  console.log('item', item);
   const navigation = useNavigation();
   const user = useSelector((state: RootState) => state.user.user);
     const onPressUser = (userId, userName, userImage) => {
@@ -68,7 +69,8 @@ const ItemHeader = ({ item }) => {
     cardAvatar: {
     display: 'flex',
     flexDirection: 'row',
- padding:10
+ paddingHorizontal:8,
+ paddingVertical:10
   },
   cardAvatarImg: {
     display: 'flex',

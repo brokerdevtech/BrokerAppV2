@@ -78,7 +78,7 @@ const LocalityTag: React.FC<LocalityTagProps> = ({
         />
       </HStack>
       <View style={localStyles.tagContainer}>
-        {localities.map(option => (
+        {Array.isArray(localities) && localities?.map(option => (
           <TouchableOpacity
             key={option.place.placeID}
             style={[localStyles.tagsWrap, localStyles.selectedTag]}>
