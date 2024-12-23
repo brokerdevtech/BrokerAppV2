@@ -147,7 +147,7 @@ const ProductItem = React.memo(
   ({item, listTypeData, User, navigation, OnGoBack}) => {
     const [isrefresh, setisrefresh] = useState(0);
     const MediaGalleryRef = useRef(null);
-     console.log(item);
+    //  console.log(item);
 
     const ProductItemOnGoBack = item => {
       //  console.log('ProductItemOnGoBack');

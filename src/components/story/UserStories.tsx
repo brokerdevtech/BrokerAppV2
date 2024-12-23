@@ -30,6 +30,7 @@ import {getDashboardStory} from '../../../BrokerAppCore/services/new/story';
 
 import {useApiPagingWithDataRequest} from '../../hooks/useApiPagingWithDataRequest';
 import {Color} from '../../styles/GlobalStyles';
+import LoadingSpinner from '../../sharedComponents/LoadingSpinner';
 
 const SkeletonPlaceholder = () => {
   return (
@@ -62,7 +63,7 @@ const UserStories = React.memo(Data => {
   const [StoryData, setStoryData]: any[] = useState(Data);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   let {
     data: Storiesdata,
     status: Storiesstatus,
@@ -77,19 +78,26 @@ const UserStories = React.memo(Data => {
     try {
       setLoading(true);
       StoriescurrentPage_Set(1);
+      StoriespageSize_Set(5);
       StorieshasMore_Set(true);
     } catch (error) {
     } finally {
-      setLoading(false);
+     // setLoading(false);
     }
   };
 
   useFocusEffect(
     React.useCallback(() => {
-      getList();
-      if (Data != null && Data.Data != null) {
-        setStoryData(Data.Data.storyList);
-      }
+      const fetchData = async () => {
+        await getList();
+        
+        if (Data != null && Data.Data != null) {
+          setStoryData(Data.Data.storyList);
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
     }, [Data]),
   );
 
@@ -167,14 +175,21 @@ const UserStories = React.memo(Data => {
             renderItem={renderItem}
             horizontal
             initialNumToRender={2}
-            maxToRenderPerBatch={4}
+           
             showsHorizontalScrollIndicator={false}
-            removeClippedSubviews
+           
             contentContainerStyle={localStyles.mainContainer}
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             ListFooterComponent={
-              isInfiniteLoading ? <SkeletonPlaceholder /> : null
+               isInfiniteLoading ? (
+                                <ActivityIndicator
+                                  size="large"
+                                  color="#0000ff"
+                                  style={localStyles.loader}
+                                />
+                              ) : null
+             
             }
           />
         )}
@@ -184,6 +199,9 @@ const UserStories = React.memo(Data => {
 });
 
 const localStyles = StyleSheet.create({
+  loader: {
+    marginVertical: 20,
+  },
   storiesHeaderWrapper: {
     marginLeft: 10,
   },
