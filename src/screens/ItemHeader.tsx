@@ -37,7 +37,7 @@ const useGetTimeDifference = (createdAt) => {
 };
 
 const ItemHeader = ({ item }) => {
-  console.log('item', item);
+ // console.log('item', item);
   const navigation = useNavigation();
   const user = useSelector((state: RootState) => state.user.user);
     const onPressUser = (userId, userName, userImage) => {

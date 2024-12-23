@@ -498,7 +498,7 @@ const ItemDetailScreen: React.FC<any> = ({
 
   const callItemDetail = async () => {
     // console.log(route, route.params.postType, 'route');
-console.log("route.params.postId",route.params.postId)
+//console.log("route.params.postId",route.params.postId)
     await execute(route.params.postType, route.params.postId);
   };
   const chatProfilePress = useCallback(async () => {

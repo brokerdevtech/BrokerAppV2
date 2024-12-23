@@ -118,7 +118,7 @@ const PersonalDetailsForm = ({
   const formikRef = useRef();
   // console.log(user, 'user');
   const onFiltersLocalityChange = Localitys => { 
-    console.log(Localitys);
+   // console.log(Localitys);
     formikRef.current.handleBlur('Location');
     formikRef.current.setFieldValue('Location', Localitys);
     

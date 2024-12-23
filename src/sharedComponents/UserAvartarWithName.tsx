@@ -98,7 +98,7 @@ function UserAvartarWithName({
       });
     }
   };
-  console.log(userName, userImage, userId, loggedInUserId);
+//  console.log(userName, userImage, userId, loggedInUserId);
   return (
     <View style={localStyles.rootContainer}>
       <TouchableOpacity onPress={onPressUser} style={localStyles.userItem}>

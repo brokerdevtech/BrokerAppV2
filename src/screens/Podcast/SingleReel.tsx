@@ -33,6 +33,7 @@ import TextWithPermissionCheck from '../../sharedComponents/TextWithPermissionCh
 import {Box} from '../../../components/ui/box';
 import {Center} from '../../../components/ui/center';
 import {
+  AddPodcastViwer,
   PodcastLike,
   PodcastUnlike,
 } from '../../../BrokerAppCore/services/podcast';
@@ -79,7 +80,7 @@ const SingleReel = ({item, index, currentIndex}) => {
             userLiked: podcastitem.data.data.userLiked,
           });
 
-          //handleViewerAdd(); // Make sure this function is defined and does what's expected
+          handleViewerAdd(); // Make sure this function is defined and does what's expected
 
           // Here's a simplified way to set the play state
           // This assumes 'setPlay' is your state setter for controlling playback
@@ -124,7 +125,8 @@ const SingleReel = ({item, index, currentIndex}) => {
   };
   const handleViewerAdd = async () => {
     try {
-      const res = null; //await AddPodcastViwer(user.userId, item.podcastId);
+      
+      const res = await AddPodcastViwer(user.userId, item.podcastId);
     } catch (e) {}
   };
   const [likeProcessingStatus, setlikeProcessingStatus] = useState(false);

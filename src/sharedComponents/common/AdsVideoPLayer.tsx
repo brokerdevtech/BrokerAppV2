@@ -77,7 +77,7 @@ const AdsVideoPlayer = forwardRef((props, ref) => {
             onEnd(); // Notify parent to move to the next card
           }}// Stop playback on video end
           onLoad={data => console.log('Video Loaded:', data)}
-          onProgress={data => console.log('Progress:', data.currentTime)}
+           onProgress={data => console.log('Progress:', data.currentTime)}
           bufferConfig={{
             minBufferMs: 5000, // Aim for at least 5 seconds of buffered content
             maxBufferMs: 20000, // Cap the buffer at 20 seconds
