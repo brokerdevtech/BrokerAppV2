@@ -65,7 +65,7 @@ function UserAvartarWithName({
     return {formattedTime, formattedDate};
   };
   const {formattedTime, formattedDate} = formatDateTime(Viewon);
-  console.log(Viewon);
+ // console.log(Viewon);
 
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,

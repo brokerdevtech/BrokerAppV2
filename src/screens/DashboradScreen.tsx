@@ -75,7 +75,8 @@ export default function DashboradScreen() {
 
   const toast = useToast();
 
-  const {data, status, error, execute} = useApiRequest(fetchPodcastList);
+  const {data, status, error, 
+    execute} = useApiRequest(fetchPodcastList);
   //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
   const cityToShow = AppLocation.City;
   const navigation = useNavigation();
@@ -126,11 +127,11 @@ export default function DashboradScreen() {
       const fetchData = async () => {
         try {
           // callmarList();
-console.log(user);
+//console.log(user);
           const results = await Promise.allSettled([
             GetDashboardData(user.userId),
             execute(user.userId, 1, 4),
-            getDashboardStory(user.userId, 1, 10),
+            getDashboardStory(user.userId, 1, 5),
             fetchDashboardData('NewlyLaunch', request),
             fetchDashboardData('Newin', {
               pageNo: 1,

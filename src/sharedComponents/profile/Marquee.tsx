@@ -223,7 +223,7 @@ function MarqueeScreen() {
   }, [cityToShow]);
 
   useEffect(() => {
-    console.log(Addata, 'add');
+ //   console.log(Addata, 'add');
   }, [Addata]);
 
   const handlePress = item => {
@@ -249,7 +249,7 @@ function MarqueeScreen() {
   };
   const renderAdItem = useCallback(
     ({item, index}) => {
-      console.log('renderAdItem',item); // Log the item to the console
+     // console.log('renderAdItem',item); // Log the item to the console
       return (
         <TouchableOpacity key={item.id} onPress={() => handlePress(item)}>
            <ZText

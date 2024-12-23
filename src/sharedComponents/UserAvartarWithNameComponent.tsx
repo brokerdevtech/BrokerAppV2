@@ -48,7 +48,7 @@ function UserAvartarWithNameComponent({
 }) {
   const appuser = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
-  console.log(userName, 'usernam');
+ // console.log(userName, 'usernam');
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
