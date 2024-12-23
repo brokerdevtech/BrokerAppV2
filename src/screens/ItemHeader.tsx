@@ -7,23 +7,35 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../BrokerAppCore/redux/store/reducers';
 import { formatDate } from '../constants/constants';
 import moment from 'moment';
-const useGetTimeDifference = createdAt => {
+const useGetTimeDifference = (createdAt) => {
   const getTimeDifference = useCallback(() => {
-    const now = moment.utc();
-    const created = moment.utc(createdAt);
+    // Ensure createdAt is treated as a UTC time
+    const created = moment.utc(createdAt).local();
+    const now = moment();
 
     const daysDifference = now.diff(created, 'days');
+    const monthsDifference = now.diff(created, 'months');
+    const yearsDifference = now.diff(created, 'years');
+
+    if (yearsDifference >= 1) {
+      return yearsDifference === 1 ? '1 year ago' : `${yearsDifference} years ago`;
+    }
+
+    if (monthsDifference >= 1) {
+      return monthsDifference === 1 ? '1 month ago' : `${monthsDifference} months ago`;
+    }
 
     if (daysDifference >= 7) {
       const weeks = Math.floor(daysDifference / 7);
       return weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
     }
 
-    return moment(createdAt).fromNow();
+    return created.fromNow(); // Show the relative time (e.g., "5 hours ago")
   }, [createdAt]);
 
   return useMemo(() => getTimeDifference(), [getTimeDifference]);
 };
+
 const ItemHeader = ({ item }) => {
   console.log('item', item);
   const navigation = useNavigation();

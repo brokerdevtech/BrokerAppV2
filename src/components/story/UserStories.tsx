@@ -147,7 +147,7 @@ const UserStories = React.memo(Data => {
             />
           </View>
         </View>
-        <ZText type={'r16'} style={localStyles.itemUsername}>
+        <ZText type={'r14'} style={localStyles.itemUsername}>
           {displayName}
         </ZText>
       </Pressable>
@@ -224,7 +224,7 @@ const localStyles = StyleSheet.create({
   itemContainer: {
     alignItems: 'center',
     ...globalStyles.mr10,
-    width:75
+    width:65
   },
   avatarWrapper: {
     backgroundColor: '#bc4a50',

@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: screenWidths,
-    // marginHorizontal: 20 ,
+     //marginHorizontal: 20 ,
      height: screenWidths/1.9,
   },
   container: {
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   //   height:200
   // },
   videoStyle: {
-    width: '100%',
+    width: '95%',
     height: '100%',
    
     borderRadius: 12,

@@ -1094,7 +1094,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   WrapcardContainer: {
-    paddingHorizontal: 20,
+   // paddingHorizontal: 20,
     marginBottom: 20,
   },
   cardContainer: {
