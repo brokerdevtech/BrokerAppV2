@@ -117,15 +117,32 @@ const PersonalDetailsForm = ({
   const minDate = new Date();
   const formikRef = useRef();
   // console.log(user, 'user');
-  const onFiltersLocalityChange = Localitys => {
+  const onFiltersLocalityChange = Localitys => { 
+    console.log(Localitys);
     formikRef.current.handleBlur('Location');
     formikRef.current.setFieldValue('Location', Localitys);
-    setLocalities(Localitys);
+    
+    const locationData = [
+      {
+        place: {
+          ...Localitys,
+         
+        },
+      },]
+    setLocalities(locationData);
   };
   const onFiltersOfficeLocalityChange = Localitys => {
     formikRef.current.handleBlur('officeLocation');
     formikRef.current.setFieldValue('officeLocation', Localitys);
-    setOfficeLocalities(Localitys);
+    const locationData = [
+      {
+        place: {
+          ...Localitys,
+         
+        },
+      },]
+ 
+    setOfficeLocalities(locationData);
   };
   const fetchCategoryData = async () => {
     await categoryexecute();
@@ -133,6 +150,24 @@ const PersonalDetailsForm = ({
 
   useEffect(() => {
     fetchCategoryData();
+    const locationData = [
+      {
+        place: {
+          ...Profiledata.location,
+          placeName: Profiledata.location.cityName,
+        },
+      },
+    ];
+    setLocalities(locationData);
+    const OfficeLocationData = [
+      {
+        place: {
+          ...Profiledata.officeLocation,
+          placeName: Profiledata.officeLocation.cityName,
+        },
+      },
+    ];
+    setOfficeLocalities(OfficeLocationData);
   }, []);
   useEffect(() => {
     if (profileUpdatestatus == 200) {
@@ -230,22 +265,7 @@ const PersonalDetailsForm = ({
     return industry.industryId;
   });
   // console.log(categorystatus, 'pd');
-  const locationData = [
-    {
-      place: {
-        ...Profiledata.location,
-        placeName: Profiledata.location.cityName,
-      },
-    },
-  ];
-  const OfficeLocationData = [
-    {
-      place: {
-        ...Profiledata.officeLocation,
-        placeName: Profiledata.officeLocation.cityName,
-      },
-    },
-  ];
+
   useEffect(() => {
     const catedate = async () => {
       if (categorystatus) {
@@ -428,7 +448,7 @@ const PersonalDetailsForm = ({
                 </ZText>
                 <LocalityTag
                   screenType="personal"
-                  selectedLocation={locationData}
+                  selectedLocation={localities}
                   onLocalityChange={onFiltersLocalityChange}
                   isMandatory={true}
                 />
@@ -439,7 +459,7 @@ const PersonalDetailsForm = ({
                 </ZText>
                 <LocalityTag
                   screenType="personal"
-                  selectedLocation={OfficeLocationData}
+                  selectedLocation={officeLocalities}
                   placeholder="Office Location"
                   onLocalityChange={onFiltersOfficeLocalityChange}
                   isMandatory={true}

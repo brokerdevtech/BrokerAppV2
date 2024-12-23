@@ -37,11 +37,14 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+//    borderColor:'red',
+// borderWidth:1,
+//     borderRadius: 12,
   },
   imageContainer: {
     width: '100%',
-    aspectRatio: 16 / 8,
-    borderRadius: 10,
+    // aspectRatio: 16 / 8,
+    borderRadius: 12,
     overflow: 'hidden',
   },
   image: {

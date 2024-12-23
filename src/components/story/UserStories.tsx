@@ -128,8 +128,8 @@ const UserStories = React.memo(Data => {
   };
   const renderItem = useCallback(({item}) => {
     const displayName =
-      item.postedBy.length > 10
-        ? `${item.postedBy.slice(0, 10)}...`
+      item.postedBy.length > 7
+        ? `${item.postedBy.slice(0, 7)}...`
         : item.postedBy;
 
     return (
@@ -224,6 +224,7 @@ const localStyles = StyleSheet.create({
   itemContainer: {
     alignItems: 'center',
     ...globalStyles.mr10,
+    width:75
   },
   avatarWrapper: {
     backgroundColor: '#bc4a50',
@@ -238,6 +239,7 @@ const localStyles = StyleSheet.create({
     padding: moderateScale(4),
     borderRadius: moderateScale(50),
     backgroundColor: '#FFF',
+  
   },
   itemImage: {
     height: 80,
