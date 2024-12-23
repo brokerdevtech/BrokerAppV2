@@ -136,7 +136,7 @@ const AppTab: React.FC = () => {
       <Tab.Navigator
         initialRouteName="AppTabHome"
         screenOptions={({route}) => ({
-          // unmountOnBlur: true,
+           unmountOnBlur: true,
           headerShown: false,
           headerTitle: '',
           tabBarStyle: [
@@ -160,6 +160,8 @@ const AppTab: React.FC = () => {
           name="AppTabHome"
           component={HomePageStack}
           options={{
+            unmountOnBlur: true,
+
             tabBarIcon: ({focused}) => (
               <TabText
                 text={''}
