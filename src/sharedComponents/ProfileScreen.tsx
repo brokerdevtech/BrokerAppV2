@@ -13,6 +13,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from 'react-native';
 
 import {useSelector} from 'react-redux';
@@ -625,93 +626,83 @@ const ProfileScreen: React.FC = ({
   const handleClear = () => {
     setUserBio('');
   };
-  const dummyData = [{key: 'dummy'}];
+
   return (
     <ZSafeAreaView>
-      <ZHeader
-        title={``}
-        rightIcon={<RightIcon />}
-        isHideBack={true}
-        isLeftIcon={<LeftIcon />}
-      />
-      {ProfileData && (
-        <FlatList
-          data={dummyData}
-          ListHeaderComponent={() => <PostHeader />}
-          renderItem={renderContent}
-          // ListFooterComponent={renderContent}
-          keyExtractor={(item, index) => index.toString()}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            flexGrow: 1,
-            marginBottom: 20,
-            paddingBottom: 20,
-          }}
+      <ScrollView>
+        <ZHeader
+          title={``}
+          rightIcon={<RightIcon />}
+          isHideBack={true}
+          isLeftIcon={<LeftIcon />}
         />
-      )}
-      <>
-        <RBSheet
-          ref={refRBSheet}
-          customStyles={{
-            wrapper: {
-              backgroundColor: 'rgba(0, 0, 0, 0.3)',
-            },
-            draggableIcon: {
-              backgroundColor: '#000',
-            },
-            container: {
-              backgroundColor: '#fff',
+        <PostHeader />
+        {renderContent()}
 
-              paddingHorizontal: 20,
-              paddingTop: 20,
-            },
-          }}
-          customModalProps={{
-            animationType: 'slide',
-            statusBarTranslucent: true,
-          }}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : ''}>
-            <View style={localStyles.header}>
-              <TouchableOpacity onPress={() => refRBSheet.current.close()}>
-                {/* <Ionicons
+        <>
+          <RBSheet
+            ref={refRBSheet}
+            customStyles={{
+              wrapper: {
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+              },
+              draggableIcon: {
+                backgroundColor: '#000',
+              },
+              container: {
+                backgroundColor: '#fff',
+
+                paddingHorizontal: 20,
+                paddingTop: 20,
+              },
+            }}
+            customModalProps={{
+              animationType: 'slide',
+              statusBarTranslucent: true,
+            }}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : ''}>
+              <View style={localStyles.header}>
+                <TouchableOpacity onPress={() => refRBSheet.current.close()}>
+                  {/* <Ionicons
                   name="close-outline"
                   size={24}
                   color={Color.primary}
                 /> */}
-              </TouchableOpacity>
-              <Text style={localStyles.headerText}>Edit Bio</Text>
-              <TouchableOpacity onPress={handleClear}>
-                <Text style={localStyles.clearButton}>Clear</Text>
-              </TouchableOpacity>
-            </View>
+                </TouchableOpacity>
+                <Text style={localStyles.headerText}>Edit Bio</Text>
+                <TouchableOpacity onPress={handleClear}>
+                  <Text style={localStyles.clearButton}>Clear</Text>
+                </TouchableOpacity>
+              </View>
 
-            <TextInput
-              multiline
-              maxLength={1000}
-              numberOfLines={4}
-              placeholder="Enter Your Bio up to 1000 characters"
-              value={userBio}
-              borderColor="#000"
-              style={localStyles.textInput}
-              onChangeText={e => setUserBio(e)}
-              // returnKeyType="done"
-            />
+              <TextInput
+                multiline
+                maxLength={1000}
+                numberOfLines={4}
+                placeholder="Enter Your Bio up to 1000 characters"
+                value={userBio}
+                borderColor="#000"
+                style={localStyles.textInput}
+                onChangeText={e => setUserBio(e)}
+                // returnKeyType="done"
+              />
 
-            <TouchableOpacity
-              onPress={handleSave}
-              style={localStyles.applyButton}>
-              <Text style={localStyles.applyButtonText}>Save</Text>
-            </TouchableOpacity>
-          </KeyboardAvoidingView>
-        </RBSheet>
-      </>
-      <ImageView
-        images={currentImage}
-        imageIndex={0}
-        visible={isViewerVisible}
-        onRequestClose={() => setViewerVisible(false)}
-      />
+              <TouchableOpacity
+                onPress={handleSave}
+                style={localStyles.applyButton}>
+                <Text style={localStyles.applyButtonText}>Save</Text>
+              </TouchableOpacity>
+            </KeyboardAvoidingView>
+          </RBSheet>
+        </>
+        <ImageView
+          images={currentImage}
+          imageIndex={0}
+          visible={isViewerVisible}
+          onRequestClose={() => setViewerVisible(false)}
+        />
+      </ScrollView>
     </ZSafeAreaView>
   );
 };
