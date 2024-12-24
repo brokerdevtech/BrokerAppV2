@@ -389,7 +389,7 @@ const AppFastImage = ({ uri }) => {
         <View style={styles.fullscreenContainer}>
           <TouchableOpacity
             onPress={() => 
-            { console.log("kp");  
+            { //console.log("kp");  
               setIsFullscreen(false)
             }
             }

@@ -552,7 +552,8 @@ const ProfileScreen: React.FC = ({
                 type="R14"
                 align={'center'}
                 color={colors.primary}
-                style={styles.mt2}
+                style={[styles.mt10, localStyles.avtarWrapper]}
+                {{...styles.mt2,paddingleft:100}}
                 onPress={selectImage}>
                 Edit Image
               </ZText>
@@ -715,6 +716,7 @@ const localStyles = StyleSheet.create({
   },
   avtarWrapper: {
     position: 'relative',
+  
   },
   bio: {
     ...styles.mt10,

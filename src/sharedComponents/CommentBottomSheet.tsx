@@ -439,7 +439,8 @@ const CommentBottomSheet = forwardRef(
                 placeholder="Add a comment..."
                 defaultValue={newComment}
                 onChangeText={text => {
-                  console.log(text), setNewComment(text);
+                 // console.log(text), 
+                  setNewComment(text);
                 }}
                 // returnKeyType="go"
                 // returnKeyLabel="post"
@@ -455,7 +456,8 @@ const CommentBottomSheet = forwardRef(
                 placeholder="Add a comment..."
                 defaultValue={newComment}
                 onChangeText={text => {
-                  console.log(text), setNewComment(text);
+                 // console.log(text), 
+                  setNewComment(text);
                 }}
                 returnKeyType="go"
                 returnKeyLabel="post"

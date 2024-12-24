@@ -256,7 +256,7 @@ export default function DashboradScreen() {
     [AppLocation.City],
   );
   const RenderPodcastItems = React.memo(({item, index}) => {
-    console.log('RenderPodcastItems',item);
+   // console.log('RenderPodcastItems',item);
     return (
       <TouchableOpacity
         onPress={() => handleThumbnailTap(item, index)}
