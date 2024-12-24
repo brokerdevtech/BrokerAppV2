@@ -30,15 +30,20 @@ const AdsVideoPlayer = forwardRef((props, ref) => {
   const videoRef = useRef(null);
   const [videoDuration, setVideoDuration] = useState(0);
   
-  useEffect(() => {
-    if (isVisible) {
-      setIsPlaying(true); // Play video when visible
-      videoRef.current?.seek(0); // Restart video
-    } else {
-      setIsPlaying(false); // Pause video when banner is out of view
-    }
-  }, [isVisible]);
+  useFocusEffect(
+    useCallback(() => {
+      // Screen is focused
+      if (isVisible) {
+        setIsPlaying(true); // Play video
+        videoRef.current?.seek(0); // Restart video
+      }
 
+      return () => {
+        // Screen is unfocused
+        setIsPlaying(false); // Pause video
+      };
+    }, [isVisible])
+  );
   const toggleMute = () => {
     setIsMuted(prev => !prev); // Toggle the mute state
   };
@@ -57,7 +62,11 @@ const AdsVideoPlayer = forwardRef((props, ref) => {
         justifyContent: 'center',
         alignItems: 'center',
       }}
-      onPress={onPress}>
+      onPress={() => {
+        onPress();
+        setIsPlaying(false);
+      }}// Stop p
+    >
       <View
         style={{
           flex: 1,

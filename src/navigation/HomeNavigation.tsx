@@ -96,7 +96,7 @@ const HomeNavigation: React.FC = () => {
     <OverlayProvider bottomInset={bottom} value={{style: streamChatTheme}}>
       {/* <Stack.Navigator screenOptions={globalScreenOptions}> */}
       <Stack.Navigator
-      
+      detachInactiveScreens={true}
       screenLayout={({ children }) => (
         <Suspense fallback={<FallbackLoader />}>{children}</Suspense>
       )}>

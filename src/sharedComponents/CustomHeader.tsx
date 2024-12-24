@@ -87,7 +87,7 @@ const CustomHeader = () => {
     // console.log(AppLocation);
     //callPodcastList(AppLocation.City);
     cityToShow = AppLocation.City;
-  }, [AppLocation]);
+  }, [AppLocation,user]);
   const onPressUser = () => {
     navigation.toggleDrawer();
   };
