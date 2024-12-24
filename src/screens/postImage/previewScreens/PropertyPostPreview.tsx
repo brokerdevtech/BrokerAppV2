@@ -218,7 +218,7 @@ const PropertyPostPreview: React.FC = ({
     try {
       const uploadPromises = [];
       let uploadedImageUrls = [];
-   //   setLoading(true);
+      setLoading(true);
 let dimensionsuploaded=[]
       if (Isvideo === false) {
         for (const image of imagesArray) {

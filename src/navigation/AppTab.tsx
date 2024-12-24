@@ -133,10 +133,11 @@ const AppTab: React.FC = () => {
         backgroundColor: 'white',
         height: 50,
       }}>
-      <Tab.Navigator
+      <Tab.Navigator 
         initialRouteName="AppTabHome"
         screenOptions={({route}) => ({
            unmountOnBlur: true,
+           lazy:true,
           headerShown: false,
           headerTitle: '',
           tabBarStyle: [

@@ -176,9 +176,10 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   const signInWithFacebook = async () => {
     try {
       //setLoading(true);
-
+      LoginManager.logOut();
       const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
-
+      console.log("signInWithFacebook");
+console.log(result);
 
       if (result.isCancelled) {
         Alert.alert('Login cancelled');
@@ -194,7 +195,8 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
 
       const fcmToken:any = await getfcmToken();
   
-
+      console.log("signInWithFacebook");
+      console.log(userInfo);
       await SocialLoginexecute(
         userInfo.email,
         'Facebook',
@@ -216,7 +218,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
 
 
     } catch (error) {
-
+console.log(error);
       setLoading(false);
    
     }
