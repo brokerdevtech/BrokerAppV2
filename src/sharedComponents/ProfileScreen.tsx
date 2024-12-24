@@ -76,6 +76,7 @@ import {
 } from '../../BrokerAppCore/services/new/profileServices';
 import {showRationaleAndRequest} from '../utils/appPermission';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
+import { Edit } from 'stream-chat-react-native';
 
 const ProfileScreen: React.FC = ({
   toast,
@@ -552,8 +553,8 @@ const ProfileScreen: React.FC = ({
                 type="R14"
                 align={'center'}
                 color={colors.primary}
-                style={[styles.mt10, localStyles.avtarWrapper]}
-                {{...styles.mt2,paddingleft:100}}
+                style={localStyles.EditText}
+           
                 onPress={selectImage}>
                 Edit Image
               </ZText>
@@ -717,6 +718,11 @@ const localStyles = StyleSheet.create({
   avtarWrapper: {
     position: 'relative',
   
+  },
+  EditText: {
+    ... styles.mt2,
+   paddingLeft:5,
+   paddingTop:5
   },
   bio: {
     ...styles.mt10,
