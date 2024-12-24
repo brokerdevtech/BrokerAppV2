@@ -25,7 +25,7 @@ const AppDrawer: React.FC = () => {
           height: Platform.OS === 'android' ? 65 : 120,
         }, // Custom header for all screens
       })}>
-      <Drawer.Screen name="HomeDrawer" component={AppTab} />
+      <Drawer.Screen name="HomeDrawer" component={AppTab}   options={{ unmountOnBlur: true }} />
       <Drawer.Screen name="Profile" component={AppTab} />
     </Drawer.Navigator>
   );
