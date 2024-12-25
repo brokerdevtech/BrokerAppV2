@@ -144,14 +144,15 @@ const CustomHeader = () => {
                     style={{
                       zIndex: 10,
                       alignSelf: 'flex-end',
-                      height: 22,
-                      width: 22,
+                      minHeight: 22,
+                      minWidth: 22,
                       backgroundColor: permissionGrantedNotification
                         ? '#bc4a50'
                         : Color.primaryDisable, // Hex color for red-600
                       borderRadius: 50,
                       marginBottom: -10, // Converts -3.5 to px
                       marginRight: -10,
+                      justifyContent:'center',
                     }}
                     variant="solid">
                     <BadgeText style={{color: 'white'}}>

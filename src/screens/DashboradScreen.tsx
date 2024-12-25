@@ -161,7 +161,7 @@ export default function DashboradScreen() {
           ] = results.map(result =>
             result.status === 'fulfilled' ? result.value : null,
           );
-
+console.log(dashboardData);
           // const [dashboardData, podcastList,DashboardStory,NewlyLaunch,NewInProperty,NewInCar,BrandAssociate] = await Promise.all([
           //   GetDashboardData(user.userId),
           //   execute(user.userId, 1, 4),

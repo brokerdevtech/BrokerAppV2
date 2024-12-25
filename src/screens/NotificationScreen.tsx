@@ -262,7 +262,7 @@ const NotificationScreen: React.FC = ({
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [connectionUpdated, setConnectionUpdated] = useState(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
   const [firstloading, setfirstloading] = useState(true);
   const [hasMoreData, setHasMoreData] = useState(true);
@@ -440,6 +440,7 @@ const NotificationScreen: React.FC = ({
           selectedNotification={selectedNotification}
         />
       )}
+      maxToRenderPerBatch={5}
       initialNumToRender={10}
         onEndReached={fetchMoreData}
         onEndReachedThreshold={0.2}

@@ -70,13 +70,20 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
     const newVisibleItems = new Set(viewableItems.map(item => item.index));
     setVisibleItems(newVisibleItems);
   }).current;
-  useEffect(() => {
-    getList();
-  }, [cityToShow]);
+  // useEffect(() => {
+  //   getList();
+  // }, [cityToShow]);
 
-  useEffect(() => {
- 
-  }, [Addata]);
+  useFocusEffect(
+    useCallback(() => {
+      getList();
+  
+      // Cleanup function if needed
+      return () => {
+        // Any cleanup logic goes here
+      };
+    }, [cityToShow]) // Dependencies
+  );
 
   useEffect(() => {
     if (Addata?.length > 1) {
@@ -114,7 +121,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
   const loadMorepage = async () => {
     if (!isInfiniteLoading) {
-      await AdsloadMore(3, cityToShow);
+      await AdsloadMore(1, cityToShow);
     }
   };
   // const loadMorePage = async () => {

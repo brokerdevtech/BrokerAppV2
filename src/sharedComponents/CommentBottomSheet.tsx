@@ -131,7 +131,7 @@ const CommentBottomSheet = forwardRef(
         endpoint = 'Car';
       }
 
-      await execute(endpoint, User.userId, postItem.postId);
+      await execute(endpoint, User.userId, postId);
     }
     const loadMorepage = async () => {
       if (!isInfiniteLoading) {
@@ -144,7 +144,7 @@ const CommentBottomSheet = forwardRef(
           endpoint = 'Car';
         }
 
-        await loadMore(endpoint, User.userId, postItem.postId);
+        await loadMore(endpoint, User.userId, postId);
       }
     };
     useEffect(() => {
@@ -489,6 +489,7 @@ const CommentBottomSheet = forwardRef(
     );
 
     const handleAddComment = async () => {
+      console.log('handleAddComment');
       if (!isInfiniteLoading) {
         setInfiniteLoading(true);
 
@@ -511,6 +512,7 @@ const CommentBottomSheet = forwardRef(
         // setLoading(true);
         if (replyCommentId === 0) {
           if (postId != 0 && newComment !== '') {
+            console.log('handleAddComment');
             const postComment = await AddComment(
               User.userId,
               postId,
