@@ -107,7 +107,7 @@ const AdsVideoPlayer = forwardRef((props, ref) => {
           borderRadius: 20,
         }}
         onPress={toggleMute}>
-        <Text style={{color: 'white'}}>{isMuted ? 'Unmuted 🔇' : 'Muted 🔊'}</Text>
+        <Text style={{color: 'white'}}>{isMuted ? 'Unmute 🔇' : 'Mute 🔊'}</Text>
       </TouchableOpacity>
     </TouchableOpacity>
   );
