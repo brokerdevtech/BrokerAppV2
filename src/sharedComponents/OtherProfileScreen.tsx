@@ -110,7 +110,7 @@ const OtherProfileScreen: React.FC = ({
       return () => {
         // Code to execute when the screen loses focus (optional)
       };
-    }, [userId]),
+    }, [userId,isFollowing, isrefresh]),
   );
   const selectprofilepic = () => {
     // console.log(ProfileData);
@@ -182,9 +182,9 @@ const OtherProfileScreen: React.FC = ({
     // });
   };
 
-  useEffect(() => {
-    getUserProfile();
-  }, [isFollowing, isrefresh]);
+  // useEffect(() => {
+  //   getUserProfile();
+  // }, [isFollowing, isrefresh]);
 
   const colors = useSelector(state => state.theme.theme);
   const [isSelect, setIsSelect] = useState(0);
