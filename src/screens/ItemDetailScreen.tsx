@@ -68,7 +68,7 @@ import {formatDate} from '../constants/constants';
 //const MediaGallery = React.lazy(() => import('../sharedComponents/MediaGallery'));
 const LocationMap = React.lazy(() => import('../sharedComponents/LocationMap'));
 const propertyDetails = (data: any, user: any, navigation: any) => {
-  console.log(data);
+//  console.log(data);
   const onPressUser = (userId, userName, userImage) => {
     if (user.userId === userId) {
       navigation.navigate('ProfileScreen');
