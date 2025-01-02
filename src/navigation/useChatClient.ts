@@ -29,8 +29,8 @@ export const useChatClient = () => {
     try {
       
       const response = await GetStreamToken(userState.user.userId);
-      // console.log("=================GetStreamToken======================")
-      // console.log(response)
+     // console.log("=================GetStreamToken======================")
+    //  console.log(response)
       const streamAccessToken =response.data.getStreamAccessToken;
       return streamAccessToken;
      
@@ -150,6 +150,7 @@ const chatClient = StreamChat.getInstance(chatApiKey);
       await registerPushToken();
    
       const connectedUser =    await chatClient.connectUser(user, await tokenProvider());
+     // console.log(connectedUser);
       const initialUnreadCount = connectedUser?.me?.total_unread_count;
     setUnreadCount(initialUnreadCount);
       const fcmToken :any=    await  getsfcmToken();
@@ -161,7 +162,7 @@ const chatClient = StreamChat.getInstance(chatApiKey);
            await chatClient.removeDevice(device.id, userState.user.userId.toString());
         }
       }
-  //    console.log("firebase",fcmToken);
+      //console.log("firebase",fcmToken);
       chatClient.addDevice(fcmToken, 'firebase', userState.user.userId.toString(), 'firebase'),
       setAppChatClient(chatClient);
       setIsConnecting(false);

@@ -489,7 +489,7 @@ const CommentBottomSheet = forwardRef(
     );
 
     const handleAddComment = async () => {
-      console.log('handleAddComment');
+  //    console.log('handleAddComment');
       if (!isInfiniteLoading) {
         setInfiniteLoading(true);
 
@@ -512,7 +512,7 @@ const CommentBottomSheet = forwardRef(
         // setLoading(true);
         if (replyCommentId === 0) {
           if (postId != 0 && newComment !== '') {
-            console.log('handleAddComment');
+          //  console.log('handleAddComment');
             const postComment = await AddComment(
               User.userId,
               postId,

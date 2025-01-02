@@ -68,6 +68,7 @@ import {formatDate} from '../constants/constants';
 //const MediaGallery = React.lazy(() => import('../sharedComponents/MediaGallery'));
 const LocationMap = React.lazy(() => import('../sharedComponents/LocationMap'));
 const propertyDetails = (data: any, user: any, navigation: any) => {
+//  console.log(data);
   const onPressUser = (userId, userName, userImage) => {
     if (user.userId === userId) {
       navigation.navigate('ProfileScreen');
@@ -183,7 +184,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
               {data.propDescription}
             </ZTextMore>
           </VStack>
-          {data.postPropertyAmenities > 0 && (
+          {data?.postPropertyAmenities?.length  > 0 && (
             <>
               <Divider className="my-0.5" />
               <KeyValueRow
@@ -193,7 +194,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
               />
             </>
           )}
-          {data.postNearbyFacilities > 0 && (
+          {data?.postNearbyFacilities?.length > 0 && (
             <>
               <Divider className="my-0.5" />
               <KeyValueRow
