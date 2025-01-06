@@ -22,7 +22,7 @@ import {
   StyleSheet,
   Text,
   useColorScheme,
-  View,
+  View,Image
 } from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
@@ -193,12 +193,16 @@ function App(): React.JSX.Element {
       );
       await store.dispatch(setUser(user));
       setLoggedIn(true);
+   
+      setTimeout(() => {
+        // setLoggedIn(true);
+        setIsSplashVisible(false);
+      }, 1000);
+    }
+    else{
       setIsSplashVisible(false);
-    // setTimeout(() => {
-    //   setLoggedIn(true);
-    //   setIsSplashVisible(false);
-    // }, 5000);  
-    }  setIsSplashVisible(false);
+    }
+   // setIsSplashVisible(false);
   };
   const getCurrentPositionAsync = () => {
     return new Promise((resolve, reject) => {
@@ -313,14 +317,12 @@ function App(): React.JSX.Element {
       try {
         const permissions = [
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-       
-        
         ];
 
         if (Platform.Version >= 33) {
           permissions.push(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
         }
-  
+
         const permissionStatusesArray = await Promise.all(
           permissions.map(permission => PermissionsAndroid.check(permission)),
         );
@@ -492,28 +494,29 @@ function App(): React.JSX.Element {
   useEffect(() => {
     const runAsyncFunctions = async () => {
       try {
-         allPermission();
+      //  console.log("checkUser0");
+        allPermission();
         await checkUser();
-       
+       // console.log("checkUser");
       } catch (error) {
         console.error('Error in permission or user check:', error);
       }
     };
     // runAsyncFunctions();
     // Run animations in parallel
-    Animated.parallel([
-      Animated.timing(opacityAnim, {
-        toValue: 1,
-        duration: 100,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        friction: 3,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    // Animated.parallel([
+    //   Animated.timing(opacityAnim, {
+    //     toValue: 1,
+    //     duration: 100,
+    //     easing: Easing.out(Easing.quad),
+    //     useNativeDriver: true,
+    //   }),
+    //   Animated.spring(scaleAnim, {
+    //     toValue: 1,
+    //     friction: 3,
+    //     useNativeDriver: true,
+    //   }),
+    // ]).start();
     // Animated.spring(opacityAnim, {
     //   toValue: 1, // Final value
     //   friction: 3, // Resistance to motion
@@ -547,10 +550,9 @@ function App(): React.JSX.Element {
   }, []);
   return (
     <>
-   
       {isSplashVisible ? (
         <View style={styles.splashContainer}>
-          <Animated.Image
+          {/* <Animated.Image
             source={require('./src/assets/images/BANew.png')}
             style={[
               styles.logo,
@@ -558,6 +560,14 @@ function App(): React.JSX.Element {
                 opacity: opacityAnim,
                 transform: [{scale: scaleAnim}],
               },
+            ]}
+            resizeMode="contain"
+          /> */}
+           <Image
+            source={require('./src/assets/images/BANew.png')}
+            style={[
+              styles.logo,
+             
             ]}
             resizeMode="contain"
           />
@@ -615,7 +625,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'red', // Customize splash background color
+    // backgroundColor: 'red', // Customize splash background color
   },
   logo: {
     width: 250, // Adjust size according to your needs

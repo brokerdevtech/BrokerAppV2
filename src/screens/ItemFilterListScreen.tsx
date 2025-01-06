@@ -74,6 +74,7 @@ import {concat, filter} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
 import {formatNumberToIndianSystem} from '../utils/helpers';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
+import ItemHeader from './ItemHeader';
 const SkeletonPlaceholder = () => {
   return (
     <HStack space={10} style={styles.skeletonContainer}>
@@ -149,7 +150,7 @@ const ProductItem = React.memo(
       navigation.navigate('AppChat', {
         defaultScreen: 'ChannelScreen',
         defaultParams: members,
-      //  defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
+        //  defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
       });
     }, []);
     const makeCall = useCallback(async phoneNumber => {
@@ -197,6 +198,7 @@ const ProductItem = React.memo(
     return (
       <View style={styles.WrapcardContainer}>
         <View style={styles.cardContainer}>
+        <ItemHeader item={item}></ItemHeader>
           <MediaGallery
             ref={MediaGalleryRef}
             mediaItems={item.postMedias}
@@ -628,12 +630,12 @@ const ItemFilterListScreen: React.FC<any> = ({
   useEffect(() => {
     setLoading(true);
     if (listTypeData == 'RealEstate') {
-      pageTitle('Property List');
-      setApppageTitle('Property List');
+      pageTitle('Properties');
+      setApppageTitle('Properties');
     }
     if (listTypeData == 'Car') {
-      pageTitle('Car List');
-      setApppageTitle('Car List');
+      pageTitle('Cars');
+      setApppageTitle('Cars');
     }
     setItemslocalities(AppLocation);
 

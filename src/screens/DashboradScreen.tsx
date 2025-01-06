@@ -29,6 +29,7 @@ import TABWealth from '../assets/svg/Tabicon/tab_wealth.svg';
 import TABHome from '../assets/svg/Tabicon/tab_home.svg';
 import Footer from './Dashboard/Footer';
 import BrandSection from './Dashboard/BrandSection';
+//const BrandSection = React.lazy(() => import('./Dashboard/BrandSection'));
 import ProductSection from './Dashboard/ProductSection';
 import MarqueeBanner from '../sharedComponents/profile/MarqueeBanner';
 import {fetchDashboardData} from '../../BrokerAppCore/services/new/dashboardService';
@@ -74,7 +75,8 @@ export default function DashboradScreen() {
 
   const toast = useToast();
 
-  const {data, status, error, execute} = useApiRequest(fetchPodcastList);
+  const {data, status, error, 
+    execute} = useApiRequest(fetchPodcastList);
   //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
   const cityToShow = AppLocation.City;
   const navigation = useNavigation();
@@ -125,11 +127,11 @@ export default function DashboradScreen() {
       const fetchData = async () => {
         try {
           // callmarList();
-
+//console.log(user);
           const results = await Promise.allSettled([
             GetDashboardData(user.userId),
             execute(user.userId, 1, 4),
-            getDashboardStory(user.userId, 1, 10),
+            getDashboardStory(user.userId, 1, 5),
             fetchDashboardData('NewlyLaunch', request),
             fetchDashboardData('Newin', {
               pageNo: 1,
@@ -159,7 +161,7 @@ export default function DashboradScreen() {
           ] = results.map(result =>
             result.status === 'fulfilled' ? result.value : null,
           );
-
+//console.log(dashboardData);
           // const [dashboardData, podcastList,DashboardStory,NewlyLaunch,NewInProperty,NewInCar,BrandAssociate] = await Promise.all([
           //   GetDashboardData(user.userId),
           //   execute(user.userId, 1, 4),
@@ -254,6 +256,7 @@ export default function DashboradScreen() {
     [AppLocation.City],
   );
   const RenderPodcastItems = React.memo(({item, index}) => {
+   // console.log('RenderPodcastItems',item);
     return (
       <TouchableOpacity
         onPress={() => handleThumbnailTap(item, index)}

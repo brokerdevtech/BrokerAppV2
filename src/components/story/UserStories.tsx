@@ -27,9 +27,10 @@ import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
 import {VStack} from '../../../components/ui/vstack';
 import CircularSkeleton from '../../sharedComponents/Skeleton/CircularSkeleton';
 import {getDashboardStory} from '../../../BrokerAppCore/services/new/story';
-import {useApiRequest} from '../../hooks/useApiRequest';
-import {useApiPagingRequest} from '../../hooks/useApiPagingRequest';
-import { useApiPagingWithDataRequest } from '../../hooks/useApiPagingWithDataRequest';
+
+import {useApiPagingWithDataRequest} from '../../hooks/useApiPagingWithDataRequest';
+import {Color} from '../../styles/GlobalStyles';
+import LoadingSpinner from '../../sharedComponents/LoadingSpinner';
 
 const SkeletonPlaceholder = () => {
   return (
@@ -44,8 +45,7 @@ const SkeletonPlaceholder = () => {
   );
 };
 
-const UserStories = React.memo((Data) => {
-
+const UserStories = React.memo(Data => {
   const user = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
@@ -63,7 +63,7 @@ const UserStories = React.memo((Data) => {
   const [StoryData, setStoryData]: any[] = useState(Data);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   let {
     data: Storiesdata,
     status: Storiesstatus,
@@ -73,23 +73,31 @@ const UserStories = React.memo((Data) => {
     pageSize_Set: StoriespageSize_Set,
     currentPage_Set: StoriescurrentPage_Set,
     hasMore_Set: StorieshasMore_Set,
-  } = useApiPagingWithDataRequest(getDashboardStory, setInfiniteLoading,Data);
+  } = useApiPagingWithDataRequest(getDashboardStory, setInfiniteLoading, Data);
   const getList = async () => {
     try {
+      setLoading(true);
       StoriescurrentPage_Set(1);
+      StoriespageSize_Set(5);
       StorieshasMore_Set(true);
-
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+     // setLoading(false);
+    }
   };
 
   useFocusEffect(
     React.useCallback(() => {
-      getList();
-      if(Data!=null && Data.Data!=null)
-     {
-    
-       setStoryData(Data.Data.storyList);
-      }
+      const fetchData = async () => {
+        await getList();
+        
+        if (Data != null && Data.Data != null) {
+          setStoryData(Data.Data.storyList);
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
     }, [Data]),
   );
 
@@ -120,8 +128,8 @@ const UserStories = React.memo((Data) => {
   };
   const renderItem = useCallback(({item}) => {
     const displayName =
-      item.postedBy.length > 10
-        ? `${item.postedBy.slice(0, 10)}...`
+      item.postedBy.length > 7
+        ? `${item.postedBy.slice(0, 7)}...`
         : item.postedBy;
 
     return (
@@ -139,7 +147,7 @@ const UserStories = React.memo((Data) => {
             />
           </View>
         </View>
-        <ZText type={'r16'} style={localStyles.itemUsername}>
+        <ZText type={'r14'} style={localStyles.itemUsername}>
           {displayName}
         </ZText>
       </Pressable>
@@ -154,32 +162,34 @@ const UserStories = React.memo((Data) => {
 
   return (
     <VStack style={{paddingHorizontal: 20, backgroundColor: 'white'}}>
-      {/* <ZText type="b22" style={{...globalStyles.mt8}}>
-        Stories
-      </ZText> */}
       <HStack>
-        {StoryData === null || loading ? (
-          // <></>
+        {loading ? (
           <SkeletonPlaceholder />
+        ) : StoryData.length === 0 ? (
+          <EmptyListComponent />
         ) : (
           <FlatList
             data={StoryData}
             style={{flex: 1}}
             keyExtractor={item => item.userId}
             renderItem={renderItem}
-            horizontal={true}
+            horizontal
             initialNumToRender={2}
-            maxToRenderPerBatch={4}
-            ListEmptyComponent={<EmptyListComponent />}
+           
             showsHorizontalScrollIndicator={false}
-            removeClippedSubviews={true}
+           
             contentContainerStyle={localStyles.mainContainer}
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             ListFooterComponent={
-              loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
-              ) : null
+               isInfiniteLoading ? (
+                                <ActivityIndicator
+                                  size="large"
+                                  color="#0000ff"
+                                  style={localStyles.loader}
+                                />
+                              ) : null
+             
             }
           />
         )}
@@ -189,6 +199,9 @@ const UserStories = React.memo((Data) => {
 });
 
 const localStyles = StyleSheet.create({
+  loader: {
+    marginVertical: 20,
+  },
   storiesHeaderWrapper: {
     marginLeft: 10,
   },
@@ -211,6 +224,7 @@ const localStyles = StyleSheet.create({
   itemContainer: {
     alignItems: 'center',
     ...globalStyles.mr10,
+    width:65
   },
   avatarWrapper: {
     backgroundColor: '#bc4a50',
@@ -225,6 +239,7 @@ const localStyles = StyleSheet.create({
     padding: moderateScale(4),
     borderRadius: moderateScale(50),
     backgroundColor: '#FFF',
+  
   },
   itemImage: {
     height: 80,

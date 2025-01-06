@@ -386,7 +386,7 @@ const PostActions = ({
           )}
 
 
-{PageName == 'MyItemList' &&
+{(PageName == 'itemDetail' || PageName == 'MyItemList') &&
    
           User.userId == item.userId &&
         (

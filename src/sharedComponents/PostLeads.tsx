@@ -1,5 +1,12 @@
 import React, {useState, useEffect, useMemo} from 'react';
-import {ActivityIndicator, FlatList, ScrollView, StyleSheet, View,Text} from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  View,
+  Text,
+} from 'react-native';
 
 import {useSelector} from 'react-redux';
 import {styles} from '../themes';
@@ -19,9 +26,14 @@ import {
   getFollowerList,
   getFollowingList,
 } from '../../BrokerAppCore/services/new/profileServices';
-import { useApiPagingRequest } from '../hooks/useApiPagingRequest';
-import { getPodcastLikeList, getPostBuyerList, getPostLeadsList, getPostLikeList } from '../../BrokerAppCore/services/new/postServices';
-import { useApiPagingWithtotalRequest } from '../hooks/useApiPagingWithtotalRequest';
+import {useApiPagingRequest} from '../hooks/useApiPagingRequest';
+import {
+  getPodcastLikeList,
+  getPostBuyerList,
+  getPostLeadsList,
+  getPostLikeList,
+} from '../../BrokerAppCore/services/new/postServices';
+import {useApiPagingWithtotalRequest} from '../hooks/useApiPagingWithtotalRequest';
 import UserAvartarWithName from './UserAvartarWithName';
 
 const DEBOUNCE_DELAY = 300;
@@ -48,13 +60,11 @@ const PostLeads: React.FC = ({
 }) => {
   const colors = useSelector(state => state.theme.theme);
   const [issearch, setissearch] = useState(false);
-  
+
   const [paramsuserId, setparamsuserId] = useState(route.params?.userId);
   const [listTypeData, setlistTypeData] = useState(route.params?.listTypeData);
   const [postId, setpostId] = useState(route.params?.postId);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
-
-
 
   const [userLists, setuserLists] = useState();
   const listType = route.params?.type;
@@ -63,12 +73,12 @@ const PostLeads: React.FC = ({
     status,
     error,
     execute,
-    loadMore:executeloadMore,
+    loadMore: executeloadMore,
     pageSize_Set,
     currentPage_Set,
-    hasMore_Set
-  } = useApiPagingWithtotalRequest(getPostLeadsList,setInfiniteLoading,15);
- 
+    hasMore_Set,
+  } = useApiPagingWithtotalRequest(getPostLeadsList, setInfiniteLoading, 15);
+
   const BlurredStyle = {
     backgroundColor: colors.inputBg,
     borderColor: colors.btnColor1,
@@ -82,8 +92,6 @@ const PostLeads: React.FC = ({
   const [searchInputStyle, setSearchInputStyle] = useState(BlurredStyle);
   const [searchIconStyle, setSearchIconStyle] = useState(BlurredIconStyle);
 
-  
-
   const onHighlightInput = () => {
     setSearchInputStyle(FocusedStyle);
     setSearchIconStyle(FocusedIconStyle);
@@ -94,59 +102,47 @@ const PostLeads: React.FC = ({
   };
   const getList = async () => {
     try {
+      currentPage_Set(1);
+      hasMore_Set(true);
+      await execute(listTypeData, postId, paramsuserId);
 
-  
-      
-   currentPage_Set(1);
-  hasMore_Set(true);
-        await execute(listTypeData,postId,paramsuserId);
-    
-      pageTitle(`Leads List`);
+      pageTitle(`Leads`);
     } catch (error) {}
   };
 
   useFocusEffect(
     React.useCallback(() => {
-     
       getList();
-    }, [listType, route.params.userId, pageTitle])
+    }, [listType, route.params.userId, pageTitle]),
   );
-
 
   useEffect(() => {
     // Bind data to the state when the data fetch is successful
-//console.log(followerdata);
+    //console.log(followerdata);
 
     if (status === 200 && data?.length > 0) {
-     // console.log(followerdata);
+      // console.log(followerdata);
       setuserLists(data);
-    } 
-  }, [status,data]);
-
+    }
+  }, [status, data]);
 
   const loadMore = async () => {
-    if(!isInfiniteLoading)
-  {  
-    await executeloadMore(listTypeData,postId,paramsuserId);
-    
-  }
+    if (!isInfiniteLoading) {
+      await executeloadMore(listTypeData, postId, paramsuserId);
+    }
   };
-
- 
-
 
   return (
     <ZSafeAreaView>
       <View style={localStyles.rootContainer}>
-     
-     <View style={{ flex: 1 }}>
+        <View style={{flex: 1}}>
           <FlatList
             data={userLists}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             initialNumToRender={5}
-            maxToRenderPerBatch={5} // Default is 10
-            removeClippedSubviews={true}
+            // maxToRenderPerBatch={5} // Default is 10
+            //   removeClippedSubviews={true}
             renderItem={({item, index}) => (
               <View
                 style={{
@@ -155,10 +151,12 @@ const PostLeads: React.FC = ({
                   borderColor: Color.borderColor,
                 }}>
                 <UserAvartarWithName
-                  userName={item?.userName}
-                  userImage={item?.profileImage}
-                 userId={item.userId}
-                 loggedInUserId={user.userId}
+                  userName={item?.viewerName}
+                  userImage={item?.viewerProfileImage}
+                  userId={item?.viewerUserId}
+                  Viewon={item?.viewedOn}
+                  isProfileView={true}
+                  loggedInUserId={user.userId}
                   key={index}
                 />
               </View>

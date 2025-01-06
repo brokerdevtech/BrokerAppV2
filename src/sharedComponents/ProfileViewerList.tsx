@@ -106,7 +106,7 @@ const ProfileViewerList: React.FC = ({
       setPageLoading(true);
       await execute(user.userId);
 
-      pageTitle(`Podcast Viewer List`);
+      pageTitle(`Profile Viewers`);
     } catch (error) {
     } finally {
       setPageLoading(false);
@@ -131,7 +131,7 @@ const ProfileViewerList: React.FC = ({
 
   const loadMore = async () => {
     if (!isInfiniteLoading) {
-      console.log('loadMore');
+  //    console.log('loadMore');
       await executeloadMore(user.userId);
     }
   };

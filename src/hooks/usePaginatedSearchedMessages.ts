@@ -60,7 +60,9 @@ export const usePaginatedSearchedMessages = (
 //   text: { $q: messageFilters } // Searches for messages that contain the keyword
 // };
 const messageFilters2 = { text: { "$autocomplete":  messageFilters }};
-
+const userFilters = {
+  name: { "$autocomplete": messageFilters }, // Search in user names
+};
       const res = await chatClient?.search(
         {
           members: {

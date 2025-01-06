@@ -318,18 +318,27 @@ module="Post"
       // }
     };
     const getTimeDifference = createdAt => {
-      const now = moment().local();
-      const created = moment(createdAt).local();
-
+   const created = moment.utc(createdAt).local();
+      const now = moment();
+  
       const daysDifference = now.diff(created, 'days');
-
+      const monthsDifference = now.diff(created, 'months');
+      const yearsDifference = now.diff(created, 'years');
+  
+      if (yearsDifference >= 1) {
+        return yearsDifference === 1 ? '1 year ago' : `${yearsDifference} years ago`;
+      }
+  
+      if (monthsDifference >= 1) {
+        return monthsDifference === 1 ? '1 month ago' : `${monthsDifference} months ago`;
+      }
+  
       if (daysDifference >= 7) {
         const weeks = Math.floor(daysDifference / 7);
         return weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
       }
-
-      // Convert createdAt to local time before using fromNow()
-      return created.fromNow();
+  
+      return created.fromNow(); 
     };
     const handleReplyClick = (comment, index) => {
       setNewComment(`@${comment.firstName} ${comment.lastName} `);

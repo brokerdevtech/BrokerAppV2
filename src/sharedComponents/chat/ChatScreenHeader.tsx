@@ -3,7 +3,7 @@
 import React from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
-import { useChatContext, useTheme } from 'stream-chat-react-native';
+import { useChatContext, UserAdd, useTheme } from 'stream-chat-react-native';
 
 import { RoundButton } from './RoundButton';
 import { ScreenHeader } from './ScreenHeader';
@@ -101,8 +101,8 @@ export const ChatScreenHeader: React.FC<{ title?: string }> = ({ title = '' }) =
             navigation.navigate('NewDirectMessagingScreen');
           }}
         >
-
-          <Icon as={NewChat_Icon} size='xl'/>
+         <UserAdd pathFill={'grey'} />
+          {/* <Icon as={NewChat_Icon} size='xl'/> */}
         </TouchableOpacity>
       )}
       // Title={isOnline ? undefined : () => <NetworkDownIndicator titleSize="large" />}

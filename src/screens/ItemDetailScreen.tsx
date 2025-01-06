@@ -68,6 +68,7 @@ import {formatDate} from '../constants/constants';
 //const MediaGallery = React.lazy(() => import('../sharedComponents/MediaGallery'));
 const LocationMap = React.lazy(() => import('../sharedComponents/LocationMap'));
 const propertyDetails = (data: any, user: any, navigation: any) => {
+//  console.log(data);
   const onPressUser = (userId, userName, userImage) => {
     if (user.userId === userId) {
       navigation.navigate('ProfileScreen');
@@ -104,7 +105,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
       });
     } catch (error) {}
   };
-  console.log(data);
+  //console.log(data);
   return (
     <>
       {data.isBrokerAppVerified && (
@@ -118,6 +119,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
         item={data}
         User={user}
         listTypeData={'RealEstate'}
+        PageName={'itemDetail'}
         onUpdateLikeCount={newCount => {}}
       />
       {/* Car Details */}
@@ -182,7 +184,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
               {data.propDescription}
             </ZTextMore>
           </VStack>
-          {data.postPropertyAmenities > 0 && (
+          {data?.postPropertyAmenities?.length  > 0 && (
             <>
               <Divider className="my-0.5" />
               <KeyValueRow
@@ -192,7 +194,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
               />
             </>
           )}
-          {data.postNearbyFacilities > 0 && (
+          {data?.postNearbyFacilities?.length > 0 && (
             <>
               <Divider className="my-0.5" />
               <KeyValueRow
@@ -314,6 +316,7 @@ const carDetails = (data: any, user: any, navigation: any) => {
         item={data}
         User={user}
         listTypeData={'Car'}
+        PageName={'itemDetail'}
         onUpdateLikeCount={newCount => {
           //   console.log(newCount);
         }}
@@ -496,7 +499,7 @@ const ItemDetailScreen: React.FC<any> = ({
 
   const callItemDetail = async () => {
     // console.log(route, route.params.postType, 'route');
-
+//console.log("route.params.postId",route.params.postId)
     await execute(route.params.postType, route.params.postId);
   };
   const chatProfilePress = useCallback(async () => {

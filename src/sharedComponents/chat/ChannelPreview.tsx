@@ -90,16 +90,15 @@ export const ChannelPreview: React.FC<ChannelPreviewMessengerProps<StreamChatGen
                   channel.delete();
                   setOverlay('none');
                 },
-                subtext: `Are you sure you want to delete this ${
-                  otherMembers.length === 1 ? 'conversation' : 'group'
-                }?`,
+                subtext: `Are you sure you want to delete this ${otherMembers.length === 1 ? 'conversation' : 'group'
+                  }?`,
                 title: `Delete ${otherMembers.length === 1 ? 'Conversation' : 'Group'}`,
               });
               setOverlay('confirmation');
             }}
             style={[styles.rightSwipeableButton]}
           >
-           <Delete height={32} pathFill={accent_red} width={32} />
+            <Delete size={32} fill={accent_red} />
           </RectButton>
         </View>
       )}

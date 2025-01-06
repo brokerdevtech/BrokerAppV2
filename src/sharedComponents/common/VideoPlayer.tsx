@@ -100,10 +100,10 @@ const VideoPlayer = forwardRef((props, ref) => {
       style={{
         flex: 1,
         width: '100%',
-        borderRadius: 16,
+        borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 10,
+       // padding: 10,
         overflow: 'hidden'
       }}>
       <Video

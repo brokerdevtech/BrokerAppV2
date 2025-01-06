@@ -83,9 +83,9 @@ const BrokerList: React.FC = ({
 
   const onSearchInput = async (text: string) => {
     //
-    console.log(text);
+  //  console.log(text);
     setSearch(text);
-
+    setInfiniteLoading(true);
     await getList(text);
   };
 
@@ -110,7 +110,7 @@ const BrokerList: React.FC = ({
 
   useEffect(() => {
     if (data) {
-      console.log(data);
+ //     console.log(data, 'data broker');
       setuserLists(data);
     }
   }, [data]);
@@ -143,13 +143,14 @@ const BrokerList: React.FC = ({
         <View style={{flex: 1}}>
           <FlatList
             data={userLists}
+            extraData={data}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             initialNumToRender={5}
             maxToRenderPerBatch={5} // Default is 10
-            removeClippedSubviews={true}
+            // removeClippedSubviews={true}
             renderItem={({item, index}) => {
-              console.log('Rendering item:', item);
+        //      console.log('Rendering item:', item);
               return (
                 <View
                   style={{

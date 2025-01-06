@@ -64,14 +64,26 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
       console.error(error);
     }
   };
+  const [visibleItems, setVisibleItems] = useState(new Set<number>()); // Track visible indices
 
-  useEffect(() => {
-    getList();
-  }, [cityToShow]);
+  const onViewableItemsChanged = useRef(({viewableItems}) => {
+    const newVisibleItems = new Set(viewableItems.map(item => item.index));
+    setVisibleItems(newVisibleItems);
+  }).current;
+  // useEffect(() => {
+  //   getList();
+  // }, [cityToShow]);
 
-  useEffect(() => {
- 
-  }, [Addata]);
+  useFocusEffect(
+    useCallback(() => {
+      getList();
+  
+      // Cleanup function if needed
+      return () => {
+        // Any cleanup logic goes here
+      };
+    }, [cityToShow]) // Dependencies
+  );
 
   useEffect(() => {
     if (Addata?.length > 1) {
@@ -79,7 +91,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
         const nextIndex = (activeIndex + 1) % Addata?.length;
         flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
         setActiveIndex(nextIndex);
-      }, 6000);
+      }, 10000);
 
       return () => clearInterval(interval);
     }
@@ -109,7 +121,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
   const loadMorepage = async () => {
     if (!isInfiniteLoading) {
-      await AdsloadMore(3, cityToShow);
+      await AdsloadMore(1, cityToShow);
     }
   };
   // const loadMorePage = async () => {
@@ -119,9 +131,10 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
   // };
 
   const renderCarouselItem = useCallback(
-    ({item}) => {
+    ({item,index}) => {
       //  console.log("renderCarouselItem")
       // console.log(item);
+      const isVisible = visibleItems.has(index); // Check if the item is visible
       const extension = getExtension(item?.postMedias[0]?.mediaBlobId);
       const sourceUri = `${imagesBucketcloudfrontPath}${
         item?.postMedias[0].mediaBlob || item?.postMedias[0]?.mediaBlobId
@@ -177,16 +190,20 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
       return (
         <View style={[localStyles.card, {width: parentWidth}]}>
           <AdsVideoPlayer
-            ref={playerRef}
             sourceUri={sourceUri}
             vidStyle={localStyles.videoStyle}
-            defaultPaused={false}
+            isVisible={isVisible} // Pass visibility status
             onPress={() => handleAdsPress(item)}
+              onEnd={() => {
+            const nextIndex = (index + 1) % Addata.length;
+            flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
+            setActiveIndex(nextIndex);
+          }}
           />
         </View>
       );
     },
-    [getExtension, parentWidth],
+    [getExtension, parentWidth,visibleItems],
   );
 
   const renderPaginationDots = () => {
@@ -198,7 +215,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
 
       Animated.timing(progressAnim, {
         toValue: 1,
-        duration: 6000, // Match the auto-scroll interval (6 seconds)
+        duration: 10000, // Match the auto-scroll interval (6 seconds)
         useNativeDriver: false,
       }).start();
 
@@ -267,6 +284,10 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
           decelerationRate="fast"
           onEndReachedThreshold={0.6}
           onEndReached={loadMorepage}
+          onViewableItemsChanged={onViewableItemsChanged} // Detect visible items
+          viewabilityConfig={{
+            itemVisiblePercentThreshold: 80, // Consider item visible if 50% is in view
+          }}
           onMomentumScrollEnd={onMomentumScrollEnd}
           ListFooterComponent={
             isInfiniteLoading ? (
@@ -334,16 +355,16 @@ const localStyles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
     marginHorizontal: 4,
   },
-  card: {
-    display: 'flex',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: screenWidths,
-    paddingHorizontal: 12,
-    maxHeight: 200,
-    height: 200,
-  },
+  // card: {
+  //   display: 'flex',
+  //   borderRadius: 12,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   width: screenWidths,
+  //   paddingHorizontal: 12,
+  //   maxHeight: 200,
+  //   height: 200,
+  // },
   paginationText: {
     color: 'white',
     fontSize: 14,
@@ -362,18 +383,16 @@ const localStyles = StyleSheet.create({
 
   card: {
     display: 'flex',
-
-    // backgroundColor: '#764ABC',
     borderRadius: 12,
-
-    // padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
     width: screenWidths,
-    // marginHorizontal: 20,
-    // marginLeft: 10,
-    // height: screenWidths - 40,q
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
+    maxHeight: 200,
+    height: 200,
+    
+
+ 
   },
   container: {
     width: '100%',

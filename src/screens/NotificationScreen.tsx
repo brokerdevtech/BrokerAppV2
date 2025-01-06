@@ -61,18 +61,32 @@ const NotificationItem = ({
   } = item;
   let response = body;
 
+
+
+
+
   const getTimeDifference = createdAt => {
-    const now = moment();
-    const created = moment(createdAt);
-
-    const daysDifference = now.diff(created, 'days');
-
-    if (daysDifference >= 7) {
-      const weeks = Math.floor(daysDifference / 7);
-      return weeks === 1 ? '1 week ago' : `${weeks} week ago`;
-    }
-
-    return moment(createdAt).fromNow();
+   const created = moment.utc(createdAt).local();
+      const now = moment();
+  
+      const daysDifference = now.diff(created, 'days');
+      const monthsDifference = now.diff(created, 'months');
+      const yearsDifference = now.diff(created, 'years');
+  
+      if (yearsDifference >= 1) {
+        return yearsDifference === 1 ? '1 year ago' : `${yearsDifference} years ago`;
+      }
+  
+      if (monthsDifference >= 1) {
+        return monthsDifference === 1 ? '1 month ago' : `${monthsDifference} months ago`;
+      }
+  
+      if (daysDifference >= 7) {
+        const weeks = Math.floor(daysDifference / 7);
+        return weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
+      }
+  
+      return created.fromNow(); 
   };
 
   const userPermissions = useSelector(
@@ -248,7 +262,7 @@ const NotificationScreen: React.FC = ({
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [connectionUpdated, setConnectionUpdated] = useState(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
   const [firstloading, setfirstloading] = useState(true);
   const [hasMoreData, setHasMoreData] = useState(true);
@@ -291,34 +305,34 @@ const NotificationScreen: React.FC = ({
 
     fetchData();
   }, []);
-  //   const fetchMoreData = async () => {
-  //     if (loading || !hasMoreData) return;
+    const fetchMoreData = async () => {
+      if (loading || !hasMoreData) return;
 
-  //     setLoading(true);
-  //     try {
-  //       const nextPage = page + 1;
-  //       const data = await getNotification(nextPage, pageSize);
-  //       // notificationData.data.notifications
-  //       //       console.log("========data");
-  //       //  console.log(data);
-  //       // const apiData = JSON.stringify(data.data.notifications);
-  //       if (data.data.notifications.length > 0) {
-  //         setNotificationData(prevData => [
-  //           ...prevData,
-  //           ...data.data.notifications,
-  //         ]);
-  //         setPage(nextPage);
-  //       } else {
-  //         setHasMoreData(false);
-  //       }
-  //       //
-  //       // setNotificationData(data);
-  //     } catch (error) {
-  //       console.error('Error fetching notification data:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+      setLoading(true);
+      try {
+        const nextPage = page + 1;
+        const data = await getNotification(nextPage, pageSize);
+        // notificationData.data.notifications
+        //       console.log("========data");
+        //  console.log(data);
+        // const apiData = JSON.stringify(data.data.notifications);
+        if (data.data.notifications.length > 0) {
+          setNotificationData(prevData => [
+            ...prevData,
+            ...data.data.notifications,
+          ]);
+          setPage(nextPage);
+        } else {
+          setHasMoreData(false);
+        }
+        //
+        // setNotificationData(data);
+      } catch (error) {
+        console.error('Error fetching notification data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
   const handleNotificationPress = async (notifcationId, currentStatus) => {
     const newStatus = currentStatus === 1 ? 0 : 1;
     setSelectedNotification(notifcationId);
@@ -426,9 +440,10 @@ const NotificationScreen: React.FC = ({
           selectedNotification={selectedNotification}
         />
       )}
+      maxToRenderPerBatch={5}
       initialNumToRender={10}
-      //   onEndReached={fetchMoreData}
-      //   onEndReachedThreshold={0.2}
+        onEndReached={fetchMoreData}
+        onEndReachedThreshold={0.2}
       ListEmptyComponent={() =>
         notificationData && loading ? null : <NoDataFound />
       }

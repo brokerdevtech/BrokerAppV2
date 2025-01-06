@@ -42,7 +42,7 @@ export const MarqueeBanner: React.FC = ({}) => {
   }, [cityToShow]);
 
   useEffect(() => {
-    console.log(Addata, 'add');
+  //  console.log(Addata, 'add');
   }, [Addata]);
   // React.useEffect(() => {
   //   const interval = setInterval(() => {

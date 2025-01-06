@@ -248,8 +248,8 @@ const BrandSection = (props: BrandSectionProps) => {
       </HStack>
       <HStack space="md" reversed={false} style={{paddingHorizontal: 10}}>
         <FlatList
-          data={data}
-          keyExtractor={item => item.postId.toString()}
+          data={data} 
+          keyExtractor={(item, index) => index.toString()} 
           renderItem={renderProductItems}
           initialNumToRender={3}
           showsHorizontalScrollIndicator={false}

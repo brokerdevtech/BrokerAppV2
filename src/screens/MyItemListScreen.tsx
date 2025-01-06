@@ -73,10 +73,10 @@ import {concat} from 'lodash';
 import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleton';
 import {formatNumberToIndianSystem} from '../utils/helpers';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
+import ItemHeader from './ItemHeader';
 
 const ProductItem = React.memo(
   ({item, listTypeData, User, navigation, OnGoBack}) => {
-    
     const MediaGalleryRef = useRef(null);
     const [isrefresh, setisrefresh] = useState(0);
     const ProductItemOnGoBack = item => {
@@ -106,7 +106,7 @@ const ProductItem = React.memo(
       navigation.navigate('AppChat', {
         defaultScreen: 'ChannelScreen',
         defaultParams: members,
-      //  defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
+        //  defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
       });
     }, []);
     const makeCall = useCallback(async phoneNumber => {
@@ -153,6 +153,7 @@ const ProductItem = React.memo(
     return (
       <View style={styles.WrapcardContainer}>
         <View style={styles.cardContainer}>
+        <ItemHeader item={item}></ItemHeader>
           <MediaGallery
             ref={MediaGalleryRef}
             mediaItems={item.postMedias}
@@ -382,10 +383,10 @@ const MyItemListScreen: React.FC<any> = ({
   useEffect(() => {
     setLoading(true);
     if (listTypeData == 'RealEstate') {
-      pageTitle('Property');
+      pageTitle('Properties');
     }
     if (listTypeData == 'Car') {
-      pageTitle('Car');
+      pageTitle('Cars');
     }
 
     set_FilterChipsData();
@@ -593,7 +594,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   WrapcardContainer: {
-    paddingHorizontal: 20,
+   // paddingHorizontal: 20,
     marginBottom: 20,
   },
   cardContainer: {

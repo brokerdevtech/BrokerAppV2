@@ -418,7 +418,7 @@ const StoryView: React.FC = ({route}) => {
 
   const storyLike = async item => {
     //
-console.log(user);
+//console.log(user);
     if (StoryState?.userLiked && StoryState?.userLiked == 1) {
       const result = await StoryUnLIke(user.userId, item.storyId);
 
