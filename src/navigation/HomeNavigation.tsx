@@ -38,7 +38,7 @@ import CarPostPreview from '../screens/postImage/previewScreens/CarPostPreview';
 import PostLikeList from '../sharedComponents/PostLikeList';
 import PostCommentLikeList from '../sharedComponents/PostCommentLikeList';
 import PostCommentReplyLikeList from '../sharedComponents/PostCommentReplyLikeList';
-import {ActivityIndicator, Platform,Text} from 'react-native';
+import {ActivityIndicator, Platform, Text} from 'react-native';
 // import MyItemListScreen from '../screens/MyItemListScreen';
 // import PodcastLikeList from '../sharedComponents/PodcastLikeList';
 // import PodcastViewList from '../sharedComponents/PodcastViewList';
@@ -52,18 +52,33 @@ import {ActivityIndicator, Platform,Text} from 'react-native';
 
 // import EnquiryForm from '../sharedComponents/EnquiryForm';
 import React from 'react';
+import StoryDetails from '../components/story/StoryDetails';
 // Lazy-loaded components
-const MyItemListScreen = React.lazy(() => import('../screens/MyItemListScreen'));
-const PodcastLikeList = React.lazy(() => import('../sharedComponents/PodcastLikeList'));
-const PodcastViewList = React.lazy(() => import('../sharedComponents/PodcastViewList'));
-const StoryLikeList = React.lazy(() => import('../sharedComponents/StoryLikeList'));
-const StoryViewList = React.lazy(() => import('../sharedComponents/StoryViewList'));
+const MyItemListScreen = React.lazy(
+  () => import('../screens/MyItemListScreen'),
+);
+const PodcastLikeList = React.lazy(
+  () => import('../sharedComponents/PodcastLikeList'),
+);
+const PodcastViewList = React.lazy(
+  () => import('../sharedComponents/PodcastViewList'),
+);
+const StoryLikeList = React.lazy(
+  () => import('../sharedComponents/StoryLikeList'),
+);
+const StoryViewList = React.lazy(
+  () => import('../sharedComponents/StoryViewList'),
+);
 const BrokerList = React.lazy(() => import('../sharedComponents/BrokerList'));
-const ItemFilterListScreen = React.lazy(() => import('../screens/ItemFilterListScreen'));
+const ItemFilterListScreen = React.lazy(
+  () => import('../screens/ItemFilterListScreen'),
+);
 const BuyerList = React.lazy(() => import('../sharedComponents/BuyerList'));
-const ProfileViewerList = React.lazy(() => import('../sharedComponents/ProfileViewerList'));
+const ProfileViewerList = React.lazy(
+  () => import('../sharedComponents/ProfileViewerList'),
+);
 const PostLeads = React.lazy(() => import('../sharedComponents/PostLeads'));
-const EnquiryForm = React.lazy(() => import('../sharedComponents/EnquiryForm'))
+const EnquiryForm = React.lazy(() => import('../sharedComponents/EnquiryForm'));
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -92,14 +107,13 @@ const HomeNavigation: React.FC = () => {
   // console.log('strea============================');
   // console.log(streamChatTheme);
   return (
-     
     <OverlayProvider bottomInset={bottom} value={{style: streamChatTheme}}>
       {/* <Stack.Navigator screenOptions={globalScreenOptions}> */}
       <Stack.Navigator
-      detachInactiveScreens={true}
-      screenLayout={({ children }) => (
-        <Suspense fallback={<FallbackLoader />}>{children}</Suspense>
-      )}>
+        detachInactiveScreens={true}
+        screenLayout={({children}) => (
+          <Suspense fallback={<FallbackLoader />}>{children}</Suspense>
+        )}>
         <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
           <Stack.Screen name="Home" component={AppDrawer} />
         </Stack.Group>
@@ -273,7 +287,11 @@ const HomeNavigation: React.FC = () => {
           component={PostCommentLikeList}
           options={{headerShown: false}}
         />
-
+        <Stack.Screen
+          name="StoryDetails"
+          component={StoryDetails}
+          options={{headerShown: false}}
+        />
         <Stack.Screen
           name="PostCommentReplyLikeList"
           component={PostCommentReplyLikeList}
@@ -292,7 +310,6 @@ const HomeNavigation: React.FC = () => {
         />
       </Stack.Navigator>
     </OverlayProvider>
-    
   );
 };
 

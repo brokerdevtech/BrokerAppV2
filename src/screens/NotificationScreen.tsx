@@ -131,7 +131,10 @@ const NotificationItem = ({
         loggedInUserId: user.userId,
       });
     } else if (type === 11 || type === 12) {
-      // navigation.navigate('StoryView', {userImage: parsedMetaData});
+      navigation.push('StoryDetails', {
+        userId: user.userId,
+        storyId: parsedMetaData?.StoryId,
+      });
     } else {
       navigation.push('ItemDetailScreen', {
         onGoBack: 'NotificationScreen',
