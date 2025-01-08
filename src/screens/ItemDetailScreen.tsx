@@ -68,7 +68,7 @@ import {formatDate} from '../constants/constants';
 //const MediaGallery = React.lazy(() => import('../sharedComponents/MediaGallery'));
 const LocationMap = React.lazy(() => import('../sharedComponents/LocationMap'));
 const propertyDetails = (data: any, user: any, navigation: any) => {
-//  console.log(data);
+  //  console.log(data);
   const onPressUser = (userId, userName, userImage) => {
     if (user.userId === userId) {
       navigation.navigate('ProfileScreen');
@@ -184,7 +184,7 @@ const propertyDetails = (data: any, user: any, navigation: any) => {
               {data.propDescription}
             </ZTextMore>
           </VStack>
-          {data?.postPropertyAmenities?.length  > 0 && (
+          {data?.postPropertyAmenities?.length > 0 && (
             <>
               <Divider className="my-0.5" />
               <KeyValueRow
@@ -432,7 +432,7 @@ const ItemDetailScreen: React.FC<any> = ({
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
-
+  console.log(route, 'route');
   const MediaGalleryRef = useRef(null);
   const {logButtonClick} = useUserJourneyTracker(
     `${route.params.postType} Detail Page`,
@@ -499,7 +499,7 @@ const ItemDetailScreen: React.FC<any> = ({
 
   const callItemDetail = async () => {
     // console.log(route, route.params.postType, 'route');
-//console.log("route.params.postId",route.params.postId)
+    //console.log("route.params.postId",route.params.postId)
     await execute(route.params.postType, route.params.postId);
   };
   const chatProfilePress = useCallback(async () => {

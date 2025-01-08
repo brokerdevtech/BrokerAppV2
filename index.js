@@ -30,7 +30,7 @@ messaging().onMessage(async remoteMessage => {
     });
 
     const data = {};
-    // console.log("setBackgroundMessageHandler");
+    console.log('setBackgroundMessageHandler', remoteMessage);
     await notifee.displayNotification({
       android: {
         channelId,

@@ -122,6 +122,7 @@ const StoryView: React.FC = ({route}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [scaleValue] = useState(new Animated.Value(1));
   const commentSheetRef = useRef(null);
+  console.log(userImage, 'userimage');
   useFocusEffect(
     useCallback(() => {
       // Initial setup that you want to run when the component gains focus
@@ -129,7 +130,7 @@ const StoryView: React.FC = ({route}) => {
         //setCurrent(0); // Reset current index to initial
         progress.setValue(0); // Reset progress to initial value
         // Reset other states as needed
-       // play();
+        // play();
         // const resetContent = route.params.userImage.storyDetails.map((item, index) => {
         //   if (current === index) { // Assuming 'current' is defined somewhere in your scope
         //     return ({
@@ -279,16 +280,16 @@ const StoryView: React.FC = ({route}) => {
     });
     start(duration); // Pass the actual content duration
   }
-  const onLoadStartImage=()=>{
+  const onLoadStartImage = () => {
     setIsLoading(true);
-  }
+  };
   const onLoadEndImage = () => {
     setIsLoading(false);
     progress.setValue(0);
     setTimeout(() => {
       play();
     }, 1000);
-  //  play(); // Default duration for images, adjust as necessary
+    //  play(); // Default duration for images, adjust as necessary
   };
   const togglePlayPause = () => {
     if (isPlayingRef.current) {
@@ -418,7 +419,7 @@ const StoryView: React.FC = ({route}) => {
 
   const storyLike = async item => {
     //
-//console.log(user);
+    //console.log(user);
     if (StoryState?.userLiked && StoryState?.userLiked == 1) {
       const result = await StoryUnLIke(user.userId, item.storyId);
 
@@ -532,7 +533,7 @@ const StoryView: React.FC = ({route}) => {
             />
           ) : (
             <FastImage
-            onLoadStart={onLoadStartImage}
+              onLoadStart={onLoadStartImage}
               onLoadEnd={onLoadEndImage}
               source={{
                 uri: `${imagesBucketcloudfrontPath}${reversedContent[current].mediaBlob}`,
