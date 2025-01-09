@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState, useRef, useCallback} from 'react';
+import React, {useState, useRef, useCallback, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -19,7 +19,11 @@ import {CommentWhite, TrashWhite} from '../../assets/svg';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import LinearGradient from 'react-native-linear-gradient';
 import Video from 'react-native-video';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@/BrokerAppCore/redux/store/reducers';
 import {secondsToMilliseconds} from '@/src/utils/helpers';
@@ -93,12 +97,16 @@ const StoryView: React.FC = ({route}) => {
   });
   const extraAvatars = avatars.slice(3);
   const remainingCount = extraAvatars.length;
-
+  const videoRef = useRef(null);
+  const [videoProgress, setVideoProgress] = useState(0);
+  const [videoDuration, setVideoDuration] = useState(0);
+  const [isScreenFocused, setIsScreenFocused] = useState(true);
+  const isFocused = useIsFocused();
   const [userImage, setuserImage] = useState(route.params.userImage);
   const [content, setContent] = useState([
     ...route.params.userImage.storyDetails,
   ]);
-
+  const [isReturningFromScreen, setIsReturningFromScreen] = useState(false);
   const [current, setCurrent] = useState(0);
   const reversedContent = content.slice().reverse();
   const userPermissions = useSelector(
@@ -125,54 +133,31 @@ const StoryView: React.FC = ({route}) => {
   console.log(userImage, 'userimage');
   useFocusEffect(
     useCallback(() => {
-      // Initial setup that you want to run when the component gains focus
-      const resetContentAndProgress = () => {
-        //setCurrent(0); // Reset current index to initial
-        progress.setValue(0); // Reset progress to initial value
-        // Reset other states as needed
-        // play();
-        // const resetContent = route.params.userImage.storyDetails.map((item, index) => {
-        //   if (current === index) { // Assuming 'current' is defined somewhere in your scope
-        //     return ({
-        //       ...item,
-        //       finish: 0, // Assuming 0 indicates not finished
-        //     });
-        //   }
-        //   if (current > index) { // Assuming 'current' is defined somewhere in your scope
-        //     return ({
-        //       ...item,
-        //       finish: 1, // Assuming 0 indicates not finished
-        //     });
-        //   }
-        //   return item;
-        // });
-        //   setContent(resetContent);
-        // setContent([...route.params.userImage.storyDetails]);
-        setStoryState({
-          likeCount: 0,
-          reactionCount: 0,
-          viewerCount: 0,
-          userLiked: 0,
-        });
-        setStoryState({
-          likeCount: reversedContent[current].likeCount,
-          reactionCount: reversedContent[current].reactionCount,
-          viewerCount: reversedContent[current].viewerCount,
-          userLiked: reversedContent[current].userLiked,
-        });
-      };
+      setIsScreenFocused(true);
+      setIsPaused(false);
+      setIsReturningFromScreen(true);
 
-      resetContentAndProgress(); // Call reset function
+      // Resume content based on type with proper progress tracking
+      if (reversedContent[current]?.mediaType === 'video') {
+        if (videoRef.current) {
+          const videoPosition = lastValueRef.current * videoDuration;
+          videoRef.current.seek(videoPosition);
 
-      // Merged Keyboard event listeners from useEffect
+          // Add small delay to ensure video seeks properly
+          setTimeout(() => {
+            start(videoDuration * (1 - lastValueRef.current));
+          }, 100);
+        }
+      } else if (lastValueRef.current > 0 && isPlayingRef.current) {
+        start(lastValueRef.current * end);
+      }
+
       const onFocus = () => {
         setKeybordShow(true);
-        // togglePlayPause(); // Pause the animation when input is in focus
       };
 
       const onBlur = () => {
         setKeybordShow(false);
-        // togglePlayPause(); // Resume the animation when input loses focus
       };
 
       const keyboardDidShowListener = Keyboard.addListener(
@@ -183,17 +168,38 @@ const StoryView: React.FC = ({route}) => {
         'keyboardDidHide',
         onBlur,
       );
-      toast.closeAll();
-      // Cleanup function
+
       return () => {
-        // Remove keyboard event listeners
+        setIsScreenFocused(false);
+        setIsPaused(true);
+        progress.stopAnimation(currentValue => {
+          lastValueRef.current = currentValue;
+        });
+
         keyboardDidShowListener.remove();
         keyboardDidHideListener.remove();
       };
-    }, [route.params.userImage.storyDetails]),
+    }, [current, videoDuration, end]),
   );
 
-  // start() is for starting the animation bars at the top
+  useEffect(() => {
+    if (isFocused) {
+      setIsPaused(false);
+      if (reversedContent[current]?.mediaType === 'video' && videoRef.current) {
+        const videoPosition = lastValueRef.current * videoDuration;
+        videoRef.current.seek(videoPosition);
+        start(videoDuration * (1 - lastValueRef.current));
+      } else if (lastValueRef.current > 0 && isPlayingRef.current) {
+        start(lastValueRef.current * end);
+      }
+    } else {
+      setIsPaused(true);
+      progress.stopAnimation(currentValue => {
+        lastValueRef.current = currentValue;
+      });
+    }
+  }, [isFocused]);
+
   function start1(n) {
     if (content[current].mediaType == 'video') {
       // type video
@@ -223,28 +229,50 @@ const StoryView: React.FC = ({route}) => {
     }
   }
   function start(duration) {
-    // Ensure duration is not zero
+    if (!isScreenFocused) return;
+
     duration = duration || 5000;
-    // if (isLoading) {
-    //   // Do not start progress if loading
-    //   return;
-    // } // Default duration for images if not set
+
     Animated.timing(progress, {
       toValue: 1,
       duration: duration,
       useNativeDriver: false,
     }).start(({finished}) => {
-      if (finished) {
-        onPressNext(); // Move to the next item
+      if (finished && isScreenFocused) {
+        onPressNext();
       }
     });
   }
+  const navigateWithPause = (screenName: string, params: any) => {
+    setIsPaused(true);
+    progress.stopAnimation(currentValue => {
+      lastValueRef.current = currentValue;
+    });
+    isPlayingRef.current = true;
+    navigation.push(screenName, params);
+  };
 
   const onLoadVideo = status => {
-    const videoDuration = secondsToMilliseconds(status.duration);
+    const duration = secondsToMilliseconds(status.duration);
+    setVideoDuration(duration);
     setIsLoading(false);
-    setEnd(videoDuration); // Set the end based on video duration
-    play(videoDuration); // Start playing the story with the correct duration
+    setEnd(duration);
+
+    if (isReturningFromScreen && lastValueRef.current > 0) {
+      // Resume from saved position when returning
+      const videoPosition = lastValueRef.current * status.duration;
+      videoRef.current?.seek(videoPosition);
+
+      // Add small delay to ensure video seeks properly
+      setTimeout(() => {
+        start(duration * (1 - lastValueRef.current));
+        setIsReturningFromScreen(false);
+      }, 100);
+    } else {
+      // Start from beginning for new video
+      lastValueRef.current = 0;
+      play(duration);
+    }
   };
   const handleLongPress = () => {
     isPlayingRef.current = false; // Pause the play state
@@ -258,6 +286,17 @@ const StoryView: React.FC = ({route}) => {
     isPlayingRef.current = true; // Resume the play state
     start(lastValueRef.current * end); // Resume from the saved progress
   };
+  // function play(duration) {
+  //   setstoryId(reversedContent[current].storyId);
+  //   AddStoryViewer(user.userId, reversedContent[current].storyId);
+  //   setStoryState({
+  //     likeCount: reversedContent[current].likeCount,
+  //     reactionCount: reversedContent[current].reactionCount,
+  //     viewerCount: reversedContent[current].viewerCount,
+  //     userLiked: reversedContent[current].userLiked,
+  //   });
+  //   start(duration); // Pass the actual content duration
+  // }
   function play(duration) {
     setstoryId(reversedContent[current].storyId);
     AddStoryViewer(user.userId, reversedContent[current].storyId);
@@ -267,18 +306,14 @@ const StoryView: React.FC = ({route}) => {
       viewerCount: reversedContent[current].viewerCount,
       userLiked: reversedContent[current].userLiked,
     });
-    start(duration); // Pass the actual content duration
-  }
-  function play(duration) {
-    setstoryId(reversedContent[current].storyId);
-    AddStoryViewer(user.userId, reversedContent[current].storyId);
-    setStoryState({
-      likeCount: reversedContent[current].likeCount,
-      reactionCount: reversedContent[current].reactionCount,
-      viewerCount: reversedContent[current].viewerCount,
-      userLiked: reversedContent[current].userLiked,
-    });
-    start(duration); // Pass the actual content duration
+
+    if (isReturningFromScreen) {
+      // If returning, start from saved position
+      start(duration * (1 - lastValueRef.current));
+    } else {
+      // Otherwise start from beginning
+      start(duration);
+    }
   }
   const onLoadStartImage = () => {
     setIsLoading(true);
@@ -302,8 +337,8 @@ const StoryView: React.FC = ({route}) => {
     } else {
       isPlayingRef.current = true;
       start(lastValueRef.current);
-      //progress.setValue(lastValueRef.current);
-      //start(lastValueRef.current);
+      progress.setValue(lastValueRef.current);
+      start(lastValueRef.current);
     }
   };
   // handle playing the animation
@@ -377,19 +412,19 @@ const StoryView: React.FC = ({route}) => {
   //   play();
   // };
   const storyLikeList = (item: any) => {
-    togglePlayPause();
-    navigation.push('StoryLikeList', {
+    navigateWithPause('StoryLikeList', {
       ActionId: item.storyId,
       userId: user.userId,
     });
   };
+
   const storyviewList = (item: any) => {
-    togglePlayPause();
-    navigation.push('StoryViewList', {
+    navigateWithPause('StoryViewList', {
       ActionId: item.storyId,
       userId: user.userId,
     });
   };
+
   const onLoadVideo1 = status => {
     const videoDuration = secondsToMilliseconds(status.duration);
 
@@ -413,7 +448,7 @@ const StoryView: React.FC = ({route}) => {
 
     setStoryState(item);
     await new Promise(resolve => setTimeout(resolve, 200));
-    togglePlayPause();
+    // togglePlayPause();
     // setPostId(0);
   };
 
@@ -494,17 +529,18 @@ const StoryView: React.FC = ({route}) => {
     });
   };
   const handlenavigateToProfile = item => {
-    if (user.userId === item.userId) {
-      navigation.navigate('ProfileScreen');
-    } else {
-      navigation.navigate('ProfileDetail', {
-        userName: item.userName,
-        userImage: item.userImage,
-        userId: item.userId,
-        loggedInUserId: user.userId,
-        connectionId: '',
-      });
-    }
+    navigateWithPause(
+      user.userId === item.userId ? 'ProfileScreen' : 'ProfileDetail',
+      user.userId === item.userId
+        ? undefined
+        : {
+            userName: item.userName,
+            userImage: item.userImage,
+            userId: item.userId,
+            loggedInUserId: user.userId,
+            connectionId: '',
+          },
+    );
   };
   return (
     <SafeAreaView style={localStyles.containerModal}>
@@ -521,15 +557,22 @@ const StoryView: React.FC = ({route}) => {
           reversedContent[current] &&
           reversedContent[current].mediaType == 'video' ? (
             <Video
+              ref={videoRef}
               source={{
                 uri: `${imagesBucketcloudfrontPath}${reversedContent[current].mediaBlob}`,
               }}
               rate={1.0}
               volume={1.0}
               resizeMode="cover"
-              //onReadyForDisplay={play}
               onLoad={onLoadVideo}
               style={{height: height, width: width}}
+              onProgress={data => {
+                setVideoProgress(data.currentTime);
+              }}
+              paused={isPaused || !isScreenFocused || !isFocused}
+              onEnd={() => {
+                onPressNext();
+              }}
             />
           ) : (
             <FastImage
