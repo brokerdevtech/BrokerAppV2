@@ -43,6 +43,7 @@
     "@gluestack-ui/textarea": "^0.1.23",
     "@gluestack-ui/toast": "^1.0.7",
     "@gluestack-ui/tooltip": "^0.1.32",
+    "@invertase/react-native-apple-authentication": "^2.4.0",
     "@legendapp/motion": "^2.4.0",
     "@notifee/react-native": "^9.1.1",
     "@react-native-async-storage/async-storage": "^2.0.0",

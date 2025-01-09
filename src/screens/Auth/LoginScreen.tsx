@@ -12,6 +12,7 @@ import {
   KeyboardAvoidingView,
   SafeAreaView,
   Alert,
+  Platform,
 } from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -24,7 +25,12 @@ import {
 } from '../../../components/ui/input';
 import {EyeIcon, EyeOffIcon, Icon} from '../../../components/ui/icon';
 import {AppleIcon, FBIcon, GoogleIcon} from '../../assets/svg';
-import {clearTokensfcmToken, getfcmToken, storeTokens, storeUser} from '../../utils/utilTokens';
+import {
+  clearTokensfcmToken,
+  getfcmToken,
+  storeTokens,
+  storeUser,
+} from '../../utils/utilTokens';
 import {setUser} from '../../../BrokerAppCore/redux/store/user/userSlice';
 import store from '../../../BrokerAppCore/redux/store';
 import {setTokens} from '../../../BrokerAppCore/redux/store/authentication/authenticationSlice';
@@ -42,9 +48,19 @@ import {
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
 import {handleApiError} from '../../../BrokerAppCore/services/new/ApiResponse';
-import { NewDeviceUpdate } from '../../../BrokerAppCore/services/authService';
-import {LoginManager, AccessToken,Profile, GraphRequest, GraphRequestManager } from 'react-native-fbsdk-next';
-import { AnyArn } from 'aws-sdk/clients/groundstation';
+import {NewDeviceUpdate} from '../../../BrokerAppCore/services/authService';
+import {
+  LoginManager,
+  AccessToken,
+  Profile,
+  GraphRequest,
+  GraphRequestManager,
+} from 'react-native-fbsdk-next';
+import {AnyArn} from 'aws-sdk/clients/groundstation';
+import appleAuth, {
+  appleAuthAndroid,
+} from '@invertase/react-native-apple-authentication';
+
 // Configure Google Sign-In
 // GoogleSignin.configure({
 //   webClientId:
@@ -173,13 +189,17 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       });
     }
   };
+
   const signInWithFacebook = async () => {
     try {
       //setLoading(true);
       LoginManager.logOut();
-      const result = await LoginManager.logInWithPermissions(['email']);
-   //   console.log("signInWithFacebook");
-//console.log(result);
+      const result = await LoginManager.logInWithPermissions([
+        'public_profile',
+        'email',
+      ]);
+      //   console.log("signInWithFacebook");
+      //console.log(result);
 
       if (result.isCancelled) {
         Alert.alert('Login cancelled');
@@ -187,16 +207,17 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       }
 
       // Get the access token
-      const data:any = await AccessToken.getCurrentAccessToken();
+      const data: any = await AccessToken.getCurrentAccessToken();
 
-      const currentProfile:any = await Profile.getCurrentProfile();
-      const userInfo:any = await fetchFacebookUser(data.accessToken.toString());
+      const currentProfile: any = await Profile.getCurrentProfile();
+      const userInfo: any = await fetchFacebookUser(
+        data.accessToken.toString(),
+      );
 
+      const fcmToken: any = await getfcmToken();
 
-      const fcmToken:any = await getfcmToken();
-  
-     // console.log("signInWithFacebook");
-      console.log(userInfo);
+      // console.log("signInWithFacebook");
+      // console.log(userInfo);
       await SocialLoginexecute(
         userInfo.email,
         'Facebook',
@@ -214,16 +235,12 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         AppLocation.viewportSouthWestLat,
         AppLocation.viewportSouthWestLng,
       );
-
-
-
     } catch (error) {
-//console.log(error);
+      //console.log(error);
       setLoading(false);
-   
     }
   };
-  const fetchFacebookUser = async (accessToken) => {
+  const fetchFacebookUser = async accessToken => {
     return new Promise((resolve, reject) => {
       const request = new GraphRequest(
         '/me',
@@ -241,7 +258,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
           } else {
             resolve(result);
           }
-        }
+        },
       );
       new GraphRequestManager().addRequest(request).start();
     });
@@ -258,16 +275,15 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     const {email, password} = values;
     setLoading(true);
     await execute(email, password);
-  
   };
   const updateDevice = async (userId: any) => {
     //
-   // console.log('updateDevice')
-   // console.log(userId)
+    // console.log('updateDevice')
+    // console.log(userId)
     await clearTokensfcmToken();
     const fcmToken: any = await getfcmToken();
- //   console.log('fcmToken===================')
-  //  console.log(fcmToken);
+    //   console.log('fcmToken===================')
+    //  console.log(fcmToken);
     const updateDevice = await NewDeviceUpdate(userId, fcmToken.toString());
   };
   useEffect(() => {
@@ -296,7 +312,6 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   const afterhandleLogin = async () => {
     setLoading(true);
     if (data) {
-    
       const storeUserresult = await storeUser(JSON.stringify(data.data));
       const storeTokensresult = await storeTokens(
         data.data.accessToken,
@@ -311,7 +326,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
           getStreamAccessToken: data.data.getStreamAccessToken,
         }),
       );
-      await   updateDevice(data.data.userId);
+      await updateDevice(data.data.userId);
       setLoggedIn(true);
       setLoading(false);
       navigation.navigate('Home');
@@ -336,7 +351,6 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   };
   const afterhandleSocialLogin = async () => {
     if (SocialLogindata) {
-  
       const storeUserresult = await storeUser(
         JSON.stringify(SocialLogindata.data),
       );
@@ -412,6 +426,32 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       }
     }
   }, [SocialLoginerror]);
+  const handleAppleLogin = async () => {
+    if (!appleAuth.isSupported) {
+      console.error('Apple Sign-In is not supported on this device.');
+      return;
+    }
+
+    try {
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+      });
+
+      const credentialState = await appleAuth.getCredentialStateForUser(
+        appleAuthRequestResponse.user,
+      );
+
+      if (credentialState === appleAuth.State.AUTHORIZED) {
+        console.log('User is authenticated:', credentialState);
+      } else {
+        console.log('User is not authenticated:', credentialState);
+      }
+    } catch (err) {
+      console.error('Error during Apple Sign-In:', err);
+    }
+  };
+
   // console.log(SocialLoginstatus, 'jdk');
   return (
     // <View style={{flex: 1}}>
@@ -532,6 +572,14 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
             onPress={signInWithFacebook}>
             <Icon as={FBIcon} />
           </TouchableOpacity>
+          {/* {Platform.OS === 'ios' && (
+            <TouchableOpacity
+              style={styles.socialButton}
+              onPress={handleAppleLogin}>
+              <Icon as={AppleIcon} />
+            </TouchableOpacity>
+          )} */}
+
           {/* <TouchableOpacity style={styles.socialButton}>
           <Icon as={FBIcon} />
         </TouchableOpacity> */}
