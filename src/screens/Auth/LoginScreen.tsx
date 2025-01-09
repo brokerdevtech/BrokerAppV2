@@ -177,7 +177,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     try {
       //setLoading(true);
       LoginManager.logOut();
-      const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
+      const result = await LoginManager.logInWithPermissions(['email']);
    //   console.log("signInWithFacebook");
 //console.log(result);
 
@@ -196,7 +196,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       const fcmToken:any = await getfcmToken();
   
      // console.log("signInWithFacebook");
-     // console.log(userInfo);
+      console.log(userInfo);
       await SocialLoginexecute(
         userInfo.email,
         'Facebook',
