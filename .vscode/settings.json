@@ -2,5 +2,6 @@
     "html.format.contentUnformatted": "",
     "tailwindCSS.experimental.classRegex": [
         ["tva\\((([^()]*|\\([^()]*\\))*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
-      ]
+      ],
+      "codegpt.apiKey": "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"
 }
