@@ -54,50 +54,23 @@ import StoryCommentBottomSheet from '../../sharedComponents/StoryCommentBottomSh
 import {DeleteStory} from '../../../BrokerAppCore/services/Story';
 
 const {width, height} = Dimensions.get('window');
-const avatars = [
-  {
-    src: 'https://gratisography.com/wp-content/uploads/2024/01/gratisography-cyber-kitty-800x525.jpg',
-    alt: 'Sandeep Srivastva',
-    color: 'bg-emerald-600',
-  },
-  {
-    src: 'https://gratisography.com/wp-content/uploads/2024/01/gratisography-cyber-kitty-800x525.jpg',
-    alt: 'Arjun Kapoor',
-    color: 'bg-cyan-600',
-  },
-  {
-    src: 'https://gratisography.com/wp-content/uploads/2024/01/gratisography-cyber-kitty-800x525.jpg',
-    alt: 'Ritik Sharma ',
-    color: 'bg-indigo-600',
-  },
-  {
-    src: 'https://gratisography.com/wp-content/uploads/2024/01/gratisography-cyber-kitty-800x525.jpg',
-    alt: 'Akhil Sharma',
-    color: 'bg-gray-600',
-  },
-  {
-    src: 'https://gratisography.com/wp-content/uploads/2024/01/gratisography-cyber-kitty-800x525.jpg',
-    alt: 'Rahul Sharma ',
-    color: 'bg-red-400',
-  },
-];
-//const AppTab: React.FC =
+
 const StoryView: React.FC = ({route}) => {
   const navigation = useNavigation();
   const user = useSelector((state: RootState) => state.user.user);
   const colors = useSelector(state => state.theme.theme);
   const [isLoading, setIsLoading] = useState(true);
   const [storyId, setstoryId] = useState(0);
-  const [newComment, setNewComment] = useState('');
+
   const [StoryState, setStoryState] = useState({
     likeCount: 0,
     reactionCount: 0,
     viewerCount: 0,
     userLiked: 0,
   });
-  const extraAvatars = avatars.slice(3);
-  const remainingCount = extraAvatars.length;
+
   const videoRef = useRef(null);
+  const progress = useRef(new Animated.Value(0)).current;
   const [videoProgress, setVideoProgress] = useState(0);
   const [videoDuration, setVideoDuration] = useState(0);
   const [isScreenFocused, setIsScreenFocused] = useState(true);
@@ -106,6 +79,7 @@ const StoryView: React.FC = ({route}) => {
   const [content, setContent] = useState([
     ...route.params.userImage.storyDetails,
   ]);
+
   const [isReturningFromScreen, setIsReturningFromScreen] = useState(false);
   const [current, setCurrent] = useState(0);
   const reversedContent = content.slice().reverse();
@@ -119,18 +93,14 @@ const StoryView: React.FC = ({route}) => {
   const [load, setLoad] = useState(false);
   const [KeybordShow, setKeybordShow] = useState(false);
   const [isOpen, setOpen] = useState(false);
-  const progress = useRef(new Animated.Value(0)).current;
-  const [isInputFocused, setIsInputFocused] = useState(false);
+
   const isPlayingRef = useRef(true);
   const lastValueRef = useRef(0);
-  const [isViewListOpen, setIsViewListOpen] = useState(false);
+
   const [isPaused, setIsPaused] = useState(false);
-  const animationProgress = useRef(new Animated.Value(0));
-  const animation = useRef(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [scaleValue] = useState(new Animated.Value(1));
+
   const commentSheetRef = useRef(null);
-  console.log(userImage, 'userimage');
+
   useFocusEffect(
     useCallback(() => {
       setIsScreenFocused(true);
@@ -172,6 +142,7 @@ const StoryView: React.FC = ({route}) => {
       return () => {
         setIsScreenFocused(false);
         setIsPaused(true);
+
         progress.stopAnimation(currentValue => {
           lastValueRef.current = currentValue;
         });
@@ -188,9 +159,11 @@ const StoryView: React.FC = ({route}) => {
       if (reversedContent[current]?.mediaType === 'video' && videoRef.current) {
         const videoPosition = lastValueRef.current * videoDuration;
         videoRef.current.seek(videoPosition);
+        console.log('start', videoPosition);
         start(videoDuration * (1 - lastValueRef.current));
       } else if (lastValueRef.current > 0 && isPlayingRef.current) {
         start(lastValueRef.current * end);
+        console.log('end');
       }
     } else {
       setIsPaused(true);
@@ -200,49 +173,23 @@ const StoryView: React.FC = ({route}) => {
     }
   }, [isFocused]);
 
-  function start1(n) {
-    if (content[current].mediaType == 'video') {
-      // type video
-
-      Animated.timing(progress, {
-        toValue: 1,
-        duration: 10000 * (1 - lastValueRef.current),
-        useNativeDriver: false,
-      }).start(({finished}) => {
-        if (finished) {
-          onPressNext();
-        }
-      });
-    } else {
-      // type image
-      Animated.timing(progress, {
-        toValue: 1,
-        duration: 10000 * (1 - lastValueRef.current),
-        useNativeDriver: false,
-      }).start(({finished}) => {
-        if (finished) {
-          lastValueRef.current = 0;
-          progress.setValue(0);
-          onPressNext();
-        }
-      });
-    }
-  }
   function start(duration) {
-    if (!isScreenFocused) return;
-
+    if (!isScreenFocused || isPaused) return;
+    console.log('jjk', isFocused);
     duration = duration || 5000;
+    progress.setValue(lastValueRef.current); // Start from last saved progress
 
     Animated.timing(progress, {
       toValue: 1,
-      duration: duration,
+      duration: duration * (1 - lastValueRef.current), // Adjust duration
       useNativeDriver: false,
     }).start(({finished}) => {
       if (finished && isScreenFocused) {
-        onPressNext();
+        onPressNext(); // Move to the next story if finished
       }
     });
   }
+
   const navigateWithPause = (screenName: string, params: any) => {
     setIsPaused(true);
     progress.stopAnimation(currentValue => {
@@ -259,44 +206,23 @@ const StoryView: React.FC = ({route}) => {
     setEnd(duration);
 
     if (isReturningFromScreen && lastValueRef.current > 0) {
-      // Resume from saved position when returning
       const videoPosition = lastValueRef.current * status.duration;
       videoRef.current?.seek(videoPosition);
 
-      // Add small delay to ensure video seeks properly
       setTimeout(() => {
-        start(duration * (1 - lastValueRef.current));
+        if (isPlayingRef.current) {
+          start(duration * (1 - lastValueRef.current));
+        }
         setIsReturningFromScreen(false);
       }, 100);
     } else {
-      // Start from beginning for new video
       lastValueRef.current = 0;
-      play(duration);
+      if (isPlayingRef.current) {
+        play(duration);
+      }
     }
   };
-  const handleLongPress = () => {
-    isPlayingRef.current = false; // Pause the play state
-    progress.stopAnimation(currentValue => {
-      lastValueRef.current = currentValue; // Save the current progress value
-    });
-  };
 
-  // Add this handler to resume the story and progress bar
-  const handlePressOut = () => {
-    isPlayingRef.current = true; // Resume the play state
-    start(lastValueRef.current * end); // Resume from the saved progress
-  };
-  // function play(duration) {
-  //   setstoryId(reversedContent[current].storyId);
-  //   AddStoryViewer(user.userId, reversedContent[current].storyId);
-  //   setStoryState({
-  //     likeCount: reversedContent[current].likeCount,
-  //     reactionCount: reversedContent[current].reactionCount,
-  //     viewerCount: reversedContent[current].viewerCount,
-  //     userLiked: reversedContent[current].userLiked,
-  //   });
-  //   start(duration); // Pass the actual content duration
-  // }
   function play(duration) {
     setstoryId(reversedContent[current].storyId);
     AddStoryViewer(user.userId, reversedContent[current].storyId);
@@ -329,30 +255,20 @@ const StoryView: React.FC = ({route}) => {
   const togglePlayPause = () => {
     if (isPlayingRef.current) {
       isPlayingRef.current = false;
-      // If currently playing, stop the animation for pausing
       progress.stopAnimation(currentValue => {
-        lastValueRef.current = currentValue;
-        // Optionally, you can store the currentValue if needed
+        lastValueRef.current = currentValue; // Save current progress
       });
     } else {
       isPlayingRef.current = true;
-      start(lastValueRef.current);
-      progress.setValue(lastValueRef.current);
-      start(lastValueRef.current);
+      start(
+        lastValueRef.current *
+          (reversedContent[current]?.mediaType === 'video'
+            ? videoDuration
+            : end),
+      ); // Resume
     }
   };
   // handle playing the animation
-  function play1() {
-    setstoryId(reversedContent[current].storyId);
-    AddStoryViewer(user.userId, reversedContent[current].storyId);
-    setStoryState({
-      likeCount: reversedContent[current].likeCount,
-      reactionCount: reversedContent[current].reactionCount,
-      viewerCount: reversedContent[current].viewerCount,
-      userLiked: reversedContent[current].userLiked,
-    });
-    start(end);
-  }
 
   // next() is for changing the content of the current content to +1
   function onPressNext() {
@@ -371,7 +287,6 @@ const StoryView: React.FC = ({route}) => {
       setLoad(false);
       progress.setValue(0);
     } else {
-      // the next content is empty
       onCloseStory();
     }
   }
@@ -402,15 +317,11 @@ const StoryView: React.FC = ({route}) => {
       Keyboard.dismiss();
       return;
     }
-    progress.setValue(0);
+    // progress.setValue(0);
     setLoad(false);
     navigation.goBack();
   }
 
-  // const onLoadEndImage1 = () => {
-  //   progress.setValue(0);
-  //   play();
-  // };
   const storyLikeList = (item: any) => {
     navigateWithPause('StoryLikeList', {
       ActionId: item.storyId,
@@ -425,31 +336,36 @@ const StoryView: React.FC = ({route}) => {
     });
   };
 
-  const onLoadVideo1 = status => {
-    const videoDuration = secondsToMilliseconds(status.duration);
-
-    setEnd(videoDuration);
-
-    progress.setValue(0);
-    play();
-    // setEnd(secondsToMilliseconds(status.duration));
-  };
   const StoryComment = () => {
-    // setActionSheetKey(prevKey => prevKey + 1);
-    // setstoryId(reversedContent[current].storyId);
-    togglePlayPause();
+    isPlayingRef.current = false; // Pause playback when opening comment
+    setIsPaused(true);
+    progress.stopAnimation(currentValue => {
+      lastValueRef.current = currentValue;
+    });
     commentSheetRef.current?.open();
     setOpen(true);
-    // togglePlayPause();
   };
   const closeModal = async (item: any) => {
+    // Close the modal and update state
     setOpen(false);
-    // await new Promise(resolve => setTimeout(resolve, 200));
+    isPlayingRef.current = true; // Ensure playback is resumed
+    setIsPaused(false);
 
+    // Update the story state
     setStoryState(item);
-    await new Promise(resolve => setTimeout(resolve, 200));
-    // togglePlayPause();
-    // setPostId(0);
+
+    // Small delay to ensure state updates are processed
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Resume playback based on content type
+    if (reversedContent[current]?.mediaType === 'video' && videoRef.current) {
+      const videoPosition = lastValueRef.current * videoDuration;
+      videoRef.current.seek(Math.round(videoPosition)); // Resume from last paused position
+
+      start(videoDuration * (1 - lastValueRef.current)); // Resume animation from where it left off
+    } else {
+      start(end * (1 - lastValueRef.current)); // For images, restart progress
+    }
   };
 
   const storyLike = async item => {
@@ -507,27 +423,7 @@ const StoryView: React.FC = ({route}) => {
     );
     togglePlayPause();
   };
-  const openStoryView = () => {
-    // Animate the shrink
-    Animated.timing(scaleValue, {
-      toValue: 0.8, // Shrinks the screen
-      duration: 300, // Animation duration
-      useNativeDriver: true,
-    }).start(() => {
-      setModalVisible(true); // Show the modal when animation is done
-    });
-  };
 
-  const closeStoryView = () => {
-    // Close the list and scale the screen back to normal
-    Animated.timing(scaleValue, {
-      toValue: 1, // Scale back to normal
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      setModalVisible(false);
-    });
-  };
   const handlenavigateToProfile = item => {
     navigateWithPause(
       user.userId === item.userId ? 'ProfileScreen' : 'ProfileDetail',
@@ -597,7 +493,6 @@ const StoryView: React.FC = ({route}) => {
             {content.map((index, key) => {
               return (
                 <View key={key} style={localStyles.barItemContainer}>
-                  {/* THE ANIMATION OF THE BAR*/}
                   <Animated.View
                     style={{
                       flex: current == key ? progress : content[key].finish,
@@ -747,27 +642,6 @@ const StoryView: React.FC = ({route}) => {
             </Box>
           )}
         </View>
-
-        {/* <View style={localStyles.avatarGroupContainer}>
-        <AvatarGroup>
-          <Avatar size="sm">
-            <AvatarFallbackText>John Doe</AvatarFallbackText>
-            <AvatarImage
-              source={{
-                uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
-              }}
-            />
-          </Avatar>
-          <Avatar size="sm">
-            <AvatarFallbackText>John Doe</AvatarFallbackText>
-            <AvatarImage
-              source={{
-                uri: 'https://images.unsplash.com/photo-1603415526960-f7e0328c63b1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
-              }}
-            />
-          </Avatar>
-        </AvatarGroup>
-      </View> */}
 
         <StoryCommentBottomSheet
           ref={commentSheetRef}

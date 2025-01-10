@@ -105,7 +105,7 @@ const StoryCommentBottomSheet = forwardRef(
       setInfiniteLoading,
       5,
     );
-    console.log(postItem, 'item');
+    // console.log(postItem, 'item');
     const [isOpenArray, setisOpenArray] = useState([]);
     // console.log(data, 'story');
     const showNewToast = NewToasttext => {
