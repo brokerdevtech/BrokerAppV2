@@ -1899,6 +1899,8 @@ PODS:
   - ReactNativeLocalization (2.3.2):
     - React-Core
   - RecaptchaInterop (100.0.0)
+  - RNAppleAuthentication (2.4.0):
+    - React-Core
   - RNAudioRecorderPlayer (3.6.11):
     - React-Core
   - RNCAsyncStorage (2.0.0):
@@ -2221,6 +2223,7 @@ DEPENDENCIES:
   - ReactCommon (from `../node_modules/react-native/ReactCommon`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeLocalization (from `../node_modules/react-native-localization`)
+  - "RNAppleAuthentication (from `../node_modules/@invertase/react-native-apple-authentication`)"
   - RNAudioRecorderPlayer (from `../node_modules/react-native-audio-recorder-player`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
@@ -2447,6 +2450,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeLocalization:
     :path: "../node_modules/react-native-localization"
+  RNAppleAuthentication:
+    :path: "../node_modules/@invertase/react-native-apple-authentication"
   RNAudioRecorderPlayer:
     :path: "../node_modules/react-native-audio-recorder-player"
   RNCAsyncStorage:
@@ -2605,6 +2610,7 @@ SPEC CHECKSUMS:
   ReactCommon: 8da2bad9c1e5901f7b5484e42e59578edeece142
   ReactNativeLocalization: fb171138cdc80d5d0d4f20243d2fc82c2b3cc48f
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
+  RNAppleAuthentication: e00c76acb03351f5544373c78fa7f359bef6d5d3
   RNAudioRecorderPlayer: 0208ee1f2e19ec027552bea44b1ae682f187ed54
   RNCAsyncStorage: d35c79ffba52c1013013e16b1fc295aec2feabb6
   RNCClipboard: 0a720adef5ec193aa0e3de24c3977222c7e52a37
