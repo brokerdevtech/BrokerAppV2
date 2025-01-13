@@ -130,7 +130,7 @@ const CustomDrawerContent = props => {
   const [showAlertDialog, setShowAlertDialog] = React.useState(false);
   const handleClose = () => setShowAlertDialog(false);
   const dashboard = useSelector((state: RootState) => state.dashboard);
- // console.log("dashboard",dashboard);
+  // console.log("dashboard",dashboard);
   const LogoutProceed = async () => {
     setIsloading(true);
     await logoutExecute();
@@ -165,7 +165,9 @@ const CustomDrawerContent = props => {
       </View>
 
       <View style={styles.drawerItemsContainer}>
-        <TouchableOpacity style={[styles.drawerItem, styles.bottomBorder]} onPress={() => navigation.navigate('ProfileViewerList')}>
+        <TouchableOpacity
+          style={[styles.drawerItem, styles.bottomBorder]}
+          onPress={() => navigation.navigate('ProfileViewerList')}>
           <ZText type={'S16'} style={styles.drawerLabel}>
             {dashboard?.profileViews}
             <ZText type={'R16'} style={styles.viewProfileText}>
@@ -187,8 +189,7 @@ const CustomDrawerContent = props => {
           rightIcon={ChevronRightIcon}
         />
         <CustomDrawerItem
-        label={`Following (${dashboard?.followings})`}
-        
+          label={`Following (${dashboard?.followings})`}
           onPress={() => {
             if (FollowingpermissionGranted) {
               viewFollower('Following');
@@ -227,6 +228,18 @@ const CustomDrawerContent = props => {
           leftIcon={Ads_Icon}
           rightIcon={ChevronRightIcon}
         /> */}
+        <CustomDrawerItem
+          label="Subscription Plans"
+          onPress={() => {
+            if (permissionGranted) {
+              navigation.navigate('SubscriptionScreen');
+            } else {
+              showToast();
+            }
+          }}
+          // leftIcon={}}
+          rightIcon={ChevronRightIcon}
+        />
         {/* <CustomDrawerItem
           label="Language"
           onPress={() => {}}
