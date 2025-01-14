@@ -60,6 +60,8 @@ import {AnyArn} from 'aws-sdk/clients/groundstation';
 import appleAuth, {
   appleAuthAndroid,
 } from '@invertase/react-native-apple-authentication';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {jwtDecode} from 'jwt-decode';
 
 // Configure Google Sign-In
 // GoogleSignin.configure({
@@ -404,6 +406,14 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     }
   }, [data]);
   useEffect(() => {
+    // onCredentialRevoked returns a function that will remove the event listener. useEffect will call this function when the component unmounts
+    return appleAuth.onCredentialRevoked(async () => {
+      console.warn(
+        'If this function executes, User Credentials have been Revoked',
+      );
+    });
+  }, []);
+  useEffect(() => {
     if (SocialLoginerror) {
       setLoading(false);
 
@@ -433,22 +443,79 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     }
 
     try {
+      setLoading(true);
+
       const appleAuthRequestResponse = await appleAuth.performRequest({
         requestedOperation: appleAuth.Operation.LOGIN,
         requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
       });
-
-      const credentialState = await appleAuth.getCredentialStateForUser(
-        appleAuthRequestResponse.user,
+      const {email, email_verified, is_private_email, sub} = jwtDecode(
+        appleAuthRequestResponse?.identityToken,
       );
+      console.log(email);
+      console.log(appleAuthRequestResponse);
+      // Check if we at least have the essential identityToken
+      // if (!appleAuthRequestResponse.identityToken) {
+      //   throw new Error('No identity token received from Apple Sign In');
+      // }
 
-      if (credentialState === appleAuth.State.AUTHORIZED) {
-        console.log('User is authenticated:', credentialState);
-      } else {
-        console.log('User is not authenticated:', credentialState);
-      }
-    } catch (err) {
-      console.error('Error during Apple Sign-In:', err);
+      // // Get stored email for this user if available
+      // let userEmail = appleAuthRequestResponse.email;
+      // if (!userEmail) {
+      //   userEmail = await AsyncStorage.getItem(
+      //     `appleAuthEmail-${appleAuthRequestResponse.user}`,
+      //   );
+      // }
+
+      // // If we still don't have an email, use the user ID as a fallback
+      // if (!userEmail) {
+      //   userEmail = `${appleAuthRequestResponse.user}@apple.signin`;
+      // }
+
+      // Store email if we received it
+      // if (appleAuthRequestResponse.email) {
+      //   await AsyncStorage.setItem(
+      //     `appleAuthEmail-${appleAuthRequestResponse.user}`,
+      //     appleAuthRequestResponse.email,
+      //   );
+      // }
+
+      const fcmToken = await getfcmToken();
+
+      // Call your social login API with the data we have
+      await SocialLoginexecute(
+        appleAuthRequestResponse.email,
+        'Apple',
+        appleAuthRequestResponse.identityToken,
+        fcmToken?.toString(),
+        AppLocation?.City || '',
+        AppLocation?.State || '',
+        AppLocation?.Country || '',
+        AppLocation?.placeID || '',
+        AppLocation?.placeName || '',
+        AppLocation?.geoLocationLatitude || 0,
+        AppLocation?.geoLocationLongitude || 0,
+        AppLocation?.viewportNorthEastLat || 0,
+        AppLocation?.viewportNorthEastLng || 0,
+        AppLocation?.viewportSouthWestLat || 0,
+        AppLocation?.viewportSouthWestLng || 0,
+      );
+    } catch (error) {
+      console.error('Apple Sign In Error:', error);
+      toast.show({
+        id: Math.random(),
+        placement: 'bottom',
+        duration: 3000,
+        render: ({id}) => (
+          <Toast nativeID={`toast-${id}`} action="error" variant="solid">
+            <ToastDescription>
+              {error.message || 'Failed to sign in with Apple'}
+            </ToastDescription>
+          </Toast>
+        ),
+      });
+    } finally {
+      setLoading(false);
     }
   };
 

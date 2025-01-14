@@ -11,7 +11,25 @@ export const useApiRequest = <T, P extends any[]>(
   const [error, setError] = useState<string | null>(null);
   // console.log(...params)
   // Function to trigger the API call
-  const execute = async (...params: P) => {
+  const execute = async (
+    email: string | null,
+    firstName: string,
+    lastName: string,
+    p0: string,
+    ...params: P,
+    p1: string | undefined,
+    City: string,
+    State: string,
+    Country: string,
+    placeID: string,
+    placeName: string,
+    geoLocationLatitude: number,
+    geoLocationLongitude: number,
+    viewportNorthEastLat: number,
+    viewportNorthEastLng: number,
+    viewportSouthWestLat: number,
+    viewportSouthWestLng: number,
+  ) => {
     // Call the external loading function, if provided
     if (setLoading) {
       setLoading(true);
@@ -39,7 +57,7 @@ export const useApiRequest = <T, P extends any[]>(
         setData(response.data || null);
         setStatus(response.status || 200);
       }
-      return response.data ;
+      return response.data;
     } catch (error: any) {
       if (setLoading) {
         setLoading(false);
@@ -51,7 +69,6 @@ export const useApiRequest = <T, P extends any[]>(
       if (setLoading) {
         setLoading(false);
       }
-     
     }
   };
 
