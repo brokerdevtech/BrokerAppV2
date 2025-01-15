@@ -50,6 +50,8 @@ import {getDashboardStory} from '../../BrokerAppCore/services/Story';
 import ProductSectionData from './Dashboard/ProductSectionData';
 import {fetchDashboardData as fetchDashboardDataBrand} from '../../BrokerAppCore/services/new/dashboardService';
 import AutoscrollAdsText from '../sharedComponents/AutoscrollAdsText';
+import StoryPreviewItem from './StoryPreviewList/StoryPreviewItem';
+import StoryPreviewList from './StoryPreviewList/StoryPreviewList';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
@@ -75,8 +77,7 @@ export default function DashboradScreen() {
 
   const toast = useToast();
 
-  const {data, status, error, 
-    execute} = useApiRequest(fetchPodcastList);
+  const {data, status, error, execute} = useApiRequest(fetchPodcastList);
   //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
   const cityToShow = AppLocation.City;
   const navigation = useNavigation();
@@ -127,7 +128,7 @@ export default function DashboradScreen() {
       const fetchData = async () => {
         try {
           // callmarList();
-//console.log(user);
+          //console.log(user);
           const results = await Promise.allSettled([
             GetDashboardData(user.userId),
             execute(user.userId, 1, 4),
@@ -161,7 +162,7 @@ export default function DashboradScreen() {
           ] = results.map(result =>
             result.status === 'fulfilled' ? result.value : null,
           );
-//console.log(dashboardData);
+          //console.log(dashboardData);
           // const [dashboardData, podcastList,DashboardStory,NewlyLaunch,NewInProperty,NewInCar,BrandAssociate] = await Promise.all([
           //   GetDashboardData(user.userId),
           //   execute(user.userId, 1, 4),
@@ -183,9 +184,8 @@ export default function DashboradScreen() {
           //     userId: user.userId,
           //   }),
           // ]);
-         
 
-          setStoryData(DashboardStory.data)
+          setStoryData(DashboardStory.data);
           setNewlyLaunchData(NewlyLaunch.data);
           setNewInPropertyData(NewInProperty.data);
           setNewInCarData(NewInCar.data);
@@ -256,7 +256,7 @@ export default function DashboradScreen() {
     [AppLocation.City],
   );
   const RenderPodcastItems = React.memo(({item, index}) => {
-   // console.log('RenderPodcastItems',item);
+    // console.log('RenderPodcastItems',item);
     return (
       <TouchableOpacity
         onPress={() => handleThumbnailTap(item, index)}
@@ -308,13 +308,13 @@ export default function DashboradScreen() {
       <ScrollView style={styles.scrollView}>
         <View>
           <View style={styles.subHeaderSection}>
-            <UserStories Data={StoryData} />
+            {/* <UserStories Data={StoryData} /> */}
+            <StoryPreviewList />
             {/* <AutoscrollAdsText
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           /> */}
-          
           </View>
-          
+
           <AutoscrollAds
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           />

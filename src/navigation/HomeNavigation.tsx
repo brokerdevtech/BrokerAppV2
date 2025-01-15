@@ -53,6 +53,7 @@ import {ActivityIndicator, Platform, Text} from 'react-native';
 // import EnquiryForm from '../sharedComponents/EnquiryForm';
 import React from 'react';
 import StoryDetails from '../components/story/StoryDetails';
+import StoryFullView from '../screens/StoryView/StoryFullView';
 // Lazy-loaded components
 const MyItemListScreen = React.lazy(
   () => import('../screens/MyItemListScreen'),
@@ -300,6 +301,11 @@ const HomeNavigation: React.FC = () => {
         <Stack.Screen
           name="StoryLikeList"
           component={StoryLikeList}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="StoryFullView"
+          component={StoryFullView}
           options={{headerShown: false}}
         />
 

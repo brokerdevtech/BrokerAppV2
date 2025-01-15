@@ -405,14 +405,14 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       // Proceed with storing tokens and user data
     }
   }, [data]);
-  useEffect(() => {
-    // onCredentialRevoked returns a function that will remove the event listener. useEffect will call this function when the component unmounts
-    return appleAuth.onCredentialRevoked(async () => {
-      console.warn(
-        'If this function executes, User Credentials have been Revoked',
-      );
-    });
-  }, []);
+  // useEffect(() => {
+  //   // onCredentialRevoked returns a function that will remove the event listener. useEffect will call this function when the component unmounts
+  //   return appleAuth.onCredentialRevoked(async () => {
+  //     console.warn(
+  //       'If this function executes, User Credentials have been Revoked',
+  //     );
+  //   });
+  // }, []);
   useEffect(() => {
     if (SocialLoginerror) {
       setLoading(false);
@@ -436,88 +436,88 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       }
     }
   }, [SocialLoginerror]);
-  const handleAppleLogin = async () => {
-    if (!appleAuth.isSupported) {
-      console.error('Apple Sign-In is not supported on this device.');
-      return;
-    }
+  // const handleAppleLogin = async () => {
+  // if (!appleAuth.isSupported) {
+  //   console.error('Apple Sign-In is not supported on this device.');
+  //   return;
+  // }
 
-    try {
-      setLoading(true);
+  // try {
+  //   setLoading(true);
 
-      const appleAuthRequestResponse = await appleAuth.performRequest({
-        requestedOperation: appleAuth.Operation.LOGIN,
-        requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
-      });
-      const {email, email_verified, is_private_email, sub} = jwtDecode(
-        appleAuthRequestResponse?.identityToken,
-      );
-      console.log(email);
-      console.log(appleAuthRequestResponse);
-      // Check if we at least have the essential identityToken
-      // if (!appleAuthRequestResponse.identityToken) {
-      //   throw new Error('No identity token received from Apple Sign In');
-      // }
+  // const appleAuthRequestResponse = await appleAuth.performRequest({
+  //   requestedOperation: appleAuth.Operation.LOGIN,
+  //   requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+  // });
+  // const {email, email_verified, is_private_email, sub} = jwtDecode(
+  //   appleAuthRequestResponse?.identityToken,
+  // );
+  // console.log(email);
+  // console.log(appleAuthRequestResponse);
+  // Check if we at least have the essential identityToken
+  // if (!appleAuthRequestResponse.identityToken) {
+  //   throw new Error('No identity token received from Apple Sign In');
+  // }
 
-      // // Get stored email for this user if available
-      // let userEmail = appleAuthRequestResponse.email;
-      // if (!userEmail) {
-      //   userEmail = await AsyncStorage.getItem(
-      //     `appleAuthEmail-${appleAuthRequestResponse.user}`,
-      //   );
-      // }
+  // // Get stored email for this user if available
+  // let userEmail = appleAuthRequestResponse.email;
+  // if (!userEmail) {
+  //   userEmail = await AsyncStorage.getItem(
+  //     `appleAuthEmail-${appleAuthRequestResponse.user}`,
+  //   );
+  // }
 
-      // // If we still don't have an email, use the user ID as a fallback
-      // if (!userEmail) {
-      //   userEmail = `${appleAuthRequestResponse.user}@apple.signin`;
-      // }
+  // // If we still don't have an email, use the user ID as a fallback
+  // if (!userEmail) {
+  //   userEmail = `${appleAuthRequestResponse.user}@apple.signin`;
+  // }
 
-      // Store email if we received it
-      // if (appleAuthRequestResponse.email) {
-      //   await AsyncStorage.setItem(
-      //     `appleAuthEmail-${appleAuthRequestResponse.user}`,
-      //     appleAuthRequestResponse.email,
-      //   );
-      // }
+  // Store email if we received it
+  // if (appleAuthRequestResponse.email) {
+  //   await AsyncStorage.setItem(
+  //     `appleAuthEmail-${appleAuthRequestResponse.user}`,
+  //     appleAuthRequestResponse.email,
+  //   );
+  // }
 
-      const fcmToken = await getfcmToken();
+  // const fcmToken = await getfcmToken();
 
-      // Call your social login API with the data we have
-      await SocialLoginexecute(
-        appleAuthRequestResponse.email,
-        'Apple',
-        appleAuthRequestResponse.identityToken,
-        fcmToken?.toString(),
-        AppLocation?.City || '',
-        AppLocation?.State || '',
-        AppLocation?.Country || '',
-        AppLocation?.placeID || '',
-        AppLocation?.placeName || '',
-        AppLocation?.geoLocationLatitude || 0,
-        AppLocation?.geoLocationLongitude || 0,
-        AppLocation?.viewportNorthEastLat || 0,
-        AppLocation?.viewportNorthEastLng || 0,
-        AppLocation?.viewportSouthWestLat || 0,
-        AppLocation?.viewportSouthWestLng || 0,
-      );
-    } catch (error) {
-      console.error('Apple Sign In Error:', error);
-      toast.show({
-        id: Math.random(),
-        placement: 'bottom',
-        duration: 3000,
-        render: ({id}) => (
-          <Toast nativeID={`toast-${id}`} action="error" variant="solid">
-            <ToastDescription>
-              {error.message || 'Failed to sign in with Apple'}
-            </ToastDescription>
-          </Toast>
-        ),
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Call your social login API with the data we have
+  // await SocialLoginexecute(
+  //   appleAuthRequestResponse.email,
+  //   'Apple',
+  //   appleAuthRequestResponse.identityToken,
+  //   fcmToken?.toString(),
+  //   AppLocation?.City || '',
+  //   AppLocation?.State || '',
+  //   AppLocation?.Country || '',
+  //   AppLocation?.placeID || '',
+  //   AppLocation?.placeName || '',
+  //   AppLocation?.geoLocationLatitude || 0,
+  //   AppLocation?.geoLocationLongitude || 0,
+  //   AppLocation?.viewportNorthEastLat || 0,
+  //   AppLocation?.viewportNorthEastLng || 0,
+  //   AppLocation?.viewportSouthWestLat || 0,
+  //   AppLocation?.viewportSouthWestLng || 0,
+  // );
+  //   } catch (error) {
+  //     console.error('Apple Sign In Error:', error);
+  //     toast.show({
+  //       id: Math.random(),
+  //       placement: 'bottom',
+  //       duration: 3000,
+  //       render: ({id}) => (
+  //         <Toast nativeID={`toast-${id}`} action="error" variant="solid">
+  //           <ToastDescription>
+  //             {error.message || 'Failed to sign in with Apple'}
+  //           </ToastDescription>
+  //         </Toast>
+  //       ),
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // console.log(SocialLoginstatus, 'jdk');
   return (

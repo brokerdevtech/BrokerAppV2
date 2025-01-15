@@ -1742,6 +1742,244 @@ const formatDate = dateString => {
 
   return `${day}/${month}/${year}`;
 };
+const storiesData = {
+  stories: [
+    {
+      userId: '1',
+      username: 'john_doe',
+      userAvatar: 'https://example.com/avatars/john.jpg',
+      hasUnseenStories: true,
+      stories: [
+        {
+          id: 'story1',
+          type: 'image',
+          url: 'https://example.com/stories/image1.jpg',
+          createdAt: '2025-01-14T10:00:00Z',
+          duration: 5,
+          viewedBy: ['user2', 'user3', 'user4', 'user5'],
+          reactions: [
+            {
+              userId: 'user2',
+              type: 'heart',
+              timestamp: '2025-01-14T10:01:00Z',
+            },
+            {
+              userId: 'user3',
+              type: 'clap',
+              timestamp: '2025-01-14T10:02:00Z',
+            },
+          ],
+          metadata: {
+            location: 'New York City',
+            filter: 'clarendon',
+            mentions: ['@jane_smith', '@mike_wilson'],
+            hashtags: ['#newyork', '#city', '#weekend'],
+            music: {
+              title: 'City Lights',
+              artist: 'Urban Dreams',
+              duration: 15,
+            },
+          },
+        },
+        {
+          id: 'story2',
+          type: 'video',
+          url: 'https://example.com/stories/video1.mp4',
+          thumbnailUrl: 'https://example.com/stories/thumb1.jpg',
+          createdAt: '2025-01-14T11:30:00Z',
+          duration: 15,
+          viewedBy: ['user2', 'user6', 'user7'],
+          reactions: [
+            {
+              userId: 'user6',
+              type: 'fire',
+              timestamp: '2025-01-14T11:35:00Z',
+            },
+          ],
+          metadata: {
+            location: 'Central Park',
+            filter: 'gingham',
+            mentions: ['@sarah_jones'],
+            hashtags: ['#centralpark', '#nature'],
+          },
+        },
+      ],
+    },
+    {
+      userId: '2',
+      username: 'jane_smith',
+      userAvatar: 'https://example.com/avatars/jane.jpg',
+      hasUnseenStories: false,
+      stories: [
+        {
+          id: 'story3',
+          type: 'image',
+          url: 'https://example.com/stories/image2.jpg',
+          createdAt: '2025-01-14T09:00:00Z',
+          duration: 5,
+          viewedBy: ['user1', 'user3', 'user4', 'user8'],
+          reactions: [
+            {
+              userId: 'user8',
+              type: 'laugh',
+              timestamp: '2025-01-14T09:05:00Z',
+            },
+          ],
+          metadata: {
+            poll: {
+              question: 'Best brunch spot?',
+              options: [
+                {
+                  text: 'Cafe Delight',
+                  votes: 245,
+                },
+                {
+                  text: 'Morning Glory',
+                  votes: 189,
+                },
+              ],
+              expiresAt: '2025-01-15T09:00:00Z',
+            },
+            location: 'Brooklyn',
+            filter: 'valencia',
+          },
+        },
+      ],
+    },
+    {
+      userId: '3',
+      username: 'mike_wilson',
+      userAvatar: 'https://example.com/avatars/mike.jpg',
+      hasUnseenStories: true,
+      stories: [
+        {
+          id: 'story4',
+          type: 'video',
+          url: 'https://example.com/stories/video2.mp4',
+          thumbnailUrl: 'https://example.com/stories/thumb2.jpg',
+          createdAt: '2025-01-14T12:00:00Z',
+          duration: 20,
+          viewedBy: ['user1', 'user2', 'user5', 'user9'],
+          reactions: [],
+          metadata: {
+            quiz: {
+              question: 'Guess where I am?',
+              options: [
+                {
+                  text: 'Paris',
+                  isCorrect: true,
+                  votes: 156,
+                },
+                {
+                  text: 'London',
+                  isCorrect: false,
+                  votes: 89,
+                },
+                {
+                  text: 'Rome',
+                  isCorrect: false,
+                  votes: 67,
+                },
+              ],
+            },
+            location: 'Paris, France',
+            filter: 'perpetua',
+          },
+        },
+      ],
+    },
+    {
+      userId: '4',
+      username: 'sarah_jones',
+      userAvatar: 'https://example.com/avatars/sarah.jpg',
+      hasUnseenStories: true,
+      stories: [
+        {
+          id: 'story5',
+          type: 'image',
+          url: 'https://example.com/stories/image3.jpg',
+          createdAt: '2025-01-14T13:30:00Z',
+          duration: 5,
+          viewedBy: ['user1', 'user2', 'user3'],
+          reactions: [],
+          metadata: {
+            countdown: {
+              event: 'Beach Party',
+              endsAt: '2025-01-20T18:00:00Z',
+              reminderCount: 45,
+            },
+            location: 'Miami Beach',
+            filter: 'mayfair',
+            hashtags: ['#beach', '#party', '#weekend'],
+          },
+        },
+        {
+          id: 'story6',
+          type: 'video',
+          url: 'https://example.com/stories/video3.mp4',
+          thumbnailUrl: 'https://example.com/stories/thumb3.jpg',
+          createdAt: '2025-01-14T14:00:00Z',
+          duration: 10,
+          viewedBy: ['user1', 'user7', 'user8'],
+          reactions: [
+            {
+              userId: 'user7',
+              type: 'heart',
+              timestamp: '2025-01-14T14:05:00Z',
+            },
+          ],
+          metadata: {
+            music: {
+              title: 'Summer Vibes',
+              artist: 'Beach Boys',
+              duration: 10,
+              albumCover: 'https://example.com/albums/summer.jpg',
+            },
+            location: 'Miami Beach',
+            filter: 'hudson',
+          },
+        },
+      ],
+    },
+    {
+      userId: '5',
+      username: 'alex_turner',
+      userAvatar: 'https://example.com/avatars/alex.jpg',
+      hasUnseenStories: true,
+      stories: [
+        {
+          id: 'story7',
+          type: 'image',
+          url: 'https://example.com/stories/image4.jpg',
+          createdAt: '2025-01-14T15:00:00Z',
+          duration: 5,
+          viewedBy: ['user2', 'user3', 'user4'],
+          reactions: [],
+          metadata: {
+            slider: {
+              question: 'Rate this sunset!',
+              emoji: '🌅',
+              votes: [
+                {
+                  userId: 'user2',
+                  value: 9,
+                },
+                {
+                  userId: 'user3',
+                  value: 10,
+                },
+              ],
+              averageRating: 9.5,
+            },
+            location: 'Malibu',
+            filter: 'rise',
+            hashtags: ['#sunset', '#malibu', '#views'],
+          },
+        },
+      ],
+    },
+  ],
+};
 export {
   formatDate,
   imagesBucketPath,
@@ -1787,4 +2025,5 @@ export {
   commentData,
   userStoryData,
   postData,
+  storiesData,
 };
