@@ -148,23 +148,23 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       //   throw new Error('Failed to get user email from Google Sign In');
       // }
 
-      await SocialLoginexecute(
-        userInfo.data?.user.email,
-        'Google',
-        userInfo.data?.idToken,
-        fcmToken?.toString(),
-        AppLocation.City,
-        AppLocation.State,
-        AppLocation.Country,
-        AppLocation.placeID,
-        AppLocation.placeName,
-        AppLocation.geoLocationLatitude,
-        AppLocation.geoLocationLongitude,
-        AppLocation.viewportNorthEastLat,
-        AppLocation.viewportNorthEastLng,
-        AppLocation.viewportSouthWestLat,
-        AppLocation.viewportSouthWestLng,
-      );
+      await SocialLoginexecute({
+        email: userInfo.data?.user.email,
+        provider: 'Google',
+        accessToken: userInfo.data?.idToken,
+        deviceId: fcmToken?.toString(),
+        cityName: AppLocation.City,
+        stateName: AppLocation.State,
+        countryName: AppLocation.Country,
+        placeID: AppLocation.placeID,
+        placeName: AppLocation.placeName,
+        geoLocationLatitude: AppLocation.geoLocationLatitude,
+        geoLocationLongitude: AppLocation.geoLocationLongitude,
+        viewportNorthEastLat: AppLocation.viewportNorthEastLat,
+        viewportNorthEastLng: AppLocation.viewportNorthEastLng,
+        viewportSouthWestLat: AppLocation.viewportSouthWestLat,
+        viewportSouthWestLng: AppLocation.viewportSouthWestLng,
+      });
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -220,23 +220,23 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
 
       // console.log("signInWithFacebook");
       // console.log(userInfo);
-      await SocialLoginexecute(
-        userInfo.email,
-        'Facebook',
-        data.accessToken.toString(),
-        fcmToken?.toString(),
-        AppLocation.City,
-        AppLocation.State,
-        AppLocation.Country,
-        AppLocation.placeID,
-        AppLocation.placeName,
-        AppLocation.geoLocationLatitude,
-        AppLocation.geoLocationLongitude,
-        AppLocation.viewportNorthEastLat,
-        AppLocation.viewportNorthEastLng,
-        AppLocation.viewportSouthWestLat,
-        AppLocation.viewportSouthWestLng,
-      );
+      await SocialLoginexecute({
+        email: userInfo.email,
+        provider: 'Facebook',
+        accessToken: data.accessToken.toString(),
+        deviceId: fcmToken?.toString(),
+        cityName: AppLocation.City,
+        stateName: AppLocation.State,
+        countryName: AppLocation.Country,
+        placeID: AppLocation.placeID,
+        placeName: AppLocation.placeName,
+        geoLocationLatitude: AppLocation.geoLocationLatitude,
+        geoLocationLongitude: AppLocation.geoLocationLongitude,
+        viewportNorthEastLat: AppLocation.viewportNorthEastLat,
+        viewportNorthEastLng: AppLocation.viewportNorthEastLng,
+        viewportSouthWestLat: AppLocation.viewportSouthWestLat,
+        viewportSouthWestLng: AppLocation.viewportSouthWestLng,
+      });
     } catch (error) {
       //console.log(error);
       setLoading(false);
@@ -405,14 +405,14 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       // Proceed with storing tokens and user data
     }
   }, [data]);
-  useEffect(() => {
-    // onCredentialRevoked returns a function that will remove the event listener. useEffect will call this function when the component unmounts
-    return appleAuth.onCredentialRevoked(async () => {
-      console.warn(
-        'If this function executes, User Credentials have been Revoked',
-      );
-    });
-  }, []);
+  // useEffect(() => {
+  //   // onCredentialRevoked returns a function that will remove the event listener. useEffect will call this function when the component unmounts
+  //   return appleAuth.onCredentialRevoked(async () => {
+  //     console.warn(
+  //       'If this function executes, User Credentials have been Revoked',
+  //     );
+  //   });
+  // }, []);
   useEffect(() => {
     if (SocialLoginerror) {
       setLoading(false);
@@ -449,57 +449,30 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
         requestedOperation: appleAuth.Operation.LOGIN,
         requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
       });
-      const {email, email_verified, is_private_email, sub} = jwtDecode(
-        appleAuthRequestResponse?.identityToken,
-      );
-      console.log(email);
+
       console.log(appleAuthRequestResponse);
-      // Check if we at least have the essential identityToken
-      // if (!appleAuthRequestResponse.identityToken) {
-      //   throw new Error('No identity token received from Apple Sign In');
-      // }
-
-      // // Get stored email for this user if available
-      // let userEmail = appleAuthRequestResponse.email;
-      // if (!userEmail) {
-      //   userEmail = await AsyncStorage.getItem(
-      //     `appleAuthEmail-${appleAuthRequestResponse.user}`,
-      //   );
-      // }
-
-      // // If we still don't have an email, use the user ID as a fallback
-      // if (!userEmail) {
-      //   userEmail = `${appleAuthRequestResponse.user}@apple.signin`;
-      // }
-
-      // Store email if we received it
-      // if (appleAuthRequestResponse.email) {
-      //   await AsyncStorage.setItem(
-      //     `appleAuthEmail-${appleAuthRequestResponse.user}`,
-      //     appleAuthRequestResponse.email,
-      //   );
-      // }
 
       const fcmToken = await getfcmToken();
 
-      // Call your social login API with the data we have
-      await SocialLoginexecute(
-        appleAuthRequestResponse.email,
-        'Apple',
-        appleAuthRequestResponse.identityToken,
-        fcmToken?.toString(),
-        AppLocation?.City || '',
-        AppLocation?.State || '',
-        AppLocation?.Country || '',
-        AppLocation?.placeID || '',
-        AppLocation?.placeName || '',
-        AppLocation?.geoLocationLatitude || 0,
-        AppLocation?.geoLocationLongitude || 0,
-        AppLocation?.viewportNorthEastLat || 0,
-        AppLocation?.viewportNorthEastLng || 0,
-        AppLocation?.viewportSouthWestLat || 0,
-        AppLocation?.viewportSouthWestLng || 0,
-      );
+      await SocialLoginexecute({
+        email: appleAuthRequestResponse.email || '',
+        firstName: appleAuthRequestResponse.fullName?.givenName,
+        lastName: appleAuthRequestResponse.fullName?.familyName,
+        provider: 'Apple',
+        accessToken: appleAuthRequestResponse.identityToken,
+        deviceId: fcmToken?.toString(),
+        cityName: AppLocation.City,
+        stateName: AppLocation.State,
+        countryName: AppLocation.Country,
+        placeID: AppLocation.placeID,
+        placeName: AppLocation.placeName,
+        geoLocationLatitude: AppLocation.geoLocationLatitude,
+        geoLocationLongitude: AppLocation.geoLocationLongitude,
+        viewportNorthEastLat: AppLocation.viewportNorthEastLat,
+        viewportNorthEastLng: AppLocation.viewportNorthEastLng,
+        viewportSouthWestLat: AppLocation.viewportSouthWestLat,
+        viewportSouthWestLng: AppLocation.viewportSouthWestLng,
+      });
     } catch (error) {
       console.error('Apple Sign In Error:', error);
       toast.show({
@@ -639,13 +612,13 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
             onPress={signInWithFacebook}>
             <Icon as={FBIcon} />
           </TouchableOpacity>
-          {/* {Platform.OS === 'ios' && (
+          {Platform.OS === 'ios' && (
             <TouchableOpacity
               style={styles.socialButton}
               onPress={handleAppleLogin}>
               <Icon as={AppleIcon} />
             </TouchableOpacity>
-          )} */}
+          )}
 
           {/* <TouchableOpacity style={styles.socialButton}>
           <Icon as={FBIcon} />

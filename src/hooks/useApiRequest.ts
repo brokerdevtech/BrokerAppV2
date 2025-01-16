@@ -11,25 +11,7 @@ export const useApiRequest = <T, P extends any[]>(
   const [error, setError] = useState<string | null>(null);
   // console.log(...params)
   // Function to trigger the API call
-  const execute = async (
-    email: string | null,
-    firstName: string,
-    lastName: string,
-    p0: string,
-    ...params: P,
-    p1: string | undefined,
-    City: string,
-    State: string,
-    Country: string,
-    placeID: string,
-    placeName: string,
-    geoLocationLatitude: number,
-    geoLocationLongitude: number,
-    viewportNorthEastLat: number,
-    viewportNorthEastLng: number,
-    viewportSouthWestLat: number,
-    viewportSouthWestLng: number,
-  ) => {
+  const execute = async (...params: P) => {
     // Call the external loading function, if provided
     if (setLoading) {
       setLoading(true);
