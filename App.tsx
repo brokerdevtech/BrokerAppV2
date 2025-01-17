@@ -8,6 +8,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import './global.css';
 import Geolocation from 'react-native-geolocation-service';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 //import "./global.css";
 import type {PropsWithChildren} from 'react';
@@ -56,6 +57,7 @@ import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import useSessionTracker from './src/hooks/Analytics/useSessionTracker';
 import useUserAnalytics from './src/hooks/Analytics/useUserAnalytics';
 import analytics from '@react-native-firebase/analytics';
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -494,7 +496,11 @@ function App(): React.JSX.Element {
   useEffect(() => {
     const runAsyncFunctions = async () => {
       try {
+        crashlytics().setCrashlyticsCollectionEnabled(true);
+
       //  console.log("checkUser0");
+      crashlytics().log('Testing Crashlytics in debug mode');
+    //  crashlytics().crash();
         allPermission();
         await checkUser();
        // console.log("checkUser");
