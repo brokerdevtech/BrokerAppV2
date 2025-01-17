@@ -75,6 +75,7 @@
     "axios": "^1.7.7",
     "formik": "^2.4.6",
     "i": "^0.3.7",
+    "jwt-decode": "^4.0.0",
     "loadash": "^1.0.0",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
