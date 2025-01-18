@@ -66,13 +66,17 @@ const { withNativeWind } = require('nativewind/metro');
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 const path = require('path');
 
+const {
+  withSentryConfig
+} = require("@sentry/react-native/metro");
+
 /**
  * Metro configuration
  * https://reactnative.dev/docs/metro
  *
  * @type {import('metro-config').MetroConfig}
  */
-module.exports = withNativeWind(
+module.exports = withSentryConfig(withNativeWind(
   mergeConfig(getDefaultConfig(__dirname), {
     transformer: {
       babelTransformerPath: require.resolve('react-native-svg-transformer'),
@@ -85,4 +89,4 @@ module.exports = withNativeWind(
   {
     input: './global.css',
   }
-);
+));

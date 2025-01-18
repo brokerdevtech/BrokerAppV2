@@ -8,6 +8,7 @@ import {
   Text,
   ActivityIndicator,
   Alert,
+  Dimensions,
 } from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
@@ -82,7 +83,7 @@ const UserStories = React.memo(Data => {
       StorieshasMore_Set(true);
     } catch (error) {
     } finally {
-     // setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -90,13 +91,13 @@ const UserStories = React.memo(Data => {
     React.useCallback(() => {
       const fetchData = async () => {
         await getList();
-        
+
         if (Data != null && Data.Data != null) {
           setStoryData(Data.Data.storyList);
           setLoading(false);
         }
       };
-  
+
       fetchData();
     }, [Data]),
   );
@@ -127,11 +128,8 @@ const UserStories = React.memo(Data => {
     }
   };
   const renderItem = useCallback(({item}) => {
-    const displayName =
-      item.postedBy.length > 7
-        ? `${item.postedBy.slice(0, 7)}...`
-        : item.postedBy;
-
+    const displayName = item.postedBy;
+    const maxNameLength = Math.floor(Dimensions.get('window').width / 40);
     return (
       <Pressable
         style={localStyles.itemContainer}
@@ -147,8 +145,14 @@ const UserStories = React.memo(Data => {
             />
           </View>
         </View>
-        <ZText type={'r14'} style={localStyles.itemUsername}>
-          {displayName}
+        <ZText
+          type={'r14'}
+          style={localStyles.itemUsername}
+          numberOfLines={1} // Ensure ellipsis
+          ellipsizeMode="tail">
+          {displayName.length > maxNameLength
+            ? `${displayName.slice(0, maxNameLength)}...`
+            : displayName}
         </ZText>
       </Pressable>
     );
@@ -175,21 +179,18 @@ const UserStories = React.memo(Data => {
             renderItem={renderItem}
             horizontal
             initialNumToRender={2}
-           
             showsHorizontalScrollIndicator={false}
-           
             contentContainerStyle={localStyles.mainContainer}
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             ListFooterComponent={
-               isInfiniteLoading ? (
-                                <ActivityIndicator
-                                  size="large"
-                                  color="#0000ff"
-                                  style={localStyles.loader}
-                                />
-                              ) : null
-             
+              isInfiniteLoading ? (
+                <ActivityIndicator
+                  size="large"
+                  color="#0000ff"
+                  style={localStyles.loader}
+                />
+              ) : null
             }
           />
         )}
@@ -224,7 +225,7 @@ const localStyles = StyleSheet.create({
   itemContainer: {
     alignItems: 'center',
     ...globalStyles.mr10,
-    width:65
+    width: 65,
   },
   avatarWrapper: {
     backgroundColor: '#bc4a50',
@@ -232,14 +233,14 @@ const localStyles = StyleSheet.create({
     borderRadius: moderateScale(50),
   },
   itemUsername: {
-    ...globalStyles.mt5,
-    textTransform: 'capitalize',
+    marginTop: 5,
+    maxWidth: Dimensions.get('window').width * 0.3, // Limit text width to 30% of screen
+    textAlign: 'center',
   },
   itemInnerContainer: {
     padding: moderateScale(4),
     borderRadius: moderateScale(50),
     backgroundColor: '#FFF',
-  
   },
   itemImage: {
     height: 80,

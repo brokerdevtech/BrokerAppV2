@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"  package="com.brokerapp.broker">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
       <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA"/>
@@ -27,6 +27,10 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme"
       android:supportsRtl="true">
+       <property
+        android:name="android.adservices.AD_SERVICES_CONFIG"
+        android:resource="@xml/ga_ad_services_config"
+        tools:replace="android:resource" />
        <meta-data
      android:name="com.google.android.geo.API_KEY"
      android:value="AIzaSyAawCHSjBRZJIu9udb1bAH1algFdNcaTPU"/>
