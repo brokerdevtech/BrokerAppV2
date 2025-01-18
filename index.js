@@ -7,7 +7,7 @@ import App from './App';
 import {name as appName} from './app.json';
 import {StreamChat, TokenOrProvider} from 'stream-chat';
 import messaging from '@react-native-firebase/messaging';
-import notifee, {AndroidImportance} from '@notifee/react-native';
+import notifee from '@notifee/react-native';
 import {GetStreamToken} from './BrokerAppCore/services/authService';
 import {chatApiKey} from './src/config/chatConfig';
 const tokenProvider: TokenOrProvider = async userId => {
@@ -21,16 +21,17 @@ const tokenProvider: TokenOrProvider = async userId => {
   }
 };
 messaging().onMessage(async remoteMessage => {
+  await notifee.requestPermission();
   if (Object.keys(remoteMessage.data).length === 0) {
     const channelId = await notifee.createChannel({
       id: 'app-messages',
       name: 'App Messages',
       vibration: true, // Ensure vibration is enabled
-      importance: AndroidImportance.HIGH,
+      // importance: AndroidImportance.HIGH,
     });
 
     const data = {};
-    console.log('setBackgroundMessageHandler', remoteMessage);
+    console.log('onMessage', remoteMessage);
     await notifee.displayNotification({
       android: {
         channelId,
@@ -88,7 +89,8 @@ messaging().onMessage(async remoteMessage => {
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   // console.log(remoteMessage);
-
+  await notifee.requestPermission();
+  console.log('setBackgroundMessageHandler', remoteMessage);
   if (Object.keys(remoteMessage.data).length === 0) {
     const channelId = await notifee.createChannel({
       id: 'app-messages',

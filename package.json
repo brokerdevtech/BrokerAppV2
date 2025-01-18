@@ -66,6 +66,7 @@
     "@react-navigation/native-stack": "^6.11.0",
     "@react-navigation/stack": "^6.4.1",
     "@reduxjs/toolkit": "^2.2.7",
+    "@sentry/react-native": "^6.5.0",
     "@shopify/flash-list": "^1.7.1",
     "@stream-io/flat-list-mvcp": "^0.10.3",
     "@types/lodash": "^4.17.10",

@@ -9,7 +9,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import './global.css';
 import Geolocation from 'react-native-geolocation-service';
 import crashlytics from '@react-native-firebase/crashlytics';
-
+import notifee from '@notifee/react-native';
 //import "./global.css";
 import type {PropsWithChildren} from 'react';
 import {
@@ -23,7 +23,8 @@ import {
   StyleSheet,
   Text,
   useColorScheme,
-  View,Image
+  View,
+  Image,
 } from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
@@ -195,16 +196,15 @@ function App(): React.JSX.Element {
       );
       await store.dispatch(setUser(user));
       setLoggedIn(true);
-   
+
       setTimeout(() => {
         // setLoggedIn(true);
         setIsSplashVisible(false);
       }, 1000);
-    }
-    else{
+    } else {
       setIsSplashVisible(false);
     }
-   // setIsSplashVisible(false);
+    // setIsSplashVisible(false);
   };
   const getCurrentPositionAsync = () => {
     return new Promise((resolve, reject) => {
@@ -324,7 +324,7 @@ function App(): React.JSX.Element {
         if (Platform.Version >= 33) {
           permissions.push(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
         }
-
+        await notifee.requestPermission();
         const permissionStatusesArray = await Promise.all(
           permissions.map(permission => PermissionsAndroid.check(permission)),
         );
@@ -498,12 +498,12 @@ function App(): React.JSX.Element {
       try {
         crashlytics().setCrashlyticsCollectionEnabled(true);
 
-      //  console.log("checkUser0");
-      crashlytics().log('Testing Crashlytics in debug mode');
-    //  crashlytics().crash();
+        //  console.log("checkUser0");
+        crashlytics().log('Testing Crashlytics in debug mode');
+        //  crashlytics().crash();
         allPermission();
         await checkUser();
-       // console.log("checkUser");
+        // console.log("checkUser");
       } catch (error) {
         console.error('Error in permission or user check:', error);
       }
@@ -569,12 +569,9 @@ function App(): React.JSX.Element {
             ]}
             resizeMode="contain"
           /> */}
-           <Image
+          <Image
             source={require('./src/assets/images/BANew.png')}
-            style={[
-              styles.logo,
-             
-            ]}
+            style={[styles.logo]}
             resizeMode="contain"
           />
         </View>

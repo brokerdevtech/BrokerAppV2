@@ -123,7 +123,7 @@ const NotificationItem = ({
     }
   };
   const onPressNotification = () => {
-    if (type === 3) {
+    if (type === 3 || type === 1) {
       navigation.push('ProfileDetail', {
         userName: `${parsedMetaData.FirstName} ${parsedMetaData.LastName}`,
         userImage: parsedMetaData?.profileImage,
@@ -137,7 +137,6 @@ const NotificationItem = ({
       });
     } else {
       navigation.push('ItemDetailScreen', {
-        onGoBack: 'NotificationScreen',
         postId: parsedMetaData?.PostId,
         postType: item?.category === 'RealEstate' ? 'Post' : 'Car/Post',
       });
@@ -171,12 +170,12 @@ const NotificationItem = ({
       </View>
       {shouldRenderButtons && (
         <View style={styles.message}>
-          <View style={styles.body}>
+          <TouchableOpacity style={styles.body} onPress={onPressNotification}>
             <ZText type={'M14'} style={[styles.capitalize]}>
               {response}
             </ZText>
             <ZText type={'M12'}>{timeDifference}</ZText>
-          </View>
+          </TouchableOpacity>
         </View>
       )}
       {!shouldRenderButtons && (
