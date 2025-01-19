@@ -123,7 +123,7 @@ const NotificationItem = ({
     }
   };
   const onPressNotification = () => {
-    if (type === 3 || type === 1) {
+    if (type === 3 || type === 1 || type === 2) {
       navigation.push('ProfileDetail', {
         userName: `${parsedMetaData.FirstName} ${parsedMetaData.LastName}`,
         userImage: parsedMetaData?.profileImage,

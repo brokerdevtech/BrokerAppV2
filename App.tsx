@@ -9,7 +9,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import './global.css';
 import Geolocation from 'react-native-geolocation-service';
 import crashlytics from '@react-native-firebase/crashlytics';
-import notifee from '@notifee/react-native';
+import notifee, {AuthorizationStatus} from '@notifee/react-native';
 //import "./global.css";
 import type {PropsWithChildren} from 'react';
 import {
@@ -206,6 +206,49 @@ function App(): React.JSX.Element {
     }
     // setIsSplashVisible(false);
   };
+  const requestNotificationPermission = async () => {
+    if (Platform.OS === 'ios') {
+      try {
+        // const result = await notifee.requestPermission();
+        const settings = await notifee.requestPermission();
+
+        if (settings.authorizationStatus >= AuthorizationStatus.AUTHORIZED) {
+          console.log('Permission settings:', settings);
+        } else {
+          Alert.alert(
+            'Permission Blocked',
+            'Notification permissions are blocked. Please enable them in settings.',
+            [
+              {text: 'Cancel', style: 'cancel'},
+              {text: 'Open Settings', onPress: openSettings},
+            ],
+          );
+          console.log('User declined permissions');
+        }
+        // switch (result) {
+        //   case RESULTS.UNAVAILABLE:
+        //     console.log(
+        //       'Notification permissions are not available on this device.',
+        //     );
+        //     break;
+        //   case RESULTS.DENIED:
+        //     console.log('Notification permission denied by the user.');
+        //     break;
+        //   case RESULTS.GRANTED:
+        //     console.log('Notification permission granted.');
+        //     break;
+        //   case RESULTS.BLOCKED:
+        //     console.log('Notification permissions are blocked.');
+
+        //     break;
+        // }
+      } catch (error) {
+        console.error('Error requesting notification permissions:', error);
+      }
+    } else {
+      console.log('Notification permissions are not needed on Android.');
+    }
+  };
   const getCurrentPositionAsync = () => {
     return new Promise((resolve, reject) => {
       Geolocation.getCurrentPosition(
@@ -324,7 +367,7 @@ function App(): React.JSX.Element {
         if (Platform.Version >= 33) {
           permissions.push(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
         }
-        await notifee.requestPermission();
+
         const permissionStatusesArray = await Promise.all(
           permissions.map(permission => PermissionsAndroid.check(permission)),
         );
@@ -456,7 +499,7 @@ function App(): React.JSX.Element {
   // };
   const allPermission = async () => {
     let granted = await checkPermission();
-
+    requestNotificationPermission();
     let UserLocation = await getUserLocation(granted);
   };
   // useEffect(() => {
