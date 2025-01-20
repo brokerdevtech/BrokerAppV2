@@ -1,6 +1,14 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState, useEffect} from 'react';
-import {View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import {useSelector} from 'react-redux';
 
 import AppBaseContainer from '../hoc/AppBaseContainer_old';
@@ -10,189 +18,220 @@ import {getConnections} from '../../BrokerAppCore/services/new/connection';
 
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 import ZText from '../sharedComponents/ZText';
-const plans = [
-  {
-    id: 1,
-    price: 361,
-    validity: '30 days',
-    data: '50.0 GB per pack',
-    details: {
-      data: '50GB',
-      validity: '30 days',
-    },
-  },
-  {
-    id: 2,
-    price: 211,
-    validity: '30 days',
-    data: '1.0 GB per day',
-    details: {
-      data: '1GB/day',
-      validity: '30 days',
-    },
-  },
-  {
-    id: 3,
-    price: 181,
-    validity: '30 days',
-    data: '15.0 GB per pack',
-    includes: 'Free 20+ OTTs',
-    details: {
-      data: '15GB',
-      validity: '30 days',
-      other: 'Xstream Play',
-    },
-  },
-  {
-    id: 4,
-    price: 49,
-    validity: '1 day',
-    data: 'Unlimited',
-    details: {
-      data: 'Unlimited',
-      validity: '1 day',
-    },
-    tag: 'Best Value',
-  },
-  {
-    id: 5,
-    price: 3999,
-    validity: '365 days',
-    data: '2.5 GB per day',
-    details: {
-      calls: 'Unlimited',
-      data: '2.5GB/day',
-      validity: '365 days',
-    },
-    tag: 'Super Saver - Rs. 334/month',
-  },
-  {
-    id: 6,
-    price: 361,
-    validity: '30 days',
-    data: '50.0 GB per pack',
-    details: {
-      data: '50GB',
-      validity: '30 days',
-    },
-  },
-  {
-    id: 7,
-    price: 211,
-    validity: '30 days',
-    data: '1.0 GB per day',
-    details: {
-      data: '1GB/day',
-      validity: '30 days',
-    },
-  },
-  {
-    id: 8,
-    price: 181,
-    validity: '30 days',
-    data: '15.0 GB per pack',
-    includes: 'Free 20+ OTTs',
-    details: {
-      data: '15GB',
-      validity: '30 days',
-      other: 'Xstream Play',
-    },
-  },
-  {
-    id: 9,
-    price: 49,
-    validity: '1 day',
-    data: 'Unlimited',
-    details: {
-      data: 'Unlimited',
-      validity: '1 day',
-    },
-    tag: 'Best Value',
-  },
-  {
-    id: 10,
-    price: 3999,
-    validity: '365 days',
-    data: '2.5 GB per day',
-    details: {
-      calls: 'Unlimited',
-      data: '2.5GB/day',
-      validity: '365 days',
-    },
-    tag: 'Super Saver - Rs. 334/month',
-  },
-];
-const renderItem = ({item}) => (
-  <TouchableOpacity style={styles.card}>
-    <View style={styles.row}>
-      <Text style={styles.price}>₹{item.price}</Text>
-      <View>
-        <Text style={styles.label}>Validity</Text>
-        <Text style={styles.value}>{item.validity}</Text>
-      </View>
-      <View>
-        <Text style={styles.label}>Data</Text>
-        <Text style={styles.value}>{item.data}</Text>
-      </View>
-    </View>
-    <View style={styles.divider} />
-    <View style={styles.details}>
-      <Text style={styles.detailText}>Data: {item.validity}</Text>
-      <Text style={styles.detailText}>Validity: {item.data}</Text>
-    </View>
-  </TouchableOpacity>
-);
-const SubscriptionPlan: React.FC = ({route}) => {
+import {useApiPagingWithtotalRequest} from '../hooks/useApiPagingWithtotalRequest';
+import {subsriptionPlanApi} from '../../BrokerAppCore/services/new/Subscription';
+import NoDataFoundScreen from '../sharedComponents/NoDataFoundScreen';
+import {formatDate} from '../constants/constants';
+import PlanDetailsScreen from '../sharedComponents/PlanDetailScreen';
+
+const SubscriptionPlan = ({route}) => {
   const user = useSelector((state: RootState) => state.user.user);
-  const [activeTab, setActiveTab] = useState('Recommended Packs');
-  const renderRecommendedplans = () => {
-    return (
-      <FlatList
-        data={plans}
-        keyExtractor={item => item.id.toString()}
-        renderItem={renderItem}
-      />
-    );
-  };
+  const [activeTab, setActiveTab] = useState('General');
+  const [selectedItem, setSelectedItem] = useState(null);
+  const commentSheetRef = useRef(null);
+
+  const handlePresentModalPress = useCallback(item => {
+    setSelectedItem(item);
+    commentSheetRef.current?.open();
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setSelectedItem(null);
+  }, []);
+
+  const renderItem = useCallback(
+    ({item}) => {
+      const limits = item.limits ? JSON.parse(item.limits) : {};
+
+      return (
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => handlePresentModalPress(item)}>
+          <View style={styles.row}>
+            <ZText type={'S22'} style={styles.price}>
+              {item?.currency + ' '}
+              {item.price}
+            </ZText>
+            <View>
+              <ZText type={'R14'} style={styles.label}>
+                Validity
+              </ZText>
+              <ZText type={'S16'} style={styles.value}>
+                {item.validityValue}{' '}
+                {item.validityType === 1 ? 'Days' : 'Hours'}
+              </ZText>
+            </View>
+            <View>
+              {Object.keys(limits).map(key => {
+                if (key === 'Ads' && Array.isArray(limits[key])) {
+                  const firstAd = limits[key][0];
+                  if (firstAd) {
+                    return (
+                      <React.Fragment key={`${key}-container`}>
+                        <Text style={styles.label}>{key}</Text>
+                        <Text style={styles.value}>{firstAd.AdCount}</Text>
+                      </React.Fragment>
+                    );
+                  }
+                } else if (key === 'SpaceAd' && Array.isArray(limits[key])) {
+                  const firstAd = limits[key][0];
+                  if (firstAd) {
+                    return (
+                      <React.Fragment key={`${key}-container`}>
+                        <Text style={styles.label}>{key}</Text>
+                        <Text style={styles.value}>{firstAd.AdCount}</Text>
+                      </React.Fragment>
+                    );
+                  }
+                } else {
+                  return (
+                    <React.Fragment key={`${key}-container`}>
+                      <Text style={styles.label}>{key}</Text>
+                      <Text style={styles.value}>{limits[key]}</Text>
+                    </React.Fragment>
+                  );
+                }
+              })}
+            </View>
+          </View>
+          <View style={styles.divider} />
+          <View type={'B26'} style={styles.details}>
+            <ZText type={'R12'} style={styles.detailText}>
+              On : {formatDate(item.activatedOn)}
+            </ZText>
+            <ZText type={'R16'} style={styles.detailText}>
+              By: {item.userName}
+            </ZText>
+          </View>
+        </TouchableOpacity>
+      );
+    },
+    [handlePresentModalPress],
+  );
+
+  const renderRecommendedplans = useCallback(
+    plantype => {
+      const flatListRef = useRef(null);
+      const [isInfiniteLoading, setInfiniteLoading] = useState(false);
+      const [plans, setPlans] = useState([]);
+      const {
+        data: Plandata,
+        status: Planstatus,
+        execute: Planexecute,
+        hasMore,
+        loadMore: PlanloadMore,
+      } = useApiPagingWithtotalRequest(
+        subsriptionPlanApi,
+        setInfiniteLoading,
+        6,
+      );
+
+      const getList = async () => {
+        try {
+          await Planexecute(plantype);
+        } catch (error) {
+          console.error('Error fetching plans:', error);
+        }
+      };
+
+      useEffect(() => {
+        getList();
+      }, [plantype]);
+
+      useEffect(() => {
+        if (Planstatus == 200) {
+          setPlans(Plandata);
+        }
+      }, [Plandata, Planstatus]);
+
+      const loadMorepage = async () => {
+        if (!isInfiniteLoading && hasMore) {
+          try {
+            await PlanloadMore(plantype);
+          } catch (error) {
+            console.error('Error loading more pages:', error);
+          }
+        }
+      };
+
+      return (
+        <FlatList
+          data={plans}
+          renderItem={renderItem}
+          ref={flatListRef}
+          getItemLayout={(data, index) => ({
+            length: 560,
+            offset: 560 * index,
+            index,
+          })}
+          initialNumToRender={2}
+          maxToRenderPerBatch={4}
+          windowSize={4}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          onEndReachedThreshold={0.6}
+          onEndReached={loadMorepage}
+          contentContainerStyle={{paddingBottom: 100}}
+          ListFooterComponent={
+            isInfiniteLoading ? (
+              <ActivityIndicator
+                size="large"
+                color="#0000ff"
+                style={styles.loader}
+              />
+            ) : null
+          }
+          removeClippedSubviews={false}
+          ListEmptyComponent={() =>
+            plans.length === 0 ? <NoDataFoundScreen /> : null
+          }
+        />
+      );
+    },
+    [renderItem],
+  );
+
   return (
     <View style={{flex: 1}}>
-      {/* Tab Buttons */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[
             styles.tabButton,
-            activeTab === 'Recommended Packs' && styles.activeTab,
+            activeTab === 'General' && styles.activeTab,
           ]}
-          onPress={() => setActiveTab('Recommended Packs')}>
+          onPress={() => setActiveTab('General')}>
           <ZText type={'R16'} style={styles.tabText}>
-            Recommended Packs
+            General
+          </ZText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tabButton, activeTab === 'Ads' && styles.activeTab]}
+          onPress={() => setActiveTab('Ads')}>
+          <ZText type={'R16'} style={styles.tabText}>
+            Ads
           </ZText>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
             styles.tabButton,
-            activeTab === 'Popular' && styles.activeTab,
+            activeTab === 'Space ads' && styles.activeTab,
           ]}
-          onPress={() => setActiveTab('Popular')}>
+          onPress={() => setActiveTab('Space ads')}>
           <ZText type={'R16'} style={styles.tabText}>
-            Popular
-          </ZText>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.tabButton,
-            activeTab === 'Super Saver' && styles.activeTab,
-          ]}
-          onPress={() => setActiveTab('Super Saver')}>
-          <ZText type={'R16'} style={styles.tabText}>
-            Super Saver
+            Space ads
           </ZText>
         </TouchableOpacity>
       </View>
 
-      {/* Tab Content */}
-      {activeTab === 'Recommended Packs' && renderRecommendedplans()}
-      {/* {activeTab === 'under' } */}
+      {activeTab === 'General' && renderRecommendedplans(1)}
+      {activeTab === 'Ads' && renderRecommendedplans(2)}
+      {activeTab === 'Space ads' && renderRecommendedplans(3)}
+
+      <PlanDetailsScreen
+        ref={commentSheetRef}
+        postItem={selectedItem}
+        onClose={closeModal}
+      />
     </View>
   );
 };
@@ -238,16 +277,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   price: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    // fontSize: 24,
+    // fontWeight: 'bold',
     color: '#000',
   },
   label: {
-    fontSize: 12,
+    // fontSize: 12,
     color: '#777',
   },
   value: {
-    fontSize: 14,
+    // fontSize: 14,
     fontWeight: '600',
     color: '#000',
   },
@@ -261,7 +300,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   detailText: {
-    fontSize: 12,
+    // fontSize: 12,
     color: '#555',
   },
 });
