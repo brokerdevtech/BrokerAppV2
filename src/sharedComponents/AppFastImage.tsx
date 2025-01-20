@@ -48,7 +48,7 @@
 //     };
 //     loadAspectRatio();
 //   }, [uri, width, height]);
-  
+
 //   // console.log(width);
 //   let finalWidth = width && width >= 0 ? width : screenWidth ;
 //   let finalHeight = height && height >= 0 ? height : finalWidth / aspectRatio;
@@ -71,9 +71,7 @@
 //         maxHeight: 450,
 // padding:10,
 //             display: 'flex',
-      
-     
-       
+
 //       }}
 //       onLayout={event => {
 //         const {width, height} = event.nativeEvent.layout;
@@ -84,7 +82,7 @@
 //         //  setContainerWidth(width);
 //         // Set container width based on layout
 //       }}>
-      
+
 //       <TouchableOpacity
 //         style={{...styles.vertical}}
 //         onPress={() => setIsFullscreen(true)} // Open the image in fullscreen on tap
@@ -129,7 +127,7 @@
 //             width: finalWidth,
 //             height: finalHeight,
 //             //   maxHeight: 450,
-//           }} 
+//           }}
 //           resizeMode={FastImage.resizeMode.cover} // Ensures the image is not cropped
 //         /> */}
 //         {/* <FastImage
@@ -176,7 +174,7 @@
 //     display: 'flex',
 // // justifyContent: 'center',
 // // alignContent: 'center',
-  
+
 //      },
 //   newImage: {
 //     flex: 1,
@@ -232,7 +230,7 @@
 // });
 
 // export default AppFastImage;
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -244,7 +242,7 @@ import {
   Platform,
 } from 'react-native';
 import FastImage from '@d11/react-native-fast-image';
-import { CloseCircleIcon, CloseIcon, Icon } from '../../components/ui/icon';
+import {CloseCircleIcon, CloseIcon, Icon} from '../../components/ui/icon';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -356,26 +354,19 @@ const screenWidth = Dimensions.get('window').width;
 
 // export default AppFastImage;
 
-
-
-
-
-const AppFastImage = ({ uri }) => {
+const AppFastImage = ({uri}) => {
   const [isFullscreen, setIsFullscreen] = React.useState(false);
 
   // Define Instagram-like dimensions (4:5 portrait aspect ratio)
   const maxWidth = screenWidth - 30; // Allow for padding
-  const maxHeight = ((maxWidth * 5) / 4)/2; // Height for a 4:5 ratio
+  const maxHeight = (maxWidth * 5) / 4 / 2; // Height for a 4:5 ratio
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => setIsFullscreen(true)}>
         <FastImage
-          source={{ uri }}
-          style={[
-            styles.image,
-            { width: maxWidth, height: maxHeight },
-          ]}
+          source={{uri}}
+          style={[styles.image, {width: maxWidth, height: maxHeight}]}
           resizeMode={FastImage.resizeMode.cover} // Crops taller images like Instagram
         />
       </TouchableOpacity>
@@ -388,20 +379,18 @@ const AppFastImage = ({ uri }) => {
         onRequestClose={() => setIsFullscreen(false)}>
         <View style={styles.fullscreenContainer}>
           <TouchableOpacity
-            onPress={() => 
-            { //console.log("kp");  
-              setIsFullscreen(false)
-            }
-            }
-            style={styles.closeButton}
-          > 
+            onPress={() => {
+              //console.log("kp");
+              setIsFullscreen(false);
+            }}
+            style={styles.closeButton}>
             <View>
-                {/* <Ionicons name="close-outline" size={28} color="white" /> */}
-                <Icon as={CloseCircleIcon} color='white'size={'xxxl'} />
-              </View>
+              {/* <Ionicons name="close-outline" size={28} color="white" /> */}
+              <Icon as={CloseCircleIcon} color="white" size={'xxxl'} />
+            </View>
           </TouchableOpacity>
           <FastImage
-            source={{ uri }}
+            source={{uri}}
             style={styles.fullscreenImage}
             resizeMode={FastImage.resizeMode.contain} // Ensures full view in fullscreen
           />
@@ -416,7 +405,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     //padding: 10,
-   borderRadius: 12,
+    borderRadius: 12,
   },
   image: {
     borderRadius: 12,
@@ -433,15 +422,17 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   closeButton: {
-    // position: 'absolute',
-    marginTop: Platform.OS === 'ios' ? 50 : 50,
-     right: 10,
-     color: 'white',
-   // flex:1,
+    position: 'absolute',
+    // marginTop: Platform.OS === 'ios' ? 200 : 50,
+    right: 20,
+    top: Platform.OS === 'ios' ? 70 : 50,
+    color: 'white',
+    // flex: 1,
     // backgroundColor: 'red',
-     marginLeft:"auto",
-     padding: 10,
-     borderRadius: 20,
+    // marginLeft: 'auto',
+    // padding: 10,
+    borderRadius: 20,
+    zIndex: 1000,
   },
   closeButtonText: {
     color: 'black',

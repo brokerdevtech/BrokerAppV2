@@ -671,7 +671,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: 'red', // Customize splash background color
+    backgroundColor: '#fff', // Customize splash background color
   },
   logo: {
     width: 250, // Adjust size according to your needs
