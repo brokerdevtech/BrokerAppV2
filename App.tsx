@@ -67,6 +67,19 @@ type ThemeContextType = {
   colorMode?: 'dark' | 'light';
   toggleColorMode?: () => void;
 };
+const defaultAdress = {
+  City: 'Noida',
+  Country: 'India',
+  State: 'Uttar Pradesh',
+  geoLocationLatitude: 28.5355161,
+  geoLocationLongitude: 77.3910265,
+  placeID: 'ChIJezVzMaTlDDkRP8B8yDDO_zc',
+  placeName: 'Noida, Uttar Pradesh, India',
+  viewportNorthEastLat: 28.63587813404002,
+  viewportNorthEastLng: 77.50655660125601,
+  viewportSouthWestLat: 28.40852545946161,
+  viewportSouthWestLng: 77.2970943490685,
+};
 export const ThemeContext = React.createContext<ThemeContextType>({
   colorMode: 'light',
   toggleColorMode: () => {},
@@ -213,7 +226,7 @@ function App(): React.JSX.Element {
         const settings = await notifee.requestPermission();
 
         if (settings.authorizationStatus >= AuthorizationStatus.AUTHORIZED) {
-          console.log('Permission settings:', settings);
+          // console.log('Permission settings:', settings);
         } else {
           Alert.alert(
             'Permission Blocked',
@@ -273,7 +286,9 @@ function App(): React.JSX.Element {
           longitude,
         );
 
-        store.dispatch(setAppLocation(resultAddress));
+        store.dispatch(
+          setAppLocation(resultAddress !== null ? resultAddress : 'Noida'),
+        );
       }
     }
     if (Platform.OS === 'ios') {
@@ -285,7 +300,7 @@ function App(): React.JSX.Element {
         latitude,
         longitude,
       );
-
+      console.log(resultAddress, 'loaction');
       store.dispatch(setAppLocation(resultAddress));
     }
   };
@@ -418,7 +433,8 @@ function App(): React.JSX.Element {
         };
 
         if (locationPermissionStatus === RESULTS.BLOCKED) {
-          await showBlockedPermissionAlert('Location');
+          // await showBlockedPermissionAlert('Location');
+          store.dispatch(setAppLocation(defaultAdress));
         } else if (locationPermissionStatus !== RESULTS.GRANTED) {
           const locationPermission = await request(
             PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,

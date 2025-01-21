@@ -59,6 +59,7 @@ const GooglePlacesAutocompleteModal = ({
   const setLoading = param => {
     setIsLoading(param);
   };
+
   const LeftIcon = () => {
     return (
       <View style={styles.rowCenter}>
@@ -125,8 +126,10 @@ const GooglePlacesAutocompleteModal = ({
     setSearchIconStyle(BlurredIconStyle);
 
     onPlaceSelected(item);
+    console.log(item);
     setModalVisible(false);
   };
+
   return (
     <Modal
       animationType="slide"
@@ -142,7 +145,7 @@ const GooglePlacesAutocompleteModal = ({
         />
       </SafeAreaView>
       <ScrollView
-        keyboardShouldPersistTaps={"always"}
+        keyboardShouldPersistTaps={'always'}
         showsVerticalScrollIndicator={false}
         bounces={false}
         contentContainerStyle={localstyles.rootContainer}>
