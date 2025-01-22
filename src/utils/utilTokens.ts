@@ -151,7 +151,8 @@ export const getItemStorage = async (item, value) => {
 
   return data;
 };
-export const getfcmToken = async () => {
+export const getfcmToken2 = async () => {
+  
   let fcmToken = await AsyncStorage.getItem('fcmToken');
 
   if (!fcmToken) {
@@ -163,9 +164,15 @@ export const getfcmToken = async () => {
     return fcmToken;
   }
 };
+export const getfcmToken = async () => {
+  
+  let  fcmToken = await firebase.messaging().getToken();
 
+    return fcmToken;
+  
+};
 export const getsfcmToken = async () => {
-  const fcmToken = await AsyncStorage.getItem('fcmToken');
+  const fcmToken =await firebase.messaging().getToken();
   // user has a device token
 
   return fcmToken;
