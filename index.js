@@ -21,12 +21,13 @@ const tokenProvider: TokenOrProvider = async userId => {
   }
 };
 async function handleNotification(remoteMessage, isBackground = false) {
-  if (isBackground) {
+  if (isBackground && Object.keys(remoteMessage.data).length==0) {
     const channelId = await notifee.createChannel({
       id: 'app-messages',
       name: 'App Messages',
     });
 
+   
     const data = {};
     await notifee.displayNotification({
       android: {
@@ -50,7 +51,9 @@ async function handleNotification(remoteMessage, isBackground = false) {
   }
 
   if (Object.keys(remoteMessage.data).length > 0) {
+ 
     const messageId = remoteMessage.data?.id;
+    console.log(messageId);
     if (!messageId) return;
 
     const chatClient = StreamChat.getInstance(chatApiKey);
@@ -58,11 +61,11 @@ async function handleNotification(remoteMessage, isBackground = false) {
       id: remoteMessage.data?.receiver_id,
     };
     let token = await tokenProvider(remoteMessage.data?.receiver_id);
-
+  
     await chatClient._setToken(user, token);
     const message = await chatClient.getMessage(messageId);
 
-    if (message.message.user?.name && message.message.text && isBackground) {
+    if (message.message.user?.name && message.message.text ) {
       const channelId = await notifee.createChannel({
         id: 'chat-messages',
         name: 'Chat Messages',
@@ -73,7 +76,7 @@ async function handleNotification(remoteMessage, isBackground = false) {
         ...rest,
         ...(stream ?? {}),
       };
-
+    
       await notifee.displayNotification({
         android: {
           channelId,
@@ -88,16 +91,23 @@ async function handleNotification(remoteMessage, isBackground = false) {
       });
     }
   }
+  else{
+    console.log("remoteMessage");
+   
+  }
 }
 
 messaging().onMessage(async remoteMessage => {
-  console.log(remoteMessage, 'onMessage');
 
-  await handleNotification(remoteMessage, false);
+ if(remoteMessage.notification)
+  {}else{
+ await handleNotification(remoteMessage, false);}
 });
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log('setBackgroundMessageHandler', remoteMessage);
-  await handleNotification(remoteMessage, true);
+
+  if(remoteMessage.notification)
+  {}else{
+    await handleNotification(remoteMessage, true);}
 });
 AppRegistry.registerComponent(appName, () => App);
