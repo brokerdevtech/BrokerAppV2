@@ -2,7 +2,7 @@
  * @format
  */
 
-import {AppRegistry} from 'react-native';
+import {AppRegistry, Platform} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
 import {StreamChat, TokenOrProvider} from 'stream-chat';
@@ -21,13 +21,12 @@ const tokenProvider: TokenOrProvider = async userId => {
   }
 };
 async function handleNotification(remoteMessage, isBackground = false) {
-  if (isBackground && Object.keys(remoteMessage.data).length==0) {
+  if (isBackground && Object.keys(remoteMessage.data).length == 0) {
     const channelId = await notifee.createChannel({
       id: 'app-messages',
       name: 'App Messages',
     });
 
-   
     const data = {};
     await notifee.displayNotification({
       android: {
@@ -51,7 +50,6 @@ async function handleNotification(remoteMessage, isBackground = false) {
   }
 
   if (Object.keys(remoteMessage.data).length > 0) {
- 
     const messageId = remoteMessage.data?.id;
     console.log(messageId);
     if (!messageId) return;
@@ -61,11 +59,11 @@ async function handleNotification(remoteMessage, isBackground = false) {
       id: remoteMessage.data?.receiver_id,
     };
     let token = await tokenProvider(remoteMessage.data?.receiver_id);
-  
+
     await chatClient._setToken(user, token);
     const message = await chatClient.getMessage(messageId);
 
-    if (message.message.user?.name && message.message.text ) {
+    if (message.message.user?.name && message.message.text) {
       const channelId = await notifee.createChannel({
         id: 'chat-messages',
         name: 'Chat Messages',
@@ -76,7 +74,7 @@ async function handleNotification(remoteMessage, isBackground = false) {
         ...rest,
         ...(stream ?? {}),
       };
-    
+
       await notifee.displayNotification({
         android: {
           channelId,
@@ -90,15 +88,13 @@ async function handleNotification(remoteMessage, isBackground = false) {
         sound: 'default',
       });
     }
-  }
-  else{
-    console.log("remoteMessage");
+  } else {
+    console.log('remoteMessage');
     const channelId = await notifee.createChannel({
       id: 'app-messages',
       name: 'App Messages',
     });
 
-   
     const data = {};
     await notifee.displayNotification({
       android: {
@@ -123,19 +119,22 @@ async function handleNotification(remoteMessage, isBackground = false) {
 }
 
 messaging().onMessage(async remoteMessage => {
-console.log(remoteMessage)
-//  if(remoteMessage.notification)
-//   {}
-//  else{
- await handleNotification(remoteMessage, false);}
-
-// }
-);
+  console.log(remoteMessage);
+  if (Platform.OS === 'ios') {
+    if (remoteMessage.notification) {
+    } else {
+      await handleNotification(remoteMessage, false);
+    }
+  } else {
+    await handleNotification(remoteMessage, false);
+  }
+});
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-
-  if(remoteMessage.notification)
-  {}else{
-    await handleNotification(remoteMessage, true);}
+  console.log(remoteMessage);
+  if (remoteMessage.notification) {
+  } else {
+    await handleNotification(remoteMessage, true);
+  }
 });
 AppRegistry.registerComponent(appName, () => App);
