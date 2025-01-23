@@ -104,9 +104,10 @@ const ManuallyselectedLocation = forwardRef(
       setSearchInputStyle(BlurredStyle);
       setSearchIconStyle(BlurredIconStyle);
       if (item) {
-        onPlaceSelected(item); // Send the selected location to the parent component
+        store.dispatch(setAppLocation(item));
+        // onPlaceSelected(item); // Send the selected location to the parent component
       }
-      //   bottomSheetRef.current?.close();
+      bottomSheetRef.current?.close();
     };
     return (
       <BottomSheetModal
