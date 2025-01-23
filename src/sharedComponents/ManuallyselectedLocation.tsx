@@ -58,7 +58,7 @@ const ManuallyselectedLocation = forwardRef(
       setIsLoading(param);
     };
     // Bottom sheet snap points
-    const snapPoints = useMemo(() => ['50%', '70%'], []);
+    const snapPoints = useMemo(() => ['50%', '70%', '80%'], []);
 
     // Expose `present` and `close` methods to the parent via `ref`
     useImperativeHandle(ref, () => ({
@@ -70,20 +70,34 @@ const ManuallyselectedLocation = forwardRef(
       },
     }));
 
-    const handleSheetChanges = useCallback(index => {
-      setIsOpen(index >= 0);
-    }, []);
+    const handleSheetChanges = useCallback(
+      index => {
+        setIsOpen(index >= 0);
+
+        // Optional: If you want to programmatically change snap point when focused
+        if (index === 0 && isInputFocused) {
+          bottomSheetRef.current?.snapToIndex(2); // Snaps to 90%
+        }
+      },
+      [isInputFocused],
+    );
+
+    const [isInputFocused, setIsInputFocused] = useState(false);
 
     const onSearchInput = (text: string) => {
       setSearch(text);
     };
     const onHighlightInput = () => {
+      setIsInputFocused(true);
       setSearchInputStyle(FocusedStyle);
       setSearchIconStyle(FocusedIconStyle);
+      bottomSheetRef.current?.snapToIndex(2);
     };
     const onUnHighlightInput = () => {
+      setIsInputFocused(false);
       setSearchInputStyle(BlurredStyle);
       setSearchIconStyle(BlurredIconStyle);
+      bottomSheetRef.current?.snapToIndex(0);
     };
 
     const renderBackdrop = useCallback(
@@ -144,7 +158,7 @@ const ManuallyselectedLocation = forwardRef(
               <ZInput
                 placeHolder={strings.search}
                 _value={search}
-                _autoFocus={true}
+                _autoFocus={false}
                 keyBoardType={'default'}
                 autoCapitalize={'none'}
                 insideLeftIcon={() => <Search />}
