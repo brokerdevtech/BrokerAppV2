@@ -47,12 +47,22 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
   }, [postItem]);
   const getLimitsData = useMemo(() => {
     const limitsData = [];
+    const adsCategoryMap = {
+      1: 'Marquee',
+      2: 'Carousel',
+    };
 
+    const spaceCategoryMap = {
+      1: 'Newly Launched',
+      2: 'Brand Associated',
+      3: 'New In Property',
+      4: 'New In Car',
+    };
     if (limits.Ads && Array.isArray(limits.Ads)) {
       limits.Ads.forEach((ad, index) => {
         limitsData.push({
           id: `ad-${index}`,
-          title: `Category ${ad.Category} Ads`,
+          title: `${adsCategoryMap[ad.Category]}  Ads`,
           description: `${ad.AdCount} ads allowed`,
         });
       });
@@ -62,7 +72,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
       limits.SpaceAds.forEach((spaceAd, index) => {
         limitsData.push({
           id: `space-ad-${index}`,
-          title: `Category ${spaceAd.Category} Space Ads`,
+          title: `${spaceCategoryMap[spaceAd.Category]} Space Ads`,
           description: `${spaceAd.SpaceAdCount} space ads allowed`,
         });
       });
@@ -79,6 +89,17 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
     return limitsData;
   }, [limits]);
   const getAdditionalBenefits = useMemo(() => {
+    const adsCategoryMap = {
+      1: 'Marquee',
+      2: 'Carousel',
+    };
+
+    const spaceCategoryMap = {
+      1: 'Newly Launched',
+      2: 'Brand Associated',
+      3: 'New In Property',
+      4: 'New In Car',
+    };
     try {
       const benefits = JSON.parse(postItem?.additionalBenifits || '{}');
       const benefitsData = [];
@@ -87,7 +108,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
         benefits.Ads.forEach((ad, index) => {
           benefitsData.push({
             id: `benefit-ad-${index}`,
-            title: `Category ${ad.Category} Additional Ads`,
+            title: `${adsCategoryMap[ad.Category]} Additional Ads`,
             description: `${ad.AdCount} ads for ${ad.Validity} days`,
           });
         });
@@ -97,7 +118,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
         benefits.SpaceAd.forEach((spaceAd, index) => {
           benefitsData.push({
             id: `benefit-space-${index}`,
-            title: `Category ${spaceAd.Category} Additional Space Ads`,
+            title: `${spaceCategoryMap[spaceAd.Category]}  Space Ads`,
             description: `${spaceAd.SpaceAdCount} space ads for ${spaceAd.Validity} days`,
           });
         });
@@ -231,7 +252,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
           )}
 
           {/* Plan Details Section */}
-          <View style={styles.detailsSection}>
+          {/* <View style={styles.detailsSection}>
             <Text style={styles.detailText}>
               Created on: {new Date(postItem?.createdOn).toLocaleDateString()}
             </Text>
@@ -242,7 +263,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
             <Text style={styles.detailText}>
               Created by: {postItem?.userName}
             </Text>
-          </View>
+          </View> */}
         </ScrollView>
 
         {/* Proceed Button - Outside ScrollView */}
@@ -366,6 +387,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderTopWidth: 1,
     borderTopColor: '#eee',
+    marginBottom: 10,
   },
   proceedButton: {
     backgroundColor: Color.primary,

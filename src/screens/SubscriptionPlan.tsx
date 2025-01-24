@@ -42,7 +42,32 @@ const SubscriptionPlan = ({route}) => {
   const renderItem = useCallback(
     ({item}) => {
       const limits = item.limits ? JSON.parse(item.limits) : {};
+      const additionalBenefits = item.additionalBenifits
+        ? JSON.parse(item.additionalBenifits)
+        : {};
+      const AdsCategoryMap = {
+        1: 'Marquee',
+        2: 'Carousel',
+      };
 
+      // Map for SpaceCategory
+      const SpaceCategoryMap = {
+        1: 'Newly Launched',
+        2: 'Brand Associated',
+        3: 'New in Property',
+        4: 'New in Car',
+      };
+      const hasLimits = Object.keys(limits).some(key =>
+        Array.isArray(limits[key])
+          ? limits[key].length > 0
+          : limits[key] !== undefined,
+      );
+
+      const hasAdditionalBenefits = Object.keys(additionalBenefits).some(key =>
+        Array.isArray(additionalBenefits[key])
+          ? additionalBenefits[key].length > 0
+          : additionalBenefits[key] !== undefined,
+      );
       return (
         <TouchableOpacity
           style={styles.card}
@@ -96,12 +121,72 @@ const SubscriptionPlan = ({route}) => {
           </View>
           <View style={styles.divider} />
           <View type={'B26'} style={styles.details}>
-            <ZText type={'R12'} style={styles.detailText}>
-              On : {formatDate(item.activatedOn)}
-            </ZText>
-            <ZText type={'R16'} style={styles.detailText}>
-              By: {item.userName}
-            </ZText>
+            {hasLimits && (
+              <>
+                <ZText type={'R12'} style={styles.detailText}>
+                  Limits : {item.limits.post}
+                </ZText>
+                {Object.keys(limits).map((key, index) => {
+                  const benefit = limits[key];
+                  if (Array.isArray(benefit)) {
+                    return benefit.map((item, idx) => {
+                      const categoryName =
+                        key === 'Ads'
+                          ? AdsCategoryMap[item.Category]
+                          : SpaceCategoryMap[item.Category];
+
+                      return (
+                        <ZText
+                          key={`${key}-${idx}`}
+                          type={'R12'}
+                          style={styles.value}>
+                          {key}: {item.AdCount} | {categoryName} | Validity:
+                          {item.Validity} days
+                        </ZText>
+                      );
+                    });
+                  }
+                  return (
+                    <ZText key={index} type={'R12'} style={styles.value}>
+                      {key}: {additionalBenefits[key]}
+                    </ZText>
+                  );
+                })}
+              </>
+            )}
+            {hasAdditionalBenefits && (
+              <>
+                <ZText type={'R12'} style={[styles.detailText, {marginTop: 8}]}>
+                  Additional Benefits:
+                </ZText>
+                {Object.keys(additionalBenefits).map((key, index) => {
+                  const benefit = additionalBenefits[key];
+                  if (Array.isArray(benefit)) {
+                    return benefit.map((item, idx) => {
+                      const categoryName =
+                        key === 'Ads'
+                          ? AdsCategoryMap[item.Category]
+                          : SpaceCategoryMap[item.Category];
+
+                      return (
+                        <ZText
+                          key={`${key}-${idx}`}
+                          type={'R12'}
+                          style={styles.value}>
+                          {key}: {item.AdCount} | {categoryName} | Validity:
+                          {item.Validity} days
+                        </ZText>
+                      );
+                    });
+                  }
+                  return (
+                    <ZText key={index} type={'R12'} style={styles.value}>
+                      {key}: {additionalBenefits[key]}
+                    </ZText>
+                  );
+                })}
+              </>
+            )}
           </View>
         </TouchableOpacity>
       );
@@ -128,6 +213,7 @@ const SubscriptionPlan = ({route}) => {
 
       const getList = async () => {
         try {
+          setPlans([]);
           await Planexecute(plantype);
         } catch (error) {
           console.error('Error fetching plans:', error);
@@ -296,12 +382,15 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   details: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
   },
   detailText: {
     // fontSize: 12,
     color: '#555',
+    // flexDirection: 'column',
+    // justifyContent: 'center',
+    // flex: 1,
   },
 });
 
