@@ -2132,6 +2132,29 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNSentry (6.5.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Sentry/HybridSDK (= 8.43.0)
+    - Yoga
   - RNShare (11.0.2):
     - DoubleConversion
     - glog
@@ -2161,6 +2184,7 @@ PODS:
   - SDWebImageWebPCoder (0.14.6):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.17)
+  - Sentry/HybridSDK (8.43.0)
   - SocketRocket (0.7.0)
   - TOCropViewController (2.7.4)
   - Yoga (0.0.0)
@@ -2274,6 +2298,7 @@ DEPENDENCIES:
   - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - SDWebImage (~> 5.18.7)
@@ -2317,6 +2342,7 @@ SPEC REPOS:
     - RecaptchaInterop
     - SDWebImage
     - SDWebImageWebPCoder
+    - Sentry
     - SocketRocket
     - TOCropViewController
 
@@ -2528,6 +2554,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSentry:
+    :path: "../node_modules/@sentry/react-native"
   RNShare:
     :path: "../node_modules/react-native-share"
   RNSVG:
@@ -2672,10 +2700,12 @@ SPEC CHECKSUMS:
   RNReactNativeHapticFeedback: 5ae6ca462509e4dcba5d6b1f70e272831972724c
   RNReanimated: 588d6037ed5b6aed59f0a1d08f163efce125d0cb
   RNScreens: de55b9d7de8a017d1588dcb70415492d0b0597c2
+  RNSentry: 43c7d810bc3b5d7da8a6d6cf71d378ee35b04de3
   RNShare: bd431b4dbee5711074a02823b7e39fe34ae0b536
   RNSVG: af3907ac5d4fa26a862b75a16d8f15bc74f2ceda
   SDWebImage: 2d6d229046fea284d62e36bfb8ebe8287dfc5b10
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
+  Sentry: 532b281a53b1b45a523fd592f608956fb36e577c
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   Yoga: 36d44f1d31d7c11be1067e5c7a70a12c2eed355c
