@@ -47,6 +47,8 @@ const SkeletonPlaceholder = () => {
 };
 
 const UserStories = React.memo(Data => {
+  console.log("UserStories");
+  console.log(Data);
   const user = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
@@ -61,7 +63,7 @@ const UserStories = React.memo(Data => {
     userPermissions,
     PermissionKey.AllowViewMyStory,
   );
-  const [StoryData, setStoryData]: any[] = useState(Data);
+  const [StoryData, setStoryData]: any[] = useState(Data.Data.data);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -74,26 +76,28 @@ const UserStories = React.memo(Data => {
     pageSize_Set: StoriespageSize_Set,
     currentPage_Set: StoriescurrentPage_Set,
     hasMore_Set: StorieshasMore_Set,
-  } = useApiPagingWithDataRequest(getDashboardStory, setInfiniteLoading, Data);
+  } = useApiPagingWithDataRequest(getDashboardStory, setInfiniteLoading, Data.Data.data);
   const getList = async () => {
     try {
       setLoading(true);
       StoriescurrentPage_Set(1);
       StoriespageSize_Set(5);
       StorieshasMore_Set(true);
+      // console.log('Storiesdata',Data)
+      // console.log('Storiesdata',Data.Data.data)
     } catch (error) {
     } finally {
-      // setLoading(false);
+       setLoading(false);
     }
   };
-
+  useEffect
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        await getList();
-
+       // await getList();
+console.log('Fetch',Data);
         if (Data != null && Data.Data != null) {
-          setStoryData(Data.Data.storyList);
+          setStoryData(Data.Data.data);
           setLoading(false);
         }
       };
@@ -103,16 +107,17 @@ const UserStories = React.memo(Data => {
   );
 
   useEffect(() => {
-    if (Storiesstatus === 200) {
-      // if (!permissionGrantedDashBoard) {
-      //   setStoryData([]);
-      //   return;
-      // }
-      setStoryData(Storiesdata.data.storyList);
+    const fetchData = async () => {
+       await getList();
+console.log('Fetch',Data);
     }
-  }, [Storiesstatus, Storiesdata]);
+
+     fetchData();
+  }, [Data]);
 
   const loadMore = async () => {
+    console.log('loadMore');
+    console.log(isInfiniteLoading);
     if (!isInfiniteLoading) {
       await StoriesLoadMore(user.userId);
     }
@@ -129,7 +134,7 @@ const UserStories = React.memo(Data => {
   };
   const renderItem = useCallback(({item}) => {
     const displayName = item.postedBy;
-    const maxNameLength = Math.floor(Dimensions.get('window').width / 40);
+   // const maxNameLength = Math.floor(Dimensions.get('window').width / 40);
     return (
       <Pressable
         style={localStyles.itemContainer}
@@ -150,9 +155,10 @@ const UserStories = React.memo(Data => {
           style={localStyles.itemUsername}
           numberOfLines={1} // Ensure ellipsis
           ellipsizeMode="tail">
-          {displayName.length > maxNameLength
+          {/* {displayName.length > maxNameLength
             ? `${displayName.slice(0, maxNameLength)}...`
-            : displayName}
+            : displayName} */}
+            {displayName}
         </ZText>
       </Pressable>
     );
@@ -169,11 +175,11 @@ const UserStories = React.memo(Data => {
       <HStack>
         {loading ? (
           <SkeletonPlaceholder />
-        ) : StoryData.length === 0 ? (
+        ) : Storiesdata.length === 0 ? (
           <EmptyListComponent />
         ) : (
           <FlatList
-            data={StoryData}
+            data={Storiesdata}
             style={{flex: 1}}
             keyExtractor={item => item.userId}
             renderItem={renderItem}
@@ -182,7 +188,7 @@ const UserStories = React.memo(Data => {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={localStyles.mainContainer}
             onEndReached={loadMore}
-            onEndReachedThreshold={0.5}
+            onEndReachedThreshold={0.2}
             ListFooterComponent={
               isInfiniteLoading ? (
                 <ActivityIndicator
