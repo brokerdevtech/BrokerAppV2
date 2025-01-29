@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
-const { width, height } = Dimensions.get('window');
-const LocationMap = ({ locationData }) => {
-
+import React, {useState, useRef, useEffect} from 'react';
+import {View, StyleSheet, Dimensions} from 'react-native';
+import MapView, {Marker} from 'react-native-maps';
+const {width, height} = Dimensions.get('window');
+const LocationMap = ({locationData}) => {
   const mapRef = useRef(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
@@ -29,9 +28,9 @@ const LocationMap = ({ locationData }) => {
           },
         ],
         {
-          edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+          edgePadding: {top: 50, right: 50, bottom: 50, left: 50},
           animated: true,
-        }
+        },
       );
     }
   }, [isMapReady]);
@@ -42,26 +41,26 @@ const LocationMap = ({ locationData }) => {
 
   return (
     <View style={styles.container} onLayout={handleMapReady}>
-        <View style={styles.mapContainer}>
-      <MapView
-        ref={mapRef}
-        style={styles.map}
-        initialRegion={initialRegion}
-        onMapReady={handleMapReady}
-        scrollEnabled={false} // Disables dragging
-        pitchEnabled={false} // Disables tilt
-        rotateEnabled={false} // Disables rotation
-        zoomEnabled={false} // Keeps zoom enabled if needed
-      >
-        <Marker
-          coordinate={{
-            latitude: locationData.geoLocationLatitude,
-            longitude: locationData.geoLocationLongitude,
-          }}
-          title={locationData.placeName}
-          description={`${locationData?.cityName}, ${locationData?.stateName}, ${locationData?.countryName}`}
-        />
-      </MapView>
+      <View style={styles.mapContainer}>
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          initialRegion={initialRegion}
+          onMapReady={handleMapReady}
+          scrollEnabled={false} // Disables dragging
+          pitchEnabled={false} // Disables tilt
+          rotateEnabled={false} // Disables rotation
+          zoomEnabled={false} // Keeps zoom enabled if needed
+        >
+          <Marker
+            coordinate={{
+              latitude: locationData.geoLocationLatitude,
+              longitude: locationData.geoLocationLongitude,
+            }}
+            title={locationData.placeName}
+            description={`${locationData?.cityName}, ${locationData?.stateName}, ${locationData?.countryName}`}
+          />
+        </MapView>
       </View>
     </View>
   );
@@ -70,7 +69,7 @@ const LocationMap = ({ locationData }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    borderRadius: 8, 
+    borderRadius: 8,
   },
   mapContainer: {
     flex: 1,
@@ -79,10 +78,10 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
-    justifyContent:'center',
-    height:300,
-    width:width-40,
-    borderRadius: 8, 
+    justifyContent: 'center',
+    height: 300,
+    width: width - 40,
+    borderRadius: 8,
   },
 });
 

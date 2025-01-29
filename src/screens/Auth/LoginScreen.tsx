@@ -12,6 +12,7 @@ import {
   KeyboardAvoidingView,
   SafeAreaView,
   Alert,
+  Platform,
 } from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -24,7 +25,12 @@ import {
 } from '../../../components/ui/input';
 import {EyeIcon, EyeOffIcon, Icon} from '../../../components/ui/icon';
 import {AppleIcon, FBIcon, GoogleIcon} from '../../assets/svg';
-import {clearTokensfcmToken, getfcmToken, storeTokens, storeUser} from '../../utils/utilTokens';
+import {
+  clearTokensfcmToken,
+  getfcmToken,
+  storeTokens,
+  storeUser,
+} from '../../utils/utilTokens';
 import {setUser} from '../../../BrokerAppCore/redux/store/user/userSlice';
 import store from '../../../BrokerAppCore/redux/store';
 import {setTokens} from '../../../BrokerAppCore/redux/store/authentication/authenticationSlice';
@@ -42,9 +48,21 @@ import {
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../BrokerAppCore/redux/store/reducers';
 import {handleApiError} from '../../../BrokerAppCore/services/new/ApiResponse';
-import { NewDeviceUpdate } from '../../../BrokerAppCore/services/authService';
-import {LoginManager, AccessToken,Profile, GraphRequest, GraphRequestManager } from 'react-native-fbsdk-next';
-import { AnyArn } from 'aws-sdk/clients/groundstation';
+import {NewDeviceUpdate} from '../../../BrokerAppCore/services/authService';
+import {
+  LoginManager,
+  AccessToken,
+  Profile,
+  GraphRequest,
+  GraphRequestManager,
+} from 'react-native-fbsdk-next';
+import {AnyArn} from 'aws-sdk/clients/groundstation';
+import appleAuth, {
+  appleAuthAndroid,
+} from '@invertase/react-native-apple-authentication';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {jwtDecode} from 'jwt-decode';
+
 // Configure Google Sign-In
 // GoogleSignin.configure({
 //   webClientId:
@@ -125,28 +143,28 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       const userInfo = await GoogleSignin.signIn();
 
       const fcmToken = await getfcmToken();
-
+console.log(fcmToken);
       // if (!userInfo.data?.user ) {
       //   throw new Error('Failed to get user email from Google Sign In');
       // }
 
-      await SocialLoginexecute(
-        userInfo.data?.user.email,
-        'Google',
-        userInfo.data?.idToken,
-        fcmToken?.toString(),
-        AppLocation.City,
-        AppLocation.State,
-        AppLocation.Country,
-        AppLocation.placeID,
-        AppLocation.placeName,
-        AppLocation.geoLocationLatitude,
-        AppLocation.geoLocationLongitude,
-        AppLocation.viewportNorthEastLat,
-        AppLocation.viewportNorthEastLng,
-        AppLocation.viewportSouthWestLat,
-        AppLocation.viewportSouthWestLng,
-      );
+      await SocialLoginexecute({
+        email: userInfo.data?.user.email,
+        provider: 'Google',
+        accessToken: userInfo.data?.idToken,
+        deviceId: fcmToken?.toString(),
+        cityName: AppLocation.City,
+        stateName: AppLocation.State,
+        countryName: AppLocation.Country,
+        placeID: AppLocation.placeID,
+        placeName: AppLocation.placeName,
+        geoLocationLatitude: AppLocation.geoLocationLatitude,
+        geoLocationLongitude: AppLocation.geoLocationLongitude,
+        viewportNorthEastLat: AppLocation.viewportNorthEastLat,
+        viewportNorthEastLng: AppLocation.viewportNorthEastLng,
+        viewportSouthWestLat: AppLocation.viewportSouthWestLat,
+        viewportSouthWestLng: AppLocation.viewportSouthWestLng,
+      });
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -173,13 +191,17 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       });
     }
   };
+
   const signInWithFacebook = async () => {
     try {
       //setLoading(true);
       LoginManager.logOut();
-      const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
-   //   console.log("signInWithFacebook");
-//console.log(result);
+      const result = await LoginManager.logInWithPermissions([
+        'public_profile',
+        'email',
+      ]);
+      //   console.log("signInWithFacebook");
+      //console.log(result);
 
       if (result.isCancelled) {
         Alert.alert('Login cancelled');
@@ -187,43 +209,40 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       }
 
       // Get the access token
-      const data:any = await AccessToken.getCurrentAccessToken();
+      const data: any = await AccessToken.getCurrentAccessToken();
 
-      const currentProfile:any = await Profile.getCurrentProfile();
-      const userInfo:any = await fetchFacebookUser(data.accessToken.toString());
-
-
-      const fcmToken:any = await getfcmToken();
-  
-     // console.log("signInWithFacebook");
-     // console.log(userInfo);
-      await SocialLoginexecute(
-        userInfo.email,
-        'Facebook',
+      const currentProfile: any = await Profile.getCurrentProfile();
+      const userInfo: any = await fetchFacebookUser(
         data.accessToken.toString(),
-        fcmToken?.toString(),
-        AppLocation.City,
-        AppLocation.State,
-        AppLocation.Country,
-        AppLocation.placeID,
-        AppLocation.placeName,
-        AppLocation.geoLocationLatitude,
-        AppLocation.geoLocationLongitude,
-        AppLocation.viewportNorthEastLat,
-        AppLocation.viewportNorthEastLng,
-        AppLocation.viewportSouthWestLat,
-        AppLocation.viewportSouthWestLng,
       );
 
+      const fcmToken: any = await getfcmToken();
 
-
+      // console.log("signInWithFacebook");
+      // console.log(userInfo);
+      await SocialLoginexecute({
+        email: userInfo.email,
+        provider: 'Facebook',
+        accessToken: data.accessToken.toString(),
+        deviceId: fcmToken?.toString(),
+        cityName: AppLocation.City,
+        stateName: AppLocation.State,
+        countryName: AppLocation.Country,
+        placeID: AppLocation.placeID,
+        placeName: AppLocation.placeName,
+        geoLocationLatitude: AppLocation.geoLocationLatitude,
+        geoLocationLongitude: AppLocation.geoLocationLongitude,
+        viewportNorthEastLat: AppLocation.viewportNorthEastLat,
+        viewportNorthEastLng: AppLocation.viewportNorthEastLng,
+        viewportSouthWestLat: AppLocation.viewportSouthWestLat,
+        viewportSouthWestLng: AppLocation.viewportSouthWestLng,
+      });
     } catch (error) {
-//console.log(error);
+      //console.log(error);
       setLoading(false);
-   
     }
   };
-  const fetchFacebookUser = async (accessToken) => {
+  const fetchFacebookUser = async accessToken => {
     return new Promise((resolve, reject) => {
       const request = new GraphRequest(
         '/me',
@@ -241,7 +260,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
           } else {
             resolve(result);
           }
-        }
+        },
       );
       new GraphRequestManager().addRequest(request).start();
     });
@@ -258,16 +277,15 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
     const {email, password} = values;
     setLoading(true);
     await execute(email, password);
-  
   };
   const updateDevice = async (userId: any) => {
     //
-   // console.log('updateDevice')
-   // console.log(userId)
+    // console.log('updateDevice')
+    // console.log(userId)
     await clearTokensfcmToken();
     const fcmToken: any = await getfcmToken();
- //   console.log('fcmToken===================')
-  //  console.log(fcmToken);
+    console.log('fcmToken===================');
+    console.log(fcmToken);
     const updateDevice = await NewDeviceUpdate(userId, fcmToken.toString());
   };
   useEffect(() => {
@@ -296,7 +314,6 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   const afterhandleLogin = async () => {
     setLoading(true);
     if (data) {
-    
       const storeUserresult = await storeUser(JSON.stringify(data.data));
       const storeTokensresult = await storeTokens(
         data.data.accessToken,
@@ -311,7 +328,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
           getStreamAccessToken: data.data.getStreamAccessToken,
         }),
       );
-      await   updateDevice(data.data.userId);
+      await updateDevice(data.data.userId);
       setLoggedIn(true);
       setLoading(false);
       navigation.navigate('Home');
@@ -336,7 +353,6 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
   };
   const afterhandleSocialLogin = async () => {
     if (SocialLogindata) {
-  
       const storeUserresult = await storeUser(
         JSON.stringify(SocialLogindata.data),
       );
@@ -389,6 +405,14 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       // Proceed with storing tokens and user data
     }
   }, [data]);
+  // useEffect(() => {
+  //   // onCredentialRevoked returns a function that will remove the event listener. useEffect will call this function when the component unmounts
+  //   return appleAuth.onCredentialRevoked(async () => {
+  //     console.warn(
+  //       'If this function executes, User Credentials have been Revoked',
+  //     );
+  //   });
+  // }, []);
   useEffect(() => {
     if (SocialLoginerror) {
       setLoading(false);
@@ -412,6 +436,62 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       }
     }
   }, [SocialLoginerror]);
+  const handleAppleLogin = async () => {
+    if (!appleAuth.isSupported) {
+      console.error('Apple Sign-In is not supported on this device.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+      });
+
+      console.log(appleAuthRequestResponse);
+
+      const fcmToken = await getfcmToken();
+
+      await SocialLoginexecute({
+        email: appleAuthRequestResponse.email || '',
+        firstName: appleAuthRequestResponse.fullName?.givenName,
+        lastName: appleAuthRequestResponse.fullName?.familyName,
+        provider: 'Apple',
+        accessToken: appleAuthRequestResponse.identityToken,
+        deviceId: fcmToken?.toString(),
+        cityName: AppLocation.City,
+        stateName: AppLocation.State,
+        countryName: AppLocation.Country,
+        placeID: AppLocation.placeID,
+        placeName: AppLocation.placeName,
+        geoLocationLatitude: AppLocation.geoLocationLatitude,
+        geoLocationLongitude: AppLocation.geoLocationLongitude,
+        viewportNorthEastLat: AppLocation.viewportNorthEastLat,
+        viewportNorthEastLng: AppLocation.viewportNorthEastLng,
+        viewportSouthWestLat: AppLocation.viewportSouthWestLat,
+        viewportSouthWestLng: AppLocation.viewportSouthWestLng,
+      });
+    } catch (error) {
+      console.error('Apple Sign In Error:', error);
+      toast.show({
+        id: Math.random(),
+        placement: 'bottom',
+        duration: 3000,
+        render: ({id}) => (
+          <Toast nativeID={`toast-${id}`} action="error" variant="solid">
+            <ToastDescription>
+              {error.message || 'Failed to sign in with Apple'}
+            </ToastDescription>
+          </Toast>
+        ),
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // console.log(SocialLoginstatus, 'jdk');
   return (
     // <View style={{flex: 1}}>
@@ -532,6 +612,14 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
             onPress={signInWithFacebook}>
             <Icon as={FBIcon} />
           </TouchableOpacity>
+          {Platform.OS === 'ios' && (
+            <TouchableOpacity
+              style={styles.socialButton}
+              onPress={handleAppleLogin}>
+              <Icon as={AppleIcon} />
+            </TouchableOpacity>
+          )}
+
           {/* <TouchableOpacity style={styles.socialButton}>
           <Icon as={FBIcon} />
         </TouchableOpacity> */}

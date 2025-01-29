@@ -76,7 +76,7 @@ const OtherProfileScreen: React.FC = ({
   toastMessage,
 }) => {
   const userId = route.params.userId;
-
+  console.log(userId, 'route');
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
@@ -110,7 +110,7 @@ const OtherProfileScreen: React.FC = ({
       return () => {
         // Code to execute when the screen loses focus (optional)
       };
-    }, [userId,isFollowing, isrefresh]),
+    }, [userId, isFollowing, isrefresh]),
   );
   const selectprofilepic = () => {
     // console.log(ProfileData);
@@ -130,7 +130,7 @@ const OtherProfileScreen: React.FC = ({
       //
       //
       //     console.log("--------result");
-      // console.log(result);
+      // console.log(result.data);
       setProfileData(result.data);
 
       const Userfollower: any = [];

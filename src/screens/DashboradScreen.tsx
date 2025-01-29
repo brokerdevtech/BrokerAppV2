@@ -9,6 +9,8 @@ import {
   FlatList,
   TouchableOpacity,
   SafeAreaView,
+  useWindowDimensions,
+  Dimensions,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -74,9 +76,8 @@ export default function DashboradScreen() {
   const permissionGrantedDashPost = true;
 
   const toast = useToast();
-
-  const {data, status, error, 
-    execute} = useApiRequest(fetchPodcastList);
+  const {width} = useWindowDimensions();
+  const {data, status, error, execute} = useApiRequest(fetchPodcastList);
   //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
   const cityToShow = AppLocation.City;
   const navigation = useNavigation();
@@ -127,7 +128,7 @@ export default function DashboradScreen() {
       const fetchData = async () => {
         try {
           // callmarList();
-//console.log(user);
+          //console.log(user);
           const results = await Promise.allSettled([
             GetDashboardData(user.userId),
             execute(user.userId, 1, 4),
@@ -161,7 +162,7 @@ export default function DashboradScreen() {
           ] = results.map(result =>
             result.status === 'fulfilled' ? result.value : null,
           );
-//console.log(dashboardData);
+          //console.log(dashboardData);
           // const [dashboardData, podcastList,DashboardStory,NewlyLaunch,NewInProperty,NewInCar,BrandAssociate] = await Promise.all([
           //   GetDashboardData(user.userId),
           //   execute(user.userId, 1, 4),
@@ -183,9 +184,8 @@ export default function DashboradScreen() {
           //     userId: user.userId,
           //   }),
           // ]);
-         
 
-          setStoryData(DashboardStory.data)
+          setStoryData(DashboardStory.data);
           setNewlyLaunchData(NewlyLaunch.data);
           setNewInPropertyData(NewInProperty.data);
           setNewInCarData(NewInCar.data);
@@ -256,7 +256,7 @@ export default function DashboradScreen() {
     [AppLocation.City],
   );
   const RenderPodcastItems = React.memo(({item, index}) => {
-   // console.log('RenderPodcastItems',item);
+    // console.log('RenderPodcastItems',item);
     return (
       <TouchableOpacity
         onPress={() => handleThumbnailTap(item, index)}
@@ -312,31 +312,17 @@ export default function DashboradScreen() {
             {/* <AutoscrollAdsText
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           /> */}
-          
           </View>
-          
+
           <AutoscrollAds
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           />
-          <Grid className="gap-2 p-2" _extra={{className: 'grid-cols-9'}}>
-            {/* <GridItem
-              className="bg-background-50 p-2 rounded-md text-center"
-              _extra={{className: 'col-span-9'}}>
-              <ZText type={'R18'}>Find what you are looking for</ZText>
-            </GridItem> */}
+          <Grid className="gap-4 p-2" _extra={{className: 'grid-cols-9'}}>
+            {/* Property */}
             <GridItem
-              style={styles.gridcontainer}
+              style={styles.gridContainer}
               className="bg-background-0 p-2 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
-              {/* <TouchableOpacity
-                onPress={() => {
-                  permissionGrantedDashPost
-                    ? navigation.navigate('ItemListScreen', {
-                        listType: 'RealEstate',
-                        categoryId: 1,
-                      })
-                    : showToast();
-                }}> */}
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate('ItemListScreen', {
@@ -346,14 +332,16 @@ export default function DashboradScreen() {
                 }}>
                 <View style={styles.tabItemContainer}>
                   <TABHome />
-                  <ZText type={'S16'} style={styles.tabItemTitle}>
+                  <ZText type="S16" style={styles.tabItemTitle}>
                     Property
                   </ZText>
                 </View>
               </TouchableOpacity>
             </GridItem>
+
+            {/* Car */}
             <GridItem
-              style={styles.gridcontainer}
+              style={styles.gridContainer}
               className="bg-background-0 p-2 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
               <TouchableOpacity
@@ -367,28 +355,29 @@ export default function DashboradScreen() {
                 }}>
                 <View style={styles.tabItemContainer}>
                   <TABCard />
-                  <ZText type={'S16'} style={styles.tabItemTitle}>
+                  <ZText type="S16" style={styles.tabItemTitle}>
                     Car
                   </ZText>
                 </View>
               </TouchableOpacity>
             </GridItem>
+
+            {/* Loan */}
             <GridItem
-              style={styles.gridcontainer}
+              style={styles.gridContainer}
               className="bg-background-0 p-2 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
               <TouchableOpacity onPress={showToastComingSoon}>
                 <View style={styles.tabItemContainer}>
                   <TABLoan />
-
-                  <ZText type={'S16'} style={styles.tabItemTitle}>
+                  <ZText type="S16" style={styles.tabItemTitle}>
                     Loan
                   </ZText>
                 </View>
               </TouchableOpacity>
             </GridItem>
             <GridItem
-              style={styles.gridcontainer}
+              style={styles.gridContainer}
               className="bg-background-0 p-2 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
               <TouchableOpacity onPress={showToastComingSoon}>
@@ -401,7 +390,7 @@ export default function DashboradScreen() {
               </TouchableOpacity>
             </GridItem>
             <GridItem
-              style={styles.gridcontainer}
+              style={styles.gridContainer}
               className="bg-background-0 p-2 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
               <TouchableOpacity onPress={showToastComingSoon}>
@@ -414,7 +403,7 @@ export default function DashboradScreen() {
               </TouchableOpacity>
             </GridItem>
             <GridItem
-              style={styles.gridcontainer}
+              style={styles.gridContainer}
               className="bg-background-0 p-2 rounded-md text-center"
               _extra={{className: 'col-span-3'}}>
               <TouchableOpacity onPress={showToastComingSoon}>
@@ -531,20 +520,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7F8FA',
     margin: 10,
   },
-  tabItemTitle: {
-    marginTop: 5,
-  },
-  gridcontainer: {
-    shadowOffset: {width: 0, height: 0}, // shadow offset
-    shadowOpacity: 1, // shadow opacity
-    // shadowRadius: 4, // blur radius (64px)
+
+  gridContainer: {
+    flex: 1,
+    minWidth: Dimensions.get('screen').width / 3 - 16, // Adjust based on your gap
+    maxWidth: Dimensions.get('screen').width / 3 - 16,
     elevation: 2,
+    shadowOpacity: 0.6,
+    shadowOffset: {height: 0, width: 0},
   },
   tabItemContainer: {
-    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    alignContent: 'center',
+  },
+  tabItemTitle: {
+    marginTop: 8,
+    textAlign: 'center',
   },
   container: {
     flexDirection: 'column',

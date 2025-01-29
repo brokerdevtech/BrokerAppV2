@@ -61,32 +61,34 @@ const NotificationItem = ({
   } = item;
   let response = body;
 
-
-
-
+  console.log(item, 'metadata');
 
   const getTimeDifference = createdAt => {
-   const created = moment.utc(createdAt).local();
-      const now = moment();
-  
-      const daysDifference = now.diff(created, 'days');
-      const monthsDifference = now.diff(created, 'months');
-      const yearsDifference = now.diff(created, 'years');
-  
-      if (yearsDifference >= 1) {
-        return yearsDifference === 1 ? '1 year ago' : `${yearsDifference} years ago`;
-      }
-  
-      if (monthsDifference >= 1) {
-        return monthsDifference === 1 ? '1 month ago' : `${monthsDifference} months ago`;
-      }
-  
-      if (daysDifference >= 7) {
-        const weeks = Math.floor(daysDifference / 7);
-        return weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
-      }
-  
-      return created.fromNow(); 
+    const created = moment.utc(createdAt).local();
+    const now = moment();
+
+    const daysDifference = now.diff(created, 'days');
+    const monthsDifference = now.diff(created, 'months');
+    const yearsDifference = now.diff(created, 'years');
+
+    if (yearsDifference >= 1) {
+      return yearsDifference === 1
+        ? '1 year ago'
+        : `${yearsDifference} years ago`;
+    }
+
+    if (monthsDifference >= 1) {
+      return monthsDifference === 1
+        ? '1 month ago'
+        : `${monthsDifference} months ago`;
+    }
+
+    if (daysDifference >= 7) {
+      const weeks = Math.floor(daysDifference / 7);
+      return weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
+    }
+
+    return created.fromNow();
   };
 
   const userPermissions = useSelector(
@@ -120,7 +122,26 @@ const NotificationItem = ({
       });
     }
   };
-
+  const onPressNotification = () => {
+    if (type === 3 || type === 1 || type === 2) {
+      navigation.push('ProfileDetail', {
+        userName: `${parsedMetaData.FirstName} ${parsedMetaData.LastName}`,
+        userImage: parsedMetaData?.profileImage,
+        userId: parsedMetaData?.UserId,
+        loggedInUserId: user.userId,
+      });
+    } else if (type === 11 || type === 12) {
+      navigation.push('StoryDetails', {
+        userId: user.userId,
+        storyId: parsedMetaData?.StoryId,
+      });
+    } else {
+      navigation.push('ItemDetailScreen', {
+        postId: parsedMetaData?.PostId,
+        postType: item?.category === 'RealEstate' ? 'Post' : 'Car/Post',
+      });
+    }
+  };
   const firstMediaItem = mediaData.length > 0 && (
     <TouchableOpacity>
       <FastImage
@@ -149,17 +170,17 @@ const NotificationItem = ({
       </View>
       {shouldRenderButtons && (
         <View style={styles.message}>
-          <View style={styles.body}>
+          <TouchableOpacity style={styles.body} onPress={onPressNotification}>
             <ZText type={'M14'} style={[styles.capitalize]}>
               {response}
             </ZText>
             <ZText type={'M12'}>{timeDifference}</ZText>
-          </View>
+          </TouchableOpacity>
         </View>
       )}
       {!shouldRenderButtons && (
         <View style={styles.message1}>
-          <TouchableOpacity style={styles.body}>
+          <TouchableOpacity style={styles.body} onPress={onPressNotification}>
             <ZText type={'M14'}>{body}</ZText>
             <ZText type={'M12'}>{timeDifference}</ZText>
           </TouchableOpacity>
@@ -305,34 +326,34 @@ const NotificationScreen: React.FC = ({
 
     fetchData();
   }, []);
-    const fetchMoreData = async () => {
-      if (loading || !hasMoreData) return;
+  const fetchMoreData = async () => {
+    if (loading || !hasMoreData) return;
 
-      setLoading(true);
-      try {
-        const nextPage = page + 1;
-        const data = await getNotification(nextPage, pageSize);
-        // notificationData.data.notifications
-        //       console.log("========data");
-        //  console.log(data);
-        // const apiData = JSON.stringify(data.data.notifications);
-        if (data.data.notifications.length > 0) {
-          setNotificationData(prevData => [
-            ...prevData,
-            ...data.data.notifications,
-          ]);
-          setPage(nextPage);
-        } else {
-          setHasMoreData(false);
-        }
-        //
-        // setNotificationData(data);
-      } catch (error) {
-        console.error('Error fetching notification data:', error);
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    try {
+      const nextPage = page + 1;
+      const data = await getNotification(nextPage, pageSize);
+      // notificationData.data.notifications
+      //       console.log("========data");
+      //  console.log(data);
+      // const apiData = JSON.stringify(data.data.notifications);
+      if (data.data.notifications.length > 0) {
+        setNotificationData(prevData => [
+          ...prevData,
+          ...data.data.notifications,
+        ]);
+        setPage(nextPage);
+      } else {
+        setHasMoreData(false);
       }
-    };
+      //
+      // setNotificationData(data);
+    } catch (error) {
+      console.error('Error fetching notification data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleNotificationPress = async (notifcationId, currentStatus) => {
     const newStatus = currentStatus === 1 ? 0 : 1;
     setSelectedNotification(notifcationId);
@@ -442,8 +463,8 @@ const NotificationScreen: React.FC = ({
       )}
       maxToRenderPerBatch={5}
       initialNumToRender={10}
-        onEndReached={fetchMoreData}
-        onEndReachedThreshold={0.2}
+      onEndReached={fetchMoreData}
+      onEndReachedThreshold={0.2}
       ListEmptyComponent={() =>
         notificationData && loading ? null : <NoDataFound />
       }
@@ -465,11 +486,12 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
   messageContainer: {
-    // borderBottomWidth: 1,
-    borderColor: '#ddd',
+    borderBottomWidth: 1,
+    borderColor: Color.borderColor,
     // padding: 10,
     paddingHorizontal: 16,
-    marginBottom: 30,
+    // marginBottom: 30,
+    paddingVertical: 20,
     // borderRadius: 10,
     width: '100%',
     flexDirection: 'row',
