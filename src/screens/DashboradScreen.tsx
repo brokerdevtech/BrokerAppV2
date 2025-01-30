@@ -185,7 +185,8 @@ export default function DashboradScreen() {
           //     userId: user.userId,
           //   }),
           // ]);
-
+          console.log('DashboardStory');
+console.log(DashboardStory.data);
           setStoryData(DashboardStory.data);
           setNewlyLaunchData(NewlyLaunch.data);
           setNewInPropertyData(NewInProperty.data);
@@ -309,7 +310,8 @@ export default function DashboradScreen() {
       <ScrollView style={styles.scrollView}>
         <View>
           <View style={styles.subHeaderSection}>
-            <UserStories Data={StoryData} />
+            {StoryData!=null && StoryData!= undefined &&
+            <UserStories Data={StoryData} />}
             {/* <AutoscrollAdsText
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           /> */}
