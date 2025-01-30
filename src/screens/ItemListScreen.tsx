@@ -99,8 +99,9 @@ const RederListHeader = React.memo(
   }) => {
     return (
       <>
+       {StoryData!=null &&
         <UserStories Data={StoryData} />
-
+       }
         <Recommend categoryId={categoryId} Data={RenderBrokerData} />
         <ProductSectionData
           heading={'Newly Launch'}
@@ -675,7 +676,7 @@ const ItemListScreen: React.FC<any> = ({
     // });
     const results = await Promise.allSettled([
       execute(listTypeData, APiobj),
-      getDashboardStory(user.userId, 1, 10),
+      getDashboardStory(user.userId, 1, 5),
       fetchDashboardData('Newin', {
         pageNo: 1,
         pageSize: 10,
@@ -704,6 +705,8 @@ const ItemListScreen: React.FC<any> = ({
     ] = results.map(result =>
       result.status === 'fulfilled' ? result.value : null,
     );
+    console.log('DashboardStory')
+    console.log(DashboardStory);
     setStoryData(DashboardStory.data);
     setNewIncategoryData(NewIncategory.data);
     setRecentSearchData(RecentSearch.data);

@@ -184,11 +184,11 @@ console.log('Fetch',Data);
             keyExtractor={item => item.userId}
             renderItem={renderItem}
             horizontal
-            initialNumToRender={2}
+            initialNumToRender={5}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={localStyles.mainContainer}
             onEndReached={loadMore}
-            onEndReachedThreshold={0.2}
+            onEndReachedThreshold={0.5}
             ListFooterComponent={
               isInfiniteLoading ? (
                 <ActivityIndicator

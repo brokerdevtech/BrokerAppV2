@@ -309,7 +309,7 @@ console.log(DashboardStory.data);
       <ScrollView style={styles.scrollView}>
         <View>
           <View style={styles.subHeaderSection}>
-            {StoryData!=null &&
+            {StoryData!=null && StoryData!= undefined &&
             <UserStories Data={StoryData} />}
             {/* <AutoscrollAdsText
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
