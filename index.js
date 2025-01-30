@@ -90,6 +90,7 @@ async function handleNotification(remoteMessage, isBackground = false) {
     }
   } else {
     console.log('remoteMessage');
+
     const channelId = await notifee.createChannel({
       id: 'app-messages',
       name: 'App Messages',
@@ -115,23 +116,32 @@ async function handleNotification(remoteMessage, isBackground = false) {
       data,
       title: remoteMessage.notification.title,
     });
+
+
   }
 }
 
 messaging().onMessage(async remoteMessage => {
+
   console.log(remoteMessage);
   if (Platform.OS === 'ios') {
     if (remoteMessage.notification) {
     } else {
       await handleNotification(remoteMessage, false);
     }
+
+  if (remoteMessage.notification) {
+
   } else {
     await handleNotification(remoteMessage, false);
   }
 });
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
+
   console.log(remoteMessage);
+
+
   if (remoteMessage.notification) {
   } else {
     await handleNotification(remoteMessage, true);

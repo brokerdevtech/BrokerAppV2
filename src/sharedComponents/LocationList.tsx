@@ -44,7 +44,7 @@ function LocationList(props: any) {
         setissearch(false);
         if (searchText.length >= 3) {
           const result = await searchLocation(searchText, SetCityFilter);
-          
+
           setLoading(false);
           if (result) {
             setuserLists(result);
@@ -59,7 +59,7 @@ function LocationList(props: any) {
       } catch (error) {
         setLoading(false);
         setuserLists([]);
-      //  console.error('Error fetching data:', error);
+        //  console.error('Error fetching data:', error);
       }
     };
 
@@ -76,7 +76,7 @@ function LocationList(props: any) {
     Keyboard.dismiss(); //
     let itemLoaction = await getPlaceDataFromID(item.placeID);
     //
-
+    console.log(itemLoaction);
     setLoaction(itemLoaction);
   };
 
