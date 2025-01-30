@@ -47,8 +47,8 @@ const SkeletonPlaceholder = () => {
 };
 
 const UserStories = React.memo(Data => {
-  console.log("UserStories");
-  console.log(Data);
+  // console.log("UserStories");
+  // console.log(Data);
   const user = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
@@ -76,7 +76,11 @@ const UserStories = React.memo(Data => {
     pageSize_Set: StoriespageSize_Set,
     currentPage_Set: StoriescurrentPage_Set,
     hasMore_Set: StorieshasMore_Set,
-  } = useApiPagingWithDataRequest(getDashboardStory, setInfiniteLoading, Data.Data.data);
+  } = useApiPagingWithDataRequest(
+    getDashboardStory,
+    setInfiniteLoading,
+    Data.Data.data,
+  );
   const getList = async () => {
     try {
       setLoading(true);
@@ -87,15 +91,15 @@ const UserStories = React.memo(Data => {
       // console.log('Storiesdata',Data.Data.data)
     } catch (error) {
     } finally {
-       setLoading(false);
+      setLoading(false);
     }
   };
-  useEffect
+  useEffect;
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-       // await getList();
-console.log('Fetch',Data);
+        // await getList();
+        // console.log('Fetch', Data);
         if (Data != null && Data.Data != null) {
           setStoryData(Data.Data.data);
           setLoading(false);
@@ -108,11 +112,11 @@ console.log('Fetch',Data);
 
   useEffect(() => {
     const fetchData = async () => {
-       await getList();
-console.log('Fetch',Data);
-    }
+      await getList();
+      // console.log('Fetch', Data);
+    };
 
-     fetchData();
+    fetchData();
   }, [Data]);
 
   const loadMore = async () => {
@@ -134,7 +138,7 @@ console.log('Fetch',Data);
   };
   const renderItem = useCallback(({item}) => {
     const displayName = item.postedBy;
-   // const maxNameLength = Math.floor(Dimensions.get('window').width / 40);
+    // const maxNameLength = Math.floor(Dimensions.get('window').width / 40);
     return (
       <Pressable
         style={localStyles.itemContainer}
@@ -158,7 +162,7 @@ console.log('Fetch',Data);
           {/* {displayName.length > maxNameLength
             ? `${displayName.slice(0, maxNameLength)}...`
             : displayName} */}
-            {displayName}
+          {displayName}
         </ZText>
       </Pressable>
     );

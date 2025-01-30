@@ -186,7 +186,7 @@ export default function DashboradScreen() {
           //   }),
           // ]);
           console.log('DashboardStory');
-console.log(DashboardStory.data);
+          console.log(DashboardStory.data);
           setStoryData(DashboardStory.data);
           setNewlyLaunchData(NewlyLaunch.data);
           setNewInPropertyData(NewInProperty.data);
@@ -310,13 +310,15 @@ console.log(DashboardStory.data);
       <ScrollView style={styles.scrollView}>
         <View>
           <View style={styles.subHeaderSection}>
-            {StoryData!=null && StoryData!= undefined &&
-            <UserStories Data={StoryData} />}
+            {StoryData != null && StoryData != undefined && (
+              <UserStories Data={StoryData} />
+            )}
             {/* <AutoscrollAdsText
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           /> */}
+            <MarqueeTextList />
           </View>
-          <MarqueeTextList />
+
           <AutoscrollAds
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           />

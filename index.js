@@ -116,13 +116,10 @@ async function handleNotification(remoteMessage, isBackground = false) {
       data,
       title: remoteMessage.notification.title,
     });
-
-
   }
 }
 
 messaging().onMessage(async remoteMessage => {
-
   console.log(remoteMessage);
   if (Platform.OS === 'ios') {
     if (remoteMessage.notification) {
@@ -130,17 +127,15 @@ messaging().onMessage(async remoteMessage => {
       await handleNotification(remoteMessage, false);
     }
 
-  if (remoteMessage.notification) {
-
-  } else {
-    await handleNotification(remoteMessage, false);
+    if (remoteMessage.notification) {
+    } else {
+      await handleNotification(remoteMessage, false);
+    }
   }
 });
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-
   console.log(remoteMessage);
-
 
   if (remoteMessage.notification) {
   } else {
