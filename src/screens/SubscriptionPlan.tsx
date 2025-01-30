@@ -69,9 +69,7 @@ const SubscriptionPlan = ({route}) => {
           : additionalBenefits[key] !== undefined,
       );
       return (
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => handlePresentModalPress(item)}>
+        <TouchableOpacity style={styles.card}>
           <View style={styles.row}>
             <ZText type={'S22'} style={styles.price}>
               {item?.currency + ' '}
@@ -120,73 +118,92 @@ const SubscriptionPlan = ({route}) => {
             </View>
           </View>
           <View style={styles.divider} />
-          <View type={'B26'} style={styles.details}>
-            {hasLimits && (
-              <>
-                <ZText type={'R12'} style={styles.detailText}>
-                  Limits : {item.limits.post}
-                </ZText>
-                {Object.keys(limits).map((key, index) => {
-                  const benefit = limits[key];
-                  if (Array.isArray(benefit)) {
-                    return benefit.map((item, idx) => {
-                      const categoryName =
-                        key === 'Ads'
-                          ? AdsCategoryMap[item.Category]
-                          : SpaceCategoryMap[item.Category];
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'flex-end',
+            }}>
+            <View type={'B26'} style={styles.details}>
+              {hasLimits && (
+                <>
+                  <ZText type={'R12'} style={styles.detailText}>
+                    Limits : {item.limits.post}
+                  </ZText>
+                  {Object.keys(limits).map((key, index) => {
+                    const benefit = limits[key];
+                    if (Array.isArray(benefit)) {
+                      return benefit.map((item, idx) => {
+                        const categoryName =
+                          key === 'Ads'
+                            ? AdsCategoryMap[item.Category]
+                            : SpaceCategoryMap[item.Category];
 
-                      return (
-                        <ZText
-                          key={`${key}-${idx}`}
-                          type={'R12'}
-                          style={styles.value}>
-                          {key}: {item.AdCount} | {categoryName} | Validity:
-                          {item.Validity} days
-                        </ZText>
-                      );
-                    });
-                  }
-                  return (
-                    <ZText key={index} type={'R12'} style={styles.value}>
-                      {key}: {additionalBenefits[key]}
-                    </ZText>
-                  );
-                })}
-              </>
-            )}
-            {hasAdditionalBenefits && (
-              <>
-                <ZText type={'R12'} style={[styles.detailText, {marginTop: 8}]}>
-                  Additional Benefits:
-                </ZText>
-                {Object.keys(additionalBenefits).map((key, index) => {
-                  const benefit = additionalBenefits[key];
-                  if (Array.isArray(benefit)) {
-                    return benefit.map((item, idx) => {
-                      const categoryName =
-                        key === 'Ads'
-                          ? AdsCategoryMap[item.Category]
-                          : SpaceCategoryMap[item.Category];
+                        return (
+                          <ZText
+                            key={`${key}-${idx}`}
+                            type={'R12'}
+                            style={styles.value}>
+                            {key}: {item.AdCount} | {categoryName} | Validity:
+                            {item.Validity} days
+                          </ZText>
+                        );
+                      });
+                    }
+                    return (
+                      <ZText key={index} type={'R12'} style={styles.value}>
+                        {key}: {additionalBenefits[key]}
+                      </ZText>
+                    );
+                  })}
+                </>
+              )}
+              {hasAdditionalBenefits && (
+                <>
+                  <ZText
+                    type={'R12'}
+                    style={[styles.detailText, {marginTop: 8}]}>
+                    Additional Benefits:
+                  </ZText>
+                  {Object.keys(additionalBenefits).map((key, index) => {
+                    const benefit = additionalBenefits[key];
+                    if (Array.isArray(benefit)) {
+                      return benefit.map((item, idx) => {
+                        const categoryName =
+                          key === 'Ads'
+                            ? AdsCategoryMap[item.Category]
+                            : SpaceCategoryMap[item.Category];
 
-                      return (
-                        <ZText
-                          key={`${key}-${idx}`}
-                          type={'R12'}
-                          style={styles.value}>
-                          {key}: {item.AdCount} | {categoryName} | Validity:
-                          {item.Validity} days
-                        </ZText>
-                      );
-                    });
-                  }
-                  return (
-                    <ZText key={index} type={'R12'} style={styles.value}>
-                      {key}: {additionalBenefits[key]}
-                    </ZText>
-                  );
-                })}
-              </>
-            )}
+                        return (
+                          <ZText
+                            key={`${key}-${idx}`}
+                            type={'R12'}
+                            style={styles.value}>
+                            {key}: {item.AdCount} | {categoryName} | Validity:
+                            {item.Validity} days
+                          </ZText>
+                        );
+                      });
+                    }
+                    return (
+                      <ZText key={index} type={'R12'} style={styles.value}>
+                        {key}: {additionalBenefits[key]}
+                      </ZText>
+                    );
+                  })}
+                </>
+              )}
+            </View>
+            <TouchableOpacity
+              style={{paddingHorizontal: 10}}
+              onPress={() => handlePresentModalPress(item)}>
+              <ZText
+                type={'S12'}
+                color={Color.primary}
+                style={{textDecorationLine: 'underline'}}>
+                Read more
+              </ZText>
+            </TouchableOpacity>
           </View>
         </TouchableOpacity>
       );
@@ -268,9 +285,9 @@ const SubscriptionPlan = ({route}) => {
             ) : null
           }
           removeClippedSubviews={false}
-          ListEmptyComponent={() =>
-            plans.length === 0 ? <NoDataFoundScreen /> : null
-          }
+          // ListEmptyComponent={() =>
+          //   plans.length === 0 ? <NoDataFoundScreen /> : null
+          // }
         />
       );
     },
@@ -365,7 +382,7 @@ const styles = StyleSheet.create({
   price: {
     // fontSize: 24,
     // fontWeight: 'bold',
-    color: '#000',
+    color: Color.primary,
   },
   label: {
     // fontSize: 12,
