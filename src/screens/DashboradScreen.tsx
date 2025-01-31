@@ -53,6 +53,8 @@ import ProductSectionData from './Dashboard/ProductSectionData';
 import {fetchDashboardData as fetchDashboardDataBrand} from '../../BrokerAppCore/services/new/dashboardService';
 import AutoscrollAdsText from '../sharedComponents/AutoscrollAdsText';
 import MarqueeTextList from '../sharedComponents/MarqueeTextNew';
+import MarqueeFlatList from '../sharedComponents/MarqueeFlatList';
+import MarqueeExample from '../sharedComponents/MarqueeExample';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
@@ -185,8 +187,7 @@ export default function DashboradScreen() {
           //     userId: user.userId,
           //   }),
           // ]);
-          console.log('DashboardStory');
-          console.log(DashboardStory.data);
+      
           setStoryData(DashboardStory.data);
           setNewlyLaunchData(NewlyLaunch.data);
           setNewInPropertyData(NewInProperty.data);
@@ -316,7 +317,12 @@ export default function DashboradScreen() {
             {/* <AutoscrollAdsText
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           /> */}
-            <MarqueeTextList />
+            {StoryData != null && StoryData != undefined && (
+          
+          <MarqueeExample></MarqueeExample>
+          )}
+         
+            {/* <MarqueeTextList /> */}
           </View>
 
           <AutoscrollAds
