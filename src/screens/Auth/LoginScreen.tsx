@@ -284,8 +284,8 @@ console.log(fcmToken);
     // console.log(userId)
     await clearTokensfcmToken();
     const fcmToken: any = await getfcmToken();
-    console.log('fcmToken===================');
-    console.log(fcmToken);
+    //   console.log('fcmToken===================')
+    //  console.log(fcmToken);
     const updateDevice = await NewDeviceUpdate(userId, fcmToken.toString());
   };
   useEffect(() => {

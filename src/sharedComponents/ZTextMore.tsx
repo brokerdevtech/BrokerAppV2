@@ -1,25 +1,18 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {Platform, Text, TouchableOpacity, View} from 'react-native';
-import {useSelector} from 'react-redux';
+import React, { useState, useRef } from 'react';
+import { Text, TouchableOpacity } from 'react-native';
+import { useSelector } from 'react-redux';
 import Typography from '../themes/typography';
-import {RootState} from '../../BrokerAppCore/redux/store/reducers';
+import { RootState } from '../../BrokerAppCore/redux/store/reducers';
 
 // Text Component
-const ZTextMore = ({
-  type,
-  style,
-  align,
-  color,
-  children,
-  numberOfLines = 2,
-  ...props
-}) => {
-  const colors = useSelector(state => state.theme.theme);
+const ZTextMore = ({ type, style, align, color, children, numberOfLines = 3, ...props }) => {
+  const colors = useSelector((state: RootState) => state.theme.theme);
   const [expanded, setExpanded] = useState(false);
   const [isTextTruncated, setIsTextTruncated] = useState(false);
+  const textRef = useRef(null);
 
   const fontWeights = () => {
-    switch (type?.charAt(0)?.toUpperCase()) {
+    switch (type.charAt(0).toUpperCase()) {
       case 'L':
         return Typography.fontWeights.Light;
       case 'R':
@@ -36,98 +29,78 @@ const ZTextMore = ({
   };
 
   const fontSize = () => {
-    const size = type?.slice(1);
-    return Typography.fontSizes[`f${size}`] || Typography.fontSizes.f14;
+    switch (type.slice(1)) {
+      case '10':
+        return Typography.fontSizes.f10;
+      case '12':
+        return Typography.fontSizes.f12;
+      case '14':
+        return Typography.fontSizes.f14;
+      case '16':
+        return Typography.fontSizes.f16;
+      case '18':
+        return Typography.fontSizes.f18;
+      case '20':
+        return Typography.fontSizes.f20;
+      case '22':
+        return Typography.fontSizes.f22;
+      case '24':
+        return Typography.fontSizes.f24;
+      case '26':
+        return Typography.fontSizes.f26;
+      case '28':
+        return Typography.fontSizes.f28;
+      case '30':
+        return Typography.fontSizes.f30;
+      case '32':
+        return Typography.fontSizes.f32;
+      case '34':
+        return Typography.fontSizes.f34;
+      case '35':
+        return Typography.fontSizes.f35;
+      case '36':
+        return Typography.fontSizes.f36;
+      case '40':
+        return Typography.fontSizes.f40;
+      case '46':
+        return Typography.fontSizes.f46;
+      default:
+        return Typography.fontSizes.f14;
+    }
   };
 
-  const onTextLayout = e => {
-    // Basic validation
-    if (!e?.nativeEvent) {
-      console.log('No nativeEvent in onTextLayout');
-      return;
-    }
-
-    const {lines} = e.nativeEvent;
-
-    if (!lines) {
-      console.log('No lines in nativeEvent');
-      return;
-    }
-
-    console.log('onTextLayout triggered', {
-      numberOfLines,
-      actualLines: lines.length,
-      lines: lines.map(line => ({
-        text: line.text,
-        width: line.width,
-        height: line.height,
-      })),
-    });
-
-    // Simple line count check
-    if (Platform.OS == 'ios') {
-      const shouldTruncate = lines.length > 1;
-      setIsTextTruncated(shouldTruncate);
-    } else {
-      const shouldTruncate = lines.length > numberOfLines;
-      setIsTextTruncated(shouldTruncate);
+  const onTextLayout = (e) => {
+    const { lines } = e.nativeEvent;
+    if (lines.length > numberOfLines) {
+      setIsTextTruncated(true);
     }
   };
-
-  console.log('Current state:', {
-    isTextTruncated,
-    expanded,
-    textContent: children?.substring(0, 50) + '...',
-  });
 
   return (
-    <View
-      style={[{width: '100%'}, style]}
-      onLayout={e => {
-        console.log('Container layout:', e.nativeEvent.layout);
-      }}>
+    <React.Fragment>
       <Text
         style={[
-          type && {...fontWeights(), ...fontSize()},
-          {
-            color: color || colors.textColor,
-            ...Platform.select({
-              ios: {
-                lineHeight: fontSize().fontSize * 1.3,
-              },
-              android: {
-                lineHeight: fontSize().fontSize * 1.2,
-              },
-            }),
-          },
-          align && {textAlign: align},
+          type && { ...fontWeights(), ...fontSize() },
+          { color: color ? color : colors.textColor },
+          align && { textAlign: align },
+          style,
         ]}
-        numberOfLines={expanded ? undefined : numberOfLines}
-        onTextLayout={onTextLayout}
-        {...props}>
+        numberOfLines={expanded ? undefined : numberOfLines} // Limit lines if not expanded
+        onTextLayout={onTextLayout} // Check if text exceeds the limit
+        ref={textRef}
+        {...props}
+      >
         {children}
       </Text>
-
       {isTextTruncated && (
-        <TouchableOpacity
-          onPress={() => {
-            console.log('Toggle expanded from:', expanded);
-            setExpanded(!expanded);
-          }}
-          style={{
-            marginTop: 5,
-            paddingVertical: 5,
-          }}>
-          <Text
-            style={{
-              color: colors.primary || 'red',
-              textDecorationLine: 'underline',
-            }}>
+        <TouchableOpacity onPress={() => setExpanded(!expanded)}>
+          <Text style={{ color: 'red', marginTop: 5, textDecorationLine: 'underline' }}>
             {expanded ? 'Read Less' : 'Read More'}
           </Text>
         </TouchableOpacity>
       )}
-    </View>
+    </React.Fragment>
   );
 };
+
 export default React.memo(ZTextMore);

@@ -40,7 +40,7 @@ import {Color} from '../styles/GlobalStyles';
 import RectangularCardSkeleton from './Skeleton/RectangularCardSkeleton';
 import RecommendedBrokersSkeleton from './Skeleton/RecomBrokerSkelton';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
-import {useApiPagingWithDataRequest} from '../hooks/useApiPagingWithDataRequest';
+import { useApiPagingWithDataRequest } from '../hooks/useApiPagingWithDataRequest';
 
 const RenderBrokerItem = React.memo(({item}) => {
   const navigation = useNavigation();
@@ -96,8 +96,8 @@ const RenderBrokerItem = React.memo(({item}) => {
   );
 });
 
-const Recommend = React.memo(props => {
-  const {categoryIds, Data} = props;
+const Recommend = React.memo((props) => {
+  const { categoryIds, Data } = props;
   const navigation = useNavigation();
   const route = useRoute();
   const {logButtonClick} = useUserJourneyTracker(
@@ -122,16 +122,12 @@ const Recommend = React.memo(props => {
     pageSize_Set: brokerspageSize_Set,
     currentPage_Set: brokerscurrentPage_Set,
     hasMore_Set: brokershasMore_Set,
-  } = useApiPagingWithDataRequest(
-    getRecommendedBrokerList,
-    setInfiniteLoading,
-    Data,
-  );
+  } = useApiPagingWithDataRequest(getRecommendedBrokerList, setInfiniteLoading,Data);
   const getList = async () => {
     try {
       brokerscurrentPage_Set(1);
       brokershasMore_Set(true);
-      //   brokersexecute(user.userId, categoryId, AppLocation.City);
+   //   brokersexecute(user.userId, categoryId, AppLocation.City);
     } catch (error) {}
   };
 
@@ -153,8 +149,9 @@ const Recommend = React.memo(props => {
     // } else {
     //   setBrokerList([]); // In case there is no data
     // }
-
-    if (props.Data != null) {
+   
+    if(props.Data!=null)
+    {
       setBrokerList(props.Data.data.records);
     }
   }, [props]);
@@ -176,11 +173,8 @@ const Recommend = React.memo(props => {
           Recommended Brokers
         </ZText>
       </View>
-      {isInfiniteLoading ? (
-        // Show the skeleton loader when data is being loaded
-        <RecommendedBrokersSkeleton />
-      ) : brokerList?.length > 0 ? (
-        // Show the FlatList when there is data
+      {/* <RecommendedBrokersSkeleton /> */}
+      {brokerList?.length > 0 ? (
         <FlatList
           horizontal
           data={brokerList}
@@ -197,8 +191,9 @@ const Recommend = React.memo(props => {
             ) : null
           }
         />
+      ) : brokerList == null ? (
+        <RecommendedBrokersSkeleton />
       ) : (
-        // Show "No data" text when there is no data and not loading
         <Text style={localStyles.noDataText}>
           No recommended broker in your city.
         </Text>

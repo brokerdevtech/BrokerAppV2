@@ -7,7 +7,7 @@ import App from './App';
 import {name as appName} from './app.json';
 import {StreamChat, TokenOrProvider} from 'stream-chat';
 import messaging from '@react-native-firebase/messaging';
-import notifee from '@notifee/react-native';
+import notifee, {AndroidImportance} from '@notifee/react-native';
 import {GetStreamToken} from './BrokerAppCore/services/authService';
 import {chatApiKey} from './src/config/chatConfig';
 const tokenProvider: TokenOrProvider = async userId => {
