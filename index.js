@@ -2,7 +2,7 @@
  * @format
  */
 
-import {AppRegistry} from 'react-native';
+import {AppRegistry, Platform} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
 import {StreamChat, TokenOrProvider} from 'stream-chat';
@@ -90,17 +90,53 @@ async function handleNotification(remoteMessage, isBackground = false) {
     }
   } else {
     console.log('remoteMessage');
+
+    const channelId = await notifee.createChannel({
+      id: 'app-messages',
+      name: 'App Messages',
+    });
+
+    const data = {};
+    await notifee.displayNotification({
+      android: {
+        channelId,
+        pressAction: {
+          id: 'default',
+        },
+      },
+      ios: {
+        foregroundPresentationOptions: {
+          badge: true,
+          sound: true,
+          banner: true,
+          list: true,
+        },
+      },
+      body: remoteMessage.notification.body,
+      data,
+      title: remoteMessage.notification.title,
+    });
   }
 }
 
 messaging().onMessage(async remoteMessage => {
-  if (remoteMessage.notification) {
-  } else {
-    await handleNotification(remoteMessage, false);
+  console.log(remoteMessage);
+  if (Platform.OS === 'ios') {
+    if (remoteMessage.notification) {
+    } else {
+      await handleNotification(remoteMessage, false);
+    }
+
+    if (remoteMessage.notification) {
+    } else {
+      await handleNotification(remoteMessage, false);
+    }
   }
 });
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log(remoteMessage);
+
   if (remoteMessage.notification) {
   } else {
     await handleNotification(remoteMessage, true);
