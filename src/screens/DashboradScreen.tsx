@@ -37,7 +37,7 @@ import MarqueeBanner from '../sharedComponents/profile/MarqueeBanner';
 import {fetchDashboardData} from '../../BrokerAppCore/services/new/dashboardService';
 import UserStories from '../components/story/UserStories';
 import {colors} from '../themes';
-import MarqueeScreen from '../sharedComponents/profile/Marquee';
+import MarqueeScreen from '../sharedComponents/MarqueeScreen';
 import RecentSearchSection from './Dashboard/RecentSearchSection';
 import {GetDashboardData} from '../../BrokerAppCore/services/authService';
 import {setDashboard} from '../../BrokerAppCore/redux/store/Dashboard/dashboardSlice';
@@ -55,6 +55,9 @@ import AutoscrollAdsText from '../sharedComponents/AutoscrollAdsText';
 import MarqueeTextList from '../sharedComponents/MarqueeTextNew';
 import MarqueeFlatList from '../sharedComponents/MarqueeFlatList';
 import MarqueeExample from '../sharedComponents/MarqueeExample';
+import MarqueeTextItems from '../sharedComponents/AutoScrollFlatList';
+import AutomaticHorizontalScroll from '../sharedComponents/AutomaticHorizontalScroll';
+import MarqueeTextCollection from '../sharedComponents/MarqueeTextCollection';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
@@ -318,8 +321,14 @@ export default function DashboradScreen() {
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           /> */}
             {StoryData != null && StoryData != undefined && (
-          
-          <MarqueeExample></MarqueeExample>
+              // <MarqueeScreen></MarqueeScreen>
+           <MarqueeTextCollection></MarqueeTextCollection>
+      //   <MarqueeTextItems
+      //   items={["Welcome to My App!", "Enjoy the experience.", "Stay tuned for updates."]}
+      //   speed={4000} // Adjust speed as needed
+      // />
+            // <MarqueeExample></MarqueeExample>
+          // <MarqueeFlatList></MarqueeFlatList>
           )}
          
             {/* <MarqueeTextList /> */}

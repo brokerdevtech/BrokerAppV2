@@ -18,106 +18,10 @@ import  {
   useFrameCallback,
   useSharedValue,
 } from 'react-native-reanimated';
+import TextTicker from 'react-native-text-ticker';
 const screenWidth = Dimensions.get('window').width;
 
-const MeasureElement = ({ onLayout, children }) => (
-  <Animated.ScrollView
-    horizontal
-    style={marqueeStyles.hidden}
-    pointerEvents="box-none">
-    <View onLayout={(ev) => onLayout(ev.nativeEvent.layout.width)}>
-      {children}
-    </View>
-  </Animated.ScrollView>
-);
-const marqueeStyles = StyleSheet.create({
-  hidden: { opacity: 0, zIndex: -1 },
-  row: { flexDirection: 'row', overflow: 'hidden' },
-});
-const TranslatedElement = ({ index, children, offset, childrenWidth }) => {
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      left: (index - 1) * childrenWidth,
-      transform: [
-        {
-          translateX: -offset.value,
-        },
-      ],
-    };
-  });
-  return (
-    <Animated.View style={[styles.animatedStyle, animatedStyle]}>
-      {children}
-    </Animated.View>
-  );
-};
 
-const getIndicesArray = (length) => Array.from({ length }, (_, i) => i);
-
-const Cloner = ({ count, renderChild }) => (
-  <>{getIndicesArray(count).map(renderChild)}</>
-);
-const ChildrenScroller = ({
-  duration,
-  childrenWidth,
-  parentWidth,
-  reverse,
-  children,
-}) => {
-  const offset = useSharedValue(0);
-  const coeff = useSharedValue(reverse ? 1 : -1);
-
-  React.useEffect(() => {
-    coeff.value = reverse ? 1 : -1;
-  }, [reverse]);
-
-  useFrameCallback((i) => {
-    var _a;
-    // prettier-ignore
-    offset.value += (coeff.value * (((_a = i.timeSincePreviousFrame) !== null && _a !== void 0 ? _a : 1) * childrenWidth)) / duration;
-    offset.value = offset.value % childrenWidth;
-  }, true);
-
-  const count = Math.round(parentWidth / childrenWidth) + 2;
-  const renderChild = (index) => (
-    <TranslatedElement
-      key={`clone-${index}`}
-      index={index}
-      offset={offset}
-      childrenWidth={childrenWidth}>
-      {children}
-    </TranslatedElement>
-  );
-
-  return <Cloner count={count} renderChild={renderChild} />;
-};
-const Marquee = ({ duration = 2000, reverse = false, children, style }) => {
-  const [parentWidth, setParentWidth] = React.useState(0);
-  const [childrenWidth, setChildrenWidth] = React.useState(0);
-
-  return (
-    <View
-      style={style}
-      onLayout={(ev) => {
-        setParentWidth(ev.nativeEvent.layout.width);
-      }}
-      pointerEvents="box-none">
-      <View style={marqueeStyles.row} pointerEvents="box-none">
-        <MeasureElement onLayout={setChildrenWidth}>{children}</MeasureElement>
-
-        {childrenWidth > 0 && parentWidth > 0 && (
-          <ChildrenScroller
-            duration={duration}
-            parentWidth={parentWidth}
-            childrenWidth={childrenWidth}
-            reverse={reverse}>
-            {children}
-          </ChildrenScroller>
-        )}
-      </View>
-    </View>
-  );
-};
 const MarqueeFlatList = () => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const cityToShow = AppLocation.City;
@@ -136,7 +40,7 @@ const MarqueeFlatList = () => {
       loadMore(2, cityToShow);
     }
   };
-
+  const getDuration = (text: string) => Math.max(text.length * 100, 2000);
   const handleScrollEnd = () => {
     if (!Addata || Addata.length === 0) return;
 
@@ -144,7 +48,7 @@ const MarqueeFlatList = () => {
     setCurrentIndex(nextIndex);
 
     if (flatListRef.current && nextIndex < Addata.length) {
-      flatListRef.current.scrollToIndex({ index: nextIndex, animated: true });
+      flatListRef.current.scrollToIndex({ index: nextIndex});
     }
   };
 
@@ -158,11 +62,35 @@ const MarqueeFlatList = () => {
         pagingEnabled
         snapToAlignment="center"
         scrollEnabled={false}
-        renderItem={({ item }) => (
+        renderItem={({ item,index }) => (
           <View style={styles.marqueeContainer}>
-        <MeasureElement>
+<MarqueeText
+          style={styles.text}
+          speed={0.2}
+          marqueeOnStart={true}
+          loop={true}
+          delay={1000}
+          onMarqueeComplete={handleScrollEnd}
+        >  
+         {index}-{item.marqueueText}
+        </MarqueeText>
 
-        </MeasureElement>
+
+        {/* <TextTicker
+           style={{ fontSize: 24 }}
+         
+           animationType='auto'
+         duration={getDuration(item.marqueueText)}
+           onMarqueeComplete={handleScrollEnd}
+           marqueeDelay={1}
+           bounce={false}
+           loop={false}
+           
+           >
+              
+              
+                 <Text style={styles.text}>{index}-{item.marqueueText}</Text>
+               </TextTicker> */}
             {/* <MarqueeText
               style={styles.text}
               speed={0.2}

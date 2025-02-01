@@ -1,13 +1,13 @@
 //import { Marquee } from '@animatereactnative/marquee';
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Easing } from 'react-native';
 import TextTicker from 'react-native-text-ticker'
 import MarqueeView from 'react-native-marquee-view';
 const MarqueeExample = () => {
   const contents = [
-    "Short Text This is a slightly longer scrolling text slightly longer scrolling text ",
-    "This is a slightly.",
-    "A much longer text that should take more time to."
+    "This is the first marquee text. It should move smoothly across the screen without truncation or clipping.",
+    "Second marquee text, ensuring it is fully visible and does not break into multiple lines.",
+    "Another example of a long text to confirm it scrolls properly without getting clipped.",
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -49,12 +49,12 @@ setCurrentIndex((prevIndex) => (prevIndex + 1) % contents.length);
     //   </TextTicker> 
       <TextTicker
     style={{ fontSize: 24 }}
-   // scrollSpeed={18}
+   scrollSpeed={18}
     animationType={'auto'}
-    duration={150*contents[currentIndex].length}
+   // duration={150*contents[currentIndex].length}
     onMarqueeComplete={onMarqueeComplete}
     marqueeDelay={1}
-    
+    easing={Easing.linear}
     >
        
        
@@ -70,7 +70,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     alignItems: 'center',
     width:'100%',
-    paddingHorizontal:10
+    paddingHorizontal:10,
+    flex: 1,
+    justifyContent: 'center',
+   
   },
   marquee: {
     width: '90%',
