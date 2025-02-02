@@ -20,6 +20,7 @@ import {
   Network,
   Network_icon,
   settings_icon,
+  subscription,
 } from '../assets/svg';
 import {
   ChevronLeftIcon,
@@ -237,7 +238,7 @@ const CustomDrawerContent = props => {
               showToast();
             }
           }}
-          // leftIcon={}}
+          leftIcon={subscription}
           rightIcon={ChevronRightIcon}
         />
         {/* <CustomDrawerItem

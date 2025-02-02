@@ -215,13 +215,17 @@ const SubscriptionPlan = ({route}) => {
     plantype => {
       const flatListRef = useRef(null);
       const [isInfiniteLoading, setInfiniteLoading] = useState(false);
-      const [plans, setPlans] = useState([]);
-      const {
+     
+      const  {
         data: Plandata,
         status: Planstatus,
         execute: Planexecute,
         hasMore,
         loadMore: PlanloadMore,
+        pageSize_Set,currentPage_Set,hasMore_Set,totalPages,recordCount,setData_Set
+
+
+
       } = useApiPagingWithtotalRequest(
         subsriptionPlanApi,
         setInfiniteLoading,
@@ -230,7 +234,7 @@ const SubscriptionPlan = ({route}) => {
 
       const getList = async () => {
         try {
-          setPlans([]);
+          await  hasMore_Set(true)
           await Planexecute(plantype);
         } catch (error) {
           console.error('Error fetching plans:', error);
@@ -238,17 +242,21 @@ const SubscriptionPlan = ({route}) => {
       };
 
       useEffect(() => {
+        // Plandata=null;
+        //setData_Set(null)
+     
+        
         getList();
       }, [plantype]);
 
       useEffect(() => {
         if (Planstatus == 200) {
-          setPlans(Plandata);
+        console.log('Plan',Plandata);
         }
       }, [Plandata, Planstatus]);
 
       const loadMorepage = async () => {
-        if (!isInfiniteLoading && hasMore) {
+        if (!isInfiniteLoading) {
           try {
             await PlanloadMore(plantype);
           } catch (error) {
@@ -258,8 +266,9 @@ const SubscriptionPlan = ({route}) => {
       };
 
       return (
+        
         <FlatList
-          data={plans}
+          data={Plandata}
           renderItem={renderItem}
           ref={flatListRef}
           getItemLayout={(data, index) => ({
@@ -269,7 +278,7 @@ const SubscriptionPlan = ({route}) => {
           })}
           initialNumToRender={2}
           maxToRenderPerBatch={4}
-          windowSize={4}
+        
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           onEndReachedThreshold={0.6}
@@ -325,7 +334,7 @@ const SubscriptionPlan = ({route}) => {
           </ZText>
         </TouchableOpacity>
       </View>
-
+     
       {activeTab === 'General' && renderRecommendedplans(1)}
       {activeTab === 'Ads' && renderRecommendedplans(2)}
       {activeTab === 'Space ads' && renderRecommendedplans(3)}

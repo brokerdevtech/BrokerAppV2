@@ -97,7 +97,8 @@ import Buyer from './buyer.svg';
 import BuyerActive from './buyer-fill.svg';
 import filter from './filter.svg';
 import ImagePlaceholder from './icons/ImagePlaceholder.svg';
-export {ImagePlaceholder,
+import subscription from './subscription.svg';
+export {ImagePlaceholder,subscription,
   Buyer,
   filter,
   BuyerActive,

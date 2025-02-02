@@ -52,11 +52,9 @@ import {getDashboardStory} from '../../BrokerAppCore/services/Story';
 import ProductSectionData from './Dashboard/ProductSectionData';
 import {fetchDashboardData as fetchDashboardDataBrand} from '../../BrokerAppCore/services/new/dashboardService';
 import AutoscrollAdsText from '../sharedComponents/AutoscrollAdsText';
-import MarqueeTextList from '../sharedComponents/MarqueeTextNew';
-import MarqueeFlatList from '../sharedComponents/MarqueeFlatList';
-import MarqueeExample from '../sharedComponents/MarqueeExample';
+
 import MarqueeTextItems from '../sharedComponents/AutoScrollFlatList';
-import AutomaticHorizontalScroll from '../sharedComponents/AutomaticHorizontalScroll';
+
 import MarqueeTextCollection from '../sharedComponents/MarqueeTextCollection';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -321,14 +319,9 @@ export default function DashboradScreen() {
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           /> */}
             {StoryData != null && StoryData != undefined && (
-              // <MarqueeScreen></MarqueeScreen>
+          
            <MarqueeTextCollection></MarqueeTextCollection>
-      //   <MarqueeTextItems
-      //   items={["Welcome to My App!", "Enjoy the experience.", "Stay tuned for updates."]}
-      //   speed={4000} // Adjust speed as needed
-      // />
-            // <MarqueeExample></MarqueeExample>
-          // <MarqueeFlatList></MarqueeFlatList>
+    
           )}
          
             {/* <MarqueeTextList /> */}
@@ -530,7 +523,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   subHeaderSection: {
-    paddingBottom: 20,
+    //paddingBottom: 10,
     backgroundColor: '#fff',
   },
   scrollView: {
