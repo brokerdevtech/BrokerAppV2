@@ -64,7 +64,7 @@ export const useApiPagingWithDataRequest = <T, P extends any[]>(
         // Use stored params along with current page and page size
         const response = await apiFunction(...params, currentPage + 1, pageSize);
 
-     console.log(response);
+
 
         if (!response.success) {
           setError(response.message || 'An error occurred');
@@ -72,7 +72,7 @@ export const useApiPagingWithDataRequest = <T, P extends any[]>(
         } else {
           if(response?.data.length > 0)
        {   setData((prevData) => [...prevData, ...(response.data || [])]);
-        console.log(response);
+       
           setStatus(response.status || 200);
           setCurrentPage((prevPage) => prevPage + 1); // Increment the page count
   

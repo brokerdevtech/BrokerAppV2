@@ -197,7 +197,7 @@ const StoryDetails: React.FC = ({route}) => {
     }
   }
 
-  console.log(content, 'conj');
+
   function start(duration) {
     // Ensure duration is not zero
     duration = duration || 5000;
@@ -479,7 +479,7 @@ const StoryDetails: React.FC = ({route}) => {
       });
     }
   };
-  console.log(content?.[current], 'im');
+
   return (
     <SafeAreaView style={localStyles.containerModal}>
       <BottomSheetModalProvider>

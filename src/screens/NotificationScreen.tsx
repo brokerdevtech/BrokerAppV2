@@ -61,7 +61,7 @@ const NotificationItem = ({
   } = item;
   let response = body;
 
-  console.log(item, 'metadata');
+
 
   const getTimeDifference = createdAt => {
     const created = moment.utc(createdAt).local();

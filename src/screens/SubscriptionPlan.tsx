@@ -57,33 +57,33 @@ const SubscriptionPlan = ({route}) => {
 
     loadMore: PlanloadMore,
     hasMore: PlanHasMore,
-  } = useApiPagingWithtotalRequest(subsriptionPlanApi, setInfiniteLoading, 4);
+  } = useApiPagingWithtotalRequest(subsriptionPlanApi, setInfiniteLoading, 6);
 
-  const getList = useCallback(async () => {
+  const getList = async () => {
     try {
-      setInfiniteLoading(false); // Reset loading state
+   
       await Planexecute(planType);
     } catch (error) {
       console.error('Error fetching plans:', error);
-      setInfiniteLoading(false);
+    
     }
-  }, [planType, Planexecute]);
+  };
 
   useEffect(() => {
     getList();
   }, [planType]);
-  const loadMorePage = useCallback(async () => {
-    if (!isInfiniteLoading && PlanHasMore && Plandata?.length > 0) {
+  const loadMorePage = async () => {
+    if (!isInfiniteLoading) {
       try {
-        setInfiniteLoading(true);
+       
         await PlanloadMore(planType);
       } catch (error) {
         console.error('Error loading more plans:', error);
       } finally {
-        setInfiniteLoading(false);
+       
       }
     }
-  }, [isInfiniteLoading, PlanHasMore, Plandata, PlanloadMore, planType]);
+  };
   const renderItem = ({item}) => {
     const limits = item.limits ? JSON.parse(item.limits) : {};
     const additionalBenefits = item.additionalBenifits
@@ -249,7 +249,7 @@ const SubscriptionPlan = ({route}) => {
       </TouchableOpacity>
     );
   };
-  console.log(Plandata);
+
   return (
     <View style={{flex: 1}}>
       <View style={styles.tabContainer}>
@@ -276,7 +276,7 @@ const SubscriptionPlan = ({route}) => {
             <ActivityIndicator size="large" color={Color.primary} />
           ) : null
         }
-        removeClippedSubviews={false}
+       
         ListEmptyComponent={() => (Plandata ? <NoDataFoundScreen /> : null)}
       />
 

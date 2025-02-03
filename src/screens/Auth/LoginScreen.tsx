@@ -450,7 +450,7 @@ console.log(fcmToken);
         requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
       });
 
-      console.log(appleAuthRequestResponse);
+
 
       const fcmToken = await getfcmToken();
 

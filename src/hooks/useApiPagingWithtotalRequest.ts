@@ -71,7 +71,7 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
 
         try {
           // Use stored params along with current page and page size
-          console.log(...params, currentPage + 1, pageSize, 'aparam');
+       
           const response = await apiFunction(
             ...params,
             currentPage + 1,
@@ -83,7 +83,7 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
               setError(response.message || 'An error occurred');
               setStatus(response.status || 500);
             } else {
-              console.log(response?.data.data, 'DataFormHook');
+           
               if (
                 response?.data.data != null &&
                 response?.data.data.length > 0

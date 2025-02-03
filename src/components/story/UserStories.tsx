@@ -120,8 +120,7 @@ const UserStories = React.memo(Data => {
   }, [Data]);
 
   const loadMore = async () => {
-    console.log('loadMore');
-    console.log(isInfiniteLoading);
+ 
     if (!isInfiniteLoading) {
       await StoriesLoadMore(user.userId);
     }
