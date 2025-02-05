@@ -25,6 +25,7 @@ import {
   Chat_Icon,
   Telephone_Icon,
   description_icon,
+  MenuThreeDots,
 } from '../assets/svg';
 
 import {
@@ -66,6 +67,7 @@ import RecentSearchSectionData from './Dashboard/RecentSearchSectionData';
 import {getRecommendedBrokerList} from '../../BrokerAppCore/services/new/recomendedBroker';
 import ZAvatarInitials from '../sharedComponents/ZAvatarInitials';
 import ItemHeader from './ItemHeader';
+import ReportScreen from '../sharedComponents/ReportScreen';
 
 //const MediaGallery = React.lazy(() => import('../sharedComponents/MediaGallery'));
 //const UserStories = React.lazy(() => import('../components/story/UserStories'));
@@ -99,9 +101,7 @@ const RederListHeader = React.memo(
   }) => {
     return (
       <>
-       {StoryData!=null &&
-        <UserStories Data={StoryData} />
-       }
+        {StoryData != null && <UserStories Data={StoryData} />}
         <Recommend categoryId={categoryId} Data={RenderBrokerData} />
         <ProductSectionData
           heading={'Newly Launch'}
@@ -145,7 +145,7 @@ const RederListHeader = React.memo(
 // ));
 
 const ProductItem = React.memo(
-  ({item, listTypeData, User, navigation, OnGoBack}) => {
+  ({item, listTypeData, User, menuPress, navigation, OnGoBack}) => {
     const [isrefresh, setisrefresh] = useState(0);
     const MediaGalleryRef = useRef(null);
     //  console.log(item);
@@ -227,7 +227,6 @@ const ProductItem = React.memo(
     return (
       <View style={styles.WrapcardContainer}>
         <View style={styles.cardContainer}>
-      
           <ItemHeader item={item}></ItemHeader>
           <MediaGallery
             ref={MediaGalleryRef}
@@ -243,13 +242,13 @@ const ProductItem = React.memo(
       /> */}
 
           {/* Check and Heart Icons */}
-          {item.isBrokerAppVerified && (
-            <View style={styles.iconContainer}>
-              <View style={styles.checkIcon}>
-                <Card_check_icon />
-              </View>
-            </View>
-          )}
+
+          <View style={styles.iconContainer}>
+            <TouchableOpacity onPress={menuPress} style={styles.checkIcon}>
+              <MenuThreeDots height={20} width={20} />
+            </TouchableOpacity>
+          </View>
+
           <View style={{marginLeft: 20}}>
             <PostActions
               item={item}
@@ -414,6 +413,17 @@ const ItemListScreen: React.FC<any> = ({
   const {logButtonClick} = useUserJourneyTracker(
     `${route.params.listType} Page`,
   );
+  const [selectedItem, setSelectedItem] = useState(null);
+  const reportSheetRef = useRef(null);
+
+  const handlePresentModalPress = useCallback(item => {
+    setSelectedItem(item);
+    reportSheetRef.current?.open();
+  }, []);
+
+  const closeModalReport = useCallback(() => {
+    setSelectedItem(null);
+  }, []);
   // console.log('=============user=============');
   // console.log(user);
   const FilterSheetRef = useRef(null);
@@ -576,6 +586,7 @@ const ItemListScreen: React.FC<any> = ({
         item={item}
         listTypeData={listTypeData}
         User={user}
+        menuPress={handlePresentModalPress}
         navigation={navigation}
         OnGoBack={OnGoBack}
       />
@@ -705,7 +716,7 @@ const ItemListScreen: React.FC<any> = ({
     ] = results.map(result =>
       result.status === 'fulfilled' ? result.value : null,
     );
-    console.log('DashboardStory')
+    console.log('DashboardStory');
     console.log(DashboardStory);
     setStoryData(DashboardStory.data);
     setNewIncategoryData(NewIncategory.data);
@@ -955,6 +966,12 @@ const ItemListScreen: React.FC<any> = ({
       {/* </SafeAreaView>
      
         </ScrollView> */}
+      <ReportScreen
+        ref={reportSheetRef}
+        postItem={selectedItem}
+        screenFrom={'List'}
+        onClose={closeModalReport}
+      />
     </BottomSheetModalProvider>
   );
 };
@@ -963,18 +980,17 @@ const styles = StyleSheet.create({
   cardAvatar: {
     display: 'flex',
     flexDirection: 'row',
- padding:10
+    padding: 10,
   },
   cardAvatarImg: {
     display: 'flex',
     flexDirection: 'row',
-   
   },
   cardAvatarText: {
     display: 'flex',
     flexDirection: 'row',
-   marginLeft:10,
-   alignItems: 'center',
+    marginLeft: 10,
+    alignItems: 'center',
   },
   callbtn: {
     display: 'flex',
@@ -1097,7 +1113,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   WrapcardContainer: {
-   // paddingHorizontal: 20,
+    // paddingHorizontal: 20,
     marginBottom: 20,
   },
   cardContainer: {

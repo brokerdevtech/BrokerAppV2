@@ -268,16 +268,17 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
 
         {/* Proceed Button - Outside ScrollView */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
+          <View
             style={styles.proceedButton}
-            onPress={() => {
-              bottomSheetModalRef.current?.dismiss();
-              onClose?.();
-            }}>
+            // onPress={() => {
+            //   bottomSheetModalRef.current?.dismiss();
+            //   onClose?.();
+            // }}>
+          >
             <Text style={styles.proceedButtonText}>
               Proceed with {postItem?.currency} {getDiscountedPrice()}
             </Text>
-          </TouchableOpacity>
+          </View>
         </View>
       </View>
     </BottomSheetModal>
@@ -390,7 +391,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   proceedButton: {
-    backgroundColor: Color.primary,
+    backgroundColor: Color.primaryDisable,
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',

@@ -38,6 +38,7 @@ import {
   share_PIcon,
   bookmark_icon,
   description_icon,
+  MenuThreeDots,
 } from '../assets/svg';
 import {imagesBucketcloudfrontPath} from '../config/constants';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
@@ -75,6 +76,7 @@ import ListingCardSkeleton from '../sharedComponents/Skeleton/ListingCardSkeleto
 import {formatNumberToIndianSystem} from '../utils/helpers';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 import ItemHeader from './ItemHeader';
+import ReportScreen from '../sharedComponents/ReportScreen';
 const SkeletonPlaceholder = () => {
   return (
     <HStack space={10} style={styles.skeletonContainer}>
@@ -119,7 +121,7 @@ const RederListHeader = React.memo(
 // ));
 
 const ProductItem = React.memo(
-  ({item, listTypeData, User, navigation, OnGoBack}) => {
+  ({item, listTypeData, User, menuPress, navigation, OnGoBack}) => {
     const MediaGalleryRef = useRef(null);
     const [isrefresh, setisrefresh] = useState(0);
 
@@ -198,7 +200,7 @@ const ProductItem = React.memo(
     return (
       <View style={styles.WrapcardContainer}>
         <View style={styles.cardContainer}>
-        <ItemHeader item={item}></ItemHeader>
+          <ItemHeader item={item}></ItemHeader>
           <MediaGallery
             ref={MediaGalleryRef}
             mediaItems={item.postMedias}
@@ -213,13 +215,11 @@ const ProductItem = React.memo(
       /> */}
 
           {/* Check and Heart Icons */}
-          {item.isBrokerAppVerified && (
-            <View style={styles.iconContainer}>
-              <View style={styles.checkIcon}>
-                <Card_check_icon />
-              </View>
-            </View>
-          )}
+          <View style={styles.iconContainer}>
+            <TouchableOpacity onPress={menuPress} style={styles.checkIcon}>
+              <MenuThreeDots height={20} width={20} />
+            </TouchableOpacity>
+          </View>
           <View style={{marginLeft: 20}}>
             <PostActions
               item={item}
@@ -364,6 +364,17 @@ const ItemFilterListScreen: React.FC<any> = ({
   const {logButtonClick} = useUserJourneyTracker(
     `${route.params.listType}Filter Search Page`,
   );
+  const [selectedItem, setSelectedItem] = useState(null);
+  const reportSheetRef = useRef(null);
+
+  const handlePresentModalPress = useCallback(item => {
+    setSelectedItem(item);
+    reportSheetRef.current?.open();
+  }, []);
+
+  const closeModalReport = useCallback(() => {
+    setSelectedItem(null);
+  }, []);
   const [Itemslocalities, setItemslocalities] = useState(null);
   const [PopUPFilter, setPopUPFilter] = useState(null);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
@@ -510,6 +521,7 @@ const ItemFilterListScreen: React.FC<any> = ({
         item={item}
         listTypeData={listTypeData}
         User={user}
+        menuPress={handlePresentModalPress}
         navigation={navigation}
         OnGoBack={OnGoBack}
       />
@@ -782,6 +794,12 @@ const ItemFilterListScreen: React.FC<any> = ({
         listTypeData={listTypeData}
         userPermissions={userPermissions}
         onClose={closeModal}
+      />
+      <ReportScreen
+        ref={reportSheetRef}
+        postItem={selectedItem}
+        screenFrom={'List'}
+        onClose={closeModalReport}
       />
       {/* </SafeAreaView>
      
