@@ -208,7 +208,14 @@ const SubscriptionPlan = ({route}) => {
             )}
           </View>
 
-          <View style={{alignItems: 'flex-end'}}>
+          <View
+            style={{
+              flexDirection: 'coloum',
+              justifyContent: 'space-between',
+              alignItems: 'center', // Ensures buttons stay in position
+              marginTop: 10,
+              // Add spacing
+            }}>
             {/* Buy Now Button */}
             <View style={styles.buyNowButton}>
               <ZText type={'S14'} color={'white'}>
@@ -218,7 +225,7 @@ const SubscriptionPlan = ({route}) => {
 
             {/* Read More Button */}
             <TouchableOpacity
-              style={{paddingHorizontal: 10, marginTop: 5}}
+              style={{paddingHorizontal: 10}}
               onPress={() => handlePresentModalPress(item)}>
               <ZText
                 type={'S12'}
@@ -333,6 +340,7 @@ const styles = StyleSheet.create({
   details: {
     flexDirection: 'column',
     justifyContent: 'space-between',
+    width: '65%',
   },
   detailText: {
     // fontSize: 12,
@@ -345,6 +353,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.primaryDisable, // Change color as needed
     paddingVertical: 8,
     paddingHorizontal: 16,
+    marginBottom: 5,
     borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
