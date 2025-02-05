@@ -1,13 +1,14 @@
-import React, { useCallback, useMemo } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import React, {useCallback, useMemo} from 'react';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import ZAvatarInitials from '../sharedComponents/ZAvatarInitials'; // Adjust import based on your project structure
 import ZText from '../sharedComponents/ZText'; // Adjust import based on your project structure
-import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../BrokerAppCore/redux/store/reducers';
-import { formatDate } from '../constants/constants';
+import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../BrokerAppCore/redux/store/reducers';
+import {formatDate} from '../constants/constants';
 import moment from 'moment';
-const useGetTimeDifference = (createdAt) => {
+import {Card_check_icon} from '../assets/svg';
+const useGetTimeDifference = createdAt => {
   const getTimeDifference = useCallback(() => {
     // Ensure createdAt is treated as a UTC time
     const created = moment.utc(createdAt).local();
@@ -18,11 +19,15 @@ const useGetTimeDifference = (createdAt) => {
     const yearsDifference = now.diff(created, 'years');
 
     if (yearsDifference >= 1) {
-      return yearsDifference === 1 ? '1 year ago' : `${yearsDifference} years ago`;
+      return yearsDifference === 1
+        ? '1 year ago'
+        : `${yearsDifference} years ago`;
     }
 
     if (monthsDifference >= 1) {
-      return monthsDifference === 1 ? '1 month ago' : `${monthsDifference} months ago`;
+      return monthsDifference === 1
+        ? '1 month ago'
+        : `${monthsDifference} months ago`;
     }
 
     if (daysDifference >= 7) {
@@ -36,33 +41,34 @@ const useGetTimeDifference = (createdAt) => {
   return useMemo(() => getTimeDifference(), [getTimeDifference]);
 };
 
-const ItemHeader = ({ item }) => {
- // console.log('item', item);
+const ItemHeader = ({item}) => {
+  // console.log('item', item);
   const navigation = useNavigation();
   const user = useSelector((state: RootState) => state.user.user);
-    const onPressUser = (userId, userName, userImage) => {
-        if (user.userId === userId) {
-          navigation.navigate('ProfileScreen');
-        } else {
-          navigation.navigate('ProfileDetail', {
-            userName: userName,
-            userImage: userImage,
-            userId: userId,
-            loggedInUserId: user.userId,
-            connectionId: '',
-          });
-        }
-      };
-      const timeDifference = useGetTimeDifference(item.postedOn);
+  const onPressUser = (userId, userName, userImage) => {
+    if (user.userId === userId) {
+      navigation.navigate('ProfileScreen');
+    } else {
+      navigation.navigate('ProfileDetail', {
+        userName: userName,
+        userImage: userImage,
+        userId: userId,
+        loggedInUserId: user.userId,
+        connectionId: '',
+      });
+    }
+  };
+  const timeDifference = useGetTimeDifference(item.postedOn);
   return (
-
     <TouchableOpacity
-        style={styles.cardAvatar}
-        onPress={() => onPressUser(item.userId, item.postedBy, item.profileImage)}
-      >
+      style={styles.cardAvatar}
+      onPress={() =>
+        onPressUser(item.userId, item.postedBy, item.profileImage)
+      }>
+      {/* Profile Image */}
       <View style={styles.cardAvatarImg}>
         <ZAvatarInitials
-        onPress={() =>
+          onPress={() =>
             onPressUser(item.userId, item.postedBy, item.profileImage)
           }
           sourceUrl={item.profileImage}
@@ -70,29 +76,44 @@ const ItemHeader = ({ item }) => {
           name={item.postedBy}
         />
       </View>
+
+      {/* Username and Time */}
       <View style={styles.cardAvatarText}>
-        <ZText type={'B16'}>{item.postedBy}</ZText>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <ZText type={'B16'}>{item.postedBy}</ZText>
+          {item.isBrokerAppVerified && (
+            <View style={styles.checkIconContainer}>
+              <Card_check_icon />
+            </View>
+          )}
+        </View>
         <ZText type={'R14'}>{timeDifference}</ZText>
       </View>
     </TouchableOpacity>
-  );};
+  );
+};
 
-  const styles = StyleSheet.create({  
-    cardAvatar: {
+const styles = StyleSheet.create({
+  cardAvatar: {
     display: 'flex',
     flexDirection: 'row',
- paddingHorizontal:8,
- paddingVertical:10
+    paddingHorizontal: 8,
+    paddingVertical: 10,
   },
   cardAvatarImg: {
     display: 'flex',
     flexDirection: 'row',
-   
   },
   cardAvatarText: {
     display: 'flex',
     flexDirection: 'column',
-   marginLeft:10,
-   //alignItems: 'center',
-  }});
-  export default ItemHeader;
+    marginLeft: 10,
+    //alignItems: 'center',
+  },
+  checkIconContainer: {
+    marginLeft: 6, // Space between username and check icon
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+export default ItemHeader;

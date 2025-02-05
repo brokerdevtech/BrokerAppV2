@@ -658,6 +658,7 @@ const OtherProfileScreen: React.FC = ({
       <ReportScreen
         ref={commentSheetRef}
         postItem={selectedItem}
+        screenFrom={'Profile'}
         onClose={closeModal}
       />
     </ZSafeAreaView>

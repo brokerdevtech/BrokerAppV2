@@ -33,7 +33,8 @@ import {useToast, Toast, ToastDescription} from '../../components/ui/toast';
 import {VStack} from '../../components/ui/vstack';
 import {Color} from '../styles/GlobalStyles';
 import {useApiRequest} from '../hooks/useApiRequest';
-import {reportApi} from '../../BrokerAppCore/services/new/Subscription';
+import {reportApi} from '../../BrokerAppCore/services/new/report';
+
 const REPORT_REASONS = [
   'Spam',
   'Harassment',
@@ -45,7 +46,7 @@ const REPORT_REASONS = [
   'Other',
 ];
 
-const ReportScreen = forwardRef(({postItem, onClose}, ref) => {
+const ReportScreen = forwardRef(({postItem, screenFrom, onClose}, ref) => {
   const bottomSheetModalRef = useRef(null);
   const [selectedReason, setSelectedReason] = useState(null);
   const snapPoints = useMemo(() => ['70%'], []);
@@ -60,11 +61,23 @@ const ReportScreen = forwardRef(({postItem, onClose}, ref) => {
   //   const handleSendReport = () => {
   //     console.log('Report submitted for:', postItem, 'Reason:', selectedReason);
   //   };
+  const postRequest = {
+    postId: postItem?.postId,
+    categoryId: postItem?.categoryId,
+    reportReason: selectedReason,
+  };
+  const userRequest = {
+    reportedUserId: postItem,
+    reportReason: selectedReason,
+  };
+  const Urltype =
+    screenFrom === 'List' ? '/Post/ReportPost' : '/Users/ReportUser';
+  const apiRequest = screenFrom === 'List' ? postRequest : userRequest;
   const handleSendReport = async () => {
     // console.log(values, 'values');
 
     setLoading(true);
-    await execute(postItem, selectedReason);
+    await execute(Urltype, apiRequest);
 
     bottomSheetModalRef.current?.close();
     onClose?.();
@@ -119,7 +132,9 @@ const ReportScreen = forwardRef(({postItem, onClose}, ref) => {
       enableHandlePanningGesture={false}
       enableDynamicSizing={false}>
       <View style={styles.container}>
-        <Text style={styles.header}>Report User</Text>
+        <Text style={styles.header}>
+          Report {screenFrom === 'List' ? `Post` : `User`}
+        </Text>
         <FlatList
           data={REPORT_REASONS}
           keyExtractor={item => item}

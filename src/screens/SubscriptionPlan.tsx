@@ -61,11 +61,9 @@ const SubscriptionPlan = ({route}) => {
 
   const getList = async () => {
     try {
-   
       await Planexecute(planType);
     } catch (error) {
       console.error('Error fetching plans:', error);
-    
     }
   };
 
@@ -75,12 +73,10 @@ const SubscriptionPlan = ({route}) => {
   const loadMorePage = async () => {
     if (!isInfiniteLoading) {
       try {
-       
         await PlanloadMore(planType);
       } catch (error) {
         console.error('Error loading more plans:', error);
       } finally {
-       
       }
     }
   };
@@ -145,7 +141,7 @@ const SubscriptionPlan = ({route}) => {
                   return (
                     <React.Fragment key={`${key}-container`}>
                       <Text style={styles.label}>{key}</Text>
-                      <Text style={styles.value}>{firstAd.AdCount}</Text>
+                      <Text style={styles.value}>{firstAd.SpaceAdCount}</Text>
                     </React.Fragment>
                   );
                 }
@@ -168,40 +164,7 @@ const SubscriptionPlan = ({route}) => {
             alignItems: 'flex-end',
           }}>
           <View type={'B26'} style={styles.details}>
-            {hasLimits && (
-              <>
-                <ZText type={'R12'} style={styles.detailText}>
-                  Limits : {item.limits.post}
-                </ZText>
-                {Object.keys(limits).map((key, index) => {
-                  const benefit = limits[key];
-                  if (Array.isArray(benefit)) {
-                    return benefit.map((item, idx) => {
-                      const categoryName =
-                        key === 'Ads'
-                          ? AdsCategoryMap[item.Category]
-                          : SpaceCategoryMap[item.Category];
-
-                      return (
-                        <ZText
-                          key={`${key}-${idx}`}
-                          type={'R12'}
-                          style={styles.value}>
-                          {key}: {item.AdCount} | {categoryName} | Validity:
-                          {item.Validity} days
-                        </ZText>
-                      );
-                    });
-                  }
-                  return (
-                    <ZText key={index} type={'R12'} style={styles.value}>
-                      {key}: {additionalBenefits[key]}
-                    </ZText>
-                  );
-                })}
-              </>
-            )}
-            {hasAdditionalBenefits && (
+            {hasAdditionalBenefits ? (
               <>
                 <ZText type={'R12'} style={[styles.detailText, {marginTop: 8}]}>
                   Additional Benefits:
@@ -233,18 +196,45 @@ const SubscriptionPlan = ({route}) => {
                   );
                 })}
               </>
+            ) : (
+              <>
+                <ZText type={'R12'} style={[styles.detailText, {marginTop: 8}]}>
+                  Additional Benefits:
+                </ZText>
+                <ZText type={'R12'} style={styles.value}>
+                  N/A
+                </ZText>
+              </>
             )}
           </View>
-          <TouchableOpacity
-            style={{paddingHorizontal: 10}}
-            onPress={() => handlePresentModalPress(item)}>
-            <ZText
-              type={'S12'}
-              color={Color.primary}
-              style={{textDecorationLine: 'underline'}}>
-              Read more
-            </ZText>
-          </TouchableOpacity>
+
+          <View
+            style={{
+              flexDirection: 'coloum',
+              justifyContent: 'space-between',
+              alignItems: 'center', // Ensures buttons stay in position
+              marginTop: 10,
+              // Add spacing
+            }}>
+            {/* Buy Now Button */}
+            <View style={styles.buyNowButton}>
+              <ZText type={'S14'} color={'white'}>
+                Buy Now
+              </ZText>
+            </View>
+
+            {/* Read More Button */}
+            <TouchableOpacity
+              style={{paddingHorizontal: 10}}
+              onPress={() => handlePresentModalPress(item)}>
+              <ZText
+                type={'S12'}
+                color={Color.primary}
+                style={{textDecorationLine: 'underline'}}>
+                Read more
+              </ZText>
+            </TouchableOpacity>
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -276,7 +266,6 @@ const SubscriptionPlan = ({route}) => {
             <ActivityIndicator size="large" color={Color.primary} />
           ) : null
         }
-       
         ListEmptyComponent={() => (Plandata ? <NoDataFoundScreen /> : null)}
       />
 
@@ -351,6 +340,7 @@ const styles = StyleSheet.create({
   details: {
     flexDirection: 'column',
     justifyContent: 'space-between',
+    width: '65%',
   },
   detailText: {
     // fontSize: 12,
@@ -358,6 +348,15 @@ const styles = StyleSheet.create({
     // flexDirection: 'column',
     // justifyContent: 'center',
     // flex: 1,
+  },
+  buyNowButton: {
+    backgroundColor: Color.primaryDisable, // Change color as needed
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginBottom: 5,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
