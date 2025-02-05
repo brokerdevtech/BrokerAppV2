@@ -98,10 +98,14 @@ import BuyerActive from './buyer-fill.svg';
 import filter from './filter.svg';
 import ImagePlaceholder from './icons/ImagePlaceholder.svg';
 import subscription from './subscription.svg';
-export {ImagePlaceholder,subscription,
+import MenuThreeDots from './menu-dots-vertical.svg';
+export {
+  ImagePlaceholder,
+  subscription,
   Buyer,
   filter,
   BuyerActive,
+  MenuThreeDots,
   BALogo,
   balconyType,
   ComingSoon,

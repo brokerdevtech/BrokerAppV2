@@ -50,7 +50,12 @@ import {
   PermissionKey,
 } from '../config/constants';
 import ZText from './ZText';
-import {ChevronRightIcon, Icon, ShareIcon} from '../../components/ui/icon';
+import {
+  ChevronRightIcon,
+  Icon,
+  MenuIcon,
+  ShareIcon,
+} from '../../components/ui/icon';
 import ZSafeAreaView from './ZSafeAreaView';
 import {useFocusEffect} from '@react-navigation/native';
 import ZHeader from './ZHeader';
@@ -59,8 +64,9 @@ import ZAvatarInitials from './ZAvatarInitials';
 import RenderUserDetail from './RenderUserDetails';
 import FollowUnfollowComponent from './FollowUnfollowButton';
 import ButtonWithPermissionCheck from './ButtonWithPermissionCheck';
-import {Chat_icon, Network_icon} from '../assets/svg';
+import {Chat_icon, MenuThreeDots, Network_icon} from '../assets/svg';
 import ZButton from './ZButton';
+import ReportScreen from './ReportScreen';
 
 const OtherProfileScreen: React.FC = ({
   toast,
@@ -80,6 +86,17 @@ const OtherProfileScreen: React.FC = ({
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
+  const [selectedItem, setSelectedItem] = useState(null);
+  const commentSheetRef = useRef(null);
+
+  const handlePresentModalPress = useCallback(item => {
+    setSelectedItem(userId);
+    commentSheetRef.current?.open();
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setSelectedItem(null);
+  }, []);
   const connectionId = route.params.connectionId || '';
   const userName = route.params.userName || '';
   const userImg = route.params.userImage || '';
@@ -341,9 +358,14 @@ const OtherProfileScreen: React.FC = ({
 
   const RightIcon = () => {
     return (
-      <TouchableOpacity onPress={shareProfile}>
-        <Icon as={ShareIcon} />
-      </TouchableOpacity>
+      <>
+        <TouchableOpacity onPress={shareProfile} style={{paddingRight: 10}}>
+          <Icon as={ShareIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handlePresentModalPress}>
+          <Icon as={MenuThreeDots} />
+        </TouchableOpacity>
+      </>
     );
   };
   // clg;
@@ -632,6 +654,11 @@ const OtherProfileScreen: React.FC = ({
         imageIndex={0}
         visible={isViewerVisible}
         onRequestClose={() => setViewerVisible(false)}
+      />
+      <ReportScreen
+        ref={commentSheetRef}
+        postItem={selectedItem}
+        onClose={closeModal}
       />
     </ZSafeAreaView>
   );
