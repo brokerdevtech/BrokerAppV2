@@ -24,6 +24,7 @@ import {
   BottomSheetFooter,
   BottomSheetTextInput,
   BottomSheetFlatList,
+  BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
 import {useApiPagingWithtotalRequest} from '@/hooks/useApiPagingWithtotalRequest';
 import {useNavigation} from '@react-navigation/native';
@@ -32,6 +33,7 @@ import {Box} from '../../components/ui/box';
 import {useToast, Toast, ToastDescription} from '../../components/ui/toast';
 import {VStack} from '../../components/ui/vstack';
 import {Color} from '../styles/GlobalStyles';
+import {formatNumberToIndianSystem} from '../utils/helpers';
 const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
   const bottomSheetModalRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -193,10 +195,9 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
       enableDynamicSizing={false}>
       <View style={styles.container}>
         {/* Main ScrollView container */}
-        <ScrollView
+        <BottomSheetScrollView
           style={styles.scrollContainer}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}>
+          contentContainerStyle={styles.scrollContent}>
           {/* Plan Info Section */}
           <View style={styles.planInfo}>
             <Text style={styles.planName}>{postItem?.planName}</Text>
@@ -204,7 +205,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
               {postItem?.planDescription}
             </Text>
             <Text style={styles.planPrice}>
-              {postItem?.currency} {postItem?.price}
+              ₹ {formatNumberToIndianSystem(postItem?.price)}
               {postItem?.discountPercentage > 0 && (
                 <Text style={styles.discount}>
                   {` (-${postItem.discountPercentage}% off)`}
@@ -264,7 +265,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
               Created by: {postItem?.userName}
             </Text>
           </View> */}
-        </ScrollView>
+        </BottomSheetScrollView>
 
         {/* Proceed Button - Outside ScrollView */}
         <View style={styles.buttonContainer}>
@@ -276,7 +277,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
             // }}>
           >
             <Text style={styles.proceedButtonText}>
-              Proceed with {postItem?.currency} {getDiscountedPrice()}
+              Proceed with {formatNumberToIndianSystem(getDiscountedPrice())}
             </Text>
           </View>
         </View>
