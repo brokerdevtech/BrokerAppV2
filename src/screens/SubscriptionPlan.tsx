@@ -24,6 +24,7 @@ import NoDataFoundScreen from '../sharedComponents/NoDataFoundScreen';
 import {formatDate} from '../constants/constants';
 import PlanDetailsScreen from '../sharedComponents/PlanDetailScreen';
 import {FlashList} from '@shopify/flash-list';
+import {formatNumberToIndianSystem} from '../utils/helpers';
 
 const SubscriptionPlan = ({route}) => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -112,8 +113,7 @@ const SubscriptionPlan = ({route}) => {
       <TouchableOpacity style={styles.card}>
         <View style={styles.row}>
           <ZText type={'S22'} style={styles.price}>
-            {item?.currency + ' '}
-            {item.price}
+            ₹ {formatNumberToIndianSystem(item.price)}
           </ZText>
           <View>
             <ZText type={'R14'} style={styles.label}>

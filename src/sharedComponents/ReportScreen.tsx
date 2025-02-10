@@ -24,6 +24,7 @@ import {
   BottomSheetFooter,
   BottomSheetTextInput,
   BottomSheetFlatList,
+  BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
 import {useApiPagingWithtotalRequest} from '@/hooks/useApiPagingWithtotalRequest';
 import {useNavigation} from '@react-navigation/native';
@@ -131,43 +132,45 @@ const ReportScreen = forwardRef(({postItem, screenFrom, onClose}, ref) => {
       backdropComponent={renderBackdrop}
       enableHandlePanningGesture={false}
       enableDynamicSizing={false}>
-      <View style={styles.container}>
-        <Text style={styles.header}>
-          Report {screenFrom === 'List' ? `Post` : `User`}
-        </Text>
-        <FlatList
-          data={REPORT_REASONS}
-          keyExtractor={item => item}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              style={[
-                styles.reasonButton,
-                selectedReason === item && styles.selectedReason,
-              ]}
-              onPress={() => handleSelectReason(item)}>
-              <Text
-                style={
-                  selectedReason === item
-                    ? styles.selectedText
-                    : styles.reasonText
-                }>
-                {item}
-              </Text>
-            </TouchableOpacity>
-          )}
-        />
-        <TouchableOpacity
-          style={[
-            styles.sendButton,
-            selectedReason
-              ? styles.sendButtonEnabled
-              : styles.sendButtonDisabled,
-          ]}
-          disabled={!selectedReason}
-          onPress={handleSendReport}>
-          <Text style={styles.sendButtonText}>Send</Text>
-        </TouchableOpacity>
-      </View>
+      <BottomSheetScrollView>
+        <View style={styles.container}>
+          <Text style={styles.header}>
+            Report {screenFrom === 'List' ? `Post` : `User`}
+          </Text>
+          <FlatList
+            data={REPORT_REASONS}
+            keyExtractor={item => item}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={[
+                  styles.reasonButton,
+                  selectedReason === item && styles.selectedReason,
+                ]}
+                onPress={() => handleSelectReason(item)}>
+                <Text
+                  style={
+                    selectedReason === item
+                      ? styles.selectedText
+                      : styles.reasonText
+                  }>
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            )}
+          />
+          <TouchableOpacity
+            style={[
+              styles.sendButton,
+              selectedReason
+                ? styles.sendButtonEnabled
+                : styles.sendButtonDisabled,
+            ]}
+            disabled={!selectedReason}
+            onPress={handleSendReport}>
+            <Text style={styles.sendButtonText}>Send</Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheetScrollView>
     </BottomSheetModal>
   );
 });
