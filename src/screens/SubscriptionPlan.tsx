@@ -362,6 +362,6 @@ const styles = StyleSheet.create({
 
 export default AppBaseContainer(
   SubscriptionPlan,
-  'Select a subcription plan',
+  'Select a subscription plan',
   true,
 );
