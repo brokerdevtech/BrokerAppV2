@@ -29,9 +29,10 @@ import {VStack} from '../../../components/ui/vstack';
 import CircularSkeleton from '../../sharedComponents/Skeleton/CircularSkeleton';
 import {getDashboardStory} from '../../../BrokerAppCore/services/new/story';
 
-import {useApiPagingWithDataRequest} from '../../hooks/useApiPagingWithDataRequest';
+
 import {Color} from '../../styles/GlobalStyles';
 import LoadingSpinner from '../../sharedComponents/LoadingSpinner';
+import { useApiPagingWithDataRequestState } from '../../hooks/useApiPagingWithDataRequestState';
 
 const SkeletonPlaceholder = () => {
   return (
@@ -46,7 +47,7 @@ const SkeletonPlaceholder = () => {
   );
 };
 
-const UserStories = React.memo(Data => {
+const UserStories = (Data) =>  {
   // console.log("UserStories");
   // console.log(Data);
   const user = useSelector((state: RootState) => state.user.user);
@@ -76,7 +77,7 @@ const UserStories = React.memo(Data => {
     pageSize_Set: StoriespageSize_Set,
     currentPage_Set: StoriescurrentPage_Set,
     hasMore_Set: StorieshasMore_Set,
-  } = useApiPagingWithDataRequest(
+  } = useApiPagingWithDataRequestState(
     getDashboardStory,
     setInfiniteLoading,
     Data.Data.data,
@@ -87,33 +88,33 @@ const UserStories = React.memo(Data => {
       StoriescurrentPage_Set(1);
       StoriespageSize_Set(5);
       StorieshasMore_Set(true);
-      // console.log('Storiesdata',Data)
-      // console.log('Storiesdata',Data.Data.data)
+      if (Data != null && Data.Data != null) {
+        setStoryData(Data.Data.data);
+        set
+        setLoading(false);
+      }
     } catch (error) {
     } finally {
       setLoading(false);
     }
   };
-  useEffect;
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchData = async () => {
-        // await getList();
-        // console.log('Fetch', Data);
-        if (Data != null && Data.Data != null) {
-          setStoryData(Data.Data.data);
-          setLoading(false);
-        }
-      };
 
-      fetchData();
-    }, [Data]),
-  );
 
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const fetchData = async () => {
+  //       console.log('Fetch', Data);
+  //       await getList();
+  //       // console.log('Fetch', Data);
+  //     };
+  
+  //     fetchData();
+  //   }, [Data])
+  // );
   useEffect(() => {
     const fetchData = async () => {
       await getList();
-      // console.log('Fetch', Data);
+       console.log('Fetch', Data.Data.data[0]);
     };
 
     fetchData();
@@ -206,7 +207,7 @@ const UserStories = React.memo(Data => {
       </HStack>
     </VStack>
   );
-});
+};
 
 const localStyles = StyleSheet.create({
   loader: {

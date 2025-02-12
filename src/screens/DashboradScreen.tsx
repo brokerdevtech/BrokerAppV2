@@ -188,7 +188,8 @@ export default function DashboradScreen() {
           //     userId: user.userId,
           //   }),
           // ]);
-      
+      console.log("DashboardStory.data");
+      console.log(JSON.stringify(DashboardStory.data));
           setStoryData(DashboardStory.data);
           setNewlyLaunchData(NewlyLaunch.data);
           setNewInPropertyData(NewInProperty.data);

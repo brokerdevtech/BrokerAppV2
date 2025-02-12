@@ -612,17 +612,11 @@ console.log(fcmToken);
             onPress={signInWithFacebook}>
             <Icon as={FBIcon} />
           </TouchableOpacity>
-          {Platform.OS === 'ios' && (
-            <TouchableOpacity
-              style={styles.socialButton}
-              onPress={handleAppleLogin}>
-              <Icon as={AppleIcon} />
-            </TouchableOpacity>
-          )}
+       
 
           {/* <TouchableOpacity style={styles.socialButton}>
           <Icon as={FBIcon} />
-        </TouchableOpacity> */}
+        </Toucha bleOpacity> */}
         </View>
 
         {/* Sign Up Option */}
