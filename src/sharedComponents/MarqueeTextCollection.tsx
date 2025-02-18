@@ -67,35 +67,40 @@ const MarqueeTextCollection = ({duration = 5000}) => {
     }
   };
 
+  console.log(Addata);
   return (
-    <View style={{flex: 1, justifyContent: 'center'}}>
-      <MarqueeView
-        style={{
-          backgroundColor: Color.primary,
-          width: '100%',
-        }}>
-        <View
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'row',
-            gap: 300,
-            paddingHorizontal: 10,
-            paddingVertical: 5,
-          }}>
-          {Addata != null &&
-            Addata.map((Item: any, index) => (
-              <ZText
-                key={index}
-                type={'S16'}
-                style={{color: 'white'}}
-                onPress={() => handlePress(Item)}>
-                {Item.marqueueText}
-              </ZText>
-            ))}
+    <>
+      {Addata != null && Addata.length > 0 && (
+        <View style={{flex: 1, justifyContent: 'center'}}>
+          <MarqueeView
+            style={{
+              backgroundColor: Color.primary,
+              width: '100%',
+            }}>
+            <View
+              style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'row',
+                gap: 300,
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+              }}>
+              {Addata != null &&
+                Addata.map((Item: any, index) => (
+                  <ZText
+                    key={index}
+                    type={'S16'}
+                    style={{color: 'white'}}
+                    onPress={() => handlePress(Item)}>
+                    {Item.marqueueText}
+                  </ZText>
+                ))}
+            </View>
+          </MarqueeView>
         </View>
-      </MarqueeView>
-    </View>
+      )}
+    </>
   );
 };
 
