@@ -76,7 +76,7 @@ import {
 } from '../../BrokerAppCore/services/new/profileServices';
 import {showRationaleAndRequest} from '../utils/appPermission';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
-import { Edit } from 'stream-chat-react-native';
+import {Edit} from 'stream-chat-react-native';
 
 const ProfileScreen: React.FC = ({
   toast,
@@ -109,7 +109,7 @@ const ProfileScreen: React.FC = ({
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
-
+  // console.log(user);
   const permissionGranted = checkPermission(
     userPermissions,
     PermissionKey.AllowViewMyPost,
@@ -387,7 +387,7 @@ const ProfileScreen: React.FC = ({
       PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
       // Add more permissions as needed
     ];
-    const granted = await PermissionsAndroid.requestMultiple(permissions);
+    // const granted = await PermissionsAndroid.requestMultiple(permissions);
 
     if (Platform.OS === 'android') {
       const permissions = [PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES];
@@ -438,7 +438,7 @@ const ProfileScreen: React.FC = ({
       let result = await s3.upload(params).promise();
 
       UpdateProfilePic(result.key);
-
+      // console.log('kkkkkk');
       // Alert('Upload Success', 'Image uploaded to S3 successfully.');
     } catch (error) {
       console.error('Error uploading image to S3:', error);
@@ -475,6 +475,7 @@ const ProfileScreen: React.FC = ({
       delete Result['location'];
       delete Result['officeLocation'];
       delete Result['userPermissions'];
+      console.log(Result, 'llll');
       await profileUpdateexecute(Result);
     } catch (error) {}
   };
@@ -486,7 +487,7 @@ const ProfileScreen: React.FC = ({
           JSON.stringify(profileUpdatedata.data),
         );
         await AsyncStorage.getItem('User');
-
+        // console.log(profileUpdatedata.data, 'pic ');
         await dispatch(setUser(profileUpdatedata.data));
 
         setProfileDataRest(!ProfileDataRest);
@@ -554,7 +555,6 @@ const ProfileScreen: React.FC = ({
                 align={'center'}
                 color={colors.primary}
                 style={localStyles.EditText}
-           
                 onPress={selectImage}>
                 Edit Image
               </ZText>
@@ -717,12 +717,11 @@ const localStyles = StyleSheet.create({
   },
   avtarWrapper: {
     position: 'relative',
-  
   },
   EditText: {
-    ... styles.mt2,
-   paddingLeft:5,
-   paddingTop:5
+    ...styles.mt2,
+    paddingLeft: 5,
+    paddingTop: 5,
   },
   bio: {
     ...styles.mt10,

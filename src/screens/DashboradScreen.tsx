@@ -127,6 +127,7 @@ export default function DashboradScreen() {
   //     };
   //   }, [AppLocation]) // Add dependencies here
   // );
+  console.log(user);
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
@@ -188,8 +189,8 @@ export default function DashboradScreen() {
           //     userId: user.userId,
           //   }),
           // ]);
-      console.log("DashboardStory.data");
-      console.log(JSON.stringify(DashboardStory.data));
+          console.log('DashboardStory.data');
+          console.log(JSON.stringify(DashboardStory.data));
           setStoryData(DashboardStory.data);
           setNewlyLaunchData(NewlyLaunch.data);
           setNewInPropertyData(NewInProperty.data);
@@ -320,11 +321,9 @@ export default function DashboradScreen() {
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           /> */}
             {StoryData != null && StoryData != undefined && (
-          
-           <MarqueeTextCollection></MarqueeTextCollection>
-    
-          )}
-         
+              <MarqueeTextCollection></MarqueeTextCollection>
+            )}
+
             {/* <MarqueeTextList /> */}
           </View>
 
