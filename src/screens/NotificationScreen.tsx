@@ -61,8 +61,6 @@ const NotificationItem = ({
   } = item;
   let response = body;
 
-  console.log(item, 'metadata');
-
   const getTimeDifference = createdAt => {
     const created = moment.utc(createdAt).local();
     const now = moment();
@@ -137,6 +135,7 @@ const NotificationItem = ({
       });
     } else {
       navigation.push('ItemDetailScreen', {
+        // onGoBack: 'NotificationScreen',
         postId: parsedMetaData?.PostId,
         postType: item?.category === 'RealEstate' ? 'Post' : 'Car/Post',
       });
@@ -170,12 +169,12 @@ const NotificationItem = ({
       </View>
       {shouldRenderButtons && (
         <View style={styles.message}>
-          <TouchableOpacity style={styles.body} onPress={onPressNotification}>
+          <View style={styles.body}>
             <ZText type={'M14'} style={[styles.capitalize]}>
               {response}
             </ZText>
             <ZText type={'M12'}>{timeDifference}</ZText>
-          </TouchableOpacity>
+          </View>
         </View>
       )}
       {!shouldRenderButtons && (

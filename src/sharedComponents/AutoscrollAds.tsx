@@ -77,12 +77,12 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
   useFocusEffect(
     useCallback(() => {
       getList();
-  
+
       // Cleanup function if needed
       return () => {
         // Any cleanup logic goes here
       };
-    }, [cityToShow]) // Dependencies
+    }, [cityToShow]), // Dependencies
   );
 
   useEffect(() => {
@@ -131,7 +131,7 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
   // };
 
   const renderCarouselItem = useCallback(
-    ({item,index}) => {
+    ({item, index}) => {
       //  console.log("renderCarouselItem")
       // console.log(item);
       const isVisible = visibleItems.has(index); // Check if the item is visible
@@ -194,16 +194,19 @@ const AutoscrollAds: React.FC = ({onPressBottomSheet}) => {
             vidStyle={localStyles.videoStyle}
             isVisible={isVisible} // Pass visibility status
             onPress={() => handleAdsPress(item)}
-              onEnd={() => {
-            const nextIndex = (index + 1) % Addata.length;
-            flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
-            setActiveIndex(nextIndex);
-          }}
+            onEnd={() => {
+              const nextIndex = (index + 1) % Addata.length;
+              flatListRef.current?.scrollToIndex({
+                index: nextIndex,
+                animated: true,
+              });
+              setActiveIndex(nextIndex);
+            }}
           />
         </View>
       );
     },
-    [getExtension, parentWidth,visibleItems],
+    [getExtension, parentWidth, visibleItems],
   );
 
   const renderPaginationDots = () => {
@@ -313,6 +316,7 @@ const localStyles = StyleSheet.create({
     // ...styles.pb10,
     flex: 0.8,
     width: '100%',
+    marginTop: 15,
     // height: 00,
   },
   header: {
@@ -390,9 +394,6 @@ const localStyles = StyleSheet.create({
     paddingHorizontal: 12,
     maxHeight: 200,
     height: 200,
-    
-
- 
   },
   container: {
     width: '100%',

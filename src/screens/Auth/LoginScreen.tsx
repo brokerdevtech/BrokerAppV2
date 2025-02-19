@@ -143,7 +143,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       const userInfo = await GoogleSignin.signIn();
 
       const fcmToken = await getfcmToken();
-console.log(fcmToken);
+      console.log(fcmToken);
       // if (!userInfo.data?.user ) {
       //   throw new Error('Failed to get user email from Google Sign In');
       // }
@@ -284,8 +284,8 @@ console.log(fcmToken);
     // console.log(userId)
     await clearTokensfcmToken();
     const fcmToken: any = await getfcmToken();
-    console.log('fcmToken===================');
-    console.log(fcmToken);
+    //   console.log('fcmToken===================')
+    //  console.log(fcmToken);
     const updateDevice = await NewDeviceUpdate(userId, fcmToken.toString());
   };
   useEffect(() => {
@@ -450,8 +450,6 @@ console.log(fcmToken);
         requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
       });
 
-      console.log(appleAuthRequestResponse);
-
       const fcmToken = await getfcmToken();
 
       await SocialLoginexecute({
@@ -599,9 +597,14 @@ console.log(fcmToken);
         </View>
 
         <View style={styles.socialContainer}>
-          {/* <TouchableOpacity style={styles.socialButton}>
-          <Icon as={AppleIcon} stroke="#000" />
-        </TouchableOpacity> */}
+          {Platform.OS === 'ios' && (
+            <TouchableOpacity
+              onPress={handleAppleLogin}
+              style={styles.socialButton}>
+              <Icon as={AppleIcon} stroke="#000" />
+            </TouchableOpacity>
+          )}
+
           <TouchableOpacity
             style={styles.socialButton}
             onPress={signInWithGoogle}>
@@ -612,17 +615,10 @@ console.log(fcmToken);
             onPress={signInWithFacebook}>
             <Icon as={FBIcon} />
           </TouchableOpacity>
-          {Platform.OS === 'ios' && (
-            <TouchableOpacity
-              style={styles.socialButton}
-              onPress={handleAppleLogin}>
-              <Icon as={AppleIcon} />
-            </TouchableOpacity>
-          )}
 
           {/* <TouchableOpacity style={styles.socialButton}>
           <Icon as={FBIcon} />
-        </TouchableOpacity> */}
+        </Toucha bleOpacity> */}
         </View>
 
         {/* Sign Up Option */}

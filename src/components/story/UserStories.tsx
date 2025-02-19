@@ -29,9 +29,10 @@ import {VStack} from '../../../components/ui/vstack';
 import CircularSkeleton from '../../sharedComponents/Skeleton/CircularSkeleton';
 import {getDashboardStory} from '../../../BrokerAppCore/services/new/story';
 
-import {useApiPagingWithDataRequest} from '../../hooks/useApiPagingWithDataRequest';
+
 import {Color} from '../../styles/GlobalStyles';
 import LoadingSpinner from '../../sharedComponents/LoadingSpinner';
+import { useApiPagingWithDataRequestState } from '../../hooks/useApiPagingWithDataRequestState';
 
 const SkeletonPlaceholder = () => {
   return (
@@ -46,7 +47,9 @@ const SkeletonPlaceholder = () => {
   );
 };
 
-const UserStories = React.memo(Data => {
+const UserStories = (Data) =>  {
+  // console.log("UserStories");
+  // console.log(Data);
   const user = useSelector((state: RootState) => state.user.user);
   const navigation = useNavigation();
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
@@ -61,7 +64,7 @@ const UserStories = React.memo(Data => {
     userPermissions,
     PermissionKey.AllowViewMyStory,
   );
-  const [StoryData, setStoryData]: any[] = useState(Data);
+  const [StoryData, setStoryData]: any[] = useState(Data.Data.data);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -74,45 +77,51 @@ const UserStories = React.memo(Data => {
     pageSize_Set: StoriespageSize_Set,
     currentPage_Set: StoriescurrentPage_Set,
     hasMore_Set: StorieshasMore_Set,
-  } = useApiPagingWithDataRequest(getDashboardStory, setInfiniteLoading, Data);
+  } = useApiPagingWithDataRequestState(
+    getDashboardStory,
+    setInfiniteLoading,
+    Data.Data.data,
+  );
   const getList = async () => {
     try {
       setLoading(true);
       StoriescurrentPage_Set(1);
       StoriespageSize_Set(5);
       StorieshasMore_Set(true);
+      if (Data != null && Data.Data != null) {
+        setStoryData(Data.Data.data);
+        set
+        setLoading(false);
+      }
     } catch (error) {
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchData = async () => {
-        await getList();
 
-        if (Data != null && Data.Data != null) {
-          setStoryData(Data.Data.storyList);
-          setLoading(false);
-        }
-      };
-
-      fetchData();
-    }, [Data]),
-  );
-
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const fetchData = async () => {
+  //       console.log('Fetch', Data);
+  //       await getList();
+  //       // console.log('Fetch', Data);
+  //     };
+  
+  //     fetchData();
+  //   }, [Data])
+  // );
   useEffect(() => {
-    if (Storiesstatus === 200) {
-      // if (!permissionGrantedDashBoard) {
-      //   setStoryData([]);
-      //   return;
-      // }
-      setStoryData(Storiesdata.data.storyList);
-    }
-  }, [Storiesstatus, Storiesdata]);
+    const fetchData = async () => {
+      await getList();
+       console.log('Fetch', Data.Data.data[0]);
+    };
+
+    fetchData();
+  }, [Data]);
 
   const loadMore = async () => {
+ 
     if (!isInfiniteLoading) {
       await StoriesLoadMore(user.userId);
     }
@@ -129,7 +138,7 @@ const UserStories = React.memo(Data => {
   };
   const renderItem = useCallback(({item}) => {
     const displayName = item.postedBy;
-    const maxNameLength = Math.floor(Dimensions.get('window').width / 40);
+    // const maxNameLength = Math.floor(Dimensions.get('window').width / 40);
     return (
       <Pressable
         style={localStyles.itemContainer}
@@ -150,9 +159,10 @@ const UserStories = React.memo(Data => {
           style={localStyles.itemUsername}
           numberOfLines={1} // Ensure ellipsis
           ellipsizeMode="tail">
-          {displayName.length > maxNameLength
+          {/* {displayName.length > maxNameLength
             ? `${displayName.slice(0, maxNameLength)}...`
-            : displayName}
+            : displayName} */}
+          {displayName}
         </ZText>
       </Pressable>
     );
@@ -169,16 +179,16 @@ const UserStories = React.memo(Data => {
       <HStack>
         {loading ? (
           <SkeletonPlaceholder />
-        ) : StoryData.length === 0 ? (
+        ) : Storiesdata.length === 0 ? (
           <EmptyListComponent />
         ) : (
           <FlatList
-            data={StoryData}
+            data={Storiesdata}
             style={{flex: 1}}
             keyExtractor={item => item.userId}
             renderItem={renderItem}
             horizontal
-            initialNumToRender={2}
+            initialNumToRender={5}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={localStyles.mainContainer}
             onEndReached={loadMore}
@@ -197,7 +207,7 @@ const UserStories = React.memo(Data => {
       </HStack>
     </VStack>
   );
-});
+};
 
 const localStyles = StyleSheet.create({
   loader: {

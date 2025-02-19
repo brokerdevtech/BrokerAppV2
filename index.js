@@ -7,7 +7,7 @@ import App from './App';
 import {name as appName} from './app.json';
 import {StreamChat, TokenOrProvider} from 'stream-chat';
 import messaging from '@react-native-firebase/messaging';
-import notifee from '@notifee/react-native';
+import notifee, {AndroidImportance} from '@notifee/react-native';
 import {GetStreamToken} from './BrokerAppCore/services/authService';
 import {chatApiKey} from './src/config/chatConfig';
 const tokenProvider: TokenOrProvider = async userId => {
@@ -90,6 +90,7 @@ async function handleNotification(remoteMessage, isBackground = false) {
     }
   } else {
     console.log('remoteMessage');
+
     const channelId = await notifee.createChannel({
       id: 'app-messages',
       name: 'App Messages',
@@ -125,13 +126,17 @@ messaging().onMessage(async remoteMessage => {
     } else {
       await handleNotification(remoteMessage, false);
     }
-  } else {
-    await handleNotification(remoteMessage, false);
+
+    if (remoteMessage.notification) {
+    } else {
+      await handleNotification(remoteMessage, false);
+    }
   }
 });
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log(remoteMessage);
+
   if (remoteMessage.notification) {
   } else {
     await handleNotification(remoteMessage, true);

@@ -68,7 +68,7 @@ const StoryLikeList: React.FC = ({
     pageSize_Set,
     currentPage_Set,
     hasMore_Set,
-  } = useApiPagingWithtotalRequest(getStoryLikeList, setInfiniteLoading);
+  } = useApiPagingWithtotalRequest(getStoryLikeList, setInfiniteLoading,10);
 
   const BlurredStyle = {
     backgroundColor: colors.inputBg,
@@ -133,7 +133,7 @@ const StoryLikeList: React.FC = ({
             showsHorizontalScrollIndicator={false}
             initialNumToRender={5}
             maxToRenderPerBatch={5} // Default is 10
-            removeClippedSubviews={true}
+           // removeClippedSubviews={true}
             renderItem={({item, index}) => (
               <View
                 style={{

@@ -37,7 +37,7 @@ import MarqueeBanner from '../sharedComponents/profile/MarqueeBanner';
 import {fetchDashboardData} from '../../BrokerAppCore/services/new/dashboardService';
 import UserStories from '../components/story/UserStories';
 import {colors} from '../themes';
-import MarqueeScreen from '../sharedComponents/profile/Marquee';
+import MarqueeScreen from '../sharedComponents/MarqueeScreen';
 import RecentSearchSection from './Dashboard/RecentSearchSection';
 import {GetDashboardData} from '../../BrokerAppCore/services/authService';
 import {setDashboard} from '../../BrokerAppCore/redux/store/Dashboard/dashboardSlice';
@@ -52,6 +52,10 @@ import {getDashboardStory} from '../../BrokerAppCore/services/Story';
 import ProductSectionData from './Dashboard/ProductSectionData';
 import {fetchDashboardData as fetchDashboardDataBrand} from '../../BrokerAppCore/services/new/dashboardService';
 import AutoscrollAdsText from '../sharedComponents/AutoscrollAdsText';
+
+import MarqueeTextItems from '../sharedComponents/AutoScrollFlatList';
+
+import MarqueeTextCollection from '../sharedComponents/MarqueeTextCollection';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
@@ -123,6 +127,7 @@ export default function DashboradScreen() {
   //     };
   //   }, [AppLocation]) // Add dependencies here
   // );
+  console.log(user);
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
@@ -184,7 +189,8 @@ export default function DashboradScreen() {
           //     userId: user.userId,
           //   }),
           // ]);
-
+          console.log('DashboardStory.data');
+          console.log(JSON.stringify(DashboardStory.data));
           setStoryData(DashboardStory.data);
           setNewlyLaunchData(NewlyLaunch.data);
           setNewInPropertyData(NewInProperty.data);
@@ -308,10 +314,17 @@ export default function DashboradScreen() {
       <ScrollView style={styles.scrollView}>
         <View>
           <View style={styles.subHeaderSection}>
-            <UserStories Data={StoryData} />
+            {StoryData != null && StoryData != undefined && (
+              <UserStories Data={StoryData} />
+            )}
             {/* <AutoscrollAdsText
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           /> */}
+            {StoryData != null && StoryData != undefined && (
+              <MarqueeTextCollection></MarqueeTextCollection>
+            )}
+
+            {/* <MarqueeTextList /> */}
           </View>
 
           <AutoscrollAds
@@ -510,7 +523,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   subHeaderSection: {
-    paddingBottom: 20,
+    //paddingBottom: 10,
     backgroundColor: '#fff',
   },
   scrollView: {

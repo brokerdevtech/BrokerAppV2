@@ -432,7 +432,7 @@ const ItemDetailScreen: React.FC<any> = ({
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
-  console.log(route, 'route');
+
   const MediaGalleryRef = useRef(null);
   const {logButtonClick} = useUserJourneyTracker(
     `${route.params.postType} Detail Page`,

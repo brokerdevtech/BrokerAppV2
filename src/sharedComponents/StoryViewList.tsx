@@ -69,7 +69,7 @@ const StoryViewList: React.FC = ({
     pageSize_Set,
     currentPage_Set,
     hasMore_Set,
-  } = useApiPagingWithtotalRequest(getStoryViewList, setInfiniteLoading);
+  } = useApiPagingWithtotalRequest(getStoryViewList, setInfiniteLoading,15);
 
   const BlurredStyle = {
     backgroundColor: colors.inputBg,
@@ -132,9 +132,9 @@ const StoryViewList: React.FC = ({
             data={userLists}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
-            initialNumToRender={5}
+           // initialNumToRender={5}
             maxToRenderPerBatch={5} // Default is 10
-            removeClippedSubviews={true}
+            initialNumToRender={15}
             renderItem={({item, index}) => (
               <View
                 style={{

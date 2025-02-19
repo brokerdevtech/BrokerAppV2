@@ -77,7 +77,7 @@ const PostLeads: React.FC = ({
     pageSize_Set,
     currentPage_Set,
     hasMore_Set,
-  } = useApiPagingWithtotalRequest(getPostLeadsList, setInfiniteLoading, 15);
+  } = useApiPagingWithtotalRequest(getPostLeadsList, setInfiniteLoading, 10);
 
   const BlurredStyle = {
     backgroundColor: colors.inputBg,

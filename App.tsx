@@ -58,6 +58,7 @@ import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import useSessionTracker from './src/hooks/Analytics/useSessionTracker';
 import useUserAnalytics from './src/hooks/Analytics/useUserAnalytics';
 import analytics from '@react-native-firebase/analytics';
+import ManuallyselectedLocation from './src/sharedComponents/ManuallyselectedLocation';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -126,6 +127,11 @@ function App(): React.JSX.Element {
   const [colorMode, setColorMode] = React.useState<'dark' | 'light'>(
     defaultTheme,
   );
+  const bottomSheetRef = useRef(null);
+
+  const openBottomSheet = () => {
+    bottomSheetRef.current?.open();
+  };
 
   const toggleColorMode = async () => {
     setColorMode(prev => (prev === 'light' ? 'dark' : 'light'));
@@ -136,55 +142,7 @@ function App(): React.JSX.Element {
   };
   const [locationPermission, setLocationPermission] = useState('unknown');
 
-  // Define the function to check permission status
-  // const checkLocationPermissionStatus = async () => {
-  //   const status = await PermissionService.checkPermissionStatus(
-  //     Platform.select({
-  //       android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-  //       ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-  //     }),
-  //     'Location'
-  //   );
-
-  //   setLocationPermission(status);
-  //   if (status === 'denied') {
-  //     // Handle permission blocked and loop until granted
-  //     const newStatus = await PermissionService.showBlockedPermissionAlert('Location');
-  //     setLocationPermission(newStatus); // Update status after returning from settings
-  //   }
-  //   if (status === 'blocked') {
-  //     // Handle permission blocked and loop until granted
-  //     const newStatus = await PermissionService.showBlockedPermissionAlert('Location');
-  //     setLocationPermission(newStatus); // Update status after returning from settings
-  //   }
-  // };
-  // useEffect(() => {
-
-  //   Animated.parallel([
-  //     Animated.timing(opacityAnim, {
-  //       toValue: 1,
-  //       duration: 1000,
-  //       easing: Easing.out(Easing.quad),
-  //       useNativeDriver: true,
-  //     }),
-  //     Animated.spring(scaleAnim, {
-  //       toValue: 1,
-  //       friction: 3,
-  //       useNativeDriver: true,
-  //     }),
-  //   ]).start();
-
-  //   // setTimeout(() => {
-  //   //   setIsSplashVisible(false);
-  //   // }, 3000);
-  // }, []);
-
   const retryAction = async () => {
-    // Implement your retry logic here
-    // For example, you can attempt to fetch data from an API
-    // or perform any action that requires an internet connection
-    // If successful, update the UI accordingly
-    // If not, you can display an error message or handle it as needed
     const state = await NetInfo.fetch();
 
     setColorMode(state.isConnected);
@@ -238,23 +196,6 @@ function App(): React.JSX.Element {
           );
           console.log('User declined permissions');
         }
-        // switch (result) {
-        //   case RESULTS.UNAVAILABLE:
-        //     console.log(
-        //       'Notification permissions are not available on this device.',
-        //     );
-        //     break;
-        //   case RESULTS.DENIED:
-        //     console.log('Notification permission denied by the user.');
-        //     break;
-        //   case RESULTS.GRANTED:
-        //     console.log('Notification permission granted.');
-        //     break;
-        //   case RESULTS.BLOCKED:
-        //     console.log('Notification permissions are blocked.');
-
-        //     break;
-        // }
       } catch (error) {
         console.error('Error requesting notification permissions:', error);
       }
@@ -316,61 +257,6 @@ function App(): React.JSX.Element {
     }
     setAppState(nextAppState);
   };
-  // const checkPermission = async () => {
-  //   if (Platform.OS === 'android') {
-  //     try {
-  //       const granted = await PermissionsAndroid.requestMultiple([
-  //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-  //         PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-  //       ]);
-  //       return granted;
-  //     } catch (err) {
-  //       console.warn(err);
-  //     }
-  //   } else if (Platform.OS === 'ios') {
-  //     try {
-  //       const locationPermission = await request(
-  //         PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-  //       );
-  //       return locationPermission;
-  //     } catch (err) {
-  //       console.warn(err);
-  //     }
-  //   }
-  // };
-  // const checkPermission = async () => {
-  //   if (Platform.OS === 'android') {
-  //     try {
-  //       const permissions = [
-  //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-  //         PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-  //       ];
-
-  //       const granted = await PermissionsAndroid.check(permissions[0]) && await PermissionsAndroid.check(permissions[1]);
-  //       console.log("===============granted")
-  //       console.log(granted)
-  //       if (!granted) {
-  //         const result = await PermissionsAndroid.requestMultiple(permissions);
-  //         return result;
-  //       }
-  //       return granted;
-  //     } catch (err) {
-  //       console.warn(err);
-  //     }
-  //   } else if (Platform.OS === 'ios') {
-  //     try {
-  //       const locationPermissionStatus = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-
-  //       if (locationPermissionStatus !== RESULTS.GRANTED) {
-  //         const locationPermission = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-  //         return locationPermission;
-  //       }
-  //       return RESULTS.GRANTED;
-  //     } catch (err) {
-  //       console.warn(err);
-  //     }
-  //   }
-  // };
 
   const checkPermission = async () => {
     if (Platform.OS === 'android') {
@@ -433,8 +319,8 @@ function App(): React.JSX.Element {
         };
 
         if (locationPermissionStatus === RESULTS.BLOCKED) {
-          // await showBlockedPermissionAlert('Location');
-          store.dispatch(setAppLocation(defaultAdress));
+          await showBlockedPermissionAlert('Location');
+          // store.dispatch(setAppLocation(defaultAdress));
         } else if (locationPermissionStatus !== RESULTS.GRANTED) {
           const locationPermission = await request(
             PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
@@ -449,8 +335,6 @@ function App(): React.JSX.Element {
     }
   };
   const showBlockedPermissionAlert = permissionName => {
-    //    const alertShown = useRef(false); // Use a ref to track alert display status
-
     return new Promise(resolve => {
       if (!alertShown.current) {
         alertShown.current = true; // Set the alert shown flag
@@ -459,14 +343,6 @@ function App(): React.JSX.Element {
           `LOCATION Permission Blocked`,
           `It looks like you have blocked the ${permissionName} permission. To enable it, go to your app settings.`,
           [
-            // {
-            //   text: 'Cancel',
-            //   style: 'cancel',
-            //   onPress: () => {
-            //     alertShown.current = false; // Reset the flag when alert is dismissed
-            //     resolve('cancel');
-            //   },
-            // },
             {
               text: 'Open Settings',
               onPress: async () => {
@@ -482,14 +358,21 @@ function App(): React.JSX.Element {
                 }
               },
             },
+            {
+              text: 'Select Manually',
+              onPress: () => {
+                openBottomSheet(); // Open the bottom sheet
+                resolve('manual_selection');
+              },
+            },
           ],
-          {cancelable: false},
         );
       } else {
         resolve('already_shown'); // Return a different response if the alert was already shown
       }
     });
   };
+
   // const showBlockedPermissionAlert = async (permissionName) => {
   //   return new Promise((resolve) => {
   //     Alert.alert(
@@ -552,6 +435,7 @@ function App(): React.JSX.Element {
       subscription.remove();
     };
   }, [appState]);
+
   useEffect(() => {
     const runAsyncFunctions = async () => {
       try {
@@ -590,6 +474,7 @@ function App(): React.JSX.Element {
     // }).start();
     // Execute async functions
     runAsyncFunctions();
+
     const subscription = AppState.addEventListener(
       'change',
       handleAppStateChange,
@@ -613,6 +498,10 @@ function App(): React.JSX.Element {
       unsubscribe();
     };
   }, []);
+  const handlePlaceSelected = (place: any) => {
+    console.log(place, 'place');
+    store.dispatch(setAppLocation(place));
+  };
   return (
     <>
       {isSplashVisible ? (
@@ -647,6 +536,11 @@ function App(): React.JSX.Element {
                     setLoggedIn={setLoggedIn}
                   />
                 </GluestackUIProvider>
+                <ManuallyselectedLocation
+                  ref={bottomSheetRef}
+                  onPlaceSelected={handlePlaceSelected}
+                  SetCityFilter={''}
+                />
               </BottomSheetModalProvider>
             </GestureHandlerRootView>
           </S3Provider>

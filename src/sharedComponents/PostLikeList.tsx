@@ -66,7 +66,7 @@ const PostLikeList: React.FC = ({
     pageSize_Set,
     currentPage_Set,
     hasMore_Set
-  } = useApiPagingWithtotalRequest(getPostLikeList,setInfiniteLoading);
+  } = useApiPagingWithtotalRequest(getPostLikeList,setInfiniteLoading,15);
  
   const BlurredStyle = {
     backgroundColor: colors.inputBg,
