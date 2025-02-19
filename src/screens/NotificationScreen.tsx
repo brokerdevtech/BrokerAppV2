@@ -61,8 +61,6 @@ const NotificationItem = ({
   } = item;
   let response = body;
 
-
-
   const getTimeDifference = createdAt => {
     const created = moment.utc(createdAt).local();
     const now = moment();
@@ -137,7 +135,7 @@ const NotificationItem = ({
       });
     } else {
       navigation.push('ItemDetailScreen', {
-        onGoBack: 'NotificationScreen',
+        // onGoBack: 'NotificationScreen',
         postId: parsedMetaData?.PostId,
         postType: item?.category === 'RealEstate' ? 'Post' : 'Car/Post',
       });

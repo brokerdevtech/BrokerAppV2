@@ -39,7 +39,10 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const snapPoints = useMemo(() => ['70%'], []);
-
+  const formatPrice = price => {
+    if (!price) return '₹ 0';
+    return `₹ ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+  };
   const limits = useMemo(() => {
     try {
       return JSON.parse(postItem?.limits || '{}');
@@ -205,7 +208,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
               {postItem?.planDescription}
             </Text>
             <Text style={styles.planPrice}>
-              ₹ {formatNumberToIndianSystem(postItem?.price)}
+              {formatPrice(postItem?.price)}
               {postItem?.discountPercentage > 0 && (
                 <Text style={styles.discount}>
                   {` (-${postItem.discountPercentage}% off)`}
@@ -277,7 +280,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
             // }}>
           >
             <Text style={styles.proceedButtonText}>
-              Proceed with {formatNumberToIndianSystem(getDiscountedPrice())}
+              Proceed with {formatPrice(getDiscountedPrice())}
             </Text>
           </View>
         </View>
