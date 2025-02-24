@@ -31,7 +31,10 @@ const SubscriptionPlan = ({route}) => {
   const [activeTab, setActiveTab] = useState('General');
   const [selectedItem, setSelectedItem] = useState(null);
   const commentSheetRef = useRef(null);
-
+  const formatPrice = price => {
+    if (!price) return '₹ 0';
+    return `₹ ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+  };
   const handlePresentModalPress = useCallback(item => {
     setSelectedItem(item);
     commentSheetRef.current?.open();
@@ -113,7 +116,7 @@ const SubscriptionPlan = ({route}) => {
       <TouchableOpacity style={styles.card}>
         <View style={styles.row}>
           <ZText type={'S22'} style={styles.price}>
-            ₹ {formatNumberToIndianSystem(item.price)}
+            {formatPrice(item.price)}
           </ZText>
           <View>
             <ZText type={'R14'} style={styles.label}>
