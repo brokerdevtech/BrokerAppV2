@@ -54,6 +54,7 @@ import {ActivityIndicator, Platform, Text} from 'react-native';
 import React from 'react';
 import StoryDetails from '../components/story/StoryDetails';
 import SubscriptionPlan from '../screens/SubscriptionPlan';
+import StickyHeaderWithTabs from '../screens/StickyHeaderWithTabs';
 // Lazy-loaded components
 const MyItemListScreen = React.lazy(
   () => import('../screens/MyItemListScreen'),
@@ -171,6 +172,11 @@ const HomeNavigation: React.FC = () => {
         <Stack.Screen
           name="ProfileKyc"
           component={ProfileKyc}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="StickyHeaderWithTabs"
+          component={StickyHeaderWithTabs}
           options={{headerShown: false}}
         />
         <Stack.Screen
