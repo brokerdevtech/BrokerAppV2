@@ -164,13 +164,31 @@ export const getfcmToken2 = async () => {
     return fcmToken;
   }
 };
+
 export const getfcmToken = async () => {
   
-  let  fcmToken = await firebase.messaging().getToken();
-
+  let fcmToken = await AsyncStorage.getItem('fcmToken');
+console.log('fcmToken',fcmToken);
+  if (!fcmToken) {
+    await firebase.messaging().deleteToken();
+    fcmToken = await firebase.messaging().getToken();
+    if (fcmToken) {
+      // user has a device token
+      await AsyncStorage.setItem('fcmToken', fcmToken);
+    }
+    console.log('fcmToken',fcmToken);
     return fcmToken;
-  
+  }
+  else  {return fcmToken;}
 };
+
+// export const getfcmToken = async () => {
+//   await firebase.messaging().deleteToken();
+//   let  fcmToken = await firebase.messaging().getToken();
+
+//     return fcmToken;
+  
+// };
 export const getsfcmToken = async () => {
   const fcmToken =await firebase.messaging().getToken();
   // user has a device token

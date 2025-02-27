@@ -39,7 +39,7 @@ import UserStories from '../components/story/UserStories';
 import {colors} from '../themes';
 import MarqueeScreen from '../sharedComponents/MarqueeScreen';
 import RecentSearchSection from './Dashboard/RecentSearchSection';
-import {GetDashboardData} from '../../BrokerAppCore/services/authService';
+import {GetDashboardData, NewDeviceUpdate} from '../../BrokerAppCore/services/authService';
 import {setDashboard} from '../../BrokerAppCore/redux/store/Dashboard/dashboardSlice';
 import store from '../../BrokerAppCore/redux/store';
 import {checkPermission} from '../utils/helpers';
@@ -56,6 +56,7 @@ import AutoscrollAdsText from '../sharedComponents/AutoscrollAdsText';
 import MarqueeTextItems from '../sharedComponents/AutoScrollFlatList';
 
 import MarqueeTextCollection from '../sharedComponents/MarqueeTextCollection';
+import { getfcmToken } from '../utils/utilTokens';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
@@ -127,7 +128,19 @@ export default function DashboradScreen() {
   //     };
   //   }, [AppLocation]) // Add dependencies here
   // );
-  console.log(user);
+ const updateDevice = async (userId: any) => {
+    //
+   // console.log('updateDevice')
+//console.log(userId)
+  
+    const fcmToken: any = await getfcmToken();
+  //  console.log('fcmToken===================')
+  //  console.log(fcmToken);
+    const updateDevice = await NewDeviceUpdate(userId, fcmToken.toString());
+  };
+
+
+ 
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
@@ -154,6 +167,7 @@ export default function DashboradScreen() {
             fetchDashboardDataBrand('BrandAssociate', {
               userId: user.userId,
             }),
+            updateDevice(user.userId)
           ]);
 
           const [
