@@ -226,9 +226,6 @@ export default function DashboradScreen() {
     }
   };
   const showToastComingSoon = () => {
-    navigation.navigate('StickyHeaderWithTabs');
-
-
     if (!toast.isActive(toastId)) {
       const newId = Math.random();
       setToastId(newId);
