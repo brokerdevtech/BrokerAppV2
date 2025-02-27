@@ -331,7 +331,7 @@ const StickyHeaderWithTabs = () => {
     loadMore,
     pageSize_Set,
     currentPage_Set,
-    hasMore_Set,
+    hasMore,
     totalPages,
     recordCount,
     setData_Set,
@@ -379,6 +379,7 @@ const StickyHeaderWithTabs = () => {
     callPodcastList();
   }, []);
   const loadMorepage = async () => {
+    if (isInfiniteLoading || !hasMore) return;
     const apiEndpoint =
       activeTab === 0 ? '/Post/DashboardPost' : '/Car/Post/DashboardPost';
     if (!isInfiniteLoading) {
@@ -393,25 +394,29 @@ const StickyHeaderWithTabs = () => {
         const currentScrollY = event.nativeEvent.contentOffset.y;
         const diff = currentScrollY - lastScrollY.current;
 
-        if (diff > 5) {
-          if (!isScrollingDown.current) {
-            isScrollingDown.current = true;
-            Animated.timing(headerVisible, {
-              toValue: 0,
-              duration: 200,
-              useNativeDriver: true,
-            }).start();
-          }
-        } else if (diff < -5) {
-          if (isScrollingDown.current) {
-            isScrollingDown.current = false;
-            Animated.timing(headerVisible, {
-              toValue: 1,
-              duration: 200,
-              useNativeDriver: true,
-            }).start();
+        // Only trigger header animations if we're not loading more content
+        if (!isInfiniteLoading) {
+          if (diff > 5) {
+            if (!isScrollingDown.current) {
+              isScrollingDown.current = true;
+              Animated.timing(headerVisible, {
+                toValue: 0,
+                duration: 200,
+                useNativeDriver: true,
+              }).start();
+            }
+          } else if (diff < -5) {
+            if (isScrollingDown.current) {
+              isScrollingDown.current = false;
+              Animated.timing(headerVisible, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: true,
+              }).start();
+            }
           }
         }
+
         lastScrollY.current = currentScrollY;
       },
     },
@@ -423,6 +428,7 @@ const StickyHeaderWithTabs = () => {
       <ProductItem
         item={item}
         User={user}
+        listTypeData={activeTab === 0 ? 'RealEstate' : 'Car'}
         menuPress={handlePresentModalPress}
         navigation={navigation}
         // OnGoBack={OnGoBack}
@@ -458,6 +464,10 @@ const StickyHeaderWithTabs = () => {
         </Animated.View>
 
         <AnimatedFlatList
+          maintainVisibleContentPosition={{
+            minIndexForVisible: 0,
+            autoscrollToTopThreshold: 10,
+          }}
           contentContainerStyle={{paddingTop: headerHeight + tabBarHeight}}
           // data={data}
           renderItem={renderItem}
@@ -475,7 +485,7 @@ const StickyHeaderWithTabs = () => {
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={<RederListHeader StoryData={StoryData} />}
           keyExtractor={(item, index) => index.toString()}
-          onEndReachedThreshold={0.6}
+          onEndReachedThreshold={0.3}
           onEndReached={loadMorepage}
           // contentContainerStyle={{paddingBottom: 100}}
           ListFooterComponent={
