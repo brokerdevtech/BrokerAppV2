@@ -89,11 +89,11 @@ const chatClient = StreamChat.getInstance(chatApiKey);
   const requestPermission = async () => {
     try {
 
-    await removeItemStorage('fcmToken');
+  //  await removeItemStorage('fcmToken');
 
-     // await firebase.messaging().requestPermission();
+      await firebase.messaging().requestPermission();
       // User has authorised
-      await  getfcmToken();
+     // await  getfcmToken();
   } catch (error) {
       // User has rejected permissions
       
@@ -107,7 +107,7 @@ const chatClient = StreamChat.getInstance(chatApiKey);
     const registerPushToken = async () => {
       // unsubscribe any previous listener
       unsubscribeTokenRefreshListenerRef.current?.();
-      const token = await  getsfcmToken();
+      const token = await  getfcmToken();
       const push_provider = 'firebase';
       const push_provider_name = 'firebase'; // name an alias for your push provider (optional)
       chatClient.setLocalDevice({
@@ -127,7 +127,7 @@ const chatClient = StreamChat.getInstance(chatApiKey);
           await chatClient.removeDevice(oldToken);
         }
       };
-      //await removeOldToken(),
+      await removeOldToken(),
       unsubscribeTokenRefreshListenerRef.current = firebase.messaging().onTokenRefresh(async newToken => {
         
         await Promise.all([
@@ -147,22 +147,23 @@ const chatClient = StreamChat.getInstance(chatApiKey);
       
       await requestPermission();
       
-      await registerPushToken();
+    //  await registerPushToken();
    
       const connectedUser =    await chatClient.connectUser(user, await tokenProvider());
      // console.log(connectedUser);
       const initialUnreadCount = connectedUser?.me?.total_unread_count;
     setUnreadCount(initialUnreadCount);
-      const fcmToken :any=    await  getsfcmToken();
+      let fcmToken :any=    await  getfcmToken();
+      console.log('fcmToken chat',fcmToken);
       const devices= await chatClient.getDevices();
-    //  console.log("devices",devices);
+     console.log("devices",devices);
       if (devices?.devices) {
         for (const device of devices.devices) {
           
            await chatClient.removeDevice(device.id, userState.user.userId.toString());
         }
       }
-      //console.log("firebase",fcmToken);
+      console.log("firebase",fcmToken);
       chatClient.addDevice(fcmToken, 'firebase', userState.user.userId.toString(), 'firebase'),
       setAppChatClient(chatClient);
       setIsConnecting(false);

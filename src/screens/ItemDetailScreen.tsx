@@ -567,7 +567,16 @@ const ItemDetailScreen: React.FC<any> = ({
       //   console.log(data);
       onGoBack({Action: Action, Data: data}); // Call the callback function with updated data
     }
-    navigation.goBack(); // Go back to FirstScreen
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    }
+    else{
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Home'}],
+      });
+    }
+   // navigation.goBack(); // Go back to FirstScreen
   };
   // console.log(data, 'j');
   return (
