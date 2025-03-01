@@ -21,9 +21,9 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>FacebookAppID</key>
-<string>558060476716214</string>
+<string>608005172125263</string>
 <key>FacebookClientToken</key>
-<string>9bc1ca924a822bc59bb434ce6bcf5f52</string>
+<string>90827a107c3189ed1e45eed045bc643e</string>
 <!-- <key>FacebookDisplayName</key>
 <string><YOUR_APP_NAME></string> -->
 <key>LSApplicationQueriesSchemes</key>
@@ -39,7 +39,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.291590546828-sq554qt1cr52ng0g2amdd1q8gt0pmrqi</string>
-				<string>fb558060476716214</string>
+				<string>fb608005172125263</string>
 			</array>
 		</dict>
 	</array>
