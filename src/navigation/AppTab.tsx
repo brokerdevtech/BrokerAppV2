@@ -44,6 +44,7 @@ import ChooseImage from '../screens/postImage/ChooseImage';
 import {Color} from '../styles/GlobalStyles';
 import AllSkeletonComponent from '../sharedComponents/Skeleton/AllSkeletonComponent';
 import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
+import StickyHeaderWithTabs from '../screens/StickyHeaderWithTabs';
 
 const Tab = createBottomTabNavigator();
 
@@ -76,7 +77,7 @@ const AppTab: React.FC = () => {
   const navigation = useNavigation();
   const userP = useSelector((state: RootState) => state.user.user);
   const toast = useToast();
-//  console.log(require('../assets/images/ComingSoon.png'));
+  //  console.log(require('../assets/images/ComingSoon.png'));
   const [toastId, setToastId] = React.useState(0);
   const userPermissions = useSelector(
     (state: RootState) => state.user.user?.userPermissions,
@@ -133,13 +134,13 @@ const AppTab: React.FC = () => {
         backgroundColor: 'white',
         height: 50,
       }}>
-      <Tab.Navigator 
+      <Tab.Navigator
         initialRouteName="AppTabHome"
         screenOptions={({route}) => ({
-           unmountOnBlur: true,
-           lazy:true,
-          headerShown: false,
-          headerTitle: '',
+          unmountOnBlur: true,
+          lazy: true,
+          headerShown: route.name === 'Favourite',
+          // headerTitle: '',
           tabBarStyle: [
             localStyles.tabBarStyle,
 
@@ -170,18 +171,21 @@ const AppTab: React.FC = () => {
                 icon={focused ? <Home_tab_icon /> : <Home_tab_icon />}
               />
             ),
-            // headerShown: false,
+            headerShown: false,
           }}
         />
         <Tab.Screen
           name="Favourite"
+          // listeners={{
+          //   focus: () => setCurrentScreen('Favourite'),
+          // }}
           options={{
             // tabBarBadge:dashboard.connectionRequestCount,
             // tabBarBadgeStyle: {
             //   backgroundColor: colors.primary, // Set your desired background color here
             //   color: 'white', // Set your desired text color here
             // },
-            // headerShown: false,
+            headerShown: false,
             tabBarIcon: ({focused}) => (
               <TabText
                 text={''}
@@ -190,7 +194,7 @@ const AppTab: React.FC = () => {
               />
             ),
           }}
-          component={PlaceholderScreen}
+          component={StickyHeaderWithTabs}
           // component={MyNetworkScreen}
         />
 
