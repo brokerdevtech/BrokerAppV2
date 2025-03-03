@@ -44,7 +44,8 @@ import ChooseImage from '../screens/postImage/ChooseImage';
 import {Color} from '../styles/GlobalStyles';
 import AllSkeletonComponent from '../sharedComponents/Skeleton/AllSkeletonComponent';
 import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
-import StickyHeaderWithTabs from '../screens/StickyHeaderWithTabs';
+// import StickyHeaderWithTabs from '../screens/StickyHeaderWithTabs';
+import StickyHeaderWithTabs1 from '../screens/StickyHeader1';
 
 const Tab = createBottomTabNavigator();
 
@@ -194,7 +195,7 @@ const AppTab: React.FC = () => {
               />
             ),
           }}
-          component={StickyHeaderWithTabs}
+          component={StickyHeaderWithTabs1}
           // component={MyNetworkScreen}
         />
 
