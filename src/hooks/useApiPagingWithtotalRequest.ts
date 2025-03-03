@@ -88,6 +88,10 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
                 response?.data.data != null &&
                 response?.data.data.length > 0
               ) {
+                console.log("New Data:",  response?.data.data);
+                console.log("Existing Data:", data.length);
+                console.log("New Data:", response?.data.data.length);
+
                 setData(prevData => [
                   ...prevData,
                   ...(response.data.data || []),

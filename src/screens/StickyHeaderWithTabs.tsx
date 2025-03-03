@@ -340,7 +340,7 @@ const StickyHeaderWithTabs = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
   const lastScrollY = useRef(0);
   const isScrollingDown = useRef(true);
-  const headerVisible = useRef(new Animated.Value(1)).current;
+  const headerVisible = useRef(new Animated.Value(1)).current; 
   const user = useSelector((state: RootState) => state.user.user);
 
   const headerTranslateY = headerVisible.interpolate({
@@ -348,7 +348,7 @@ const StickyHeaderWithTabs = () => {
     outputRange: [-headerHeight + 10, 0],
     extrapolate: 'clamp',
   });
-  console.log(activeTab, 'jk');
+  // console.log(activeTab, 'jk');
   const reportSheetRef = useRef(null);
   const handlePresentModalPress = useCallback(item => {
     setSelectedItem(item);
@@ -372,6 +372,7 @@ const StickyHeaderWithTabs = () => {
     headerVisible.setValue(1);
   }, []);
   useEffect(() => {
+    console.log("activeTab")
     callPodcastList();
   }, [activeTab]);
 
@@ -387,39 +388,35 @@ const StickyHeaderWithTabs = () => {
     }
   };
   const handleScroll = Animated.event(
-    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
     {
       useNativeDriver: true,
-      listener: event => {
+      listener: (event) => {
         const currentScrollY = event.nativeEvent.contentOffset.y;
         const diff = currentScrollY - lastScrollY.current;
-
-        // Only trigger header animations if we're not loading more content
+  
+        // Only trigger animation if we're actually scrolling and not just updating state
         if (!isInfiniteLoading) {
-          if (diff > 5) {
-            if (!isScrollingDown.current) {
-              isScrollingDown.current = true;
-              Animated.timing(headerVisible, {
-                toValue: 0,
-                duration: 200,
-                useNativeDriver: true,
-              }).start();
-            }
-          } else if (diff < -5) {
-            if (isScrollingDown.current) {
-              isScrollingDown.current = false;
-              Animated.timing(headerVisible, {
-                toValue: 1,
-                duration: 200,
-                useNativeDriver: true,
-              }).start();
-            }
+          if (diff > 5 && !isScrollingDown.current) {
+            isScrollingDown.current = true;
+            Animated.timing(headerVisible, {
+              toValue: 0, // Hide header
+              duration: 200,
+              useNativeDriver: true,
+            }).start();
+          } else if (diff < -5 && isScrollingDown.current) {
+            isScrollingDown.current = false;
+            Animated.timing(headerVisible, {
+              toValue: 1, // Show header
+              duration: 200,
+              useNativeDriver: true,
+            }).start();
           }
         }
-
+  
         lastScrollY.current = currentScrollY;
       },
-    },
+    }
   );
   console.log(data);
   // eslint-disable-next-line react/no-unstable-nested-components
@@ -464,10 +461,7 @@ const StickyHeaderWithTabs = () => {
         </Animated.View>
 
         <AnimatedFlatList
-          maintainVisibleContentPosition={{
-            minIndexForVisible: 0,
-            autoscrollToTopThreshold: 10,
-          }}
+       
           contentContainerStyle={{paddingTop: headerHeight + tabBarHeight}}
           // data={data}
           renderItem={renderItem}
@@ -479,8 +473,8 @@ const StickyHeaderWithTabs = () => {
           // getItemLayout={560}
           // renderItem={renderHomeItem}
           initialNumToRender={2}
-          maxToRenderPerBatch={4}
-          // windowSize={4}
+          maxToRenderPerBatch={5}
+        //  onScroll={handleScrollDebounced} // ✅ Use debounced scroll handler
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={<RederListHeader StoryData={StoryData} />}

@@ -45,6 +45,7 @@ import {Color} from '../styles/GlobalStyles';
 import AllSkeletonComponent from '../sharedComponents/Skeleton/AllSkeletonComponent';
 import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 import StickyHeaderWithTabs from '../screens/StickyHeaderWithTabs';
+import InstagramReels from '../screens/Podcast/VideoReelsInsta';
 
 const Tab = createBottomTabNavigator();
 
@@ -258,7 +259,7 @@ const AppTab: React.FC = () => {
               />
             ),
           }}
-          component={PlaceholderScreen}
+          component={InstagramReels}
           // component={MyNetworkScreen}
         />
         <Tab.Screen

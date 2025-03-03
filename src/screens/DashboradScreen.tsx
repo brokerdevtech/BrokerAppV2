@@ -240,6 +240,7 @@ export default function DashboradScreen() {
     }
   };
   const showToastComingSoon = () => {
+    
     if (!toast.isActive(toastId)) {
       const newId = Math.random();
       setToastId(newId);
