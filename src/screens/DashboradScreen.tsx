@@ -11,6 +11,8 @@ import {
   SafeAreaView,
   useWindowDimensions,
   Dimensions,
+  Animated,
+  TextInput,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -54,17 +56,24 @@ import EnquiryBottomSheet from '../sharedComponents/EnquiryForm';
 import {getDashboardStory} from '../../BrokerAppCore/services/Story';
 import ProductSectionData from './Dashboard/ProductSectionData';
 import {fetchDashboardData as fetchDashboardDataBrand} from '../../BrokerAppCore/services/new/dashboardService';
-import AutoscrollAdsText from '../sharedComponents/AutoscrollAdsText';
-
-import MarqueeTextItems from '../sharedComponents/AutoScrollFlatList';
 
 import MarqueeTextCollection from '../sharedComponents/MarqueeTextCollection';
 import {getfcmToken} from '../utils/utilTokens';
 import StoryComponent from '../sharedComponents/StoryComponent';
+import {Icon, SearchIcon} from '../../components/ui/icon';
+import {Color} from '../styles/GlobalStyles';
+import {
+  Input,
+  InputField,
+  InputIcon,
+  InputSlot,
+} from '../../components/ui/input';
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-
+  const [searchText, setSearchText] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const searchBarAnimatedValue = useRef(new Animated.Value(0)).current;
   const {setUser_Analytics} = useUserAnalytics();
   const {logButtonClick} = useUserJourneyTracker('Dashborad');
   const userPermissions = useSelector(
@@ -94,6 +103,9 @@ export default function DashboradScreen() {
   const [NewlyLaunchData, setNewlyLaunchData]: any[] = useState(null);
   const [NewInPropertyData, setNewInPropertyData]: any[] = useState(null);
   const [NewInCarData, setNewInCarData]: any[] = useState(null);
+  const [isSearchVisible, setIsSearchVisible] = useState(true);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const lastScrollY = useRef(0);
   const [BrandSectionData, setBrandSectionData]: any[] = useState(null);
   const callPodcastList = async () => {
     execute(user.userId, 1, 4);
@@ -109,6 +121,42 @@ export default function DashboradScreen() {
     error: marqueeError,
     execute: marqueeExecute,
   } = useApiRequest(fetchDashboardData);
+  const handleScroll = Animated.event(
+    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+    {
+      useNativeDriver: false,
+      listener: event => {
+        const currentScrollY = event.nativeEvent.contentOffset.y;
+
+        if (currentScrollY > lastScrollY.current) {
+          // Scrolling down - hide search bar
+          setIsSearchVisible(false);
+        } else if (currentScrollY < lastScrollY.current) {
+          // Scrolling up - show search bar
+          setIsSearchVisible(true);
+        }
+
+        lastScrollY.current = currentScrollY;
+      },
+    },
+  );
+
+  const searchBarTranslateY = scrollY.interpolate({
+    inputRange: [0, 50],
+    outputRange: [isSearchVisible ? 0 : -50, -50],
+    extrapolate: 'clamp',
+  });
+
+  const searchBarOpacity = scrollY.interpolate({
+    inputRange: [0, 50],
+    outputRange: [isSearchVisible ? 1 : 0, 0],
+    extrapolate: 'clamp',
+  });
+
+  const handleSearch = (text: string) => {
+    setSearchText(text);
+  };
+
   useEffect(() => {
     // console.log(user);
     const userS = {
@@ -327,16 +375,56 @@ export default function DashboradScreen() {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <ScrollView style={styles.scrollView}>
+      <Animated.View
+        style={[
+          styles.searchBarContainer,
+          {
+            transform: [{translateY: searchBarTranslateY}],
+            opacity: searchBarOpacity,
+          },
+        ]}>
+        <View style={styles.searchInputContainer}>
+          {/* <Icon
+            as={SearchIcon}
+            size="xl"
+            style={styles.searchIcon}
+            color={Color.primary}
+          /> */}
+          {/* <TextInput
+            placeholder="Search properties, cars..."
+            placeholderTextColor={colors.light.gray}
+            style={styles.searchInput}
+            value={searchText}
+            onChangeText={handleSearch}
+          /> */}
+          <Input style={styles.input}>
+            <InputSlot style={{paddingLeft: 10}}>
+              <InputIcon
+                as={SearchIcon}
+                className="text-darkBlue-500"
+                stroke={Color.primary}
+              />
+            </InputSlot>
+            <InputField
+              type={'text'}
+              placeholder="Search properties, cars..."
+              value={searchText}
+              onChangeText={handleSearch}
+            />
+          </Input>
+        </View>
+      </Animated.View>
+
+      <ScrollView
+        style={styles.scrollView}
+        scrollEventThrottle={16}
+        onScroll={handleScroll}>
         <View>
-          <View style={styles.subHeaderSection}>
+          <View style={[styles.subHeaderSection, {marginTop: 65}]}>
             {StoryData != null && StoryData != undefined && (
               <UserStories Data={StoryData} />
-              // <StoryComponent storiesData={StoryData} />
             )}
-            {/* <AutoscrollAdsText
-            onPressBottomSheet={() => bottomSheetRef.current?.expand()}
-          /> */}
+
             {StoryData != null && StoryData != undefined && (
               <MarqueeTextCollection></MarqueeTextCollection>
             )}
@@ -592,5 +680,43 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 2,
     justifyContent: 'space-between',
+  },
+  searchBarContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
+    // paddingHorizontal: 15,
+    paddingVertical: 10,
+    backgroundColor: colors.light.white,
+  },
+  searchInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // backgroundColor: colors.light.gray100,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    height: 50,
+  },
+  searchIcon: {
+    marginRight: 10,
+    color: colors.light.gray,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: colors.light.black,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 15,
+    // padding: 10,
+    width: '100%',
+    marginBottom: 20,
+    backgroundColor: '#f9f9f9',
+    height: 43,
+    elevation: 2,
   },
 });

@@ -42,7 +42,7 @@ const AppDrawer: React.FC = () => {
             // Otherwise, show the custom header.
             return {
               headerShown: true,
-              header: () => <CustomHeader2 />,
+              header: () => <CustomHeader />,
               headerStyle: {
                 height: Platform.OS === 'android' ? 65 : 120,
               },
