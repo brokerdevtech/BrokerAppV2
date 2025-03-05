@@ -12,6 +12,7 @@ import CustomDrawerContent from '../sharedComponents/CustomDrawerProfile';
 import {Platform, SafeAreaView} from 'react-native';
 import {NavigationProvider} from '../Context/NavigationContext';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import CustomHeader2 from '../sharedComponents/CustomHeader2';
 const Drawer = createDrawerNavigator();
 
 const AppDrawer: React.FC = () => {
@@ -41,7 +42,7 @@ const AppDrawer: React.FC = () => {
             // Otherwise, show the custom header.
             return {
               headerShown: true,
-              header: () => <CustomHeader />,
+              header: () => <CustomHeader2 />,
               headerStyle: {
                 height: Platform.OS === 'android' ? 65 : 120,
               },
