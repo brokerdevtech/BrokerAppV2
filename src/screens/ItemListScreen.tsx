@@ -64,10 +64,14 @@ import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 import {getDashboardStory} from '../../BrokerAppCore/services/Story';
 import ProductSectionData from './Dashboard/ProductSectionData';
 import RecentSearchSectionData from './Dashboard/RecentSearchSectionData';
-import {getRecommendedBrokerList} from '../../BrokerAppCore/services/new/recomendedBroker';
+import {
+  getRecommendedBrokerList,
+  getSuggestionBrokerList,
+} from '../../BrokerAppCore/services/new/recomendedBroker';
 import ZAvatarInitials from '../sharedComponents/ZAvatarInitials';
 import ItemHeader from './ItemHeader';
 import ReportScreen from '../sharedComponents/ReportScreen';
+import SuggestedUsers from '../sharedComponents/SuggestedUsers';
 
 //const MediaGallery = React.lazy(() => import('../sharedComponents/MediaGallery'));
 //const UserStories = React.lazy(() => import('../components/story/UserStories'));
@@ -98,11 +102,13 @@ const RederListHeader = React.memo(
     NewIncategoryData,
     RecentSearchData,
     RenderBrokerData,
+    SuggestionData,
   }) => {
     return (
       <>
         {StoryData != null && <UserStories Data={StoryData} />}
         <Recommend categoryId={categoryId} Data={RenderBrokerData} />
+        <SuggestedUsers categoryId={categoryId} Data={SuggestionData} />
         <ProductSectionData
           heading={'Newly Launch'}
           background={'#FFFFFF'}
@@ -407,6 +413,7 @@ const ItemListScreen: React.FC<any> = ({
   const [NewIncategoryData, setNewIncategoryData]: any[] = useState(null);
   const [RecentSearchData, setRecentSearchData]: any[] = useState(null);
   const [RenderBrokerData, setRenderBrokerData]: any[] = useState(null);
+  const [suggestionData, setSuggestionData]: any[] = useState(null);
   const brandName =
     route.params.brandName !== undefined ? route.params.brandName : '';
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -705,6 +712,7 @@ const ItemListScreen: React.FC<any> = ({
         1,
         10,
       ),
+      getSuggestionBrokerList(1, 10),
     ]);
 
     const [
@@ -713,6 +721,7 @@ const ItemListScreen: React.FC<any> = ({
       NewIncategory,
       RecentSearch,
       RecommendedBroker,
+      SuggestionBrokers,
     ] = results.map(result =>
       result.status === 'fulfilled' ? result.value : null,
     );
@@ -722,6 +731,7 @@ const ItemListScreen: React.FC<any> = ({
     setNewIncategoryData(NewIncategory.data);
     setRecentSearchData(RecentSearch.data);
     setRenderBrokerData(RecommendedBroker.data);
+    setSuggestionData(SuggestionBrokers.data);
     setLoading(false);
   }
 
@@ -910,6 +920,7 @@ const ItemListScreen: React.FC<any> = ({
                   NewIncategoryData={NewIncategoryData}
                   RecentSearchData={RecentSearchData}
                   RenderBrokerData={RenderBrokerData}
+                  SuggestionData={suggestionData}
                 />
               }
               keyExtractor={(item, index) => index.toString()}

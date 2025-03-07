@@ -82,7 +82,7 @@ const OtherProfileScreen: React.FC = ({
   toastMessage,
 }) => {
   const userId = route.params.userId;
-  console.log(userId, 'route');
+  // console.log(userId, 'route');
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
