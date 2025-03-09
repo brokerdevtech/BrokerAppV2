@@ -1,5 +1,3 @@
-/* eslint-disable react/no-unstable-nested-components */
-/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
@@ -11,6 +9,8 @@ import {
   SafeAreaView,
   useWindowDimensions,
   Dimensions,
+  Animated,
+  TextInput,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -22,7 +22,6 @@ import {imagesBucketcloudfrontPath, PermissionKey} from '../config/constants';
 import ZText from '../sharedComponents/ZText';
 import {useApiRequest} from '@/src/hooks/useApiRequest';
 import {fetchPodcastList} from '@/BrokerAppCore/services/new/podcastService';
-import LottieView from 'lottie-react-native';
 import TABCard from '../assets/svg/Tabicon/tab_card.svg';
 import TABInsurance from '../assets/svg/Tabicon/tab_insurance.svg';
 import TABLoan from '../assets/svg/Tabicon/tab_loan.svg';
@@ -31,7 +30,6 @@ import TABWealth from '../assets/svg/Tabicon/tab_wealth.svg';
 import TABHome from '../assets/svg/Tabicon/tab_home.svg';
 import Footer from './Dashboard/Footer';
 import BrandSection from './Dashboard/BrandSection';
-//const BrandSection = React.lazy(() => import('./Dashboard/BrandSection'));
 import ProductSection from './Dashboard/ProductSection';
 import MarqueeBanner from '../sharedComponents/profile/MarqueeBanner';
 import {fetchDashboardData} from '../../BrokerAppCore/services/new/dashboardService';
@@ -54,32 +52,40 @@ import EnquiryBottomSheet from '../sharedComponents/EnquiryForm';
 import {getDashboardStory} from '../../BrokerAppCore/services/Story';
 import ProductSectionData from './Dashboard/ProductSectionData';
 import {fetchDashboardData as fetchDashboardDataBrand} from '../../BrokerAppCore/services/new/dashboardService';
-import AutoscrollAdsText from '../sharedComponents/AutoscrollAdsText';
-
-import MarqueeTextItems from '../sharedComponents/AutoScrollFlatList';
-
 import MarqueeTextCollection from '../sharedComponents/MarqueeTextCollection';
 import {getfcmToken} from '../utils/utilTokens';
 import StoryComponent from '../sharedComponents/StoryComponent';
+import {Icon, SearchIcon} from '../../components/ui/icon';
+import {Color} from '../styles/GlobalStyles';
+import {
+  Input,
+  InputField,
+  InputIcon,
+  InputSlot,
+} from '../../components/ui/input';
+import CustomHeader from '../sharedComponents/CustomHeader';
+
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
-
+  const [searchText, setSearchText] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const searchBarAnimatedValue = useRef(new Animated.Value(0)).current;
   const {setUser_Analytics} = useUserAnalytics();
   const {logButtonClick} = useUserJourneyTracker('Dashborad');
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
+  const headerHeight = 60;
+  const searchBarHeight = 50;
+  const totalHeaderHeight = headerHeight + searchBarHeight;
+
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const lastScrollY = useRef(0);
+  const isScrollingDown = useRef(true);
+  const headerVisible = useRef(new Animated.Value(1)).current;
   const bottomSheetRef = useRef(null);
   const [toastId, setToastId] = React.useState(0);
-  // const permissionGrantedPodacast = checkPermission(
-  //   userPermissions,
-  //   PermissionKey.AllowViewPodcast,
-  // );
-  // const permissionGrantedDashPost = checkPermission(
-  //   userPermissions,
-  //   PermissionKey.AllowViewDashboardPost,
-  // );
 
   const permissionGrantedPodacast = true;
   const permissionGrantedDashPost = true;
@@ -87,59 +93,94 @@ export default function DashboradScreen() {
   const toast = useToast();
   const {width} = useWindowDimensions();
   const {data, status, error, execute} = useApiRequest(fetchPodcastList);
-  //const {data: footerData, status: footerStatus, error: footerError, execute: footerExecute} = useApiRequest(fetchDashboardFooterCount);
   const cityToShow = AppLocation.City;
   const navigation = useNavigation();
   const [StoryData, setStoryData]: any[] = useState(null);
   const [NewlyLaunchData, setNewlyLaunchData]: any[] = useState(null);
   const [NewInPropertyData, setNewInPropertyData]: any[] = useState(null);
   const [NewInCarData, setNewInCarData]: any[] = useState(null);
+  const [isSearchVisible, setIsSearchVisible] = useState(true);
   const [BrandSectionData, setBrandSectionData]: any[] = useState(null);
+
   const callPodcastList = async () => {
     execute(user.userId, 1, 4);
-    //await footerExecute()
   };
-  const callmarList = async () => {
-    const request = {pageNo: 1, pageSize: 10, cityName: cityToShow};
-    marqueeExecute('Marqueue', request);
-  };
+
+  const headerTranslateY = headerVisible.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-headerHeight, 0],
+    extrapolate: 'clamp',
+  });
+
+  // Create a new animated value for content translation
+  const contentTranslateY = headerVisible.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-headerHeight, 0],
+    extrapolate: 'clamp',
+  });
+
   const {
     data: marqueeText,
     status: marqueeStatus,
     error: marqueeError,
     execute: marqueeExecute,
   } = useApiRequest(fetchDashboardData);
+
+  const animatedScrollEvent = Animated.event(
+    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+    {useNativeDriver: true},
+  );
+
+  const handleScroll = Animated.event(
+    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+    {
+      useNativeDriver: true,
+      listener: event => {
+        const currentScrollY = event.nativeEvent.contentOffset.y;
+        const diff = currentScrollY - lastScrollY.current;
+
+        if (diff > 5 && !isScrollingDown.current) {
+          isScrollingDown.current = true;
+          Animated.timing(headerVisible, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+          }).start();
+        } else if (diff < -5 && isScrollingDown.current) {
+          isScrollingDown.current = false;
+          Animated.timing(headerVisible, {
+            toValue: 1,
+            duration: 200,
+            useNativeDriver: true,
+          }).start();
+        }
+
+        lastScrollY.current = currentScrollY;
+      },
+    },
+  );
+  // Then modify your ScrollView implementation to use animatedMarginTop
+  const animatedMarginTop = headerVisible.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, totalHeaderHeight],
+    extrapolate: 'clamp',
+  });
+
+  const handleSearch = (text: string) => {
+    setSearchText(text);
+  };
+
   useEffect(() => {
-    // console.log(user);
     const userS = {
       id: String(user.userId),
       firstName: String(user.firstName),
       lastName: String(user.lastName),
     };
-    // console.log(userS);
     setUser_Analytics(userS);
   }, []);
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     // Call the functions when the screen comes into focus
-  //     callPodcastList();
-  //     callmarList();
-
-  //     // Optional cleanup logic
-  //     return () => {
-  //       // Add any cleanup code if necessary
-  //     };
-  //   }, [AppLocation]) // Add dependencies here
-  // );
   const updateDevice = async (userId: any) => {
-    //
-    // console.log('updateDevice')
-    //console.log(userId)
-
     const fcmToken: any = await getfcmToken();
-    //  console.log('fcmToken===================')
-    //  console.log(fcmToken);
     const updateDevice = await NewDeviceUpdate(userId, fcmToken.toString());
   };
 
@@ -147,8 +188,7 @@ export default function DashboradScreen() {
     React.useCallback(() => {
       const fetchData = async () => {
         try {
-          // callmarList();
-          //console.log(user);
+          const request = {pageNo: 1, pageSize: 10, cityName: AppLocation.City};
           const results = await Promise.allSettled([
             GetDashboardData(user.userId),
             execute(user.userId, 1, 4),
@@ -183,43 +223,26 @@ export default function DashboradScreen() {
           ] = results.map(result =>
             result.status === 'fulfilled' ? result.value : null,
           );
-          //console.log(dashboardData);
-          // const [dashboardData, podcastList,DashboardStory,NewlyLaunch,NewInProperty,NewInCar,BrandAssociate] = await Promise.all([
-          //   GetDashboardData(user.userId),
-          //   execute(user.userId, 1, 4),
-          //   getDashboardStory(user.userId,1,10),
-          //   fetchDashboardData('NewlyLaunch',request),
-          //   fetchDashboardData('Newin',{
-          //     pageNo: 1,
-          //     pageSize: 10,
-          //     cityName: AppLocation.City,
-          //     categoryId: 1,
-          //   }),
-          //   fetchDashboardData('Newin',{
-          //     pageNo: 1,
-          //     pageSize: 10,
-          //     cityName: AppLocation.City,
-          //     categoryId: 2,
-          //   }),
-          //   fetchDashboardDataBrand('BrandAssociate',{
-          //     userId: user.userId,
-          //   }),
-          // ]);
-          console.log('DashboardStory.data');
-          console.log(JSON.stringify(DashboardStory.data));
-          setStoryData(DashboardStory.data);
-          setNewlyLaunchData(NewlyLaunch.data);
-          setNewInPropertyData(NewInProperty.data);
-          setNewInCarData(NewInCar.data);
-          setBrandSectionData(BrandAssociate.data);
-          store.dispatch(setDashboard(dashboardData.data));
-        } catch (error) {}
-      };
-      fetchData();
 
+          setStoryData(DashboardStory?.data);
+          setNewlyLaunchData(NewlyLaunch?.data);
+          setNewInPropertyData(NewInProperty?.data);
+          setNewInCarData(NewInCar?.data);
+          setBrandSectionData(BrandAssociate?.data);
+
+          if (dashboardData?.data) {
+            store.dispatch(setDashboard(dashboardData.data));
+          }
+        } catch (error) {
+          console.error('Error fetching dashboard data:', error);
+        }
+      };
+
+      fetchData();
       return () => {};
     }, [AppLocation]),
   );
+
   const showToast = () => {
     if (!toast.isActive(toastId)) {
       const newId = Math.random();
@@ -233,7 +256,7 @@ export default function DashboradScreen() {
           return (
             <Toast nativeID={uniqueToastId} action="muted" variant="solid">
               <ToastDescription>
-                {'You do not have permission.Contact dev@brokerapp.com.'}
+                {'You do not have permission. Contact dev@brokerapp.com.'}
               </ToastDescription>
             </Toast>
           );
@@ -241,6 +264,7 @@ export default function DashboradScreen() {
       });
     }
   };
+
   const showToastComingSoon = () => {
     if (!toast.isActive(toastId)) {
       const newId = Math.random();
@@ -262,6 +286,7 @@ export default function DashboradScreen() {
       });
     }
   };
+
   const handleThumbnailTap = async (item, index) => {
     permissionGrantedPodacast
       ? navigation.navigate('VideoReels', {
@@ -273,12 +298,13 @@ export default function DashboradScreen() {
         })
       : showToast();
   };
+
   const request = useMemo(
     () => ({pageNo: 1, pageSize: 10, cityName: AppLocation.City}),
     [AppLocation.City],
   );
+
   const RenderPodcastItems = React.memo(({item, index}) => {
-    // console.log('RenderPodcastItems',item);
     return (
       <TouchableOpacity
         onPress={() => handleThumbnailTap(item, index)}
@@ -327,26 +353,71 @@ export default function DashboradScreen() {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <ScrollView style={styles.scrollView}>
+      {/* Header */}
+      <Animated.View
+        style={[
+          styles.headerContainer,
+          {
+            height: totalHeaderHeight,
+            transform: [{translateY: headerTranslateY}],
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            zIndex: 10,
+            marginTop: 10,
+          },
+        ]}>
+        {/* Header */}
+        <View style={{height: headerHeight}}>
+          <CustomHeader />
+        </View>
+
+        {/* Search Bar */}
+        <View style={styles.searchBarContainer}>
+          <Input style={styles.input}>
+            <InputSlot style={{paddingLeft: 10}}>
+              <InputIcon
+                as={SearchIcon}
+                className="text-darkBlue-500"
+                stroke={Color.primary}
+              />
+            </InputSlot>
+            <InputField
+              type={'text'}
+              placeholder="Search properties, cars..."
+              value={searchText}
+              onChangeText={handleSearch}
+            />
+          </Input>
+        </View>
+      </Animated.View>
+
+      <Animated.ScrollView
+        style={{
+          flex: 1,
+          transform: [{translateY: contentTranslateY}],
+        }}
+        scrollEventThrottle={16}
+        onScroll={handleScroll}
+        contentContainerStyle={{
+          paddingTop: isScrollingDown.current ? 0 : totalHeaderHeight + 20,
+        }}>
         <View>
           <View style={styles.subHeaderSection}>
             {StoryData != null && StoryData != undefined && (
               <UserStories Data={StoryData} />
-              // <StoryComponent storiesData={StoryData} />
             )}
-            {/* <AutoscrollAdsText
-            onPressBottomSheet={() => bottomSheetRef.current?.expand()}
-          /> */}
+
             {StoryData != null && StoryData != undefined && (
               <MarqueeTextCollection></MarqueeTextCollection>
             )}
-
-            {/* <MarqueeTextList /> */}
           </View>
 
           <AutoscrollAds
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           />
+
           <Grid className="gap-4 p-2" _extra={{className: 'grid-cols-9'}}>
             {/* Property */}
             <GridItem
@@ -392,7 +463,7 @@ export default function DashboradScreen() {
               </TouchableOpacity>
             </GridItem>
 
-            {/* Loan */}
+            {/* Other grid items... */}
             <GridItem
               style={styles.gridContainer}
               className="bg-background-0 p-2 rounded-md text-center"
@@ -406,6 +477,7 @@ export default function DashboradScreen() {
                 </View>
               </TouchableOpacity>
             </GridItem>
+
             <GridItem
               style={styles.gridContainer}
               className="bg-background-0 p-2 rounded-md text-center"
@@ -419,6 +491,7 @@ export default function DashboradScreen() {
                 </View>
               </TouchableOpacity>
             </GridItem>
+
             <GridItem
               style={styles.gridContainer}
               className="bg-background-0 p-2 rounded-md text-center"
@@ -432,6 +505,7 @@ export default function DashboradScreen() {
                 </View>
               </TouchableOpacity>
             </GridItem>
+
             <GridItem
               style={styles.gridContainer}
               className="bg-background-0 p-2 rounded-md text-center"
@@ -447,6 +521,7 @@ export default function DashboradScreen() {
             </GridItem>
           </Grid>
 
+          {/* Content sections */}
           <ProductSectionData
             heading={'Newly Launch'}
             background={'#FFFFFF'}
@@ -490,13 +565,11 @@ export default function DashboradScreen() {
             }}
             Data={NewInCarData}
           />
+
           {/* Podcast */}
           <View style={styles.container}>
             <HStack space="md" reversed={false} style={styles.heading}>
               <ZText type={'R18'}>Podcast</ZText>
-              {/* <ZText type={'R14'} style={styles.headingLink}>
-                See All
-              </ZText> */}
             </HStack>
             <HStack space="md" reversed={false} style={styles.list}>
               <FlatList
@@ -508,8 +581,6 @@ export default function DashboradScreen() {
                 initialNumToRender={3}
                 showsHorizontalScrollIndicator={false}
                 horizontal
-                // onEndReachedThreshold={0.8}
-                // onEndReached={fetchMoreData}
               />
             </HStack>
           </View>
@@ -526,7 +597,7 @@ export default function DashboradScreen() {
           />
           <Footer />
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 }
@@ -540,7 +611,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   subHeaderSection: {
-    //paddingBottom: 10,
     backgroundColor: '#fff',
   },
   scrollView: {
@@ -550,10 +620,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7F8FA',
     margin: 10,
   },
-
   gridContainer: {
     flex: 1,
-    minWidth: Dimensions.get('screen').width / 3 - 16, // Adjust based on your gap
+    minWidth: Dimensions.get('screen').width / 3 - 16,
     maxWidth: Dimensions.get('screen').width / 3 - 16,
     elevation: 2,
     shadowOpacity: 0.6,
@@ -571,7 +640,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     margin: 20,
     marginRight: 10,
-    //backgroundColor:'#FFFFFF'
   },
   heading: {
     flexDirection: 'row',
@@ -583,7 +651,6 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 20,
   },
-
   headingLink: {
     color: '#b71c1c',
     fontSize: 16,
@@ -592,5 +659,53 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 2,
     justifyContent: 'space-between',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 15,
+    width: '95%',
+    marginHorizontal: '2.5%',
+    marginBottom: 10,
+    backgroundColor: '#f9f9f9',
+    height: 43,
+    elevation: 2,
+  },
+  headerContainer: {
+    // height: 80,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+    justifyContent: 'center',
+  },
+  fixedSearchContainer: {
+    height: 70,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  stickySearchContainer: {
+    height: 50,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  searchBarContainer: {
+    height: 60,
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    marginTop: 10,
   },
 });

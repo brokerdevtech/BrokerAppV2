@@ -36,13 +36,13 @@ const AppDrawer: React.FC = () => {
               getFocusedRouteNameFromRoute(route) ?? 'AppTabHome';
 
             // When "Favourite" tab is active, hide the header.
-            if (routeName === 'Favourite') {
+            if (routeName === 'Favourite' || routeName === 'AppTabHome') {
               return {headerShown: false};
             }
             // Otherwise, show the custom header.
             return {
               headerShown: true,
-              header: () => <CustomHeader2 />,
+              header: () => <CustomHeader />,
               headerStyle: {
                 height: Platform.OS === 'android' ? 65 : 120,
               },
