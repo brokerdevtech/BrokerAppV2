@@ -44,6 +44,7 @@ import RectangularCardSkeleton from './Skeleton/RectangularCardSkeleton';
 import RecommendedBrokersSkeleton from './Skeleton/RecomBrokerSkelton';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 import {useApiPagingWithDataRequest} from '../hooks/useApiPagingWithDataRequest';
+import {useApiPagingWithtotalRequest} from '../hooks/useApiPagingWithtotalRequest';
 
 const RenderBrokerItem = React.memo(({item, setIsFollowing}) => {
   const navigation = useNavigation();
@@ -98,6 +99,7 @@ const RenderBrokerItem = React.memo(({item, setIsFollowing}) => {
         followedId={item.userId}
         onFollow={setIsFollowing(true)}
         onUnfollow={setIsFollowing(false)}
+        screen={'item'}
       />
       {/* <FollowUnfollowComponent
         // isFollowing={ProfileData?.isFollowing}
@@ -135,33 +137,33 @@ const SuggestedUsers = React.memo(props => {
     pageSize_Set: brokerspageSize_Set,
     currentPage_Set: brokerscurrentPage_Set,
     hasMore_Set: brokershasMore_Set,
-  } = useApiPagingWithDataRequest(
+  } = useApiPagingWithtotalRequest(
     getSuggestionBrokerList,
     setInfiniteLoading,
-    Data,
+    5,
   );
   const getList = async () => {
     try {
       brokerscurrentPage_Set(1);
       brokershasMore_Set(true);
-      //   brokersexecute(user.userId, categoryId, AppLocation.City);
+      brokersexecute();
     } catch (error) {}
   };
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     getList();
-  //   }, []),
-  // );
   useEffect(() => {
     getList();
   }, []);
   useEffect(() => {
-    if (props.Data != null) {
-      setBrokerList(props.Data.data.records);
+    if (brokersdata != null) {
+      setBrokerList(brokersdata.data);
     }
+    console.log(brokersdata, 'daat');
   }, [props]);
-
+  // useEffect(() => {
+  //   if (brokersdata?.data.length > 0) {
+  //     setBrokerList(prev => [...(prev || []), ...brokersdata.data]);
+  //   }
+  // }, [brokersdata]);
   const loadMore = async () => {
     if (!isInfiniteLoading) {
       await brokersLoadMore();
@@ -180,10 +182,10 @@ const SuggestedUsers = React.memo(props => {
         </ZText>
       </View>
       {/* <RecommendedBrokersSkeleton /> */}
-      {brokerList?.length > 0 ? (
+      {brokersdata?.length > 0 ? (
         <FlatList
           horizontal
-          data={brokerList}
+          data={brokersdata}
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderBrokerItem}
           contentContainerStyle={{paddingHorizontal: 20, paddingVertical: 5}}
@@ -276,8 +278,8 @@ const localStyles = StyleSheet.create({
   card: {
     backgroundColor: '#f4f4f4',
     borderRadius: 10,
-    padding: 15,
-    width: 150,
+    padding: 10,
+    width: 120,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
@@ -285,7 +287,7 @@ const localStyles = StyleSheet.create({
     elevation: 3,
     position: 'relative',
     alignItems: 'center',
-    marginRight: 5, // Space between cards
+    marginRight: 2, // Space between cards
   },
   profileImage: {
     width: 80,

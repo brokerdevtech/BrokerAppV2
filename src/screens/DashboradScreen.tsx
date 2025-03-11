@@ -368,13 +368,13 @@ export default function DashboradScreen() {
             marginTop: 10,
           },
         ]}> */}
-        {/* Header */}
-        {/* <View style={{height: headerHeight}}>
+      {/* Header */}
+      {/* <View style={{height: headerHeight}}>
           <CustomHeader />
         </View> */}
 
-        {/* Search Bar */}
-        {/* <View style={styles.searchBarContainer}>
+      {/* Search Bar */}
+      {/* <View style={styles.searchBarContainer}>
           <Input style={styles.input}>
             <InputSlot style={{paddingLeft: 10}}>
               <InputIcon
@@ -399,7 +399,7 @@ export default function DashboradScreen() {
           transform: [{translateY: contentTranslateY}],
         }}
         scrollEventThrottle={16}
-        onScroll={handleScroll}
+        // onScroll={handleScroll}
         contentContainerStyle={{
           paddingTop: isScrollingDown.current ? 0 : totalHeaderHeight + 20,
         }}>
