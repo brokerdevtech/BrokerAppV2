@@ -1,5 +1,3 @@
-/* eslint-disable react/no-unstable-nested-components */
-/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
@@ -355,252 +353,251 @@ export default function DashboradScreen() {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <SafeAreaView style={{flex: 1}}>
-        <Animated.View
-          style={[
-            styles.headerContainer,
-            {
-              height: totalHeaderHeight,
-              transform: [{translateY: headerTranslateY}],
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              top: 0,
-              zIndex: 10,
-              marginTop: 10,
-            },
-          ]}>
-          {/* Header */}
-          <View style={{height: headerHeight}}>
-            <CustomHeader />
-          </View>
+      {/* Header */}
+      {/* <Animated.View
+        style={[
+          styles.headerContainer,
+          {
+            height: totalHeaderHeight,
+            transform: [{translateY: headerTranslateY}],
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            zIndex: 10,
+            marginTop: 10,
+          },
+        ]}> */}
+        {/* Header */}
+        {/* <View style={{height: headerHeight}}>
+          <CustomHeader />
+        </View> */}
 
-          {/* Search Bar */}
-          <View style={styles.searchBarContainer}>
-            <Input style={styles.input}>
-              <InputSlot style={{paddingLeft: 10}}>
-                <InputIcon
-                  as={SearchIcon}
-                  className="text-darkBlue-500"
-                  stroke={Color.primary}
-                />
-              </InputSlot>
-              <InputField
-                type={'text'}
-                placeholder="Search properties, cars..."
-                value={searchText}
-                onChangeText={handleSearch}
+        {/* Search Bar */}
+        {/* <View style={styles.searchBarContainer}>
+          <Input style={styles.input}>
+            <InputSlot style={{paddingLeft: 10}}>
+              <InputIcon
+                as={SearchIcon}
+                className="text-darkBlue-500"
+                stroke={Color.primary}
               />
-            </Input>
+            </InputSlot>
+            <InputField
+              type={'text'}
+              placeholder="Search properties, cars..."
+              value={searchText}
+              onChangeText={handleSearch}
+            />
+          </Input>
+        </View>
+      </Animated.View> */}
+
+      <Animated.ScrollView
+        style={{
+          flex: 1,
+          transform: [{translateY: contentTranslateY}],
+        }}
+        scrollEventThrottle={16}
+        onScroll={handleScroll}
+        contentContainerStyle={{
+          paddingTop: isScrollingDown.current ? 0 : totalHeaderHeight + 20,
+        }}>
+        <View>
+          <View style={styles.subHeaderSection}>
+            {StoryData != null && StoryData != undefined && (
+              <UserStories Data={StoryData} />
+            )}
+
+            {StoryData != null && StoryData != undefined && (
+              <MarqueeTextCollection></MarqueeTextCollection>
+            )}
           </View>
-        </Animated.View>
 
-        <Animated.ScrollView
-          style={{
-            flex: 1,
-            transform: [{translateY: contentTranslateY}],
-          }}
-          scrollEventThrottle={16}
-          onScroll={handleScroll}
-          contentContainerStyle={{
-            paddingTop: isScrollingDown.current ? 0 : totalHeaderHeight + 20,
-          }}>
-          <View>
-            <View style={styles.subHeaderSection}>
-              {StoryData != null && StoryData != undefined && (
-                <UserStories Data={StoryData} />
-              )}
+          <AutoscrollAds
+            onPressBottomSheet={() => bottomSheetRef.current?.expand()}
+          />
 
-              {StoryData != null && StoryData != undefined && (
-                <MarqueeTextCollection></MarqueeTextCollection>
-              )}
-            </View>
+          <Grid className="gap-4 p-2" _extra={{className: 'grid-cols-9'}}>
+            {/* Property */}
+            <GridItem
+              style={styles.gridContainer}
+              className="bg-background-0 p-2 rounded-md text-center"
+              _extra={{className: 'col-span-3'}}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('ItemListScreen', {
+                    listType: 'RealEstate',
+                    categoryId: 1,
+                  });
+                }}>
+                <View style={styles.tabItemContainer}>
+                  <TABHome />
+                  <ZText type="S16" style={styles.tabItemTitle}>
+                    Property
+                  </ZText>
+                </View>
+              </TouchableOpacity>
+            </GridItem>
 
-            <AutoscrollAds
-              onPressBottomSheet={() => bottomSheetRef.current?.expand()}
-            />
+            {/* Car */}
+            <GridItem
+              style={styles.gridContainer}
+              className="bg-background-0 p-2 rounded-md text-center"
+              _extra={{className: 'col-span-3'}}>
+              <TouchableOpacity
+                onPress={() => {
+                  permissionGrantedDashPost
+                    ? navigation.navigate('ItemListScreen', {
+                        listType: 'Car',
+                        categoryId: 2,
+                      })
+                    : showToast();
+                }}>
+                <View style={styles.tabItemContainer}>
+                  <TABCard />
+                  <ZText type="S16" style={styles.tabItemTitle}>
+                    Car
+                  </ZText>
+                </View>
+              </TouchableOpacity>
+            </GridItem>
 
-            <Grid className="gap-4 p-2" _extra={{className: 'grid-cols-9'}}>
-              {/* Property */}
-              <GridItem
-                style={styles.gridContainer}
-                className="bg-background-0 p-2 rounded-md text-center"
-                _extra={{className: 'col-span-3'}}>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate('ItemListScreen', {
-                      listType: 'RealEstate',
-                      categoryId: 1,
-                    });
-                  }}>
-                  <View style={styles.tabItemContainer}>
-                    <TABHome />
-                    <ZText type="S16" style={styles.tabItemTitle}>
-                      Property
-                    </ZText>
-                  </View>
-                </TouchableOpacity>
-              </GridItem>
+            {/* Other grid items... */}
+            <GridItem
+              style={styles.gridContainer}
+              className="bg-background-0 p-2 rounded-md text-center"
+              _extra={{className: 'col-span-3'}}>
+              <TouchableOpacity onPress={showToastComingSoon}>
+                <View style={styles.tabItemContainer}>
+                  <TABLoan />
+                  <ZText type="S16" style={styles.tabItemTitle}>
+                    Loan
+                  </ZText>
+                </View>
+              </TouchableOpacity>
+            </GridItem>
 
-              {/* Car */}
-              <GridItem
-                style={styles.gridContainer}
-                className="bg-background-0 p-2 rounded-md text-center"
-                _extra={{className: 'col-span-3'}}>
-                <TouchableOpacity
-                  onPress={() => {
-                    permissionGrantedDashPost
-                      ? navigation.navigate('ItemListScreen', {
-                          listType: 'Car',
-                          categoryId: 2,
-                        })
-                      : showToast();
-                  }}>
-                  <View style={styles.tabItemContainer}>
-                    <TABCard />
-                    <ZText type="S16" style={styles.tabItemTitle}>
-                      Car
-                    </ZText>
-                  </View>
-                </TouchableOpacity>
-              </GridItem>
+            <GridItem
+              style={styles.gridContainer}
+              className="bg-background-0 p-2 rounded-md text-center"
+              _extra={{className: 'col-span-3'}}>
+              <TouchableOpacity onPress={showToastComingSoon}>
+                <View style={styles.tabItemContainer}>
+                  <TABInsurance />
+                  <ZText type={'S16'} style={styles.tabItemTitle}>
+                    Insurance
+                  </ZText>
+                </View>
+              </TouchableOpacity>
+            </GridItem>
 
-              {/* Other grid items... */}
-              <GridItem
-                style={styles.gridContainer}
-                className="bg-background-0 p-2 rounded-md text-center"
-                _extra={{className: 'col-span-3'}}>
-                <TouchableOpacity onPress={showToastComingSoon}>
-                  <View style={styles.tabItemContainer}>
-                    <TABLoan />
-                    <ZText type="S16" style={styles.tabItemTitle}>
-                      Loan
-                    </ZText>
-                  </View>
-                </TouchableOpacity>
-              </GridItem>
+            <GridItem
+              style={styles.gridContainer}
+              className="bg-background-0 p-2 rounded-md text-center"
+              _extra={{className: 'col-span-3'}}>
+              <TouchableOpacity onPress={showToastComingSoon}>
+                <View style={styles.tabItemContainer}>
+                  <TABTravel />
+                  <ZText type={'S16'} style={styles.tabItemTitle}>
+                    Travel
+                  </ZText>
+                </View>
+              </TouchableOpacity>
+            </GridItem>
 
-              <GridItem
-                style={styles.gridContainer}
-                className="bg-background-0 p-2 rounded-md text-center"
-                _extra={{className: 'col-span-3'}}>
-                <TouchableOpacity onPress={showToastComingSoon}>
-                  <View style={styles.tabItemContainer}>
-                    <TABInsurance />
-                    <ZText type={'S16'} style={styles.tabItemTitle}>
-                      Insurance
-                    </ZText>
-                  </View>
-                </TouchableOpacity>
-              </GridItem>
+            <GridItem
+              style={styles.gridContainer}
+              className="bg-background-0 p-2 rounded-md text-center"
+              _extra={{className: 'col-span-3'}}>
+              <TouchableOpacity onPress={showToastComingSoon}>
+                <View style={styles.tabItemContainer}>
+                  <TABWealth />
+                  <ZText type={'S16'} style={styles.tabItemTitle}>
+                    Wealth
+                  </ZText>
+                </View>
+              </TouchableOpacity>
+            </GridItem>
+          </Grid>
 
-              <GridItem
-                style={styles.gridContainer}
-                className="bg-background-0 p-2 rounded-md text-center"
-                _extra={{className: 'col-span-3'}}>
-                <TouchableOpacity onPress={showToastComingSoon}>
-                  <View style={styles.tabItemContainer}>
-                    <TABTravel />
-                    <ZText type={'S16'} style={styles.tabItemTitle}>
-                      Travel
-                    </ZText>
-                  </View>
-                </TouchableOpacity>
-              </GridItem>
+          {/* Content sections */}
+          <ProductSectionData
+            heading={'Newly Launch'}
+            background={'#FFFFFF'}
+            endpoint={`NewlyLaunch`}
+            isShowAll={false}
+            request={request}
+            Data={NewlyLaunchData}
+          />
+          <RecentSearchSection
+            heading={'Recent Search'}
+            background={'#F7F8FA'}
+            endpoint={`RecentSearch`}
+            isShowAll={true}
+            request={{
+              userId: user.userId,
+            }}
+          />
+          <ProductSectionData
+            heading={'New In Property'}
+            background={'#FFFFFF'}
+            endpoint={`Newin`}
+            isShowAll={true}
+            request={{
+              pageNo: 1,
+              pageSize: 10,
+              cityName: AppLocation.City,
+              categoryId: 1,
+            }}
+            Data={NewInPropertyData}
+          />
+          <ProductSectionData
+            heading={'New In Car'}
+            background={'#F7F8FA'}
+            endpoint={`Newin`}
+            isShowAll={true}
+            request={{
+              pageNo: 1,
+              pageSize: 10,
+              cityName: AppLocation.City,
+              categoryId: 2,
+            }}
+            Data={NewInCarData}
+          />
 
-              <GridItem
-                style={styles.gridContainer}
-                className="bg-background-0 p-2 rounded-md text-center"
-                _extra={{className: 'col-span-3'}}>
-                <TouchableOpacity onPress={showToastComingSoon}>
-                  <View style={styles.tabItemContainer}>
-                    <TABWealth />
-                    <ZText type={'S16'} style={styles.tabItemTitle}>
-                      Wealth
-                    </ZText>
-                  </View>
-                </TouchableOpacity>
-              </GridItem>
-            </Grid>
-
-            {/* Content sections */}
-            <ProductSectionData
-              heading={'Newly Launch'}
-              background={'#FFFFFF'}
-              endpoint={`NewlyLaunch`}
-              isShowAll={false}
-              request={request}
-              Data={NewlyLaunchData}
-            />
-            <RecentSearchSection
-              heading={'Recent Search'}
-              background={'#F7F8FA'}
-              endpoint={`RecentSearch`}
-              isShowAll={true}
-              request={{
-                userId: user.userId,
-              }}
-            />
-            <ProductSectionData
-              heading={'New In Property'}
-              background={'#FFFFFF'}
-              endpoint={`Newin`}
-              isShowAll={true}
-              request={{
-                pageNo: 1,
-                pageSize: 10,
-                cityName: AppLocation.City,
-                categoryId: 1,
-              }}
-              Data={NewInPropertyData}
-            />
-            <ProductSectionData
-              heading={'New In Car'}
-              background={'#F7F8FA'}
-              endpoint={`Newin`}
-              isShowAll={true}
-              request={{
-                pageNo: 1,
-                pageSize: 10,
-                cityName: AppLocation.City,
-                categoryId: 2,
-              }}
-              Data={NewInCarData}
-            />
-
-            {/* Podcast */}
-            <View style={styles.container}>
-              <HStack space="md" reversed={false} style={styles.heading}>
-                <ZText type={'R18'}>Podcast</ZText>
-              </HStack>
-              <HStack space="md" reversed={false} style={styles.list}>
-                <FlatList
-                  data={data}
-                  keyExtractor={item => item.podcastId.toString()}
-                  renderItem={({item, index}) => (
-                    <RenderPodcastItems item={item} index={index} />
-                  )}
-                  initialNumToRender={3}
-                  showsHorizontalScrollIndicator={false}
-                  horizontal
-                />
-              </HStack>
-            </View>
-
-            <BrandSection
-              heading={'Brands Associated'}
-              background={'#FFFFFF'}
-              endpoint={`BrandAssociate`}
-              isShowAll={true}
-              isGuest={false}
-              request={{
-                userId: user.userId,
-              }}
-            />
-            <Footer />
+          {/* Podcast */}
+          <View style={styles.container}>
+            <HStack space="md" reversed={false} style={styles.heading}>
+              <ZText type={'R18'}>Podcast</ZText>
+            </HStack>
+            <HStack space="md" reversed={false} style={styles.list}>
+              <FlatList
+                data={data}
+                keyExtractor={item => item.podcastId.toString()}
+                renderItem={({item, index}) => (
+                  <RenderPodcastItems item={item} index={index} />
+                )}
+                initialNumToRender={3}
+                showsHorizontalScrollIndicator={false}
+                horizontal
+              />
+            </HStack>
           </View>
-        </Animated.ScrollView>
-      </SafeAreaView>
+
+          <BrandSection
+            heading={'Brands Associated'}
+            background={'#FFFFFF'}
+            endpoint={`BrandAssociate`}
+            isShowAll={true}
+            isGuest={false}
+            request={{
+              userId: user.userId,
+            }}
+          />
+          <Footer />
+        </View>
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 }
