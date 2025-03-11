@@ -354,7 +354,7 @@ export default function DashboradScreen() {
   return (
     <SafeAreaView style={{flex: 1}}>
       {/* Header */}
-      <Animated.View
+      {/* <Animated.View
         style={[
           styles.headerContainer,
           {
@@ -367,14 +367,14 @@ export default function DashboradScreen() {
             zIndex: 10,
             marginTop: 10,
           },
-        ]}>
+        ]}> */}
         {/* Header */}
-        <View style={{height: headerHeight}}>
+        {/* <View style={{height: headerHeight}}>
           <CustomHeader />
-        </View>
+        </View> */}
 
         {/* Search Bar */}
-        <View style={styles.searchBarContainer}>
+        {/* <View style={styles.searchBarContainer}>
           <Input style={styles.input}>
             <InputSlot style={{paddingLeft: 10}}>
               <InputIcon
@@ -391,7 +391,7 @@ export default function DashboradScreen() {
             />
           </Input>
         </View>
-      </Animated.View>
+      </Animated.View> */}
 
       <Animated.ScrollView
         style={{
