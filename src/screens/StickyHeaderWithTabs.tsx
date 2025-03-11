@@ -435,7 +435,7 @@ const StickyHeaderWithTabs = () => {
   );
   return (
     <>
-      <SafeAreaView style={{flex: 0, backgroundColor: Color.primary}} />
+      <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}} />
       <SafeAreaView style={styles.container}>
         {/* <StatusBar backgroundColor={Color.primary} barStyle="light-content" /> */}
 

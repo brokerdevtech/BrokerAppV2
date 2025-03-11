@@ -45,7 +45,7 @@ import RecommendedBrokersSkeleton from './Skeleton/RecomBrokerSkelton';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 import {useApiPagingWithDataRequest} from '../hooks/useApiPagingWithDataRequest';
 
-const RenderBrokerItem = React.memo(({item}) => {
+const RenderBrokerItem = React.memo(({item, setIsFollowing}) => {
   const navigation = useNavigation();
   const getInitials = name => {
     return name
@@ -93,7 +93,12 @@ const RenderBrokerItem = React.memo(({item}) => {
           View Profile
         </ZText>
       </TouchableOpacity> */}
-      {/* <FollowUnfollowComponent isFollowing={undefined} followedId={undefined} onFollow={undefined} onUnfollow={undefined} /> */}
+      <FollowUnfollowComponent
+        isFollowing={undefined}
+        followedId={item.userId}
+        onFollow={setIsFollowing(true)}
+        onUnfollow={setIsFollowing(false)}
+      />
       {/* <FollowUnfollowComponent
         // isFollowing={ProfileData?.isFollowing}
         followedId={userId}
@@ -152,16 +157,6 @@ const SuggestedUsers = React.memo(props => {
     getList();
   }, []);
   useEffect(() => {
-    // Bind data to the state when the data fetch is successful
-    // console.log(brokersstatus, 'redf');
-    // console.log("brokersdata",brokersdata.data.records);
-    // if (brokersstatus === 200 && brokersdata?.data?.records?.length > 0) {
-    //   // console.log('brokersdata', brokersdata.data.records);
-    //   setBrokerList(brokersdata.data.records);
-    // } else {
-    //   setBrokerList([]); // In case there is no data
-    // }
-
     if (props.Data != null) {
       setBrokerList(props.Data.data.records);
     }
@@ -174,7 +169,7 @@ const SuggestedUsers = React.memo(props => {
   };
 
   const renderBrokerItem = useCallback(({item}) => (
-    <RenderBrokerItem item={item} />
+    <RenderBrokerItem item={item} setIsFollowing={setIsFollowing} />
   ));
 
   return (
@@ -321,7 +316,8 @@ const localStyles = StyleSheet.create({
   },
   locationContainer: {
     flexDirection: 'row',
-    alignItems: 'center', // Ensures proper vertical alignment
+    alignItems: 'center',
+    marginBottom: 10, // Ensures proper vertical alignment
   },
   mapPinIcon: {
     marginRight: 5, // Adds spacing between the icon and the text

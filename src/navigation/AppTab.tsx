@@ -34,6 +34,8 @@ import {
   Calender_tab_icon,
   Plus_Icon,
   ComingSoon,
+  Home_tab_icon_fill,
+  Heart_tab_icon_fill,
 } from '../assets/svg';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import TouchableOpacityWithPermissionCheck from '../sharedComponents/TouchableOpacityWithPermissionCheck';
@@ -48,9 +50,7 @@ import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
 import StickyHeaderWithTabs from '../screens/StickyHeaderWithTabs';
 import InstagramReels from '../screens/Podcast/VideoReelsInsta';
 
-
 import StickyHeaderWithTabs1 from '../screens/StickyHeader1';
-
 
 const Tab = createBottomTabNavigator();
 
@@ -174,7 +174,7 @@ const AppTab: React.FC = () => {
               <TabText
                 text={''}
                 focused={focused}
-                icon={focused ? <Home_tab_icon /> : <Home_tab_icon />}
+                icon={focused ? <Home_tab_icon_fill /> : <Home_tab_icon />}
               />
             ),
             headerShown: false,
@@ -196,7 +196,7 @@ const AppTab: React.FC = () => {
               <TabText
                 text={''}
                 focused={focused}
-                icon={focused ? <Heart_tab_icon /> : <Heart_tab_icon />}
+                icon={focused ? <Heart_tab_icon_fill /> : <Heart_tab_icon />}
               />
             ),
           }}
