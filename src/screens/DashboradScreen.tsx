@@ -64,6 +64,10 @@ import {
   InputSlot,
 } from '../../components/ui/input';
 import CustomHeader from '../sharedComponents/CustomHeader';
+import { StoryProvider, useStory } from '../story/StoryContext';
+import StoriesFlatList from '../story/StoriesFlatList';
+import StoriesCarousel from '../story/StoriesCarousel';
+import StoryViewer from '../story/StoryViewer';
 
 export default function DashboradScreen() {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -223,7 +227,8 @@ export default function DashboradScreen() {
           ] = results.map(result =>
             result.status === 'fulfilled' ? result.value : null,
           );
-
+//           console.log("DashboardStory?.data");
+// console.log(JSON.stringify(DashboardStory?.data));
           setStoryData(DashboardStory?.data);
           setNewlyLaunchData(NewlyLaunch?.data);
           setNewInPropertyData(NewInProperty?.data);
@@ -350,6 +355,7 @@ export default function DashboradScreen() {
       </TouchableOpacity>
     );
   });
+//  const { isStoryViewerVisible } = useStory();
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -405,9 +411,18 @@ export default function DashboradScreen() {
         }}>
         <View>
           <View style={styles.subHeaderSection}>
-            {StoryData != null && StoryData != undefined && (
+          <StoryProvider userId={user.userId || undefined}>
+      <View style={{ flex: 1 }}>
+        <StoriesFlatList />
+        {<StoryViewer />}
+        {/* {selectedUserId !== null && <StoryViewer />} */}
+      </View>
+    </StoryProvider>
+
+
+            {/* {StoryData != null && StoryData != undefined && (
               <UserStories Data={StoryData} />
-            )}
+            )} */}
 
             {StoryData != null && StoryData != undefined && (
               <MarqueeTextCollection></MarqueeTextCollection>

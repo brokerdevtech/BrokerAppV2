@@ -241,7 +241,7 @@ function App(): React.JSX.Element {
         latitude,
         longitude,
       );
-      console.log(resultAddress, 'loaction');
+   
       store.dispatch(setAppLocation(resultAddress));
     }
   };
