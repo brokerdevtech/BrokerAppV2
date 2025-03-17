@@ -1,19 +1,24 @@
-import { imagesBucketcloudfrontPath } from '../config/constants';
-import React, { useEffect, useRef, useState } from 'react';
-import { Image, View, Dimensions, ActivityIndicator, StyleSheet } from 'react-native';
+import {imagesBucketcloudfrontPath} from '../config/constants';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  Image,
+  View,
+  Dimensions,
+  ActivityIndicator,
+  StyleSheet,
+} from 'react-native';
 import Video from 'react-native-video';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 interface StoryItemProps {
-  story: { mediaBlob: string; mediaType: 'image' | 'video' };
+  story: {mediaBlob: string; mediaType: 'image' | 'video'};
   onLoad: () => void; // Notify when media is loaded
   onVideoEnd: () => void; // Notify when video finishes playing
-
 }
 
-const StoryItem: React.FC<StoryItemProps> = ({ story,onLoad, onVideoEnd }) => {
-console.log(story?.mediaType);
+const StoryItem: React.FC<StoryItemProps> = ({story, onLoad, onVideoEnd}) => {
+  // console.log(story?.mediaType);
   const videoRef = useRef<Video>(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,9 +36,8 @@ console.log(story?.mediaType);
 
       {story && story?.mediaType.toLowerCase() === 'image' ? (
         <>
-         
           <Image
-            source={{ uri: `${imagesBucketcloudfrontPath}${story.mediaBlob}` }}
+            source={{uri: `${imagesBucketcloudfrontPath}${story.mediaBlob}`}}
             style={styles.media}
             resizeMode="contain"
             onLoad={() => {
@@ -46,22 +50,23 @@ console.log(story?.mediaType);
             }}
           />
         </>
-      ) : (story &&
-        <Video
-          ref={videoRef}
-          source={{ uri: `${imagesBucketcloudfrontPath}${story.mediaBlob}` }}
-          style={styles.media}
-          resizeMode="contain"
-      
-          onReadyForDisplay={() => {
-            setLoading(false);
-            onLoad();
-          }}
-          onEnd={onVideoEnd}
-          controls={false}
-          muted={false}
-          repeat={false}
-        />
+      ) : (
+        story && (
+          <Video
+            ref={videoRef}
+            source={{uri: `${imagesBucketcloudfrontPath}${story.mediaBlob}`}}
+            style={styles.media}
+            resizeMode="contain"
+            onReadyForDisplay={() => {
+              setLoading(false);
+              onLoad();
+            }}
+            onEnd={onVideoEnd}
+            controls={false}
+            muted={false}
+            repeat={false}
+          />
+        )
       )}
     </View>
   );
