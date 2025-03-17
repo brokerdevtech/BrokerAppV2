@@ -240,7 +240,7 @@ export default function DashboradScreen() {
     }
   };
   const showToastComingSoon = () => {
-    navigation.navigate('StickyHeaderWithTabs');
+   // navigation.navigate('StickyHeaderWithTabs');
 
 
     if (!toast.isActive(toastId)) {
