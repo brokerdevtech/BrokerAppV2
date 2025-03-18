@@ -42,6 +42,7 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
             setError(response.message || 'An error occurred');
             setStatus(response.status || 500);
           } else {
+            console.log(response.data.data, 'set');
             setData(response.data.data || null);
             settotalPages(response.data.totalPages || null);
             setrecordCount(response.data.recordCount || null);
@@ -71,7 +72,7 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
 
         try {
           // Use stored params along with current page and page size
-       
+
           const response = await apiFunction(
             ...params,
             currentPage + 1,
@@ -83,14 +84,13 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
               setError(response.message || 'An error occurred');
               setStatus(response.status || 500);
             } else {
-           
               if (
                 response?.data.data != null &&
                 response?.data.data.length > 0
               ) {
-                console.log("New Data:",  response?.data.data);
-                console.log("Existing Data:", data.length);
-                console.log("New Data:", response?.data.data.length);
+                console.log('New Data:', response?.data.data);
+                console.log('Existing Data:', data.length);
+                console.log('New Data:', response?.data.data.length);
 
                 setData(prevData => [
                   ...prevData,

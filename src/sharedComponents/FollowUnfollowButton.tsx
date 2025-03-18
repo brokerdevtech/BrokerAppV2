@@ -17,6 +17,7 @@ export default function FollowUnfollowComponent({
   followedId,
   onFollow,
   onUnfollow,
+  screen = '',
 }) {
   const user = useSelector((state: RootState) => state.user.user);
   const userPermissions = useSelector(
@@ -57,7 +58,7 @@ export default function FollowUnfollowComponent({
       textType="r16"
       containerStyle={[
         localStyles.buttonContainer,
-        {borderColor: colors.primary},
+        {borderColor: colors.primary, height: screen == 'item' ? 30 : 40},
       ]}
       bgColor={isFollow ? colors.primary : colors.tranparent}
       onPress={onPressFollow}

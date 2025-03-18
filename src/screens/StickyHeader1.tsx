@@ -512,6 +512,7 @@ const StickyHeaderWithTabs1 = () => {
         <TabView
           navigationState={{index, routes}}
           renderScene={renderScene}
+          swipeEnabled={false}
           onIndexChange={handleIndexChange}
           initialLayout={{width: screenWidth}}
           renderTabBar={props => (
