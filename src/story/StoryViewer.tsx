@@ -48,20 +48,20 @@ const StoryViewer = () => {
 
   // Initialize story states when stories change
   useEffect(() => {
-    const initialStates = {};
-    stories.forEach(userStories => {
-      if (userStories?.storyDetails) {
-        userStories.storyDetails.forEach(story => {
-          initialStates[story.storyId] = {
-            likeCount: story.likeCount || 0,
-            reactionCount: story.reactionCount || 0,
-            viewerCount: story.viewerCount || 0,
-            userLiked: story.userLiked || 0,
-          };
-        });
-      }
-    });
-    setStoryStates(initialStates);
+    // const initialStates = {};
+    // stories.forEach(userStories => {
+    //   if (userStories?.storyDetails) {
+    //     userStories.storyDetails.forEach(story => {
+    //       initialStates[story.storyId] = {
+    //         likeCount: story.likeCount || 0,
+    //         reactionCount: story.reactionCount || 0,
+    //         viewerCount: story.viewerCount || 0,
+    //         userLiked: story.userLiked || 0,
+    //       };
+    //     });
+    //   }
+    // });
+    // setStoryStates(initialStates);
   }, [stories]);
 
   if (currentStoryIndex === -1) return null;
@@ -93,13 +93,14 @@ const StoryViewer = () => {
 
   // Handles transitioning to the previous story
   const handlePreviousStory = () => {
+    if (isPaused === false) {
     if (!isTransitioning.current) {
       isTransitioning.current = true;
       goToPreviousStory();
       setTimeout(() => {
         isTransitioning.current = false;
       }, 50);
-    }
+    }}
   };
 
   // Set action area active state
@@ -192,34 +193,14 @@ const StoryViewer = () => {
             {/* Story Content */}
             <StoryItem
               story={currentStory}
+              storyIndex={currentMediaIndex}
               onLoad={() => runOnJS(setIsPaused)(false)}
               onVideoEnd={handleNextStory}
+              togglePause={togglePause}
+              oncloseModal={closeModal}
             />
 
-            {/* Pass handlers to track when touch is over action area */}
-            {currentStory && (
-              <StoriesAction
-                story={currentStory}
-                storyState={
-                  storyStates[currentStory.storyId] || {
-                    likeCount: currentStory.likeCount || 0,
-                    reactionCount: currentStory.reactionCount || 0,
-                    viewerCount: currentStory.viewerCount || 0,
-                    userLiked: currentStory.userLiked || 0,
-                  }
-                }
-                updateStoryState={newState =>
-                  updateStoryState(currentStory.storyId, newState)
-                }
-                storyIndex={currentStoryIndex}
-                mediaIndex={currentMediaIndex}
-                userId={user.userId}
-                togglePause={togglePause}
-                closeStory={closeModal}
-                onTouchStart={() => handleActionAreaActive(true)}
-                onTouchEnd={() => handleActionAreaActive(false)}
-              />
-            )}
+         
           </View>
         </GestureDetector>
       </GestureHandlerRootView>

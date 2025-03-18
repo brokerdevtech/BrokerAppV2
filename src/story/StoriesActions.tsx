@@ -27,16 +27,14 @@ const StoriesAction = ({
   storyState,
   updateStoryState,
   storyIndex,
-  mediaIndex,
-  userId,
   togglePause,
   colors = {white: '#FFFFFF'},
-  onTouchStart,
-  onTouchEnd,
+ 
   closeStory,
 }) => {
   const {stories} = useStory();
   const user = useSelector((state: RootState) => state.user.user);
+  const userId=user.userId;
   const toast = useToast();
   const isStoryOwner = userId === stories[storyIndex]?.userId;
   const navigation = useNavigation();
@@ -52,10 +50,12 @@ const StoriesAction = ({
     await new Promise(resolve => setTimeout(resolve, 200));
     // togglePause();
   };
-  console.log(storyState, 'jk');
+ 
   const handleStoryLike = async () => {
+    console.log(storyState, 'jk');
     togglePause(); // Pause the story when action starts
     console.log('user', user.userId, story.storyId);
+    console.log('user', user);
     try {
       let result;
       if (storyState?.userLiked && storyState?.userLiked == 1) {
@@ -70,11 +70,14 @@ const StoriesAction = ({
         viewerCount: result.data.storyDetails[0].viewerCount,
         userLiked: result.data.storyDetails[0].userLiked,
       });
+      togglePause(); 
     } catch (error) {
+      console.log(error);
       console.error('Error liking/unliking story:', error);
+      togglePause(); 
     }
 
-    togglePause(); // Resume the story when action is completed
+   
   };
 
   const navigateToStoryLikeList = () => {
@@ -148,8 +151,8 @@ const StoriesAction = ({
       {!isOpen && (
         <View
           style={styles.actionContainer}
-          onTouchStart={onTouchStart}
-          onTouchEnd={onTouchEnd}>
+          
+    >
           {/* Like Button */}
           <TouchableOpacity
             style={styles.actionButton}
@@ -222,8 +225,7 @@ const StoriesAction = ({
         listTypeData={''}
         userPermissions={userPermissions}
         onClose={closeModal}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
+       
       />
     </BottomSheetModalProvider>
   );
