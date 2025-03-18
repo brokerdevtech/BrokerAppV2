@@ -72,7 +72,16 @@ import ReplyCommentList from './ReplyCommentList';
 
 const StoryCommentBottomSheet = forwardRef(
   (
-    {postItem, User, listTypeData, StoryStateParam, userPermissions, onClose},
+    {
+      postItem,
+      User,
+      listTypeData,
+      StoryStateParam,
+      userPermissions,
+      onClose,
+      onTouchStart,
+      onTouchEnd,
+    },
     ref,
   ) => {
     const navigation = useNavigation();

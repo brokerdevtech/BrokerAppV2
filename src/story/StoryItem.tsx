@@ -1,26 +1,43 @@
-import { imagesBucketcloudfrontPath } from '../config/constants';
-import React, { useEffect, useRef, useState } from 'react';
-import { Image, View, Dimensions, ActivityIndicator, StyleSheet } from 'react-native';
+import {imagesBucketcloudfrontPath} from '../config/constants';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  Image,
+  View,
+  Dimensions,
+  ActivityIndicator,
+  StyleSheet,
+} from 'react-native';
 import Video from 'react-native-video';
+import StoriesAction from './StoriesActions';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 interface StoryItemProps {
-  story: { mediaBlob: string; mediaType: 'image' | 'video' };
+  story: any;
+  storyIndex:any;
   onLoad: () => void; // Notify when media is loaded
   onVideoEnd: () => void; // Notify when video finishes playing
-
+  togglePause: () => void; // Notify when video finishes playing
+  oncloseModal:()=>void; // Notify when
 }
 
-const StoryItem: React.FC<StoryItemProps> = ({ story,onLoad, onVideoEnd }) => {
-console.log(story?.mediaType);
+const StoryItem: React.FC<StoryItemProps> = ({story,storyIndex, onLoad, onVideoEnd,togglePause,oncloseModal}) => {
+  // console.log(story?.mediaType);
   const videoRef = useRef<Video>(null);
   const [loading, setLoading] = useState(true);
+ const [storyStates, setStoryStates] = useState({});
 
   useEffect(() => {
     if (story?.mediaType.toLowerCase() === 'video') {
       videoRef.current?.seek(0);
     }
+let storystateobj={
+  likeCount: story.likeCount || 0,
+  reactionCount: story.reactionCount || 0,
+  viewerCount: story.viewerCount || 0,
+  userLiked: story.userLiked || 0,
+};
+setStoryStates(storyStates);
   }, [story]);
 
   return (
@@ -31,9 +48,8 @@ console.log(story?.mediaType);
 
       {story && story?.mediaType.toLowerCase() === 'image' ? (
         <>
-         
           <Image
-            source={{ uri: `${imagesBucketcloudfrontPath}${story.mediaBlob}` }}
+            source={{uri: `${imagesBucketcloudfrontPath}${story.mediaBlob}`}}
             style={styles.media}
             resizeMode="contain"
             onLoad={() => {
@@ -46,23 +62,41 @@ console.log(story?.mediaType);
             }}
           />
         </>
-      ) : (story &&
-        <Video
-          ref={videoRef}
-          source={{ uri: `${imagesBucketcloudfrontPath}${story.mediaBlob}` }}
-          style={styles.media}
-          resizeMode="contain"
-      
-          onReadyForDisplay={() => {
-            setLoading(false);
-            onLoad();
-          }}
-          onEnd={onVideoEnd}
-          controls={false}
-          muted={false}
-          repeat={false}
-        />
+      ) : (
+        story && (
+          <Video
+            ref={videoRef}
+            source={{uri: `${imagesBucketcloudfrontPath}${story.mediaBlob}`}}
+            style={styles.media}
+            resizeMode="contain"
+            onReadyForDisplay={() => {
+              setLoading(false);
+              onLoad();
+            }}
+            onEnd={onVideoEnd}
+            controls={false}
+            muted={false}
+            repeat={false}
+          />
+        )
       )}
+         {/* Pass handlers to track when touch is over action area */}
+                  {story && (
+                    <StoriesAction
+                      story={story}
+                      storyState={storyStates}
+                      
+                      updateStoryState={newState =>
+                        setStoryStates(newState)
+                      }
+                      storyIndex={storyIndex}
+                   
+                   
+                      togglePause={togglePause}
+                      closeStory={oncloseModal}
+                      
+                    />
+                  )}
     </View>
   );
 };
