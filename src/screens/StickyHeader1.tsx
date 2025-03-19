@@ -45,6 +45,7 @@ import {
 } from '../assets/svg';
 import PostActions from '../sharedComponents/PostActions';
 import UserStories from '../components/story/UserStories';
+import ReportScreen from '../sharedComponents/ReportScreen';
 
 const HEADER_HEIGHT = 60;
 const TAB_BAR_HEIGHT = 48; // Approximate height of TabBar
@@ -145,7 +146,9 @@ const ProductItem = React.memo(
           />
 
           <View style={styles.iconContainer}>
-            <TouchableOpacity onPress={menuPress} style={styles.checkIcon}>
+            <TouchableOpacity
+              onPress={() => menuPress(item)}
+              style={styles.checkIcon}>
               <MenuThreeDots height={20} width={20} />
             </TouchableOpacity>
           </View>
@@ -329,7 +332,7 @@ const ProductListScreen = ({
       onEndReached={loadMorepage}
       onEndReachedThreshold={0.5}
       ListFooterComponent={() =>
-        loading && <ActivityIndicator size="large" color="green" />
+        loading && <ActivityIndicator size="large" color={Color.primary} />
       }
     />
   );
@@ -348,10 +351,12 @@ const StickyHeaderWithTabs1 = () => {
   const headerVisible = useRef(new Animated.Value(1)).current;
   const navigation = useNavigation();
   const reportSheetRef = useRef(null);
+
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const [selectedItem, setSelectedItem] = useState(null);
   const user = useSelector((state: RootState) => state.user.user);
   const [StoryData, setStoryData]: any[] = useState(null);
+
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   let {
     data,
@@ -367,8 +372,12 @@ const StickyHeaderWithTabs1 = () => {
     setData_Set,
   } = useApiPagingWithtotalRequest(DashboardItemList, setInfiniteLoading, 5);
   const handlePresentModalPress = useCallback(item => {
+    console.log(item, 'modela');
     setSelectedItem(item);
     reportSheetRef.current?.open();
+  }, []);
+  const closeModalReport = useCallback(() => {
+    setSelectedItem(null);
   }, []);
   async function callPodcastList() {
     const apiEndpoint =
@@ -410,14 +419,18 @@ const StickyHeaderWithTabs1 = () => {
   // Header translation on scroll (show/hide based on scroll direction)
   const headerTranslateY = headerVisible.interpolate({
     inputRange: [0, 1],
-    outputRange: [-HEADER_HEIGHT, 0],
+    outputRange:
+      Platform.OS === 'ios' ? [-HEADER_HEIGHT - 70, 0] : [-HEADER_HEIGHT, 0],
     extrapolate: 'clamp',
   });
 
   // TabBar translation based on header visibility
   const tabBarTranslateY = headerVisible.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, HEADER_HEIGHT],
+    outputRange: [
+      0,
+      Platform.OS === 'ios' ? HEADER_HEIGHT - 30 : HEADER_HEIGHT,
+    ],
     extrapolate: 'clamp',
   });
 
@@ -505,9 +518,20 @@ const StickyHeaderWithTabs1 = () => {
     [scrollY, handleScroll],
   );
 
+  // Replace the current SafeAreaView implementation with this approach
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.contentContainer}>
+    <View style={styles.container}>
+      <Animated.View
+        style={[styles.header, {transform: [{translateY: headerTranslateY}]}]}>
+        <CustomHeader />
+      </Animated.View>
+
+      {/* <SafeAreaView style={styles.contentContainer}> */}
+      <View
+        style={[
+          styles.contentContainer,
+          {paddingTop: Platform.OS == 'ios' ? HEADER_HEIGHT : 0},
+        ]}>
         {/* TabView with animated TabBar */}
         <TabView
           navigationState={{index, routes}}
@@ -525,34 +549,35 @@ const StickyHeaderWithTabs1 = () => {
                 {...props}
                 style={styles.tabBar}
                 indicatorStyle={{
-                  backgroundColor: '#C20707', // Using a strong red color that appears in your styles
+                  backgroundColor: '#C20707',
                   height: 3,
                 }}
                 renderLabel={({route, focused}) => (
                   <Text
                     style={{
-                      color: focused ? '#C20707' : '#000000', // Black for unfocused, red for focused
-                      fontSize: 16, // Increased size
+                      color: focused ? '#C20707' : '#000000',
+                      fontSize: 16,
                       fontWeight: focused ? 'bold' : 'normal',
                     }}>
                     {route.title}
                   </Text>
                 )}
-                // Add these additional props to ensure visibility
                 activeColor="#C20707"
                 inactiveColor="#000000"
-                pressColor="rgba(194, 7, 7, 0.1)" // Light red press effect
+                pressColor="rgba(194, 7, 7, 0.1)"
               />
             </Animated.View>
           )}
         />
       </View>
-
-      <Animated.View
-        style={[styles.header, {transform: [{translateY: headerTranslateY}]}]}>
-        <CustomHeader />
-      </Animated.View>
-    </SafeAreaView>
+      {/* </SafeAreaView> */}
+      <ReportScreen
+        ref={reportSheetRef}
+        postItem={selectedItem}
+        screenFrom={'List'}
+        onClose={closeModalReport}
+      />
+    </View>
   );
 };
 
@@ -571,11 +596,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: HEADER_HEIGHT,
-    backgroundColor: '#FFD700',
+    // backgroundColor: '#FFD700',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 2,
     elevation: 4,
+    marginTop: Platform.OS === 'ios' ? 20 : 0,
   },
   appTitle: {
     fontSize: 18,

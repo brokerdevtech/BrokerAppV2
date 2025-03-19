@@ -52,7 +52,7 @@ const ReportScreen = forwardRef(({postItem, screenFrom, onClose}, ref) => {
   const [selectedReason, setSelectedReason] = useState(null);
   const snapPoints = useMemo(() => ['70%'], []);
   const [toastId, setToastId] = React.useState(0);
-
+  console.log(postItem, 'item');
   const toast = useToast();
   const [loading, setLoading] = React.useState(false);
   const handleSelectReason = reason => {
@@ -67,6 +67,7 @@ const ReportScreen = forwardRef(({postItem, screenFrom, onClose}, ref) => {
     categoryId: postItem?.categoryId,
     reportReason: selectedReason,
   };
+  console.log(postRequest);
   const userRequest = {
     reportedUserId: postItem,
     reportReason: selectedReason,
@@ -79,7 +80,7 @@ const ReportScreen = forwardRef(({postItem, screenFrom, onClose}, ref) => {
 
     setLoading(true);
     await execute(Urltype, apiRequest);
-
+    console.log(status, 'sat');
     bottomSheetModalRef.current?.close();
     onClose?.();
   };
@@ -97,7 +98,7 @@ const ReportScreen = forwardRef(({postItem, screenFrom, onClose}, ref) => {
         setToastId(newId);
         toast.show({
           id: newId,
-          placement: 'bottom',
+          placement: 'top',
           duration: 3000,
           render: ({id}) => {
             const uniqueToastId = 'toast-' + id;
