@@ -68,7 +68,7 @@ const StoryViewer = () => {
   const currentUser = stories[currentStoryIndex] || {};
   const currentUserStories = stories[currentStoryIndex]?.storyDetails || [];
   const togglePause = () => {
-    console.log('Toggle ');
+    // console.log('Toggle ');
     // runOnJS(setIsPaused)(true);
 
     setIsPaused(prev => !prev);
@@ -94,13 +94,14 @@ const StoryViewer = () => {
   // Handles transitioning to the previous story
   const handlePreviousStory = () => {
     if (isPaused === false) {
-    if (!isTransitioning.current) {
-      isTransitioning.current = true;
-      goToPreviousStory();
-      setTimeout(() => {
-        isTransitioning.current = false;
-      }, 50);
-    }}
+      if (!isTransitioning.current) {
+        isTransitioning.current = true;
+        goToPreviousStory();
+        setTimeout(() => {
+          isTransitioning.current = false;
+        }, 50);
+      }
+    }
   };
 
   // Set action area active state
@@ -137,7 +138,6 @@ const StoryViewer = () => {
     .onStart(() => runOnJS(setIsPaused)(true)) // Pause progress
     .onEnd(() => runOnJS(setIsPaused)(false)); // Resume progress
 
-  // Swipe Down Gesture to Close Story Viewer
   const swipeDownGesture = Gesture.Pan()
     .shouldCancelWhenOutside(false)
     .onEnd(event => {
@@ -150,7 +150,7 @@ const StoryViewer = () => {
   };
   // Get the current story being displayed
   const currentStory = currentUserStories[currentMediaIndex];
-  console.log(currentStory);
+  console.log(isPaused, 'current');
   return (
     <Modal visible={isStoryViewerVisible} animationType="fade" transparent>
       <GestureHandlerRootView style={{flex: 1}}>
@@ -199,8 +199,6 @@ const StoryViewer = () => {
               togglePause={togglePause}
               oncloseModal={closeModal}
             />
-
-         
           </View>
         </GestureDetector>
       </GestureHandlerRootView>
