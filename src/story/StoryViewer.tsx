@@ -185,10 +185,10 @@ const StoryViewer = () => {
 
             {/* Progress Bars */}
             <View style={styles.progressBarContainer}>
-              {currentUserStories.map((_, index) => (
+              {currentUserStories.map((item, index) => (
                 <ProgressBar
                   key={index}
-                  duration={5000}
+                  duration={currentStory?.mediaDuration || 10000}
                   isActive={index === currentMediaIndex}
                   isPaused={isPaused}
                   hasCompleted={index < currentMediaIndex} // Mark previous stories as completed
@@ -208,6 +208,7 @@ const StoryViewer = () => {
               setActionAreaActive={handleActionAreaActive}
               handleNextStory={handleNextStory}
               handlePreviousStory={handlePreviousStory}
+              isPaused={isPaused}
             />
           </View>
         </GestureDetector>

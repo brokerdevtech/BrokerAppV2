@@ -54,7 +54,7 @@ const StoriesAction = ({
     return event => {
       console.log('handleActionPress');
       event.stopPropagation(); // Prevents tapGesture from triggering
-      setActionAreaActive(true); // Mark action area as active
+      // setActionAreaActive(true); // Mark action area as active
       callback();
     };
   };
