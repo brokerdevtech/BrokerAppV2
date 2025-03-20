@@ -29,14 +29,14 @@ const StoriesAction = ({
   storyIndex,
   togglePause,
   colors = {white: '#FFFFFF'},
- 
+
   closeStory,
 }) => {
-  const {stories} = useStory();
+  const {stories, currentStoryIndex} = useStory();
   const user = useSelector((state: RootState) => state.user.user);
-  const userId=user.userId;
+
   const toast = useToast();
-  const isStoryOwner = userId === stories[storyIndex]?.userId;
+  const isStoryOwner = user.userId === stories[currentStoryIndex]?.userId;
   const navigation = useNavigation();
   const commentSheetRef = useRef(null);
   const userPermissions = useSelector(
@@ -48,12 +48,17 @@ const StoriesAction = ({
     setOpen(false);
     updateStoryState(item);
     await new Promise(resolve => setTimeout(resolve, 200));
-    // togglePause();
+    togglePause();
   };
- 
+  const handleActionPress = callback => {
+    // Stop event propagation
+    return event => {
+      event.stopPropagation();
+      callback();
+    };
+  };
   const handleStoryLike = async () => {
-    console.log(storyState, 'jk');
-    togglePause(); // Pause the story when action starts
+    togglePause(true); // Pause the story when action starts
     console.log('user', user.userId, story.storyId);
     console.log('user', user);
     try {
@@ -70,14 +75,12 @@ const StoriesAction = ({
         viewerCount: result.data.storyDetails[0].viewerCount,
         userLiked: result.data.storyDetails[0].userLiked,
       });
-      togglePause(); 
+      togglePause();
     } catch (error) {
       console.log(error);
       console.error('Error liking/unliking story:', error);
-      togglePause(); 
+      togglePause();
     }
-
-   
   };
 
   const navigateToStoryLikeList = () => {
@@ -124,7 +127,10 @@ const StoriesAction = ({
           text: 'Yes',
           onPress: async () => {
             try {
-              const deleteResponse = await DeleteStory(userId, story.storyId);
+              const deleteResponse = await DeleteStory(
+                user.userId,
+                story.storyId,
+              );
               if (deleteResponse.status === 'success') {
                 toast.show({
                   description: deleteResponse.statusMessage,
@@ -149,14 +155,11 @@ const StoriesAction = ({
     <BottomSheetModalProvider>
       {/* Only render action buttons when bottom sheet is not open */}
       {!isOpen && (
-        <View
-          style={styles.actionContainer}
-          
-    >
+        <View style={styles.actionContainer}>
           {/* Like Button */}
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={handleStoryLike}>
+            onPress={handleActionPress(handleStoryLike)}>
             <View
               style={[
                 styles.iconContainer,
@@ -225,7 +228,6 @@ const StoriesAction = ({
         listTypeData={''}
         userPermissions={userPermissions}
         onClose={closeModal}
-       
       />
     </BottomSheetModalProvider>
   );
