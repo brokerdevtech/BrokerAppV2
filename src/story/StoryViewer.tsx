@@ -69,9 +69,9 @@ const StoryViewer = () => {
   const currentUserStories = stories[currentStoryIndex]?.storyDetails || [];
   const togglePause = () => {
     // console.log('Toggle ');
-    // runOnJS(setIsPaused)(true);
+     runOnJS(setIsPaused)(true);
 
-    setIsPaused(prev => !prev);
+   // setIsPaused(prev => !prev);
   };
   // Handles transitioning between stories
   const handleNextStory = () => {
@@ -118,18 +118,25 @@ const StoryViewer = () => {
   };
 
   // Tap Gesture for Navigation (Right → Next, Left → Previous)
-  const tapGesture = Gesture.Tap()
-    .runOnJS(true)
-    .onEnd(event => {
-      // Only handle navigation if not tapping on action area
-      if (!actionAreaRef.current) {
-        if (event.x > width / 2) {
-          runOnJS(handleNextStory)();
-        } else {
-          runOnJS(handlePreviousStory)();
-        }
-      }
-    });
+  // const tapGesture = Gesture.Tap()
+  //   .runOnJS(true)
+  //   .onEnd(event => {
+  //     console.log("tapGesture")
+  //     console.log(actionAreaRef.current);
+  //     // Only handle navigation if not tapping on action area
+  //     if (!actionAreaRef.current) {  // Ignore taps on action buttons
+  //       if (event.x > width / 2) {
+  //         console.log("handleNextStory");
+  //       //  runOnJS(handleNextStory)();
+  //       } else {
+  //         console.log("handlePreviousStory");
+  //       //  runOnJS(handlePreviousStory)();
+  //       }
+  //     }
+  //     actionAreaRef.current = false; // Reset after tap
+  //     console.log("tapGesture")
+  //     console.log(actionAreaRef.current);
+  //   });
 
   // Long Press to Pause ProgressBar
   const longPressGesture = Gesture.LongPress()
@@ -157,7 +164,7 @@ const StoryViewer = () => {
         <GestureDetector
           gesture={Gesture.Simultaneous(
             swipeDownGesture,
-            tapGesture,
+           // tapGesture,
             longPressGesture,
           )}>
           <View style={styles.container}>
@@ -198,6 +205,9 @@ const StoryViewer = () => {
               onVideoEnd={handleNextStory}
               togglePause={togglePause}
               oncloseModal={closeModal}
+              setActionAreaActive={handleActionAreaActive}  
+              handleNextStory={handleNextStory}
+              handlePreviousStory={handlePreviousStory}
             />
           </View>
         </GestureDetector>
@@ -212,6 +222,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  overlayContainer: {
+    ...StyleSheet.absoluteFillObject,
+    flexDirection: 'row',
+  },
+  leftTap: {
+    flex: 1,  // Left 50% of the screen
+  },
+  rightTap: {
+    flex: 1,  // Right 50% of the screen
   },
   progressBarContainer: {
     flexDirection: 'row',

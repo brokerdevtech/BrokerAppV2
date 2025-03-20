@@ -29,7 +29,7 @@ const StoriesAction = ({
   storyIndex,
   togglePause,
   colors = {white: '#FFFFFF'},
-
+  setActionAreaActive,
   closeStory,
 }) => {
   const {stories, currentStoryIndex} = useStory();
@@ -50,37 +50,39 @@ const StoriesAction = ({
     await new Promise(resolve => setTimeout(resolve, 200));
     togglePause();
   };
-  const handleActionPress = callback => {
-    // Stop event propagation
-    return event => {
-      event.stopPropagation();
+ const handleActionPress = (callback) => {
+    return (event) => {
+      console.log("handleActionPress");
+      event.stopPropagation(); // Prevents tapGesture from triggering
+      setActionAreaActive(true);  // Mark action area as active
       callback();
     };
   };
   const handleStoryLike = async () => {
-    togglePause(true); // Pause the story when action starts
-    console.log('user', user.userId, story.storyId);
-    console.log('user', user);
-    try {
-      let result;
-      if (storyState?.userLiked && storyState?.userLiked == 1) {
-        result = await StoryUnLIke(user.userId, story.storyId);
-      } else {
-        result = await StoryLike(user.userId, story.storyId);
-      }
-      console.log(result, 'result');
-      updateStoryState({
-        likeCount: result.data.storyDetails[0].likeCount,
-        reactionCount: result.data.storyDetails[0].reactionCount,
-        viewerCount: result.data.storyDetails[0].viewerCount,
-        userLiked: result.data.storyDetails[0].userLiked,
-      });
-      togglePause();
-    } catch (error) {
-      console.log(error);
-      console.error('Error liking/unliking story:', error);
-      togglePause();
-    }
+    console.log("handleStoryLike");
+    // togglePause(true); // Pause the story when action starts
+    // console.log('user', user.userId, story.storyId);
+    // console.log('user', user);
+    // try {
+    //   let result;
+    //   if (storyState?.userLiked && storyState?.userLiked == 1) {
+    //     result = await StoryUnLIke(user.userId, story.storyId);
+    //   } else {
+    //     result = await StoryLike(user.userId, story.storyId);
+    //   }
+    //   console.log(result, 'result');
+    //   updateStoryState({
+    //     likeCount: result.data.storyDetails[0].likeCount,
+    //     reactionCount: result.data.storyDetails[0].reactionCount,
+    //     viewerCount: result.data.storyDetails[0].viewerCount,
+    //     userLiked: result.data.storyDetails[0].userLiked,
+    //   });
+    //   togglePause();
+    // } catch (error) {
+    //   console.log(error);
+    //   console.error('Error liking/unliking story:', error);
+    //   togglePause();
+    // }
   };
 
   const navigateToStoryLikeList = () => {

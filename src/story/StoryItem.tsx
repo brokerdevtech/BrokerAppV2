@@ -6,10 +6,11 @@ import {
   Dimensions,
   ActivityIndicator,
   StyleSheet,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import Video from 'react-native-video';
 import StoriesAction from './StoriesActions';
-
+import {styles as gstyles} from '../themes';
 const {width, height} = Dimensions.get('window');
 
 interface StoryItemProps {
@@ -19,6 +20,10 @@ interface StoryItemProps {
   onVideoEnd: () => void; // Notify when video finishes playing
   togglePause: () => void; // Notify when video finishes playing
   oncloseModal: () => void; // Notify when
+  setActionAreaActive: any;
+  handleNextStory: any;
+  handlePreviousStory: any;
+
 }
 
 const StoryItem: React.FC<StoryItemProps> = ({
@@ -28,6 +33,9 @@ const StoryItem: React.FC<StoryItemProps> = ({
   onVideoEnd,
   togglePause,
   oncloseModal,
+  setActionAreaActive,
+  handleNextStory,
+  handlePreviousStory
 }) => {
   // console.log(story?.mediaType);
   const videoRef = useRef<Video>(null);
@@ -47,12 +55,21 @@ const StoryItem: React.FC<StoryItemProps> = ({
     setStoryStates(storyStates);
   }, [story]);
   console.log(story, 'ss');
+
+  function onPressPrevious() {
+    console.log("onPressPrevious");
+    handlePreviousStory();
+  }
+  function onPressNext() {
+    console.log("onPressNext");
+    handleNextStory();
+  }
   return (
     <View style={styles.container}>
       {loading && (
         <ActivityIndicator size="large" color="white" style={styles.loader} />
       )}
-
+   <View style={styles.backgroundContainer}>
       {story && story?.mediaType.toLowerCase() === 'image' ? (
         <>
           <Image
@@ -87,7 +104,17 @@ const StoryItem: React.FC<StoryItemProps> = ({
           />
         )
       )}
-      {/* Pass handlers to track when touch is over action area */}
+</View>
+       <View style={styles.nextPreviousContainer}>
+                  <TouchableWithoutFeedback onPress={onPressPrevious}>
+                    <View style={gstyles.flex} />
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback onPress={onPressNext}>
+                    <View style={gstyles.flex} />
+                  </TouchableWithoutFeedback>
+                </View>
+              
+     
       {story && (
         <StoriesAction
           story={story}
@@ -96,6 +123,7 @@ const StoryItem: React.FC<StoryItemProps> = ({
           storyIndex={storyIndex}
           togglePause={togglePause}
           closeStory={oncloseModal}
+          setActionAreaActive={setActionAreaActive}
         />
       )}
     </View>
@@ -111,6 +139,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#000',
   },
+  backgroundContainer: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
   media: {
     width,
     height,
@@ -118,6 +153,11 @@ const styles = StyleSheet.create({
   loader: {
     position: 'absolute',
   },
+    nextPreviousContainer: {
+     // backgroundColor:'red',
+      ...gstyles.flexRow,
+      ...gstyles.flex,
+    },
 });
 
 export default StoryItem;
