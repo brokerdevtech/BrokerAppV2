@@ -69,9 +69,9 @@ const StoryViewer = () => {
   const currentUserStories = stories[currentStoryIndex]?.storyDetails || [];
   const togglePause = () => {
     // console.log('Toggle ');
-     runOnJS(setIsPaused)(true);
+    // runOnJS(setIsPaused)(true);
 
-   // setIsPaused(prev => !prev);
+    setIsPaused(prev => !prev);
   };
   // Handles transitioning between stories
   const handleNextStory = () => {
@@ -164,7 +164,7 @@ const StoryViewer = () => {
         <GestureDetector
           gesture={Gesture.Simultaneous(
             swipeDownGesture,
-           // tapGesture,
+            // tapGesture,
             longPressGesture,
           )}>
           <View style={styles.container}>
@@ -205,7 +205,7 @@ const StoryViewer = () => {
               onVideoEnd={handleNextStory}
               togglePause={togglePause}
               oncloseModal={closeModal}
-              setActionAreaActive={handleActionAreaActive}  
+              setActionAreaActive={handleActionAreaActive}
               handleNextStory={handleNextStory}
               handlePreviousStory={handlePreviousStory}
             />
@@ -228,10 +228,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   leftTap: {
-    flex: 1,  // Left 50% of the screen
+    flex: 1, // Left 50% of the screen
   },
   rightTap: {
-    flex: 1,  // Right 50% of the screen
+    flex: 1, // Right 50% of the screen
   },
   progressBarContainer: {
     flexDirection: 'row',
