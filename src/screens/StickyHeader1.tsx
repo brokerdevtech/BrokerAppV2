@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import CustomHeader from '../sharedComponents/CustomHeader';
 import {Color} from '../styles/GlobalStyles';
 import React, {useState, useRef, useCallback, useEffect} from 'react';
@@ -298,7 +298,8 @@ const ProductListScreen = ({
 }) => {
   const animatedPaddingTop = headerVisible.interpolate({
     inputRange: [0, 1],
-    outputRange: [TAB_BAR_HEIGHT, HEADER_HEIGHT + TAB_BAR_HEIGHT],
+
+    outputRange: [TAB_BAR_HEIGHT + 70, HEADER_HEIGHT + TAB_BAR_HEIGHT],
     extrapolate: 'clamp',
   });
   const renderItem = useCallback(
@@ -318,12 +319,17 @@ const ProductListScreen = ({
   return (
     <Animated.FlatList
       ref={listRef}
-      ListHeaderComponent={<RederListHeader StoryData={StoryData} />}
+      ListHeaderComponent={
+        // Wrap stories in a View with fixed height to prevent collapsing
+        <View style={{minHeight: 120}}>
+          <RederListHeader StoryData={StoryData} />
+        </View>
+      }
       data={data}
       keyExtractor={item => item.id}
       renderItem={renderItem}
       contentContainerStyle={{
-        paddingTop: animatedPaddingTop, // Use animated value instead of fixed value
+        paddingTop: animatedPaddingTop,
         paddingBottom: 50,
       }}
       style={{flex: 1}}
@@ -380,6 +386,8 @@ const StickyHeaderWithTabs1 = () => {
     setSelectedItem(null);
   }, []);
   async function callPodcastList() {
+    setData_Set([]);
+    // setStoryData(null);
     const apiEndpoint =
       index === 0 ? '/Post/DashboardPost' : '/Car/Post/DashboardPost';
     const results = await Promise.allSettled([
@@ -393,15 +401,16 @@ const StickyHeaderWithTabs1 = () => {
 
     setStoryData(DashboardStory.data);
   }
-
+  useFocusEffect(
+    useCallback(() => {
+      callPodcastList();
+    }, []),
+  );
   useEffect(() => {
     console.log('activeTab');
     callPodcastList();
   }, [index]);
 
-  useEffect(() => {
-    callPodcastList();
-  }, []);
   const loadMorepage = async () => {
     if (isInfiniteLoading || !hasMore) return;
     const apiEndpoint =
@@ -443,8 +452,8 @@ const StickyHeaderWithTabs1 = () => {
         const diff = currentScrollY - lastScrollY.current;
 
         // Determine if scrolling up or down
-        if (diff > 3) {
-          // Scrolling down
+        if (diff > 5) {
+          // Scrolling down more significantly
           if (!isScrollingDown.current) {
             isScrollingDown.current = true;
             Animated.timing(headerVisible, {
@@ -453,8 +462,8 @@ const StickyHeaderWithTabs1 = () => {
               useNativeDriver: true,
             }).start();
           }
-        } else if (diff < -3) {
-          // Scrolling up
+        } else if (diff < -5) {
+          // Scrolling up more significantly
           if (isScrollingDown.current) {
             isScrollingDown.current = false;
             Animated.timing(headerVisible, {
