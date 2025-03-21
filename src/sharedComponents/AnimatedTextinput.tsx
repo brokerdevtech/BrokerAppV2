@@ -1,5 +1,5 @@
 import {Color, GilroyFontFamily} from '../styles/GlobalStyles';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   TextInput,
@@ -8,7 +8,6 @@ import {
   Text,
   TouchableWithoutFeedback,
   TextInputProps,
-  KeyboardType,
 } from 'react-native';
 
 interface AnimatedTextInputProps extends TextInputProps {
@@ -28,22 +27,37 @@ const AnimatedTextInput: React.FC<AnimatedTextInputProps> = ({
   ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const placeholderAnim = useState(new Animated.Value(0))[0];
-  const borderColor = useState(new Animated.Value(0))[0];
-  const textInputRef = React.useRef<TextInput>(null);
+  const placeholderAnim = useRef(new Animated.Value(0)).current;
+  const borderColor = useRef(new Animated.Value(0)).current;
+  const textInputRef = useRef<TextInput>(null);
+  const isMounted = useRef(true);
 
   useEffect(() => {
-    Animated.timing(placeholderAnim, {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const placeholderAnimRef = Animated.timing(placeholderAnim, {
       toValue: isFocused || value ? 1 : 0,
       duration: 100,
       useNativeDriver: false,
-    }).start();
+    });
 
-    Animated.timing(borderColor, {
+    const borderColorAnimRef = Animated.timing(borderColor, {
       toValue: isFocused ? 1 : 0,
       duration: 100,
       useNativeDriver: false,
-    }).start();
+    });
+
+    placeholderAnimRef.start();
+    borderColorAnimRef.start();
+
+    return () => {
+      placeholderAnimRef.stop();
+      borderColorAnimRef.stop();
+    };
   }, [isFocused, value]);
 
   const placeholderStyle = {
@@ -74,7 +88,12 @@ const AnimatedTextInput: React.FC<AnimatedTextInputProps> = ({
   return (
     <View>
       <View style={styles.inputWrapper}>
-        <TouchableWithoutFeedback onPress={() => textInputRef.current?.focus()}>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            if (textInputRef.current) {
+              textInputRef.current.focus();
+            }
+          }}>
           <Animated.Text style={[styles.placeholder, placeholderStyle]}>
             {placeholder}
           </Animated.Text>
@@ -82,10 +101,13 @@ const AnimatedTextInput: React.FC<AnimatedTextInputProps> = ({
         <Animated.View style={[styles.inputContainer, borderStyle]}>
           <TextInput
             ref={textInputRef}
-            // keyboardType="default"
             style={[styles.textInput, multiline && styles.multilineTextInput]}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
+            onFocus={() => {
+              if (isMounted.current) setIsFocused(true);
+            }}
+            onBlur={() => {
+              if (isMounted.current) setIsFocused(false);
+            }}
             onChangeText={onChangeText}
             value={value}
             multiline={multiline}
@@ -100,7 +122,6 @@ const AnimatedTextInput: React.FC<AnimatedTextInputProps> = ({
 const styles = StyleSheet.create({
   inputWrapper: {
     position: 'relative',
-    // flex:1
   },
   inputContainer: {
     borderWidth: 1,

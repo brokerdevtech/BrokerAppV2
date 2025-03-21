@@ -148,7 +148,7 @@ const CarForm = ({formikRef}) => {
               <HStack style={localStyles.inputContainer}>
                 {/* <RenderLabel1 labelText={`Title`} /> */}
                 <AnimatedTextInput
-                  // key={formikRef.current?.values?.title ?? 'title'}
+                  key={'title'}
                   placeholder="Title"
                   value={values.title}
                   onChangeText={handleChange('title')}
