@@ -76,6 +76,7 @@ const RenderBrokerItem = React.memo(({item, setIsFollowing}) => {
         name={item.name}
         style={localStyles.profileImage}
         iconSize="lg"
+        onPress={onPressUser}
       />
 
       <ZText type={'M14'} style={localStyles.name}>

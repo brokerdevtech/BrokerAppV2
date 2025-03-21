@@ -23,7 +23,7 @@ interface StoryItemProps {
   setActionAreaActive: any;
   handleNextStory: any;
   handlePreviousStory: any;
-
+  isPaused: any;
 }
 
 const StoryItem: React.FC<StoryItemProps> = ({
@@ -35,7 +35,8 @@ const StoryItem: React.FC<StoryItemProps> = ({
   oncloseModal,
   setActionAreaActive,
   handleNextStory,
-  handlePreviousStory
+  handlePreviousStory,
+  isPaused,
 }) => {
   // console.log(story?.mediaType);
   const videoRef = useRef<Video>(null);
@@ -54,67 +55,72 @@ const StoryItem: React.FC<StoryItemProps> = ({
     };
     setStoryStates(storyStates);
   }, [story]);
-  console.log(story, 'ss');
+  // console.log(story, 'ss');
 
   function onPressPrevious() {
-    console.log("onPressPrevious");
+    console.log('onPressPrevious');
     handlePreviousStory();
   }
   function onPressNext() {
-    console.log("onPressNext");
+    console.log('onPressNext');
     handleNextStory();
   }
+  // Inside StoryItem.js
+  useEffect(() => {
+    console.log('isPaused changed in StoryItem:', isPaused);
+    // Rest of your code
+  }, [isPaused]);
   return (
     <View style={styles.container}>
       {loading && (
         <ActivityIndicator size="large" color="white" style={styles.loader} />
       )}
-   <View style={styles.backgroundContainer}>
-      {story && story?.mediaType.toLowerCase() === 'image' ? (
-        <>
-          <Image
-            source={{uri: `${imagesBucketcloudfrontPath}${story.mediaBlob}`}}
-            style={styles.media}
-            resizeMode="contain"
-            onLoad={() => {
-              setLoading(false);
-              onLoad();
-            }}
-            onError={() => {
-              setLoading(false);
-              onLoad();
-            }}
-          />
-        </>
-      ) : (
-        story && (
-          <Video
-            ref={videoRef}
-            source={{uri: `${imagesBucketcloudfrontPath}${story.mediaBlob}`}}
-            style={styles.media}
-            resizeMode="contain"
-            onReadyForDisplay={() => {
-              setLoading(false);
-              onLoad();
-            }}
-            onEnd={onVideoEnd}
-            controls={false}
-            muted={false}
-            repeat={false}
-          />
-        )
-      )}
-</View>
-       <View style={styles.nextPreviousContainer}>
-                  <TouchableWithoutFeedback onPress={onPressPrevious}>
-                    <View style={gstyles.flex} />
-                  </TouchableWithoutFeedback>
-                  <TouchableWithoutFeedback onPress={onPressNext}>
-                    <View style={gstyles.flex} />
-                  </TouchableWithoutFeedback>
-                </View>
-              
-     
+      <View style={styles.backgroundContainer}>
+        {story && story?.mediaType.toLowerCase() === 'image' ? (
+          <>
+            <Image
+              source={{uri: `${imagesBucketcloudfrontPath}${story.mediaBlob}`}}
+              style={styles.media}
+              resizeMode="contain"
+              onLoad={() => {
+                setLoading(false);
+                onLoad();
+              }}
+              onError={() => {
+                setLoading(false);
+                onLoad();
+              }}
+            />
+          </>
+        ) : (
+          story && (
+            <Video
+              ref={videoRef}
+              source={{uri: `${imagesBucketcloudfrontPath}${story.mediaBlob}`}}
+              style={styles.media}
+              resizeMode="contain"
+              onReadyForDisplay={() => {
+                setLoading(false);
+                onLoad();
+              }}
+              paused={isPaused}
+              onEnd={onVideoEnd}
+              controls={false}
+              muted={false}
+              repeat={false}
+            />
+          )
+        )}
+      </View>
+      <View style={styles.nextPreviousContainer}>
+        <TouchableWithoutFeedback onPress={onPressPrevious}>
+          <View style={gstyles.flex} />
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={onPressNext}>
+          <View style={gstyles.flex} />
+        </TouchableWithoutFeedback>
+      </View>
+
       {story && (
         <StoriesAction
           story={story}
@@ -153,11 +159,11 @@ const styles = StyleSheet.create({
   loader: {
     position: 'absolute',
   },
-    nextPreviousContainer: {
-     // backgroundColor:'red',
-      ...gstyles.flexRow,
-      ...gstyles.flex,
-    },
+  nextPreviousContainer: {
+    // backgroundColor:'red',
+    ...gstyles.flexRow,
+    ...gstyles.flex,
+  },
 });
 
 export default StoryItem;

@@ -64,7 +64,7 @@ import useUserJourneyTracker from '../../hooks/Analytics/useUserJourneyTracker';
 const windowWidth = Dimensions.get('window').width;
 const windowheight = Dimensions.get('window').height;
 const Bucket = 'broker2023';
-
+let globalStoryDuration;
 const ChooseImage = ({user, s3, toast, navigation}: any) => {
   // console.log(user, 'from hoc');
   const {logButtonClick} = useUserJourneyTracker('Post Creation');
@@ -87,7 +87,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
   const handleEmptyImage = () => {
     Alert.alert('Please select atleast one image');
   };
-
+  const [StoryDuration, setStoryDuration] = useState();
   const {
     status: Storystatus,
     error: Storyerror,
@@ -510,6 +510,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       // navigation.replace('Home');
     } catch (error) {}
   };
+
   const deleteFile = filePath => {
     RNFS.unlink(filePath)
       .then(() => {})
@@ -541,7 +542,14 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
 
     uploadedImageUrls = results.map((result, index) => {
       if (result) {
-        return {mediaBlob: result.Key, caption: '', mediaType: mediaType};
+        return {
+          mediaBlob: result.Key,
+          caption: '',
+          mediaType: mediaType,
+          mediaHeight: 0,
+          mediaWidth: 0,
+          mediaDuration: globalStoryDuration,
+        };
       } else {
         console.error('Error uploading image to S3:', imagesArray[index]);
         return null;
@@ -552,7 +560,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       userId: user.userId,
       storyMedia: uploadedImageUrls,
     };
-
+    console.log(AddStoryobj);
     // toast("'Post created successfully'")   ;
     let storyResult = await Storyexecute(AddStoryobj);
     setLoadingOverlay(false);
@@ -720,7 +728,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       mediaType: 'video,photo',
       // maxFileSize: 30 * 1024 * 1024,
     });
-
+    globalStoryDuration = Asset.duration;
     //
     if (Asset.mime === 'video/mp4') {
       showEditor(Asset.path, {
