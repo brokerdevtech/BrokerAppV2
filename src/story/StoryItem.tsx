@@ -55,7 +55,7 @@ const StoryItem: React.FC<StoryItemProps> = ({
     };
     setStoryStates(storyStates);
   }, [story]);
-  console.log(story, 'ss');
+  // console.log(story, 'ss');
 
   function onPressPrevious() {
     console.log('onPressPrevious');
@@ -65,6 +65,11 @@ const StoryItem: React.FC<StoryItemProps> = ({
     console.log('onPressNext');
     handleNextStory();
   }
+  // Inside StoryItem.js
+  useEffect(() => {
+    console.log('isPaused changed in StoryItem:', isPaused);
+    // Rest of your code
+  }, [isPaused]);
   return (
     <View style={styles.container}>
       {loading && (

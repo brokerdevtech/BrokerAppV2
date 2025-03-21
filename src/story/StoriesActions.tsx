@@ -52,18 +52,18 @@ const StoriesAction = ({
   };
   const handleActionPress = callback => {
     return event => {
-      console.log('handleActionPress');
+      // console.log('handleActionPress');
       event.stopPropagation(); // Prevents tapGesture from triggering
       // setActionAreaActive(true); // Mark action area as active
       callback();
     };
   };
   const handleStoryLike = async () => {
-    console.log('handleStoryLike', story.storyId);
+    // console.log('handleStoryLike', story.storyId);
 
     togglePause(); // Pause the story when action starts
-    console.log('user', user.userId, story.storyId);
-    console.log('user', user);
+    // console.log('user', user.userId, story.storyId);
+    // console.log('user', user);
     try {
       let result;
       if (storyState?.userLiked && storyState?.userLiked == 1) {
@@ -71,7 +71,7 @@ const StoriesAction = ({
       } else {
         result = await StoryLike(user.userId, story.storyId);
       }
-      console.log(result, 'result');
+      // console.log(result, 'result');
       updateStoryState({
         likeCount: result.data.storyDetails[0].likeCount,
         reactionCount: result.data.storyDetails[0].reactionCount,
@@ -153,7 +153,7 @@ const StoriesAction = ({
       {cancelable: false},
     );
   };
-  console.log(stories, 'kmm');
+  // console.log(stories, 'kmm');
   return (
     <BottomSheetModalProvider>
       {/* Only render action buttons when bottom sheet is not open */}

@@ -37,6 +37,8 @@ const StoryViewer = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const isTransitioning = useRef(false);
   const [isPaused, setIsPaused] = useState(false);
+
+  const [isVideoPaused, setIsVideoPaused] = useState(false);
   // Add this ref to track if touch is happening over actions
   const actionAreaRef = useRef(false);
   // Track story states individually for each story
@@ -68,14 +70,15 @@ const StoryViewer = () => {
   const currentUser = stories[currentStoryIndex] || {};
   const currentUserStories = stories[currentStoryIndex]?.storyDetails || [];
   const togglePause = () => {
-    // console.log('Toggle ');
-    // runOnJS(setIsPaused)(true);
-
-    setIsPaused(prev => !prev);
+    console.log('Toggle pause called, current state:', isPaused);
+    setIsPaused(prev => {
+      console.log('Setting isPaused to:', !prev);
+      return !prev;
+    });
   };
   // Handles transitioning between stories
   const handleNextStory = () => {
-    console.log('next');
+    // console.log('next');
     if (isPaused === false) {
       if (!isTransitioning.current) {
         isTransitioning.current = true;
@@ -138,13 +141,19 @@ const StoryViewer = () => {
   //     console.log(actionAreaRef.current);
   //   });
 
-  // Long Press to Pause ProgressBar
   const longPressGesture = Gesture.LongPress()
     .minDuration(200)
     .shouldCancelWhenOutside(false)
-    .onStart(() => runOnJS(setIsPaused)(true)) // Pause progress
-    .onEnd(() => runOnJS(setIsPaused)(false)); // Resume progress
-
+    .onStart(() => {
+      console.log('Long press started - pausing video');
+      runOnJS(setIsVideoPaused)(true);
+      runOnJS(setIsPaused)(true);
+    })
+    .onEnd(() => {
+      console.log('Long press ended - resuming video');
+      runOnJS(setIsVideoPaused)(false);
+      runOnJS(setIsPaused)(false);
+    });
   const swipeDownGesture = Gesture.Pan()
     .shouldCancelWhenOutside(false)
     .onEnd(event => {
@@ -157,15 +166,17 @@ const StoryViewer = () => {
   };
   // Get the current story being displayed
   const currentStory = currentUserStories[currentMediaIndex];
-  console.log(isPaused, 'current');
+  // console.log(isPaused, 'current');
   return (
     <Modal visible={isStoryViewerVisible} animationType="fade" transparent>
       <GestureHandlerRootView style={{flex: 1}}>
         <GestureDetector
-          gesture={Gesture.Simultaneous(
-            swipeDownGesture,
-            // tapGesture,
+          gesture={Gesture.Exclusive(
             longPressGesture,
+            Gesture.Simultaneous(
+              swipeDownGesture,
+              // tapGesture removed as it might interfere
+            ),
           )}>
           <View style={styles.container}>
             <View style={styles.userInfoContainer}>
@@ -190,7 +201,7 @@ const StoryViewer = () => {
                   key={index}
                   duration={currentStory?.mediaDuration || 10000}
                   isActive={index === currentMediaIndex}
-                  isPaused={isPaused}
+                  isPaused={isPaused || isVideoPaused}
                   hasCompleted={index < currentMediaIndex} // Mark previous stories as completed
                   onComplete={handleNextStory}
                 />
@@ -208,7 +219,7 @@ const StoryViewer = () => {
               setActionAreaActive={handleActionAreaActive}
               handleNextStory={handleNextStory}
               handlePreviousStory={handlePreviousStory}
-              isPaused={isPaused}
+              isPaused={isPaused || isVideoPaused}
             />
           </View>
         </GestureDetector>
