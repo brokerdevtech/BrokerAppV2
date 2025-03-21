@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
   Modal,
@@ -7,6 +7,7 @@ import {
   Text,
   StyleSheet,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {
   GestureDetector,
@@ -20,10 +21,15 @@ import {runOnJS} from 'react-native-reanimated';
 import {imagesBucketcloudfrontPath} from '../config/constants';
 import StoriesAction from './StoriesActions';
 import {useSelector} from 'react-redux';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 
 const {width} = Dimensions.get('window');
 
 const StoryViewer = () => {
+  const route = useRoute();
+  const navigation = useNavigation();
+  const { index } = route.params;
+
   const {
     stories,
     currentStoryIndex,
@@ -34,43 +40,64 @@ const StoryViewer = () => {
     goToPreviousStory,
     goToNextUser,
   } = useStory();
+
   const user = useSelector((state: RootState) => state.user.user);
   const isTransitioning = useRef(false);
-  const [isPaused, setIsPaused] = useState(false);
+  const [isPaused, setIsPaused] = useState(true);
+  const [isLoadingMedia, setIsLoadingMedia] = useState(true);
 
-  const [isVideoPaused, setIsVideoPaused] = useState(false);
   // Add this ref to track if touch is happening over actions
   const actionAreaRef = useRef(false);
   // Track story states individually for each story
   const [storyStates, setStoryStates] = useState({});
+  const [currentStory, setcurrentStory] = useState({});
+  const [currentUserStories, setcurrentUserStories] = useState({});
 
+  useEffect(() => {
+    if (index !== undefined) {
+      setCurrentUser(index); // this sets story viewer state
+    }
+  }, [index]);
+
+  useFocusEffect(
+    useCallback(() => {
+      // Screen is focused (coming back)
+      console.log('StoryViewer focused - resume playback');
+      setIsPaused(false);
+  
+      return () => {
+        // Screen is unfocused (navigating away)
+        console.log('StoryViewer unfocused - pause playback');
+        setIsPaused(true);
+      };
+    }, [])
+  );
   useEffect(() => {
     setIsPaused(false);
   }, [currentMediaIndex, currentStoryIndex]);
 
+  useEffect(() => {
+    setIsLoadingMedia(true); // every time story index or user changes
+  }, [currentMediaIndex, currentStoryIndex]);
   // Initialize story states when stories change
   useEffect(() => {
-    // const initialStates = {};
-    // stories.forEach(userStories => {
-    //   if (userStories?.storyDetails) {
-    //     userStories.storyDetails.forEach(story => {
-    //       initialStates[story.storyId] = {
-    //         likeCount: story.likeCount || 0,
-    //         reactionCount: story.reactionCount || 0,
-    //         viewerCount: story.viewerCount || 0,
-    //         userLiked: story.userLiked || 0,
-    //       };
-    //     });
-    //   }
-    // });
-    // setStoryStates(initialStates);
-  }, [stories]);
+     // Get the current story being displayed
+     let  currentUserStoriesEffect = stories[currentStoryIndex]?.storyDetails || [];
+     setcurrentUserStories(currentUserStoriesEffect);
+     setcurrentStory(currentUserStoriesEffect[currentMediaIndex]);
+ 
+  }, [currentMediaIndex, currentStoryIndex]);
 
   if (currentStoryIndex === -1) return null;
   const currentUser = stories[currentStoryIndex] || {};
-  const currentUserStories = stories[currentStoryIndex]?.storyDetails || [];
+//  const currentUserStories = stories[currentStoryIndex]?.storyDetails || [];
   const togglePause = () => {
     console.log('Toggle pause called, current state:', isPaused);
+    // if(isPaused== true){
+    //   runOnJS(setIsPaused)(false);
+    // }else{
+    //   runOnJS(setIsPaused)(true);
+    // }
     setIsPaused(prev => {
       console.log('Setting isPaused to:', !prev);
       return !prev;
@@ -78,7 +105,7 @@ const StoryViewer = () => {
   };
   // Handles transitioning between stories
   const handleNextStory = () => {
-    // console.log('next');
+     console.log('handleNextStory');
     if (isPaused === false) {
       if (!isTransitioning.current) {
         isTransitioning.current = true;
@@ -142,16 +169,16 @@ const StoryViewer = () => {
   //   });
 
   const longPressGesture = Gesture.LongPress()
-    .minDuration(200)
+    .minDuration(400)
     .shouldCancelWhenOutside(false)
     .onStart(() => {
       console.log('Long press started - pausing video');
-      runOnJS(setIsVideoPaused)(true);
+  
       runOnJS(setIsPaused)(true);
     })
     .onEnd(() => {
       console.log('Long press ended - resuming video');
-      runOnJS(setIsVideoPaused)(false);
+  
       runOnJS(setIsPaused)(false);
     });
   const swipeDownGesture = Gesture.Pan()
@@ -163,12 +190,11 @@ const StoryViewer = () => {
     });
   const closeModal = () => {
     setCurrentUser(-1);
+    navigation.goBack();
   };
-  // Get the current story being displayed
-  const currentStory = currentUserStories[currentMediaIndex];
-  // console.log(isPaused, 'current');
+
   return (
-    <Modal visible={isStoryViewerVisible} animationType="fade" transparent>
+  
       <GestureHandlerRootView style={{flex: 1}}>
         <GestureDetector
           gesture={Gesture.Exclusive(
@@ -199,32 +225,42 @@ const StoryViewer = () => {
               {currentUserStories.map((item, index) => (
                 <ProgressBar
                   key={index}
-                  duration={currentStory?.mediaDuration || 10000}
+                  duration={(currentStory?.mediaDuration > -1 ? currentStory.mediaDuration : 10000)}
                   isActive={index === currentMediaIndex}
-                  isPaused={isPaused || isVideoPaused}
+                  isPaused={isPaused  || isLoadingMedia}
                   hasCompleted={index < currentMediaIndex} // Mark previous stories as completed
                   onComplete={handleNextStory}
                 />
               ))}
             </View>
-
+            {isLoadingMedia && (
+              <ActivityIndicator
+                size="large"
+                color="white"
+                style={{ position: 'absolute', alignSelf: 'center' }}
+              />
+            )}
             {/* Story Content */}
             <StoryItem
               story={currentStory}
               storyIndex={currentMediaIndex}
-              onLoad={() => runOnJS(setIsPaused)(false)}
+              onLoad={() => {
+                setIsLoadingMedia(false);
+                setIsPaused(false); // resume only after loading completes
+              }}
+             // onLoad={() => runOnJS(setIsPaused)(false)}
               onVideoEnd={handleNextStory}
               togglePause={togglePause}
               oncloseModal={closeModal}
               setActionAreaActive={handleActionAreaActive}
               handleNextStory={handleNextStory}
               handlePreviousStory={handlePreviousStory}
-              isPaused={isPaused || isVideoPaused}
+              isPaused={isPaused }
             />
           </View>
         </GestureDetector>
       </GestureHandlerRootView>
-    </Modal>
+   
   );
 };
 

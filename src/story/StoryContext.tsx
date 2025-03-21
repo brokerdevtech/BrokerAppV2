@@ -1,5 +1,6 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback, useRef } from 'react';
 import { getDashboardStory } from '../../BrokerAppCore/services/Story';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 interface Story {
   storyId: number;
@@ -44,6 +45,8 @@ interface StoryContextType {
   goToPreviousStory: () => void;
   loadMoreStories: () => void;
   goToNextUser: () => void;
+  updateCurrentStory:(newStoryState:any)=>void;
+  deleteCurrentStory: () => void
   isStoryViewerVisible: boolean;
 }
 
@@ -51,6 +54,7 @@ const StoryContext = createContext<StoryContextType | undefined>(undefined);
 
 export const StoryProvider = ({ userId, children }: { userId?: any; children: ReactNode }) => {
   const [stories, setStories] = useState<UserStory[]>([]);
+   const navigation = useNavigation();
   const [currentUserIndex, setCurrentUserIndex] = useState(0);
   const [currentStoryUserId, setcurrentStoryUserId] = useState(0);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(-1);
@@ -62,16 +66,21 @@ export const StoryProvider = ({ userId, children }: { userId?: any; children: Re
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [isStoryViewerVisible, setStoryViewerVisible] = useState(false);
-  useEffect(() => {
-    fetchStories();
-  }, []);
+    const isLoadingMore = useRef(false);
+    useFocusEffect(
+      useCallback(() => {
+        setCurrentPage(1);
+        setCurrentPageSize(5);
+        fetchStories();
+      }, [])
+    );
 
   const fetchStories = async () => {
     try {
       // Mocking API fetch
       const response = await getDashboardStory(userId,currentPage,currentPageSize);
             
-
+console.log(JSON.stringify( response.data?.data));
       setTotalPages(response.data?.totalPages);
       setRecordCount(response.data?.recordCount);
 setLoading(false);
@@ -83,6 +92,19 @@ setLoading(false);
   };
 
   const loadMoreStories = async () => {
+    if (isLoadingMore.current || currentPage >= totalPages) return;
+  
+    isLoadingMore.current = true;
+  
+    const response = await getDashboardStory(userId, currentPage + 1, currentPageSize);
+    if (response?.data?.data?.length > 0) {
+      setStories(prev => [...prev, ...response.data.data]);
+      setCurrentPage(prev => prev + 1);
+    }
+  
+    isLoadingMore.current = false;
+  };
+  const loadMoreStories1 = async () => {
 
     if (currentPage < totalPages) {
 
@@ -111,7 +133,9 @@ setLoading(false);
     setCurrentStoryIndex(index);
     setCurrentMediaIndex(0);
     if(index==-1)
-    {setStoryViewerVisible(false);}
+    {setStoryViewerVisible(false);
+      navigation.goBack();
+    }
     else{setStoryViewerVisible(true);}
   };
 
@@ -134,9 +158,18 @@ setLoading(false);
   };
 
   const goToNextUser = () => {
+  
     if (currentStoryIndex < stories.length - 1) {
       setCurrentStoryIndex((prev) => prev + 1);
       setCurrentMediaIndex(0);
+      if (stories.length - currentStoryIndex <= 2) {
+        console.log("Current story index======================================");
+        loadMoreStories();  // 👈 this will fetch next page in the background
+      }
+
+    }
+    else{
+      setCurrentUser(-1);
     }
   };
   // const setCurrentUser = (UserId: number) => {
@@ -147,10 +180,76 @@ setLoading(false);
   //  setCurrentUserStories(userStories);
   //   setcurrentStoryUserId(UserId);
   // };
+  const updateCurrentStory = (newStoryState:any) => {
+    setStories((prevStories) => {
+      return prevStories.map((userStory, userIndex) => {
+        if (userIndex === currentStoryIndex) {
+          return {
+            ...userStory,
+            storyDetails: userStory.storyDetails.map((story, mediaIndex) => {
+              if (mediaIndex === currentMediaIndex) {
+                return {
+                  ...story,
+                  ...newStoryState, // Update properties (likeCount, reactionCount, etc.)
+                };
+              }
+              return story;
+            }),
+          };
+        }
+        return userStory;
+      });
+    });
+  };
+
+  const deleteCurrentStory = () => {
+    setStories((prevStories) => {
+      return prevStories
+        .map((userStory, userIndex) => {
+          if (userIndex === currentStoryIndex) {
+            // Remove the current story from the user's list
+            const updatedStories = userStory.storyDetails.filter(
+              (_, mediaIndex) => mediaIndex !== currentMediaIndex
+            );
+  
+            // If no stories remain for the user, remove the user
+            if (updatedStories.length === 0) {
+              return null; // Mark for removal
+            }
+  
+            return {
+              ...userStory,
+              storyDetails: updatedStories,
+            };
+          }
+          return userStory;
+        })
+        .filter(Boolean); // Remove null entries (users with no stories)
+    });
+  
+    // Move to the next story, or close viewer if no more stories exist
+    setTimeout(() => {
+      const newStories = stories.filter(user => user?.storyDetails?.length > 0);
+    
+      if (newStories.length === 0) {
+        setCurrentUser(-1); // No stories left, close viewer
+      } else {
+        const currentUserStories = newStories[currentStoryIndex]?.storyDetails;
+    
+        if (!currentUserStories || currentMediaIndex >= currentUserStories.length) {
+          setCurrentMediaIndex(0); // Reset index if out of range
+        }
+    
+        goToNextStory();
+      }
+    }, 300);
+  };
+
+
 
   return (
     <StoryContext.Provider
-      value={{ stories, currentStoryIndex, currentMediaIndex,isStoryViewerVisible, goToNextStory, goToPreviousStory, goToNextUser, setCurrentUser,  totalPages, recordCount,loading, loadMoreStories }}
+      value={{ stories, currentStoryIndex, currentMediaIndex,isStoryViewerVisible, goToNextStory, goToPreviousStory, goToNextUser, setCurrentUser,  totalPages, recordCount,loading, loadMoreStories,updateCurrentStory,deleteCurrentStory }}
     >
       {children}
     </StoryContext.Provider>

@@ -55,6 +55,10 @@ import React from 'react';
 import StoryDetails from '../components/story/StoryDetails';
 import SubscriptionPlan from '../screens/SubscriptionPlan';
 import StickyHeaderWithTabs1 from '../screens/StickyHeader1';
+import StoryViewer from '../story/StoryViewer';
+import { StoryProvider } from '../story/StoryContext';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../BrokerAppCore/redux/store/reducers';
 // import StickyHeaderWithTabs from '../screens/StickyHeaderWithTabs';
 // Lazy-loaded components
 const MyItemListScreen = React.lazy(
@@ -100,7 +104,7 @@ const globalScreenOptions = {
 const HomeNavigation: React.FC = () => {
   const [initialRoute, setInitialRoute] = useState('Home');
   const {bottom} = useSafeAreaInsets();
-
+  const user = useSelector((state: RootState) => state.user.user);
   // const navigation = useNavigation();
   //const {clientIsReady} = useChatClient();
   let streamChatTheme = useStreamChatTheme();
@@ -110,6 +114,7 @@ const HomeNavigation: React.FC = () => {
   // console.log('strea============================');
   // console.log(streamChatTheme);
   return (
+       <StoryProvider userId={user.userId || undefined}>
     <OverlayProvider bottomInset={bottom} value={{style: streamChatTheme}}>
       {/* <Stack.Navigator screenOptions={globalScreenOptions}> */}
       <Stack.Navigator
@@ -130,6 +135,11 @@ const HomeNavigation: React.FC = () => {
           name="VideoReels"
           component={VideoCarousel}
         />
+        <Stack.Screen
+  name="StoryViewer"
+  component={StoryViewer}
+  options={{ headerShown: false, presentation: 'modal' }} // modal-style animation
+/>
         {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         <Stack.Screen name="HomeTab" component={DashboradScreen} />
@@ -322,7 +332,7 @@ const HomeNavigation: React.FC = () => {
           options={{headerShown: false}}
         />
       </Stack.Navigator>
-    </OverlayProvider>
+    </OverlayProvider></StoryProvider>
   );
 };
 

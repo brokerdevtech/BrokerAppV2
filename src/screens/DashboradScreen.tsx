@@ -411,12 +411,12 @@ export default function DashboradScreen() {
         }}>
         <View>
           <View style={styles.subHeaderSection}>
-            <StoryProvider userId={user.userId || undefined}>
+         
               <View style={{flex: 1}}>
                 <StoriesFlatList />
-                {<StoryViewer />}
+                {/* {<StoryViewer />} */}
               </View>
-            </StoryProvider>
+           
             {/* 
             {StoryData != null && StoryData != undefined && (
               <UserStories Data={StoryData} />

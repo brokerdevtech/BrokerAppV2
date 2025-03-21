@@ -49,10 +49,11 @@ const onPressStory = (item,index) => {
     } else if (item.userId !== user.userId && !permissionGrantedDashBoard) {
       Alert.alert("You don't have permission to view Story");
     } else {
-      // console.log("onPressStoryonPressStoryonPressStoryonPressStory");
+      console.log("onPressStoryonPressStoryonPressStoryonPressStory");
       // console.log(item);
       // console.log(index);
-        setCurrentUser(index) 
+      navigation.navigate('StoryViewer', { index });
+      //  setCurrentUser(index) 
      // navigation.navigate('StoryView', {userImage: item});
     }
   };
@@ -112,8 +113,8 @@ const onPressStory = (item,index) => {
             initialNumToRender={5}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={localStyles.mainContainer}
-            //  onEndReached={loadMoreStories}
-            //  onEndReachedThreshold={0.5}
+             onEndReached={loadMoreStories}
+             onEndReachedThreshold={0.5}
             ListFooterComponent={
               isInfiniteLoading ? (
                 <ActivityIndicator

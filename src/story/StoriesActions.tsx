@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {View, TouchableOpacity, StyleSheet, Alert, Text} from 'react-native';
 import {runOnJS} from 'react-native-reanimated';
 import {useStory} from './StoryContext';
@@ -22,31 +22,54 @@ import {useToast} from '../../components/ui/toast';
 import {useNavigation} from '@react-navigation/native';
 import StoryCommentBottomSheet from '../sharedComponents/StoryCommentBottomSheet';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import { RootState } from '../../BrokerAppCore/redux/store/reducers';
 const StoriesAction = ({
   story,
   storyState,
-  updateStoryState,
+
   storyIndex,
   togglePause,
   colors = {white: '#FFFFFF'},
   setActionAreaActive,
   closeStory,
 }) => {
-  const {stories, currentStoryIndex} = useStory();
+  const {stories, currentStoryIndex,updateCurrentStory,deleteCurrentStory} = useStory();
+  const [ActionStoryStates, setActionStoryStates] = useState({});
   const user = useSelector((state: RootState) => state.user.user);
-
+ 
   const toast = useToast();
-  const isStoryOwner = user.userId === stories[currentStoryIndex]?.userId;
+  let isStoryOwner = user.userId === stories[currentStoryIndex]?.userId;
   const navigation = useNavigation();
   const commentSheetRef = useRef(null);
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
   );
+
+  useEffect(() => {
+
+    console.log("StoriesAction");
+    console.log(currentStoryIndex);
+    console.log(storyState);
+   isStoryOwner = user.userId === stories[currentStoryIndex]?.userId;
+
+
+   let storystateobj = {
+    likeCount: storyState?.likeCount || 0,
+    reactionCount: storyState?.reactionCount || 0,
+    viewerCount: storyState?.viewerCount || 0,
+    userLiked: storyState?.userLiked || 0,
+  };
+  setActionStoryStates(storystateobj);
+  console.log(ActionStoryStates);
+  }, [story,storyState,currentStoryIndex]);
+
+
   const [isOpen, setOpen] = useState(false);
 
   const closeModal = async (item: any) => {
     setOpen(false);
-    updateStoryState(item);
+    setActionStoryStates(item)
+    updateCurrentStory(item)
     await new Promise(resolve => setTimeout(resolve, 200));
     togglePause();
   };
@@ -72,12 +95,18 @@ const StoriesAction = ({
         result = await StoryLike(user.userId, story.storyId);
       }
       // console.log(result, 'result');
-      updateStoryState({
+      setActionStoryStates({
         likeCount: result.data.storyDetails[0].likeCount,
         reactionCount: result.data.storyDetails[0].reactionCount,
         viewerCount: result.data.storyDetails[0].viewerCount,
         userLiked: result.data.storyDetails[0].userLiked,
       });
+      updateCurrentStory({
+        likeCount: result.data.storyDetails[0].likeCount,
+        reactionCount: result.data.storyDetails[0].reactionCount,
+        viewerCount: result.data.storyDetails[0].viewerCount,
+        userLiked: result.data.storyDetails[0].userLiked,
+      })
       togglePause();
     } catch (error) {
       console.log(error);
@@ -104,9 +133,10 @@ const StoriesAction = ({
   };
 
   const handleComment = () => {
-    togglePause();
+    
     commentSheetRef.current?.open();
     setOpen(true);
+    togglePause();
   };
 
   const handleDeleteStory = () => {
@@ -138,7 +168,9 @@ const StoriesAction = ({
                 toast.show({
                   description: deleteResponse.statusMessage,
                 });
-                closeStory();
+                deleteCurrentStory();
+                togglePause();
+              //  closeStory();
               } else {
                 togglePause();
               }
@@ -166,9 +198,12 @@ const StoriesAction = ({
             <View
               style={[
                 styles.iconContainer,
-                storyState.userLiked ? styles.likedIcon : {},
+                ActionStoryStates?.userLiked ? styles.likedIcon : {},
               ]}>
-              {storyState.userLiked ? (
+                
+
+
+              {ActionStoryStates?.userLiked ? (
                 <LikeWhite accessible={true} accessibilityLabel="Like White" />
               ) : (
                 <UnLikeWhite
@@ -179,7 +214,7 @@ const StoriesAction = ({
             </View>
 
             <TouchableOpacity onPress={navigateToStoryLikeList}>
-              <Text style={styles.countText}>{storyState.likeCount}</Text>
+              <Text style={styles.countText}>{ActionStoryStates.likeCount}</Text>
             </TouchableOpacity>
           </TouchableOpacity>
 
@@ -191,7 +226,7 @@ const StoriesAction = ({
                 accessibilityLabel="comment white"
               />
             </View>
-            <Text style={styles.countText}>{storyState.reactionCount}</Text>
+            <Text style={styles.countText}>{ActionStoryStates?.reactionCount}</Text>
           </TouchableOpacity>
 
           {isStoryOwner && (
@@ -201,7 +236,7 @@ const StoriesAction = ({
               <View style={styles.iconContainer}>
                 <OpenEye accessible={true} accessibilityLabel="open eye" />
               </View>
-              <Text style={styles.countText}>{storyState.viewerCount}</Text>
+              <Text style={styles.countText}>{ActionStoryStates?.viewerCount}</Text>
             </TouchableOpacity>
           )}
 
@@ -225,7 +260,7 @@ const StoriesAction = ({
 
       <StoryCommentBottomSheet
         ref={commentSheetRef}
-        StoryStateParam={storyState}
+        StoryStateParam={ActionStoryStates}
         postItem={story}
         User={user}
         listTypeData={''}
@@ -249,9 +284,10 @@ const styles = StyleSheet.create({
   actionButton: {
     alignItems: 'center',
     marginBottom: 15,
+ 
   },
   iconContainer: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 1.5)',
     borderRadius: 25,
     height: 50,
     width: 50,
@@ -266,7 +302,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
   },
   countText: {
-    color: '#FFF',
+    color: 'red',
     fontSize: 14,
     fontWeight: 'bold',
   },

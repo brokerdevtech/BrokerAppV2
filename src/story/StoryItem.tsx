@@ -42,21 +42,25 @@ const StoryItem: React.FC<StoryItemProps> = ({
   const videoRef = useRef<Video>(null);
   const [loading, setLoading] = useState(true);
   const [storyStates, setStoryStates] = useState({});
-
+ // const [PauseStoryItem, settogglePauseStoryItem] = useState();
   useEffect(() => {
+    console.log("StoryItem",story);
     if (story?.mediaType.toLowerCase() === 'video') {
       videoRef.current?.seek(0);
     }
     let storystateobj = {
-      likeCount: story.likeCount || 0,
-      reactionCount: story.reactionCount || 0,
-      viewerCount: story.viewerCount || 0,
-      userLiked: story.userLiked || 0,
+      likeCount: story?.likeCount || 0,
+      reactionCount: story?.reactionCount || 0,
+      viewerCount: story?.viewerCount || 0,
+      userLiked: story?.userLiked || 0,
     };
-    setStoryStates(storyStates);
+    setStoryStates(storystateobj);
   }, [story]);
   // console.log(story, 'ss');
+  function togglePauseStoryItem()
+  {
 
+  }
   function onPressPrevious() {
     console.log('onPressPrevious');
     handlePreviousStory();
@@ -73,7 +77,9 @@ const StoryItem: React.FC<StoryItemProps> = ({
   return (
     <View style={styles.container}>
       {loading && (
-        <ActivityIndicator size="large" color="white" style={styles.loader} />
+        <View style={styles.loaderContainer}>
+                     <ActivityIndicator size="large" color="white" />
+                   </View>
       )}
       <View style={styles.backgroundContainer}>
         {story && story?.mediaType.toLowerCase() === 'image' ? (
@@ -99,9 +105,9 @@ const StoryItem: React.FC<StoryItemProps> = ({
               source={{uri: `${imagesBucketcloudfrontPath}${story.mediaBlob}`}}
               style={styles.media}
               resizeMode="contain"
-              onReadyForDisplay={() => {
+              onLoad={() => {
                 setLoading(false);
-                onLoad();
+                onLoad(); // Trigger resume logic
               }}
               paused={isPaused}
               onEnd={onVideoEnd}
@@ -112,7 +118,20 @@ const StoryItem: React.FC<StoryItemProps> = ({
           )
         )}
       </View>
-      <View style={styles.nextPreviousContainer}>
+    
+
+      {story && (
+        <StoriesAction
+          story={story}
+          storyState={storyStates}
+         
+          storyIndex={storyIndex}
+          togglePause={togglePause}
+          closeStory={oncloseModal}
+          setActionAreaActive={setActionAreaActive}
+        />
+      )}
+        <View style={styles.nextPreviousContainer}>
         <TouchableWithoutFeedback onPress={onPressPrevious}>
           <View style={gstyles.flex} />
         </TouchableWithoutFeedback>
@@ -120,18 +139,6 @@ const StoryItem: React.FC<StoryItemProps> = ({
           <View style={gstyles.flex} />
         </TouchableWithoutFeedback>
       </View>
-
-      {story && (
-        <StoriesAction
-          story={story}
-          storyState={storyStates}
-          updateStoryState={newState => setStoryStates(newState)}
-          storyIndex={storyIndex}
-          togglePause={togglePause}
-          closeStory={oncloseModal}
-          setActionAreaActive={setActionAreaActive}
-        />
-      )}
     </View>
   );
 };
@@ -155,6 +162,17 @@ const styles = StyleSheet.create({
   media: {
     width,
     height,
+  },
+  loaderContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Optional dimming effect
+    zIndex: 1,
   },
   loader: {
     position: 'absolute',
