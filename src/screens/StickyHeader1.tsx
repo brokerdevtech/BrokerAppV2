@@ -326,7 +326,7 @@ const ProductListScreen = ({
         </View>
       }
       data={data}
-      keyExtractor={item => item.id}
+      keyExtractor={(item, index) => index.toString()}
       renderItem={renderItem}
       contentContainerStyle={{
         paddingTop: animatedPaddingTop,
@@ -334,6 +334,9 @@ const ProductListScreen = ({
       }}
       style={{flex: 1}}
       onScroll={onScroll}
+      initialNumToRender={2}
+      maxToRenderPerBatch={4}
+      // windowSize={4}
       scrollEventThrottle={16}
       onEndReached={loadMorepage}
       onEndReachedThreshold={0.5}
