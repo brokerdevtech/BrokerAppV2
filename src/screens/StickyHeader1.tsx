@@ -58,27 +58,21 @@ const RederListHeader = React.memo(({StoryData}) => {
   return <>{StoryData != null && <UserStories Data={StoryData} />}</>;
 });
 // TabNavigation component remains the same
+const ProductItem = ({ item, listTypeData, User, menuPress, navigation, OnGoBack }) => {
+  const [isrefresh, setIsRefresh] = useState(0);
+  const MediaGalleryRef = useRef(null);
 
-const ProductItem =({item, listTypeData, User, menuPress, navigation, OnGoBack}) => 
-  {
-      console.log('ProductItem',item);
-    const [isrefresh, setisrefresh] = useState(0);
-    const MediaGalleryRef = useRef(null);
-    //  console.log(item);
-
-    const ProductItemOnGoBack = item => {
-      //  console.log('ProductItemOnGoBack');
-      if (item.Action != 'Delete') {
-        setisrefresh(isrefresh + 1);
-      }
-      OnGoBack(item);
-    };
-
+  const ProductItemOnGoBack = updatedItem => {
+    if (updatedItem?.Action !== 'Delete') {
+      setIsRefresh(prev => prev + 1);
+    }
+    if (OnGoBack) {
+      OnGoBack(updatedItem);
+    }
+  };
 
   const openWhatsApp = useCallback((phoneNumber, message) => {
-    const url = `whatsapp://send?text=${encodeURIComponent(
-      message,
-    )}&phone=${phoneNumber}`;
+    const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
 
     Linking.canOpenURL(url)
       .then(supported => {
@@ -90,35 +84,34 @@ const ProductItem =({item, listTypeData, User, menuPress, navigation, OnGoBack})
       })
       .catch(err => console.error('Error opening WhatsApp', err));
   }, []);
-  const chatProfilePress = useCallback(async () => {
-    const members = [User.userId.toString(), item.userId.toString()];
 
+  const chatProfilePress = useCallback(() => {
+    const members = [User.userId.toString(), item.userId.toString()];
     navigation.navigate('AppChat', {
       defaultScreen: 'ChannelScreen',
       defaultParams: members,
-      //  defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
     });
-  }, []);
+  }, [User, item, navigation]);
+
   const makeCall = useCallback(async phoneNumber => {
-    // console.log(phoneNumber, 'phone');
     const url = `tel:${phoneNumber}`;
 
     const checkPermissionAndOpen = async () => {
       const hasPermission = await PermissionsAndroid.check(
-        PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+        PermissionsAndroid.PERMISSIONS.CALL_PHONE
       );
       if (hasPermission) {
         Linking.openURL(url);
       } else {
         const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+          PermissionsAndroid.PERMISSIONS.CALL_PHONE
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           Linking.openURL(url);
         } else {
           Alert.alert(
             'Permission Denied',
-            'You need to enable call permissions to use this feature',
+            'You need to enable call permissions to use this feature'
           );
         }
       }
@@ -133,44 +126,37 @@ const ProductItem =({item, listTypeData, User, menuPress, navigation, OnGoBack})
             Linking.openURL(url);
           } else {
             Alert.alert(
-              'Oops! ',
-              'No contact info available for this post. Try reaching out through other channels!',
+              'Oops!',
+              'No contact info available for this post. Try reaching out through other channels!'
             );
           }
         })
         .catch(err => console.error('Error opening dialer', err));
     }
   }, []);
+
   return (
     <View style={styles.WrapcardContainer}>
       <View style={styles.cardContainer}>
-        <ItemHeader item={item}></ItemHeader>
-        <MediaGallery
-          ref={MediaGalleryRef}
-          mediaItems={item.postMedias}
-          paused={false}
-        />
+        <ItemHeader item={item} />
+        <MediaGallery ref={MediaGalleryRef} mediaItems={item.postMedias} paused={false} />
 
         <View style={styles.iconContainer}>
-          <TouchableOpacity
-            onPress={() => menuPress(item)}
-            style={styles.checkIcon}>
+          <TouchableOpacity onPress={() => menuPress(item)} style={styles.checkIcon}>
             <MenuThreeDots height={20} width={20} />
           </TouchableOpacity>
         </View>
 
-        <View style={{marginLeft: 20}}>
+        <View style={{ marginLeft: 20 }}>
           <PostActions
             item={item}
             User={User}
             listTypeData={listTypeData}
             isrefresh={isrefresh}
-            onUpdateLikeCount={newCount => {
-              // console.log(newCount);
-            }}
+            onUpdateLikeCount={() => {}}
           />
         </View>
-        {/* Car Details */}
+
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('ItemDetailScreen', {
@@ -181,13 +167,13 @@ const ProductItem =({item, listTypeData, User, menuPress, navigation, OnGoBack})
           }>
           <VStack space="xs" style={styles.detailsContainer}>
             <HStack>
-              <Box style={{marginLeft: 4}}>
-                <ZText type={'M16'} style={{color: colors.light.appred}}>
+              <Box style={{ marginLeft: 4 }}>
+                <ZText type="M16" style={{ color: colors.light.appred }}>
                   {'\u20B9'}{' '}
                 </ZText>
               </Box>
               <Box>
-                <ZText type={'M16'} style={{color: colors.light.appred}}>
+                <ZText type="M16" style={{ color: colors.light.appred }}>
                   {formatNumberToIndianSystem(item.price)}
                 </ZText>
               </Box>
@@ -198,96 +184,57 @@ const ProductItem =({item, listTypeData, User, menuPress, navigation, OnGoBack})
                 <Box>
                   <Icon as={Location_Icon} size="xl" />
                 </Box>
-                <Box style={{width: '100%', flex: 1}}>
-                  <ZText
-                    type={'R16'}
-                    numberOfLines={1} // Limits to 2 lines
-                    ellipsizeMode="tail">
-                    {' '}
-                    {item.location.placeName}
+                <Box style={{ width: '100%', flex: 1 }}>
+                  <ZText type="R16" numberOfLines={1} ellipsizeMode="tail">
+                    {' '}{item.location.placeName}
                   </ZText>
                 </Box>
               </HStack>
             )}
 
-            <HStack style={{width: '100%', flex: 1}}>
+            <HStack style={{ width: '100%', flex: 1 }}>
               <Box>
                 <Icon as={description_icon} fill="black" size="xl" />
               </Box>
-              <Box style={{width: '100%', flex: 1}}>
-                <ZText
-                  type={'R16'}
-                  numberOfLines={1} // Limits to 2 lines
-                  ellipsizeMode="tail">
-                  {' '}
-                  {item.title}
+              <Box style={{ width: '100%', flex: 1 }}>
+                <ZText type="R16" numberOfLines={1} ellipsizeMode="tail">
+                  {' '}{item.title}
                 </ZText>
               </Box>
             </HStack>
           </VStack>
         </TouchableOpacity>
-        {/* <Divider  className="my-0.5" /> */}
 
         <View style={styles.detailsContainerBottom}>
-          <HStack
-          // space="md"
-          >
-            <HStack
-              style={{
-                alignItems: 'center',
-                width: '50%',
-                justifyContent: 'center',
-              }}>
-              <TouchableOpacity
-                style={styles.callbtn}
-                onPress={() => makeCall(item.contactNo)}>
-                <View style={{alignItems: 'center'}}>
-                  <Icon
-                    as={Telephone_Icon}
-                    color={colors.light.appred}
-                    size={'xxl'}
-                  />
+          <HStack>
+            <HStack style={{ alignItems: 'center', width: '50%', justifyContent: 'center' }}>
+              <TouchableOpacity style={styles.callbtn} onPress={() => makeCall(item.contactNo)}>
+                <View style={{ alignItems: 'center' }}>
+                  <Icon as={Telephone_Icon} color={colors.light.appred} size="xxl" />
                 </View>
-                <View style={{alignItems: 'center', paddingVertical: 10}}>
-                  <ZText type={'M14'}>Call</ZText>
+                <View style={{ alignItems: 'center', paddingVertical: 10 }}>
+                  <ZText type="M14">Call</ZText>
                 </View>
               </TouchableOpacity>
             </HStack>
-            <HStack
-              style={{
-                alignItems: 'center',
-                width: '50%',
-                justifyContent: 'center',
-              }}>
-              <TouchableOpacity
-                style={styles.Chatbtn}
-                onPress={() => chatProfilePress()}>
-                <View style={{alignItems: 'center', marginRight: 10}}>
-                  <Icon as={Chat_Icon} color={'#0F5DC4'} size={'xxl'} />
+            <HStack style={{ alignItems: 'center', width: '50%', justifyContent: 'center' }}>
+              <TouchableOpacity style={styles.Chatbtn} onPress={chatProfilePress}>
+                <View style={{ alignItems: 'center', marginRight: 10 }}>
+                  <Icon as={Chat_Icon} color="#0F5DC4" size="xxl" />
                 </View>
-                <View style={{alignItems: 'center', paddingVertical: 10}}>
-                  <ZText type={'M14'}>Chat</ZText>
+                <View style={{ alignItems: 'center', paddingVertical: 10 }}>
+                  <ZText type="M14">Chat</ZText>
                 </View>
               </TouchableOpacity>
             </HStack>
           </HStack>
         </View>
       </View>
+    </View>
+  );
+};
 
 
-
-//   (prevProps, nextProps) => {
-//     // Perform shallow comparison on key props
-//     return (
-//       isEqual(prevProps.item, nextProps.item) &&
-//       prevProps.listTypeData === nextProps.listTypeData &&
-
-//       prevProps.User === nextProps.User 
-     
-
-//     );
-//   },
-// );
 
 const ProductListScreen = ({
   category,
@@ -324,7 +271,11 @@ const ProductListScreen = ({
     ),
     [user, category, handlePresentModalPress, navigation],
   );
-
+  const OnGoBack = updatedItem => {
+ 
+    listRef.current?.scrollToOffset({animated: true, offset: 0});
+  
+  };
   return (
 
 <FlashList

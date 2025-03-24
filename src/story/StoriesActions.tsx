@@ -84,7 +84,7 @@ const closeModal = async (item: any) => {
     }, 300);
   };
 
-  };
+
   const handleActionPress = callback => {
     return event => {
       // console.log('handleActionPress');
