@@ -46,7 +46,8 @@ import {
 import PostActions from '../sharedComponents/PostActions';
 import UserStories from '../components/story/UserStories';
 import ReportScreen from '../sharedComponents/ReportScreen';
-
+import { FlashList } from '@shopify/flash-list';
+import isEqual from 'lodash/isEqual';
 const HEADER_HEIGHT = 60;
 const TAB_BAR_HEIGHT = 48; // Approximate height of TabBar
 const screenWidth = Dimensions.get('window').width;
@@ -55,8 +56,9 @@ const RederListHeader = React.memo(({StoryData}) => {
   return <>{StoryData != null && <UserStories Data={StoryData} />}</>;
 });
 // TabNavigation component remains the same
-const ProductItem = React.memo(
-  ({item, listTypeData, User, menuPress, navigation, OnGoBack}) => {
+const ProductItem =({item, listTypeData, User, menuPress, navigation, OnGoBack}) => 
+  {
+      console.log('ProductItem',item);
     const [isrefresh, setisrefresh] = useState(0);
     const MediaGalleryRef = useRef(null);
     //  console.log(item);
@@ -269,18 +271,18 @@ const ProductItem = React.memo(
         </View>
       </View>
     );
-  },
+  }
 
-  (prevProps, nextProps) => {
-    // Perform shallow comparison on key props
-    return (
-      prevProps.item === nextProps.item &&
-      prevProps.listTypeData === nextProps.listTypeData &&
-      prevProps.User === nextProps.User &&
-      prevProps.updateItem === nextProps.updateItem
-    );
-  },
-);
+//   (prevProps, nextProps) => {
+//     // Perform shallow comparison on key props
+//     return (
+//       isEqual(prevProps.item, nextProps.item) &&
+//       prevProps.listTypeData === nextProps.listTypeData &&
+//       prevProps.User === nextProps.User 
+     
+//     );
+//   },
+// );
 
 const ProductListScreen = ({
   category,
@@ -296,6 +298,7 @@ const ProductListScreen = ({
   user,
   headerVisible,
 }) => {
+  console.log('ProductListScreen', category);
   const animatedPaddingTop = headerVisible.interpolate({
     inputRange: [0, 1],
 
@@ -313,37 +316,32 @@ const ProductListScreen = ({
         // OnGoBack={OnGoBack}
       />
     ),
-    [data],
+    [user, category, handlePresentModalPress, navigation],
   );
 
   return (
-    <Animated.FlatList
-      ref={listRef}
-      ListHeaderComponent={
-        // Wrap stories in a View with fixed height to prevent collapsing
-        <View style={{minHeight: 120}}>
-          <RederListHeader StoryData={StoryData} />
-        </View>
-      }
-      data={data}
-      keyExtractor={(item, index) => index.toString()}
-      renderItem={renderItem}
-      contentContainerStyle={{
-        paddingTop: animatedPaddingTop,
-        paddingBottom: 50,
-      }}
-      style={{flex: 1}}
-      onScroll={onScroll}
-      initialNumToRender={2}
-      maxToRenderPerBatch={4}
-      // windowSize={4}
-      scrollEventThrottle={16}
-      onEndReached={loadMorepage}
-      onEndReachedThreshold={0.5}
-      ListFooterComponent={() =>
-        loading && <ActivityIndicator size="large" color={Color.primary} />
-      }
-    />
+<FlashList
+  ref={listRef}
+  data={data}
+  estimatedItemSize={560} // Adjust based on actual item height
+  keyExtractor={(item, index) => index.toString()}
+
+  renderItem={renderItem}
+  onScroll={onScroll}
+  scrollEventThrottle={16}
+  onEndReached={loadMorepage}
+  onEndReachedThreshold={0.5}
+  contentContainerStyle={{
+    paddingTop: HEADER_HEIGHT + TAB_BAR_HEIGHT,
+    paddingBottom: 50,
+  }}
+  ListFooterComponent={() =>
+    loading && <ActivityIndicator size="large" color={Color.primary} />
+  }
+/>
+
+
+   
   );
 };
 
@@ -407,20 +405,20 @@ const StickyHeaderWithTabs1 = () => {
   useFocusEffect(
     useCallback(() => {
       callPodcastList();
-    }, []),
+    }, [index]),
   );
-  useEffect(() => {
-    console.log('activeTab');
-    callPodcastList();
-  }, [index]);
+  // useEffect(() => {
+  //   console.log('activeTab');
+  //   callPodcastList();
+  // }, [index]);
 
   const loadMorepage = async () => {
-    if (isInfiniteLoading || !hasMore) return;
+    // if (isInfiniteLoading || !hasMore) return;
     const apiEndpoint =
       index === 0 ? '/Post/DashboardPost' : '/Car/Post/DashboardPost';
-    if (!isInfiniteLoading) {
+    // if (!isInfiniteLoading) {
       await loadMore(user.userId, apiEndpoint);
-    }
+    // }
   };
   // Create refs for each tab's FlatList
   const listRefs = useRef({});
@@ -481,9 +479,33 @@ const StickyHeaderWithTabs1 = () => {
       },
     },
   );
-
+  const handleScroll1 = (event) => {
+    const currentScrollY = event.nativeEvent.contentOffset.y;
+    scrollY.setValue(currentScrollY); // update animation manually
+  
+    const diff = currentScrollY - lastScrollY.current;
+  
+    if (diff > 5 && !isScrollingDown.current) {
+      isScrollingDown.current = true;
+      Animated.timing(headerVisible, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    } else if (diff < -5 && isScrollingDown.current) {
+      isScrollingDown.current = false;
+      Animated.timing(headerVisible, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+  
+    lastScrollY.current = currentScrollY;
+  };
   // Handle tab change
   const handleIndexChange = newIndex => {
+    setData_Set([]);
     // Reset header visibility when changing tabs
     Animated.timing(headerVisible, {
       toValue: 1,
@@ -515,7 +537,7 @@ const StickyHeaderWithTabs1 = () => {
             scrollY={scrollY}
             data={data}
             loadMorepage={loadMorepage}
-            onScroll={handleScroll}
+            onScroll={handleScroll1}
             navigation={navigation}
             listRef={listRefs.current[route.key]}
             handlePresentModalPress={handlePresentModalPress}
