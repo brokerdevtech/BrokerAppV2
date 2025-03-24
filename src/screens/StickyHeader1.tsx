@@ -303,6 +303,7 @@ const ProductListScreen = ({
   loading,
   user,
   headerVisible,
+  isTabSwitching, // <- new prop
 }) => {
   console.log('ProductListScreen', category);
   const animatedPaddingTop = headerVisible.interpolate({
@@ -360,7 +361,7 @@ const StickyHeaderWithTabs1 = () => {
   const headerVisible = useRef(new Animated.Value(1)).current;
   const navigation = useNavigation();
   const reportSheetRef = useRef(null);
-
+  const [isTabSwitching, setIsTabSwitching] = useState(false);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const [selectedItem, setSelectedItem] = useState(null);
   const user = useSelector((state: RootState) => state.user.user);
@@ -508,7 +509,8 @@ const StickyHeaderWithTabs1 = () => {
   };
   // Handle tab change
   const handleIndexChange = newIndex => {
-    setData_Set([]);
+    setIsTabSwitching(true); // Start switching
+    setIndex(newIndex); // Trigger tab change
     // Reset header visibility when changing tabs
     Animated.timing(headerVisible, {
       toValue: 1,
@@ -528,13 +530,21 @@ const StickyHeaderWithTabs1 = () => {
     scrollY.setValue(0);
     isScrollingDown.current = false;
 
-    setIndex(newIndex);
+    setTimeout(() => {
+      setData_Set([]); // Clear data after tab change
+      setIsTabSwitching(false); // Done switching
+    }, 1000); // adjust if needed
   };
 
   const renderScene = useCallback(
     ({route}) => {
       return (
         <View style={styles.tabContent}>
+        {isTabSwitching&&
+           <View style={styles.emptyContainer}>
+        <ActivityIndicator size="large" color={Color.primary} />
+      </View> }
+      {!isTabSwitching &&
           <ProductListScreen
             category={route.title}
             scrollY={scrollY}
@@ -548,7 +558,8 @@ const StickyHeaderWithTabs1 = () => {
             loading={isInfiniteLoading}
             user={user}
             headerVisible={headerVisible}
-          />
+            isTabSwitching={isTabSwitching}
+          />}
         </View>
       );
     },
