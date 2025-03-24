@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -78,7 +78,7 @@ export default function DashboradScreen() {
   const {setUser_Analytics} = useUserAnalytics();
   const {logButtonClick} = useUserJourneyTracker('Dashborad');
   const userPermissions = useSelector(
-    (state: RootState) => state.user.user.userPermissions,
+    (state: RootState) => state.user?.user?.userPermissions,
   );
   const headerHeight = 60;
   const searchBarHeight = 50;
@@ -188,11 +188,22 @@ export default function DashboradScreen() {
     const updateDevice = await NewDeviceUpdate(userId, fcmToken.toString());
   };
 
+  const { fetchStories } = useStory();
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchStories(); // reloads stories when screen comes into focus
+    }, [])
+  );
+
+
+
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
         try {
           const request = {pageNo: 1, pageSize: 10, cityName: AppLocation.City};
+
           const results = await Promise.allSettled([
             GetDashboardData(user.userId),
             execute(user.userId, 1, 4),
@@ -549,7 +560,7 @@ export default function DashboradScreen() {
             endpoint={`RecentSearch`}
             isShowAll={true}
             request={{
-              userId: user.userId,
+              userId: user?.userId,
             }}
           />
           <ProductSectionData
@@ -605,7 +616,7 @@ export default function DashboradScreen() {
             isShowAll={true}
             isGuest={false}
             request={{
-              userId: user.userId,
+              userId: user?.userId,
             }}
           />
           <Footer />

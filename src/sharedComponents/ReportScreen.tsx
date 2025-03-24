@@ -98,7 +98,7 @@ const ReportScreen = forwardRef(({postItem, screenFrom, onClose}, ref) => {
         setToastId(newId);
         toast.show({
           id: newId,
-          placement: 'top',
+          placement: 'bottom',
           duration: 3000,
           render: ({id}) => {
             const uniqueToastId = 'toast-' + id;

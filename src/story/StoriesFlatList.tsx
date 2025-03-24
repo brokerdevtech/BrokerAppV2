@@ -31,7 +31,7 @@ const StoriesFlatList = () => {
   const navigation = useNavigation();
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const userPermissions = useSelector(
-    (state: RootState) => state.user.user.userPermissions,
+    (state: RootState) => state?.user?.user?.userPermissions,
   );
   const permissionGrantedDashBoard = checkPermission(
     userPermissions,

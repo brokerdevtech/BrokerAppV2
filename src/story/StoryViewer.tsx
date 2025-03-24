@@ -39,13 +39,14 @@ const StoryViewer = () => {
     goToNextStory,
     goToPreviousStory,
     goToNextUser,
+    goToPreviousUser,
   } = useStory();
 
   const user = useSelector((state: RootState) => state.user.user);
   const isTransitioning = useRef(false);
   const [isPaused, setIsPaused] = useState(true);
   const [isLoadingMedia, setIsLoadingMedia] = useState(true);
-
+  const [isStoryReady, setIsStoryReady] = useState(false);
   // Add this ref to track if touch is happening over actions
   const actionAreaRef = useRef(false);
   // Track story states individually for each story
@@ -78,17 +79,34 @@ const StoryViewer = () => {
 
   useEffect(() => {
     setIsLoadingMedia(true); // every time story index or user changes
+    setIsStoryReady(false);
   }, [currentMediaIndex, currentStoryIndex]);
   // Initialize story states when stories change
-  useEffect(() => {
-     // Get the current story being displayed
-     let  currentUserStoriesEffect = stories[currentStoryIndex]?.storyDetails || [];
-     setcurrentUserStories(currentUserStoriesEffect);
-     setcurrentStory(currentUserStoriesEffect[currentMediaIndex]);
+  // useEffect(() => {
+  //    // Get the current story being displayed
+  //    let  currentUserStoriesEffect = stories[currentStoryIndex]?.storyDetails || [];
+  //    setcurrentUserStories(currentUserStoriesEffect);
+  //    setcurrentStory(currentUserStoriesEffect[currentMediaIndex]);
  
-  }, [currentMediaIndex, currentStoryIndex]);
-
-  if (currentStoryIndex === -1) return null;
+  // }, [currentMediaIndex, currentStoryIndex]);
+  useEffect(() => {
+    if (currentStoryIndex >= 0) {
+      const currentUserStoriesEffect = stories[currentStoryIndex]?.storyDetails || [];
+  
+      setcurrentUserStories(currentUserStoriesEffect);
+  
+      if (currentMediaIndex >= 0 && currentMediaIndex < currentUserStoriesEffect.length) {
+        setcurrentStory(currentUserStoriesEffect[currentMediaIndex]);
+      } else {
+        setcurrentStory(null); // optional: prevent out-of-bounds error
+      }
+    } else {
+      // Story viewer is closed
+      setcurrentUserStories([]);
+      setcurrentStory(null);
+    }
+  }, [currentMediaIndex, currentStoryIndex, stories]);
+  if (currentStoryIndex === -1 || !Array.isArray(currentUserStories)) return null;
   const currentUser = stories[currentStoryIndex] || {};
 //  const currentUserStories = stories[currentStoryIndex]?.storyDetails || [];
   const togglePause = () => {
@@ -190,9 +208,27 @@ const StoryViewer = () => {
     });
   const closeModal = () => {
     setCurrentUser(-1);
-    navigation.goBack();
+    // navigation.goBack();
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate('Home'); // or whatever your main screen is
+    }
   };
-
+  const horizontalSwipeGesture = Gesture.Pan()
+  .onEnd((event) => {
+    if (Math.abs(event.translationX) > 50) {
+      if (event.translationX < 0) {
+        // Swipe left → next user
+        console.log('➡️ Swipe left: Next user');
+        runOnJS(goToNextUser)();
+      } else {
+        // Swipe right → previous user
+        console.log('⬅️ Swipe right: Previous user');
+        runOnJS(goToPreviousUser)();
+      }
+    }
+  });
   return (
   
       <GestureHandlerRootView style={{flex: 1}}>
@@ -201,6 +237,7 @@ const StoryViewer = () => {
             longPressGesture,
             Gesture.Simultaneous(
               swipeDownGesture,
+              horizontalSwipeGesture // ✅ Add here
               // tapGesture removed as it might interfere
             ),
           )}>
@@ -224,10 +261,10 @@ const StoryViewer = () => {
             <View style={styles.progressBarContainer}>
               {currentUserStories.map((item, index) => (
                 <ProgressBar
-                  key={index}
+                key={item.storyId?.toString() ?? index.toString()}
                   duration={(currentStory?.mediaDuration > -1 ? currentStory.mediaDuration : 10000)}
                   isActive={index === currentMediaIndex}
-                  isPaused={isPaused  || isLoadingMedia}
+                  isPaused={isPaused  || isLoadingMedia|| !isStoryReady}
                   hasCompleted={index < currentMediaIndex} // Mark previous stories as completed
                   onComplete={handleNextStory}
                 />
@@ -247,6 +284,7 @@ const StoryViewer = () => {
               onLoad={() => {
                 setIsLoadingMedia(false);
                 setIsPaused(false); // resume only after loading completes
+                setIsStoryReady(true);
               }}
              // onLoad={() => runOnJS(setIsPaused)(false)}
               onVideoEnd={handleNextStory}

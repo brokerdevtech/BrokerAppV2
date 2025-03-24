@@ -105,6 +105,7 @@ const HomeNavigation: React.FC = () => {
   const [initialRoute, setInitialRoute] = useState('Home');
   const {bottom} = useSafeAreaInsets();
   const user = useSelector((state: RootState) => state.user.user);
+  
   // const navigation = useNavigation();
   //const {clientIsReady} = useChatClient();
   let streamChatTheme = useStreamChatTheme();
@@ -114,7 +115,7 @@ const HomeNavigation: React.FC = () => {
   // console.log('strea============================');
   // console.log(streamChatTheme);
   return (
-       <StoryProvider userId={user.userId || undefined}>
+       <StoryProvider userId={user?.userId || undefined}>
     <OverlayProvider bottomInset={bottom} value={{style: streamChatTheme}}>
       {/* <Stack.Navigator screenOptions={globalScreenOptions}> */}
       <Stack.Navigator

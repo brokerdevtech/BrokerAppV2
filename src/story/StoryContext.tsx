@@ -48,6 +48,8 @@ interface StoryContextType {
   updateCurrentStory:(newStoryState:any)=>void;
   deleteCurrentStory: () => void
   isStoryViewerVisible: boolean;
+  fetchStories:any;
+  goToPreviousUser:any;
 }
 
 const StoryContext = createContext<StoryContextType | undefined>(undefined);
@@ -67,18 +69,21 @@ export const StoryProvider = ({ userId, children }: { userId?: any; children: Re
     const [loading, setLoading] = useState(true);
     const [isStoryViewerVisible, setStoryViewerVisible] = useState(false);
     const isLoadingMore = useRef(false);
-    useFocusEffect(
-      useCallback(() => {
-        setCurrentPage(1);
-        setCurrentPageSize(5);
-        fetchStories();
-      }, [])
-    );
+    // useFocusEffect(
+    //   useCallback(() => {
+    //     setCurrentPage(1);
+    //     setCurrentPageSize(5);
+    //     fetchStories();
+    //   }, [])
+    // );
 
   const fetchStories = async () => {
     try {
       // Mocking API fetch
-      const response = await getDashboardStory(userId,currentPage,currentPageSize);
+      console.log("====================================fetchStories===============================");
+      setCurrentPage(1);
+      setCurrentPageSize(5);
+      const response = await getDashboardStory(userId,1,currentPageSize);
             
 console.log(JSON.stringify( response.data?.data));
       setTotalPages(response.data?.totalPages);
@@ -139,7 +144,22 @@ setLoading(false);
     else{setStoryViewerVisible(true);}
   };
 
-
+  // const goToNextUser = () => {
+  //   setCurrentStoryIndex(prevIndex => {
+  //     const nextIndex = prevIndex + 1;
+  
+  //     if (nextIndex < stories.length) {
+  //       setCurrentMediaIndex(0); // ✅ Now it's tied to the new user
+  //       if (stories.length - nextIndex <= 2) {
+  //         loadMoreStories();
+  //       }
+  //     } else {
+  //       setCurrentUser(-1);
+  //     }
+  
+  //     return nextIndex;
+  //   });
+  // };
   const goToNextStory = () => {
     if (currentMediaIndex < stories[currentStoryIndex].storyDetails.length - 1) {
       setCurrentMediaIndex((prev) => prev + 1);
@@ -147,31 +167,64 @@ setLoading(false);
       goToNextUser();
     }
   };
-
+  const goToNextUser = () => {
+    setCurrentStoryIndex(prevIndex => {
+      const nextIndex = prevIndex + 1;
+  
+      if (nextIndex < stories.length) {
+        const newUserStories = stories[nextIndex]?.storyDetails || [];
+        setCurrentMediaIndex(0); // ✅ always reset to first story
+  
+        // Prefetch if near end
+        if (stories.length - nextIndex <= 2) {
+          loadMoreStories();
+        }
+  
+        return nextIndex;
+      } else {
+        setCurrentUser(-1); // Close viewer
+        return prevIndex;
+      }
+    });
+  };
+  // const goToPreviousStory = () => {
+  //   if (currentMediaIndex > 0) {
+  //     setCurrentMediaIndex((prev) => prev - 1);
+  //   } else if (currentStoryIndex > 0) {
+  //     setCurrentStoryIndex((prev) => prev - 1);
+  //     setCurrentMediaIndex(stories[currentStoryIndex - 1].storyDetails.length - 1);
+  //   }
+  // };
   const goToPreviousStory = () => {
     if (currentMediaIndex > 0) {
       setCurrentMediaIndex((prev) => prev - 1);
     } else if (currentStoryIndex > 0) {
-      setCurrentStoryIndex((prev) => prev - 1);
-      setCurrentMediaIndex(stories[currentStoryIndex - 1].storyDetails.length - 1);
-    }
-  };
-
-  const goToNextUser = () => {
+      setCurrentStoryIndex((prevStoryIndex) => {
+        const newStoryIndex = prevStoryIndex - 1;
+        const previousUserStories = stories[newStoryIndex]?.storyDetails || [];
   
-    if (currentStoryIndex < stories.length - 1) {
-      setCurrentStoryIndex((prev) => prev + 1);
-      setCurrentMediaIndex(0);
-      if (stories.length - currentStoryIndex <= 2) {
-        console.log("Current story index======================================");
-        loadMoreStories();  // 👈 this will fetch next page in the background
-      }
-
-    }
-    else{
-      setCurrentUser(-1);
+        setCurrentMediaIndex(previousUserStories.length - 1);
+        return newStoryIndex;
+      });
+    } else {
+      setCurrentUser(-1); // Optional: close viewer if already at first user/story
     }
   };
+  // const goToNextUser = () => {
+  
+  //   if (currentStoryIndex < stories.length - 1) {
+  //     setCurrentStoryIndex((prev) => prev + 1);
+  //     setCurrentMediaIndex(0);
+  //     if (stories.length - currentStoryIndex <= 2) {
+  //       console.log("Current story index======================================");
+  //       loadMoreStories();  // 👈 this will fetch next page in the background
+  //     }
+
+  //   }
+  //   else{
+  //     setCurrentUser(-1);
+  //   }
+  // };
   // const setCurrentUser = (UserId: number) => {
    
 
@@ -244,12 +297,25 @@ setLoading(false);
       }
     }, 300);
   };
-
+  const goToPreviousUser = () => {
+    setCurrentStoryIndex((prevIndex) => {
+      const prevUserIndex = prevIndex - 1;
+  
+      if (prevUserIndex >= 0) {
+        setCurrentMediaIndex(0); // Start at first story of previous user
+        return prevUserIndex;
+      } else {
+        setCurrentUser(-1); // Or do nothing if already at first user
+        return prevIndex;
+      }
+    });
+  };
+  
 
 
   return (
     <StoryContext.Provider
-      value={{ stories, currentStoryIndex, currentMediaIndex,isStoryViewerVisible, goToNextStory, goToPreviousStory, goToNextUser, setCurrentUser,  totalPages, recordCount,loading, loadMoreStories,updateCurrentStory,deleteCurrentStory }}
+      value={{ stories, currentStoryIndex, currentMediaIndex,isStoryViewerVisible, goToNextStory, goToPreviousStory, goToNextUser, setCurrentUser,  totalPages, recordCount,loading, loadMoreStories,updateCurrentStory,deleteCurrentStory,fetchStories,goToPreviousUser }}
     >
       {children}
     </StoryContext.Provider>
