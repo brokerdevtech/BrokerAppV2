@@ -118,7 +118,14 @@ const StoryItem: React.FC<StoryItemProps> = ({
           )
         )}
       </View>
-    
+      <View style={styles.nextPreviousContainer}>
+        <TouchableWithoutFeedback onPress={onPressPrevious}>
+          <View style={gstyles.flex} />
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={onPressNext}>
+          <View style={gstyles.flex} />
+        </TouchableWithoutFeedback>
+      </View>
 
       {story && (
         <StoriesAction
@@ -131,14 +138,7 @@ const StoryItem: React.FC<StoryItemProps> = ({
           setActionAreaActive={setActionAreaActive}
         />
       )}
-        <View style={styles.nextPreviousContainer}>
-        <TouchableWithoutFeedback onPress={onPressPrevious}>
-          <View style={gstyles.flex} />
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={onPressNext}>
-          <View style={gstyles.flex} />
-        </TouchableWithoutFeedback>
-      </View>
+       
     </View>
   );
 };

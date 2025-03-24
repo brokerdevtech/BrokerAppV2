@@ -159,10 +159,11 @@ const StoryCommentBottomSheet = forwardRef(
         setToastId(0);
         callCommentList();
       }
+      console.log("===========useEffect===========")
     }, [Reset, isOpen]);
 
     useEffect(() => {
-      //   console.log("===========callCommentList===========")
+        console.log("===========callCommentList===========")
       //   console.log(postItem)
       //  callCommentList();
       setStoryState(StoryStateParam);
@@ -181,12 +182,14 @@ const StoryCommentBottomSheet = forwardRef(
 
     useImperativeHandle(ref, () => ({
       open: () => {
+        console.log("useImperativeHandle")
         bottomSheetModalRef.current?.present();
       },
     }));
 
     const handleSheetChanges = useCallback(
       index => {
+        console.log('handleSheetChanges', index);
         setIsOpen(index >= 0);
         if (index == -1) {
           onClose(StoryState);
@@ -409,7 +412,7 @@ module="Post"
       handleAddComment();
     };
     const renderFooter = () => (
-      <KeyboardAvoidingView>
+      
         <View style={styles.footerContainer}>
           <HStack
             style={{
@@ -458,7 +461,7 @@ module="Post"
             </Box>
           </HStack>
         </View>
-      </KeyboardAvoidingView>
+      
     );
 
     const handleAddComment = async () => {
@@ -611,6 +614,7 @@ const styles = StyleSheet.create({
   sheetContent: {
     flex: 1,
     width: '100%',
+   
   },
   contentContainer: {
     // paddingBottom: 20,
