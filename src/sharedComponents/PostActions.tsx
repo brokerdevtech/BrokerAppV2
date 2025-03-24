@@ -70,7 +70,7 @@ const PostActions = ({
   PageName = 'ItemList',
   isrefresh = 0,
 }) => {
-  //console.log(item);
+  console.log(listTypeData);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const {
     data,
