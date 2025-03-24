@@ -70,7 +70,7 @@ const PostActions = ({
   PageName = 'ItemList',
   isrefresh = 0,
 }) => {
-  console.log(listTypeData);
+  console.log(item);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const {
     data,
@@ -101,6 +101,7 @@ const PostActions = ({
   );
 
   useEffect(() => {
+    console.log('PostActions', listTypeData);
     const fetchData = async () => {
       if (isrefresh > 0) {
         //  console.log('isrefresh', item);
@@ -213,9 +214,13 @@ const PostActions = ({
   };
   const handlePresentModalPress = useCallback(() => {
     commentSheetRef.current?.open();
+    callCommentList();
   }, []);
 
   async function callCommentList() {
+    console.log('commentList', listTypeData);
+    console.log('commentList', listTypeData);
+    console.log('commentList', item.postId);
     pageSize_Set(15);
     currentPage_Set(0);
     hasMore_Set(true);
@@ -234,9 +239,9 @@ const PostActions = ({
   const closeModal = useCallback(item => {
     setCardComment(item);
   }, []);
-  useEffect(() => {
-    callCommentList();
-  }, []);
+  // useEffect(() => {
+  //   callCommentList();
+  // }, []);
   const HaveBuyerList = async () => {
     //
     //
