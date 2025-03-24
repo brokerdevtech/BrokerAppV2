@@ -22,7 +22,10 @@ import {useToast} from '../../components/ui/toast';
 import {useNavigation} from '@react-navigation/native';
 import StoryCommentBottomSheet from '../sharedComponents/StoryCommentBottomSheet';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
-import { RootState } from '../../BrokerAppCore/redux/store/reducers';
+import {RootState} from '../../BrokerAppCore/redux/store/reducers';
+import TouchableOpacityWithPermissionCheck from '../sharedComponents/TouchableOpacityWithPermissionCheck';
+import {PermissionKey} from '../config/constants';
+import TextWithPermissionCheck from '../sharedComponents/TextWithPermissionCheck';
 const StoriesAction = ({
   story,
   storyState,
@@ -33,10 +36,11 @@ const StoriesAction = ({
   setActionAreaActive,
   closeStory,
 }) => {
-  const {stories, currentStoryIndex,updateCurrentStory,deleteCurrentStory} = useStory();
+  const {stories, currentStoryIndex, updateCurrentStory, deleteCurrentStory} =
+    useStory();
   const [ActionStoryStates, setActionStoryStates] = useState({});
   const user = useSelector((state: RootState) => state.user.user);
- 
+
   const toast = useToast();
   let isStoryOwner = user.userId === stories[currentStoryIndex]?.userId;
   const navigation = useNavigation();
@@ -46,30 +50,27 @@ const StoriesAction = ({
   );
 
   useEffect(() => {
-
-    console.log("StoriesAction");
+    console.log('StoriesAction');
     console.log(currentStoryIndex);
     console.log(storyState);
-   isStoryOwner = user.userId === stories[currentStoryIndex]?.userId;
+    isStoryOwner = user.userId === stories[currentStoryIndex]?.userId;
 
-
-   let storystateobj = {
-    likeCount: storyState?.likeCount || 0,
-    reactionCount: storyState?.reactionCount || 0,
-    viewerCount: storyState?.viewerCount || 0,
-    userLiked: storyState?.userLiked || 0,
-  };
-  setActionStoryStates(storystateobj);
-  console.log(ActionStoryStates);
-  }, [story,storyState,currentStoryIndex]);
-
+    let storystateobj = {
+      likeCount: storyState?.likeCount || 0,
+      reactionCount: storyState?.reactionCount || 0,
+      viewerCount: storyState?.viewerCount || 0,
+      userLiked: storyState?.userLiked || 0,
+    };
+    setActionStoryStates(storystateobj);
+    console.log(ActionStoryStates);
+  }, [story, storyState, currentStoryIndex]);
 
   const [isOpen, setOpen] = useState(false);
 
   const closeModal = async (item: any) => {
     setOpen(false);
-    setActionStoryStates(item)
-    updateCurrentStory(item)
+    setActionStoryStates(item);
+    updateCurrentStory(item);
     await new Promise(resolve => setTimeout(resolve, 200));
     togglePause();
   };
@@ -106,7 +107,7 @@ const StoriesAction = ({
         reactionCount: result.data.storyDetails[0].reactionCount,
         viewerCount: result.data.storyDetails[0].viewerCount,
         userLiked: result.data.storyDetails[0].userLiked,
-      })
+      });
       togglePause();
     } catch (error) {
       console.log(error);
@@ -133,7 +134,6 @@ const StoriesAction = ({
   };
 
   const handleComment = () => {
-    
     commentSheetRef.current?.open();
     setOpen(true);
     togglePause();
@@ -170,7 +170,7 @@ const StoriesAction = ({
                 });
                 deleteCurrentStory();
                 togglePause();
-              //  closeStory();
+                //  closeStory();
               } else {
                 togglePause();
               }
@@ -192,17 +192,22 @@ const StoriesAction = ({
       {!isOpen && (
         <View style={styles.actionContainer}>
           {/* Like Button */}
-          <TouchableOpacity
+          <TouchableOpacityWithPermissionCheck
             style={styles.actionButton}
-            onPress={handleActionPress(handleStoryLike)}>
+            fontColor={colors.white}
+            tagNames={[View, LikeWhite, UnLikeWhite]}
+            permissionEnum={
+              ActionStoryStates.userLiked
+                ? PermissionKey.AllowUnLikeStory
+                : PermissionKey.AllowLikeStory
+            }
+            permissionsArray={userPermissions}
+            onPress={() => handleStoryLike()}>
             <View
               style={[
                 styles.iconContainer,
                 ActionStoryStates?.userLiked ? styles.likedIcon : {},
               ]}>
-                
-
-
               {ActionStoryStates?.userLiked ? (
                 <LikeWhite accessible={true} accessibilityLabel="Like White" />
               ) : (
@@ -213,37 +218,58 @@ const StoriesAction = ({
               )}
             </View>
 
-            <TouchableOpacity onPress={navigateToStoryLikeList}>
-              <Text style={styles.countText}>{ActionStoryStates.likeCount}</Text>
-            </TouchableOpacity>
-          </TouchableOpacity>
+            <TextWithPermissionCheck
+              permissionEnum={PermissionKey.AllowViewStoryLikes}
+              permissionsArray={userPermissions}
+              onPress={navigateToStoryLikeList}>
+              <Text style={styles.countText}>
+                {ActionStoryStates.likeCount}
+              </Text>
+            </TextWithPermissionCheck>
+          </TouchableOpacityWithPermissionCheck>
 
           {/* Comment Button */}
-          <TouchableOpacity style={styles.actionButton} onPress={handleComment}>
+
+          <TouchableOpacityWithPermissionCheck
+            tagNames={[View, CommentWhite]}
+            permissionsArray={userPermissions}
+            permissionEnum={PermissionKey.AllowViewStoryReaction}
+            style={styles.actionButton}
+            onPress={handleComment}>
             <View style={styles.iconContainer}>
               <CommentWhite
                 accessible={true}
                 accessibilityLabel="comment white"
               />
             </View>
-            <Text style={styles.countText}>{ActionStoryStates?.reactionCount}</Text>
-          </TouchableOpacity>
+            <Text style={styles.countText}>
+              {ActionStoryStates?.reactionCount}
+            </Text>
+          </TouchableOpacityWithPermissionCheck>
 
           {isStoryOwner && (
-            <TouchableOpacity
+            <TouchableOpacityWithPermissionCheck
               style={styles.actionButton}
-              onPress={navigateToStoryViewList}>
+              onPress={navigateToStoryViewList}
+              permissionsArray={userPermissions}
+              tagNames={[View, OpenEye, Text]}
+              permissionEnum={PermissionKey.AllowViewStoryViewers}>
               <View style={styles.iconContainer}>
                 <OpenEye accessible={true} accessibilityLabel="open eye" />
               </View>
-              <Text style={styles.countText}>{ActionStoryStates?.viewerCount}</Text>
-            </TouchableOpacity>
+              <Text style={styles.countText}>
+                {ActionStoryStates?.viewerCount}
+              </Text>
+            </TouchableOpacityWithPermissionCheck>
           )}
 
           {/* Delete Button (only for story owner) */}
           {isStoryOwner && (
-            <TouchableOpacity
+            <TouchableOpacityWithPermissionCheck
               style={styles.actionButton}
+              tagNames={[View, TrashWhite]}
+              permissionEnum={PermissionKey.AllowDeleteStory}
+              permissionsArray={userPermissions}
               onPress={handleDeleteStory}>
               <View style={styles.iconContainer}>
                 <TrashWhite
@@ -251,7 +277,7 @@ const StoriesAction = ({
                   accessibilityLabel="trash white"
                 />
               </View>
-            </TouchableOpacity>
+            </TouchableOpacityWithPermissionCheck>
           )}
         </View>
       )}
@@ -284,7 +310,6 @@ const styles = StyleSheet.create({
   actionButton: {
     alignItems: 'center',
     marginBottom: 15,
- 
   },
   iconContainer: {
     backgroundColor: 'rgba(0, 0, 0, 1.5)',
@@ -302,7 +327,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
   },
   countText: {
-    color: 'red',
+    color: 'white',
     fontSize: 14,
     fontWeight: 'bold',
   },
