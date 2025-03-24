@@ -71,6 +71,7 @@ const PostActions = ({
   isrefresh = 0,
 }) => {
   console.log(item);
+  console.log(item);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const {
     data,

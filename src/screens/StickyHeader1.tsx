@@ -305,19 +305,6 @@ const ProductListScreen = ({
   headerVisible,
 }) => {
   console.log('ProductListScreen', category);
-  const OnGoBack = updatedItem => {
-    //  console.log(data);
-    //  let newd=  data.map((item) =>
-    //     item.postId === updatedItem?.postId ? updatedItem : item
-    //   )
-
-    //   data=[...newd]
-    //   console.log(data);
-    //   // setData(newd);
-    if (updatedItem.Action == 'Delete') {
-      listRef.current?.scrollToOffset({animated: true, offset: 0});
-    }
-  };
   const animatedPaddingTop = headerVisible.interpolate({
     inputRange: [0, 1],
 
@@ -428,6 +415,7 @@ const StickyHeaderWithTabs1 = () => {
   // }, [index]);
 
   const loadMorepage = async () => {
+    // if (isInfiniteLoading || !hasMore) return;
     // if (isInfiniteLoading || !hasMore) return;
     const apiEndpoint =
       index === 0 ? '/Post/DashboardPost' : '/Car/Post/DashboardPost';
