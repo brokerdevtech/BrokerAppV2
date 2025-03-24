@@ -67,7 +67,7 @@ const StoriesAction = ({
 
   const [isOpen, setOpen] = useState(false);
 
-  const closeModal = async (item: any) => {
+const closeModal = async (item: any) => {
     // updateCurrentStory(item)
     setOpen(false);
     setActionStoryStates(item);
@@ -82,6 +82,8 @@ const StoriesAction = ({
     setTimeout(() => {
       togglePause(); // resume playback after close
     }, 300);
+  };
+
   };
   const handleActionPress = callback => {
     return event => {
@@ -143,6 +145,7 @@ const StoriesAction = ({
   };
 
   const handleComment = () => {
+
     setOpen(true);
     togglePause();
     commentSheetRef.current?.open();
@@ -298,7 +301,7 @@ const StoriesAction = ({
       )}
 
       {/* Always render the bottom sheet */}
-
+     
       <StoryCommentBottomSheet
         ref={commentSheetRef}
         StoryStateParam={ActionStoryStates}

@@ -46,7 +46,9 @@ import {
 import PostActions from '../sharedComponents/PostActions';
 import UserStories from '../components/story/UserStories';
 import ReportScreen from '../sharedComponents/ReportScreen';
-import {FlashList} from '@shopify/flash-list';
+
+import { FlashList } from '@shopify/flash-list';
+
 import isEqual from 'lodash/isEqual';
 const HEADER_HEIGHT = 60;
 const TAB_BAR_HEIGHT = 48; // Approximate height of TabBar
@@ -56,26 +58,22 @@ const RederListHeader = React.memo(({StoryData}) => {
   return <>{StoryData != null && <UserStories Data={StoryData} />}</>;
 });
 // TabNavigation component remains the same
-const ProductItem = ({
-  item,
-  listTypeData,
-  User,
-  menuPress,
-  navigation,
-  OnGoBack,
-}) => {
-  console.log('ProductItem', item);
-  const [isrefresh, setisrefresh] = useState(0);
-  const MediaGalleryRef = useRef(null);
-  //  console.log(item);
 
-  const ProductItemOnGoBack = item => {
-    //  console.log('ProductItemOnGoBack');
-    if (item.Action != 'Delete') {
-      setisrefresh(isrefresh + 1);
-    }
-    OnGoBack(item);
-  };
+const ProductItem =({item, listTypeData, User, menuPress, navigation, OnGoBack}) => 
+  {
+      console.log('ProductItem',item);
+    const [isrefresh, setisrefresh] = useState(0);
+    const MediaGalleryRef = useRef(null);
+    //  console.log(item);
+
+    const ProductItemOnGoBack = item => {
+      //  console.log('ProductItemOnGoBack');
+      if (item.Action != 'Delete') {
+        setisrefresh(isrefresh + 1);
+      }
+      OnGoBack(item);
+    };
+
 
   const openWhatsApp = useCallback((phoneNumber, message) => {
     const url = `whatsapp://send?text=${encodeURIComponent(
@@ -275,16 +273,17 @@ const ProductItem = ({
           </HStack>
         </View>
       </View>
-    </View>
-  );
-};
+
+
 
 //   (prevProps, nextProps) => {
 //     // Perform shallow comparison on key props
 //     return (
 //       isEqual(prevProps.item, nextProps.item) &&
 //       prevProps.listTypeData === nextProps.listTypeData &&
-//       prevProps.User === nextProps.User
+
+//       prevProps.User === nextProps.User 
+     
 
 //     );
 //   },
@@ -327,24 +326,30 @@ const ProductListScreen = ({
   );
 
   return (
-    <FlashList
-      ref={listRef}
-      data={data}
-      estimatedItemSize={560} // Adjust based on actual item height
-      keyExtractor={(item, index) => index.toString()}
-      renderItem={renderItem}
-      onScroll={onScroll}
-      scrollEventThrottle={16}
-      onEndReached={loadMorepage}
-      onEndReachedThreshold={0.5}
-      contentContainerStyle={{
-        paddingTop: HEADER_HEIGHT + TAB_BAR_HEIGHT,
-        paddingBottom: 50,
-      }}
-      ListFooterComponent={() =>
-        loading && <ActivityIndicator size="large" color={Color.primary} />
-      }
-    />
+
+<FlashList
+  ref={listRef}
+  data={data}
+  estimatedItemSize={560} // Adjust based on actual item height
+  keyExtractor={(item, index) => index.toString()}
+
+  renderItem={renderItem}
+  onScroll={onScroll}
+  scrollEventThrottle={16}
+  onEndReached={loadMorepage}
+  onEndReachedThreshold={0.5}
+  contentContainerStyle={{
+    paddingTop: HEADER_HEIGHT + TAB_BAR_HEIGHT,
+    paddingBottom: 50,
+  }}
+  ListFooterComponent={() =>
+    loading && <ActivityIndicator size="large" color={Color.primary} />
+  }
+/>
+
+
+   
+
   );
 };
 

@@ -71,7 +71,8 @@ const PostActions = ({
   isrefresh = 0,
 }) => {
   console.log(item);
-  console.log(item);
+
+
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const {
     data,
@@ -102,7 +103,7 @@ const PostActions = ({
   );
 
   useEffect(() => {
-    console.log('PostActions', listTypeData);
+
     const fetchData = async () => {
       if (isrefresh > 0) {
         //  console.log('isrefresh', item);
@@ -219,9 +220,11 @@ const PostActions = ({
   }, []);
 
   async function callCommentList() {
-    console.log('commentList', listTypeData);
-    console.log('commentList', listTypeData);
-    console.log('commentList', item.postId);
+
+    console.log('commentList',listTypeData);
+    console.log('commentList',listTypeData);
+    console.log('commentList',item.postId);
+
     pageSize_Set(15);
     currentPage_Set(0);
     hasMore_Set(true);
