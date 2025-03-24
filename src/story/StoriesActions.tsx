@@ -68,11 +68,20 @@ const StoriesAction = ({
   const [isOpen, setOpen] = useState(false);
 
   const closeModal = async (item: any) => {
+    // updateCurrentStory(item)
     setOpen(false);
     setActionStoryStates(item);
-    updateCurrentStory(item);
-    await new Promise(resolve => setTimeout(resolve, 200));
-    togglePause();
+    //updateCurrentStory(item)
+    // await new Promise(resolve => setTimeout(resolve, 200));
+    // togglePause();
+    //   commentSheetRef.current?.close();
+    setTimeout(() => {
+      updateCurrentStory(item);
+    }, 200); // optional delay to avoid open loop
+
+    setTimeout(() => {
+      togglePause(); // resume playback after close
+    }, 300);
   };
   const handleActionPress = callback => {
     return event => {
@@ -134,11 +143,17 @@ const StoriesAction = ({
   };
 
   const handleComment = () => {
-    commentSheetRef.current?.open();
     setOpen(true);
     togglePause();
+    commentSheetRef.current?.open();
   };
-
+  const handleComment1 = () => {
+    if (!isOpen) {
+      setOpen(true);
+      togglePause();
+      commentSheetRef.current?.open();
+    }
+  };
   const handleDeleteStory = () => {
     // Pause the story while showing the alert
     togglePause();
