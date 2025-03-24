@@ -21,14 +21,18 @@ import {runOnJS} from 'react-native-reanimated';
 import {imagesBucketcloudfrontPath} from '../config/constants';
 import StoriesAction from './StoriesActions';
 import {useSelector} from 'react-redux';
-import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 
 const {width} = Dimensions.get('window');
 
 const StoryViewer = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { index } = route.params;
+  const {index} = route.params;
 
   const {
     stories,
@@ -65,13 +69,13 @@ const StoryViewer = () => {
       // Screen is focused (coming back)
       console.log('StoryViewer focused - resume playback');
       setIsPaused(false);
-  
+
       return () => {
         // Screen is unfocused (navigating away)
         console.log('StoryViewer unfocused - pause playback');
         setIsPaused(true);
       };
-    }, [])
+    }, []),
   );
   useEffect(() => {
     setIsPaused(false);
@@ -87,15 +91,19 @@ const StoryViewer = () => {
   //    let  currentUserStoriesEffect = stories[currentStoryIndex]?.storyDetails || [];
   //    setcurrentUserStories(currentUserStoriesEffect);
   //    setcurrentStory(currentUserStoriesEffect[currentMediaIndex]);
- 
+
   // }, [currentMediaIndex, currentStoryIndex]);
   useEffect(() => {
     if (currentStoryIndex >= 0) {
-      const currentUserStoriesEffect = stories[currentStoryIndex]?.storyDetails || [];
-  
+      const currentUserStoriesEffect =
+        stories[currentStoryIndex]?.storyDetails || [];
+
       setcurrentUserStories(currentUserStoriesEffect);
-  
-      if (currentMediaIndex >= 0 && currentMediaIndex < currentUserStoriesEffect.length) {
+
+      if (
+        currentMediaIndex >= 0 &&
+        currentMediaIndex < currentUserStoriesEffect.length
+      ) {
         setcurrentStory(currentUserStoriesEffect[currentMediaIndex]);
       } else {
         setcurrentStory(null); // optional: prevent out-of-bounds error
@@ -106,9 +114,10 @@ const StoryViewer = () => {
       setcurrentStory(null);
     }
   }, [currentMediaIndex, currentStoryIndex, stories]);
-  if (currentStoryIndex === -1 || !Array.isArray(currentUserStories)) return null;
+  if (currentStoryIndex === -1 || !Array.isArray(currentUserStories))
+    return null;
   const currentUser = stories[currentStoryIndex] || {};
-//  const currentUserStories = stories[currentStoryIndex]?.storyDetails || [];
+  //  const currentUserStories = stories[currentStoryIndex]?.storyDetails || [];
   const togglePause = () => {
     console.log('Toggle pause called, current state:', isPaused);
     // if(isPaused== true){
@@ -123,7 +132,7 @@ const StoryViewer = () => {
   };
   // Handles transitioning between stories
   const handleNextStory = () => {
-     console.log('handleNextStory');
+    console.log('handleNextStory');
     if (isPaused === false) {
       if (!isTransitioning.current) {
         isTransitioning.current = true;
@@ -191,12 +200,12 @@ const StoryViewer = () => {
     .shouldCancelWhenOutside(false)
     .onStart(() => {
       console.log('Long press started - pausing video');
-  
+
       runOnJS(setIsPaused)(true);
     })
     .onEnd(() => {
       console.log('Long press ended - resuming video');
-  
+
       runOnJS(setIsPaused)(false);
     });
   const swipeDownGesture = Gesture.Pan()
@@ -215,8 +224,19 @@ const StoryViewer = () => {
       navigation.navigate('Home'); // or whatever your main screen is
     }
   };
-  const horizontalSwipeGesture = Gesture.Pan()
-  .onEnd((event) => {
+  const onPressUser = () => {
+    if (user.userId === currentUser.userId) {
+      navigation.navigate('ProfileScreen');
+    } else {
+      navigation.navigate('ProfileDetail', {
+        userName: currentUser.postedBy,
+        userImage: currentUser.profileImage,
+        userId: currentUser.userId,
+        loggedInUserId: user.userId,
+      });
+    }
+  };
+  const horizontalSwipeGesture = Gesture.Pan().onEnd(event => {
     if (Math.abs(event.translationX) > 50) {
       if (event.translationX < 0) {
         // Swipe left → next user
@@ -230,75 +250,79 @@ const StoryViewer = () => {
     }
   });
   return (
-  
-      <GestureHandlerRootView style={{flex: 1}}>
-        <GestureDetector
-          gesture={Gesture.Exclusive(
-            longPressGesture,
-            Gesture.Simultaneous(
-              swipeDownGesture,
-              horizontalSwipeGesture // ✅ Add here
-              // tapGesture removed as it might interfere
-            ),
-          )}>
-          <View style={styles.container}>
-            <View style={styles.userInfoContainer}>
-              <Image
-                source={{
-                  uri: `${imagesBucketcloudfrontPath}${currentUser.profileImage}`,
-                }}
-                style={styles.profileImage}
-              />
-              <Text style={styles.username}>{currentUser.postedBy}</Text>
-            </View>
-
-            {/* Close Button */}
-            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-              <Text style={styles.closeText}>✕</Text>
-            </TouchableOpacity>
-
-            {/* Progress Bars */}
-            <View style={styles.progressBarContainer}>
-              {currentUserStories.map((item, index) => (
-                <ProgressBar
-                key={item.storyId?.toString() ?? index.toString()}
-                  duration={(currentStory?.mediaDuration > -1 ? currentStory.mediaDuration : 10000)}
-                  isActive={index === currentMediaIndex}
-                  isPaused={isPaused  || isLoadingMedia|| !isStoryReady}
-                  hasCompleted={index < currentMediaIndex} // Mark previous stories as completed
-                  onComplete={handleNextStory}
-                />
-              ))}
-            </View>
-            {isLoadingMedia && (
-              <ActivityIndicator
-                size="large"
-                color="white"
-                style={{ position: 'absolute', alignSelf: 'center' }}
-              />
-            )}
-            {/* Story Content */}
-            <StoryItem
-              story={currentStory}
-              storyIndex={currentMediaIndex}
-              onLoad={() => {
-                setIsLoadingMedia(false);
-                setIsPaused(false); // resume only after loading completes
-                setIsStoryReady(true);
+    <GestureHandlerRootView style={{flex: 1}}>
+      <GestureDetector
+        gesture={Gesture.Exclusive(
+          longPressGesture,
+          Gesture.Simultaneous(
+            swipeDownGesture,
+            horizontalSwipeGesture, // ✅ Add here
+            // tapGesture removed as it might interfere
+          ),
+        )}>
+        <View style={styles.container}>
+          <TouchableOpacity
+            style={styles.userInfoContainer}
+            onPress={onPressUser}>
+            <Image
+              source={{
+                uri: `${imagesBucketcloudfrontPath}${currentUser.profileImage}`,
               }}
-             // onLoad={() => runOnJS(setIsPaused)(false)}
-              onVideoEnd={handleNextStory}
-              togglePause={togglePause}
-              oncloseModal={closeModal}
-              setActionAreaActive={handleActionAreaActive}
-              handleNextStory={handleNextStory}
-              handlePreviousStory={handlePreviousStory}
-              isPaused={isPaused }
+              style={styles.profileImage}
             />
+            <Text style={styles.username}>{currentUser.postedBy}</Text>
+          </TouchableOpacity>
+
+          {/* Close Button */}
+          <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+            <Text style={styles.closeText}>✕</Text>
+          </TouchableOpacity>
+
+          {/* Progress Bars */}
+          <View style={styles.progressBarContainer}>
+            {currentUserStories.map((item, index) => (
+              <ProgressBar
+                key={item.storyId?.toString() ?? index.toString()}
+                duration={
+                  currentStory?.mediaDuration > -1
+                    ? currentStory.mediaDuration
+                    : 10000
+                }
+                isActive={index === currentMediaIndex}
+                isPaused={isPaused || isLoadingMedia || !isStoryReady}
+                hasCompleted={index < currentMediaIndex} // Mark previous stories as completed
+                onComplete={handleNextStory}
+              />
+            ))}
           </View>
-        </GestureDetector>
-      </GestureHandlerRootView>
-   
+          {isLoadingMedia && (
+            <ActivityIndicator
+              size="large"
+              color="white"
+              style={{position: 'absolute', alignSelf: 'center'}}
+            />
+          )}
+          {/* Story Content */}
+          <StoryItem
+            story={currentStory}
+            storyIndex={currentMediaIndex}
+            onLoad={() => {
+              setIsLoadingMedia(false);
+              setIsPaused(false); // resume only after loading completes
+              setIsStoryReady(true);
+            }}
+            // onLoad={() => runOnJS(setIsPaused)(false)}
+            onVideoEnd={handleNextStory}
+            togglePause={togglePause}
+            oncloseModal={closeModal}
+            setActionAreaActive={handleActionAreaActive}
+            handleNextStory={handleNextStory}
+            handlePreviousStory={handlePreviousStory}
+            isPaused={isPaused}
+          />
+        </View>
+      </GestureDetector>
+    </GestureHandlerRootView>
   );
 };
 

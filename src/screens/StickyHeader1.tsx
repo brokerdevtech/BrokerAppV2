@@ -46,7 +46,9 @@ import {
 import PostActions from '../sharedComponents/PostActions';
 import UserStories from '../components/story/UserStories';
 import ReportScreen from '../sharedComponents/ReportScreen';
+
 import { FlashList } from '@shopify/flash-list';
+
 import isEqual from 'lodash/isEqual';
 const HEADER_HEIGHT = 60;
 const TAB_BAR_HEIGHT = 48; // Approximate height of TabBar
@@ -56,6 +58,7 @@ const RederListHeader = React.memo(({StoryData}) => {
   return <>{StoryData != null && <UserStories Data={StoryData} />}</>;
 });
 // TabNavigation component remains the same
+
 const ProductItem =({item, listTypeData, User, menuPress, navigation, OnGoBack}) => 
   {
       console.log('ProductItem',item);
@@ -71,144 +74,129 @@ const ProductItem =({item, listTypeData, User, menuPress, navigation, OnGoBack})
       OnGoBack(item);
     };
 
-    const openWhatsApp = useCallback((phoneNumber, message) => {
-      const url = `whatsapp://send?text=${encodeURIComponent(
-        message,
-      )}&phone=${phoneNumber}`;
 
+  const openWhatsApp = useCallback((phoneNumber, message) => {
+    const url = `whatsapp://send?text=${encodeURIComponent(
+      message,
+    )}&phone=${phoneNumber}`;
+
+    Linking.canOpenURL(url)
+      .then(supported => {
+        if (supported) {
+          Linking.openURL(url);
+        } else {
+          Alert.alert('Error', 'WhatsApp is not installed on this device');
+        }
+      })
+      .catch(err => console.error('Error opening WhatsApp', err));
+  }, []);
+  const chatProfilePress = useCallback(async () => {
+    const members = [User.userId.toString(), item.userId.toString()];
+
+    navigation.navigate('AppChat', {
+      defaultScreen: 'ChannelScreen',
+      defaultParams: members,
+      //  defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
+    });
+  }, []);
+  const makeCall = useCallback(async phoneNumber => {
+    // console.log(phoneNumber, 'phone');
+    const url = `tel:${phoneNumber}`;
+
+    const checkPermissionAndOpen = async () => {
+      const hasPermission = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+      );
+      if (hasPermission) {
+        Linking.openURL(url);
+      } else {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          Linking.openURL(url);
+        } else {
+          Alert.alert(
+            'Permission Denied',
+            'You need to enable call permissions to use this feature',
+          );
+        }
+      }
+    };
+
+    if (Platform.OS === 'android') {
+      await checkPermissionAndOpen();
+    } else {
       Linking.canOpenURL(url)
         .then(supported => {
           if (supported) {
             Linking.openURL(url);
           } else {
-            Alert.alert('Error', 'WhatsApp is not installed on this device');
-          }
-        })
-        .catch(err => console.error('Error opening WhatsApp', err));
-    }, []);
-    const chatProfilePress = useCallback(async () => {
-      const members = [User.userId.toString(), item.userId.toString()];
-
-      navigation.navigate('AppChat', {
-        defaultScreen: 'ChannelScreen',
-        defaultParams: members,
-        //  defaultchannelSubject: `Hi,i want to connect on ${item.title}`,
-      });
-    }, []);
-    const makeCall = useCallback(async phoneNumber => {
-      // console.log(phoneNumber, 'phone');
-      const url = `tel:${phoneNumber}`;
-
-      const checkPermissionAndOpen = async () => {
-        const hasPermission = await PermissionsAndroid.check(
-          PermissionsAndroid.PERMISSIONS.CALL_PHONE,
-        );
-        if (hasPermission) {
-          Linking.openURL(url);
-        } else {
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.CALL_PHONE,
-          );
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            Linking.openURL(url);
-          } else {
             Alert.alert(
-              'Permission Denied',
-              'You need to enable call permissions to use this feature',
+              'Oops! ',
+              'No contact info available for this post. Try reaching out through other channels!',
             );
           }
-        }
-      };
+        })
+        .catch(err => console.error('Error opening dialer', err));
+    }
+  }, []);
+  return (
+    <View style={styles.WrapcardContainer}>
+      <View style={styles.cardContainer}>
+        <ItemHeader item={item}></ItemHeader>
+        <MediaGallery
+          ref={MediaGalleryRef}
+          mediaItems={item.postMedias}
+          paused={false}
+        />
 
-      if (Platform.OS === 'android') {
-        await checkPermissionAndOpen();
-      } else {
-        Linking.canOpenURL(url)
-          .then(supported => {
-            if (supported) {
-              Linking.openURL(url);
-            } else {
-              Alert.alert(
-                'Oops! ',
-                'No contact info available for this post. Try reaching out through other channels!',
-              );
-            }
-          })
-          .catch(err => console.error('Error opening dialer', err));
-      }
-    }, []);
-    return (
-      <View style={styles.WrapcardContainer}>
-        <View style={styles.cardContainer}>
-          <ItemHeader item={item}></ItemHeader>
-          <MediaGallery
-            ref={MediaGalleryRef}
-            mediaItems={item.postMedias}
-            paused={false}
-          />
-
-          <View style={styles.iconContainer}>
-            <TouchableOpacity
-              onPress={() => menuPress(item)}
-              style={styles.checkIcon}>
-              <MenuThreeDots height={20} width={20} />
-            </TouchableOpacity>
-          </View>
-
-          <View style={{marginLeft: 20}}>
-            <PostActions
-              item={item}
-              User={User}
-              listTypeData={listTypeData}
-              isrefresh={isrefresh}
-              onUpdateLikeCount={newCount => {
-                // console.log(newCount);
-              }}
-            />
-          </View>
-          {/* Car Details */}
+        <View style={styles.iconContainer}>
           <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('ItemDetailScreen', {
-                onGoBack: ProductItemOnGoBack,
-                postId: item.postId,
-                postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post',
-              })
-            }>
-            <VStack space="xs" style={styles.detailsContainer}>
+            onPress={() => menuPress(item)}
+            style={styles.checkIcon}>
+            <MenuThreeDots height={20} width={20} />
+          </TouchableOpacity>
+        </View>
+
+        <View style={{marginLeft: 20}}>
+          <PostActions
+            item={item}
+            User={User}
+            listTypeData={listTypeData}
+            isrefresh={isrefresh}
+            onUpdateLikeCount={newCount => {
+              // console.log(newCount);
+            }}
+          />
+        </View>
+        {/* Car Details */}
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('ItemDetailScreen', {
+              onGoBack: ProductItemOnGoBack,
+              postId: item.postId,
+              postType: item.hasOwnProperty('fuelType') ? 'Car/Post' : 'Post',
+            })
+          }>
+          <VStack space="xs" style={styles.detailsContainer}>
+            <HStack>
+              <Box style={{marginLeft: 4}}>
+                <ZText type={'M16'} style={{color: colors.light.appred}}>
+                  {'\u20B9'}{' '}
+                </ZText>
+              </Box>
+              <Box>
+                <ZText type={'M16'} style={{color: colors.light.appred}}>
+                  {formatNumberToIndianSystem(item.price)}
+                </ZText>
+              </Box>
+            </HStack>
+
+            {item.location?.cityName && (
               <HStack>
-                <Box style={{marginLeft: 4}}>
-                  <ZText type={'M16'} style={{color: colors.light.appred}}>
-                    {'\u20B9'}{' '}
-                  </ZText>
-                </Box>
                 <Box>
-                  <ZText type={'M16'} style={{color: colors.light.appred}}>
-                    {formatNumberToIndianSystem(item.price)}
-                  </ZText>
-                </Box>
-              </HStack>
-
-              {item.location?.cityName && (
-                <HStack>
-                  <Box>
-                    <Icon as={Location_Icon} size="xl" />
-                  </Box>
-                  <Box style={{width: '100%', flex: 1}}>
-                    <ZText
-                      type={'R16'}
-                      numberOfLines={1} // Limits to 2 lines
-                      ellipsizeMode="tail">
-                      {' '}
-                      {item.location.placeName}
-                    </ZText>
-                  </Box>
-                </HStack>
-              )}
-
-              <HStack style={{width: '100%', flex: 1}}>
-                <Box>
-                  <Icon as={description_icon} fill="black" size="xl" />
+                  <Icon as={Location_Icon} size="xl" />
                 </Box>
                 <Box style={{width: '100%', flex: 1}}>
                   <ZText
@@ -216,70 +204,87 @@ const ProductItem =({item, listTypeData, User, menuPress, navigation, OnGoBack})
                     numberOfLines={1} // Limits to 2 lines
                     ellipsizeMode="tail">
                     {' '}
-                    {item.title}
+                    {item.location.placeName}
                   </ZText>
                 </Box>
               </HStack>
-            </VStack>
-          </TouchableOpacity>
-          {/* <Divider  className="my-0.5" /> */}
+            )}
 
-          <View style={styles.detailsContainerBottom}>
-            <HStack
-            // space="md"
-            >
-              <HStack
-                style={{
-                  alignItems: 'center',
-                  width: '50%',
-                  justifyContent: 'center',
-                }}>
-                <TouchableOpacity
-                  style={styles.callbtn}
-                  onPress={() => makeCall(item.contactNo)}>
-                  <View style={{alignItems: 'center'}}>
-                    <Icon
-                      as={Telephone_Icon}
-                      color={colors.light.appred}
-                      size={'xxl'}
-                    />
-                  </View>
-                  <View style={{alignItems: 'center', paddingVertical: 10}}>
-                    <ZText type={'M14'}>Call</ZText>
-                  </View>
-                </TouchableOpacity>
-              </HStack>
-              <HStack
-                style={{
-                  alignItems: 'center',
-                  width: '50%',
-                  justifyContent: 'center',
-                }}>
-                <TouchableOpacity
-                  style={styles.Chatbtn}
-                  onPress={() => chatProfilePress()}>
-                  <View style={{alignItems: 'center', marginRight: 10}}>
-                    <Icon as={Chat_Icon} color={'#0F5DC4'} size={'xxl'} />
-                  </View>
-                  <View style={{alignItems: 'center', paddingVertical: 10}}>
-                    <ZText type={'M14'}>Chat</ZText>
-                  </View>
-                </TouchableOpacity>
-              </HStack>
+            <HStack style={{width: '100%', flex: 1}}>
+              <Box>
+                <Icon as={description_icon} fill="black" size="xl" />
+              </Box>
+              <Box style={{width: '100%', flex: 1}}>
+                <ZText
+                  type={'R16'}
+                  numberOfLines={1} // Limits to 2 lines
+                  ellipsizeMode="tail">
+                  {' '}
+                  {item.title}
+                </ZText>
+              </Box>
             </HStack>
-          </View>
+          </VStack>
+        </TouchableOpacity>
+        {/* <Divider  className="my-0.5" /> */}
+
+        <View style={styles.detailsContainerBottom}>
+          <HStack
+          // space="md"
+          >
+            <HStack
+              style={{
+                alignItems: 'center',
+                width: '50%',
+                justifyContent: 'center',
+              }}>
+              <TouchableOpacity
+                style={styles.callbtn}
+                onPress={() => makeCall(item.contactNo)}>
+                <View style={{alignItems: 'center'}}>
+                  <Icon
+                    as={Telephone_Icon}
+                    color={colors.light.appred}
+                    size={'xxl'}
+                  />
+                </View>
+                <View style={{alignItems: 'center', paddingVertical: 10}}>
+                  <ZText type={'M14'}>Call</ZText>
+                </View>
+              </TouchableOpacity>
+            </HStack>
+            <HStack
+              style={{
+                alignItems: 'center',
+                width: '50%',
+                justifyContent: 'center',
+              }}>
+              <TouchableOpacity
+                style={styles.Chatbtn}
+                onPress={() => chatProfilePress()}>
+                <View style={{alignItems: 'center', marginRight: 10}}>
+                  <Icon as={Chat_Icon} color={'#0F5DC4'} size={'xxl'} />
+                </View>
+                <View style={{alignItems: 'center', paddingVertical: 10}}>
+                  <ZText type={'M14'}>Chat</ZText>
+                </View>
+              </TouchableOpacity>
+            </HStack>
+          </HStack>
         </View>
       </View>
-    );
-  }
+
+
 
 //   (prevProps, nextProps) => {
 //     // Perform shallow comparison on key props
 //     return (
 //       isEqual(prevProps.item, nextProps.item) &&
 //       prevProps.listTypeData === nextProps.listTypeData &&
+
 //       prevProps.User === nextProps.User 
      
+
 //     );
 //   },
 // );
@@ -314,13 +319,14 @@ const ProductListScreen = ({
         listTypeData={category === 'Property' ? 'RealEstate' : 'Car'}
         menuPress={handlePresentModalPress}
         navigation={navigation}
-        // OnGoBack={OnGoBack}
+        OnGoBack={OnGoBack}
       />
     ),
     [user, category, handlePresentModalPress, navigation],
   );
 
   return (
+
 <FlashList
   ref={listRef}
   data={data}
@@ -343,6 +349,7 @@ const ProductListScreen = ({
 
 
    
+
   );
 };
 
@@ -415,10 +422,11 @@ const StickyHeaderWithTabs1 = () => {
 
   const loadMorepage = async () => {
     // if (isInfiniteLoading || !hasMore) return;
+    // if (isInfiniteLoading || !hasMore) return;
     const apiEndpoint =
       index === 0 ? '/Post/DashboardPost' : '/Car/Post/DashboardPost';
     // if (!isInfiniteLoading) {
-      await loadMore(user.userId, apiEndpoint);
+    await loadMore(user.userId, apiEndpoint);
     // }
   };
   // Create refs for each tab's FlatList
@@ -480,12 +488,12 @@ const StickyHeaderWithTabs1 = () => {
       },
     },
   );
-  const handleScroll1 = (event) => {
+  const handleScroll1 = event => {
     const currentScrollY = event.nativeEvent.contentOffset.y;
     scrollY.setValue(currentScrollY); // update animation manually
-  
+
     const diff = currentScrollY - lastScrollY.current;
-  
+
     if (diff > 5 && !isScrollingDown.current) {
       isScrollingDown.current = true;
       Animated.timing(headerVisible, {
@@ -501,7 +509,7 @@ const StickyHeaderWithTabs1 = () => {
         useNativeDriver: true,
       }).start();
     }
-  
+
     lastScrollY.current = currentScrollY;
   };
   // Handle tab change
