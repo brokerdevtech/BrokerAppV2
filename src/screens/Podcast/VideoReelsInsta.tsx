@@ -3,6 +3,7 @@ import {View, Dimensions, ActivityIndicator, FlatList} from 'react-native';
 import Video from 'react-native-video';
 import {fetchInstagramVideos} from '../../../BrokerAppCore/services/new/podcastService';
 import {Padding} from '@/styles/GlobalStyles';
+import {useFocusEffect} from '@react-navigation/native';
 
 const {height: screenHeight, width} = Dimensions.get('window');
 
@@ -88,6 +89,14 @@ const InstagramReels = () => {
       fetchVideos(nextPage);
     }
   };
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        // Pause video when screen is unfocused
+        setCurrentIndex(-1); // This will pause all videos
+      };
+    }, []),
+  );
   useEffect(() => {
     fetchVideos();
   }, []);

@@ -36,6 +36,7 @@ import {
   ComingSoon,
   Home_tab_icon_fill,
   Heart_tab_icon_fill,
+  Reel_tab_icon_fill,
 } from '../assets/svg';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import TouchableOpacityWithPermissionCheck from '../sharedComponents/TouchableOpacityWithPermissionCheck';
@@ -260,7 +261,7 @@ const AppTab: React.FC = () => {
               <TabText
                 text={''}
                 focused={focused}
-                icon={focused ? <Reel_tab_icon /> : <Reel_tab_icon />}
+                icon={focused ? <Reel_tab_icon_fill /> : <Reel_tab_icon />}
               />
             ),
           }}
