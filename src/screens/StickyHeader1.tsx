@@ -50,6 +50,9 @@ import ReportScreen from '../sharedComponents/ReportScreen';
 import { FlashList } from '@shopify/flash-list';
 
 import isEqual from 'lodash/isEqual';
+import { GetDashboardData } from '../../BrokerAppCore/services/authService';
+import store from '../../BrokerAppCore/redux/store';
+import { setDashboard } from '../../BrokerAppCore/redux/store/Dashboard/dashboardSlice';
 const HEADER_HEIGHT = 60;
 const TAB_BAR_HEIGHT = 48; // Approximate height of TabBar
 const screenWidth = Dimensions.get('window').width;
@@ -361,9 +364,38 @@ const StickyHeaderWithTabs1 = () => {
 
     setStoryData(DashboardStory.data);
   }
+
+  
   useFocusEffect(
     useCallback(() => {
+      const fetchData = async () => {
+        try {
+          const request = {pageNo: 1, pageSize: 10, cityName: AppLocation.City};
+
+          const results = await Promise.allSettled([
+            GetDashboardData(user.userId),
+          
+          ]);
+
+          const [
+            dashboardData,
+           
+          ] = results.map(result =>
+            result.status === 'fulfilled' ? result.value : null,
+          );
+          //           console.log("DashboardStory?.data");
+          // console.log(JSON.stringify(DashboardStory?.data));
+         
+
+          if (dashboardData?.data) {
+            store.dispatch(setDashboard(dashboardData.data));
+          }
+        } catch (error) {
+          console.error('Error fetching dashboard data:', error);
+        }
+      };
       callPodcastList();
+      fetchData();
     }, [index]),
   );
   // useEffect(() => {

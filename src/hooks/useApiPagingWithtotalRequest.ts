@@ -134,6 +134,8 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
     return () => {
       isMounted.current = false; // Set mounted to false when the component unmounts
       if (setLoading) setLoading(false); // Reset loading state when unmounted
+      setData(null);
+       console.log("===============Mounted==================")
     };
   }, [setLoading]);
   const setData_Set = (newData: T | null) => {

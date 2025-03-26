@@ -21,7 +21,7 @@ import {
 import {useToast} from '../../components/ui/toast';
 import {useNavigation} from '@react-navigation/native';
 import StoryCommentBottomSheet from '../sharedComponents/StoryCommentBottomSheet';
-import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import {BottomSheetModalProvider, useBottomSheetModal} from '@gorhom/bottom-sheet';
 import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import TouchableOpacityWithPermissionCheck from '../sharedComponents/TouchableOpacityWithPermissionCheck';
 import {PermissionKey} from '../config/constants';
@@ -40,7 +40,7 @@ const StoriesAction = ({
     useStory();
   const [ActionStoryStates, setActionStoryStates] = useState({});
   const user = useSelector((state: RootState) => state.user.user);
-
+  const { dismiss, dismissAll } = useBottomSheetModal();
   const toast = useToast();
   let isStoryOwner = user.userId === stories[currentStoryIndex]?.userId;
   const navigation = useNavigation();
@@ -70,7 +70,10 @@ const StoriesAction = ({
 const closeModal = async (item: any) => {
     // updateCurrentStory(item)
     setOpen(false);
+
     setActionStoryStates(item);
+  //  dismissAll();
+     commentSheetRef.current?.dismiss();
     //updateCurrentStory(item)
     // await new Promise(resolve => setTimeout(resolve, 200));
     // togglePause();
@@ -82,6 +85,8 @@ const closeModal = async (item: any) => {
     setTimeout(() => {
       togglePause(); // resume playback after close
     }, 300);
+      
+       
   };
 
 
@@ -154,7 +159,7 @@ const closeModal = async (item: any) => {
     if (!isOpen) {
       setOpen(true);
       togglePause();
-      commentSheetRef.current?.open();
+   //   commentSheetRef.current?.open();
     }
   };
   const handleDeleteStory = () => {
@@ -203,6 +208,13 @@ const closeModal = async (item: any) => {
       {cancelable: false},
     );
   };
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        commentSheetRef.current?.open(); // safer for @gorhom/bottom-sheet v5+
+      }, 0);
+    }
+  }, [isOpen]);
   // console.log(stories, 'kmm');
   return (
     <BottomSheetModalProvider>
@@ -301,7 +313,7 @@ const closeModal = async (item: any) => {
       )}
 
       {/* Always render the bottom sheet */}
-     
+     {isOpen &&
       <StoryCommentBottomSheet
         ref={commentSheetRef}
         StoryStateParam={ActionStoryStates}
@@ -310,7 +322,7 @@ const closeModal = async (item: any) => {
         listTypeData={''}
         userPermissions={userPermissions}
         onClose={closeModal}
-      />
+      />}
     </BottomSheetModalProvider>
   );
 };

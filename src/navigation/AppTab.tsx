@@ -264,8 +264,8 @@ const AppTab: React.FC = () => {
               />
             ),
           }}
-          component={InstagramReels}
-          // component={MyNetworkScreen}
+         // component={InstagramReels}
+           component={PlaceholderScreen}
         />
         <Tab.Screen
           name="appointment"

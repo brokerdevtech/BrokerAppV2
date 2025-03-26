@@ -109,6 +109,7 @@ const StoryCommentBottomSheet = forwardRef(
       hasMore_Set,
       totalPages,
       recordCount,
+      setData_Set
     } = useApiPagingWithtotalRequest(
       GetStoryCommentList,
       setInfiniteLoading,
@@ -152,6 +153,7 @@ const StoryCommentBottomSheet = forwardRef(
       //   console.log(postItem)
       //  callCommentList();
       if (isOpen) {
+        console.log("===========callCommentList===========")
         setInfiniteLoading(true);
         setNewComment('');
         setreplyCommentId(0);
@@ -159,11 +161,12 @@ const StoryCommentBottomSheet = forwardRef(
         setToastId(0);
         callCommentList();
       }
-      console.log("===========useEffect===========")
+     
     }, [Reset, isOpen]);
 
     useEffect(() => {
-        console.log("===========callCommentList===========")
+        console.log("===========StoryStateParam===========")
+        setData_Set([])
       //   console.log(postItem)
       //  callCommentList();
       setStoryState(StoryStateParam);
@@ -184,6 +187,11 @@ const StoryCommentBottomSheet = forwardRef(
       open: () => {
         console.log("useImperativeHandle")
         bottomSheetModalRef.current?.present();
+      },
+      dismiss: () => {
+        console.log("dismiss")
+        setData_Set([]);
+        bottomSheetModalRef.current?.dismiss();
       },
     }));
 
