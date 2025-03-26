@@ -22,12 +22,10 @@ const InstagramReels = () => {
   const [nextPage, setNextPage] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const onVideoEndRef = useRef(false);
-  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
   // const [videos, setVideos] = useState([]);
   // const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef(null);
-  const videoRefs = useRef({});
   // Fetch Instagram videos
   const fetchVideos = async (
     url = `${FACEBOOK_API_URL}/${ACCOUNT_ID}/tags?fields=id,media_type,media_url,permalink,timestamp&access_token=${ACCESS_TOKEN}&limit=5`,
@@ -115,76 +113,39 @@ const InstagramReels = () => {
       onVideoEndRef.current = false; // Reset flag after transition
     }, 500); // Adjust delay if needed
   };
-  const toggleSound = () => {
-    setIsSoundEnabled(!isSoundEnabled);
-  };
-
   const renderItem = useCallback(
-    ({item, index}) => {
-      const isCurrentItem = currentIndex === index;
-
-      return (
-        <View
-          style={{
-            height: screenHeight,
-            width,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+    ({item, index}) => (
+      <View
+        style={{
+          height: VIDEO_HEIGHT,
+          width,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        {currentIndex == index && (
           <Video
-            ref={ref => {
-              if (ref) {
-                videoRefs.current[index] = ref;
-              }
-            }}
             source={{uri: item.media_url}}
-            style={{
-              width: '100%',
-              height: '100%',
-            }}
+            style={{width, height: VIDEO_HEIGHT}} // Responsive aspect ratio
             resizeMode="cover"
-            paused={!isCurrentItem}
-            muted={!isCurrentItem || !soundEnabled}
-            repeat={false}
-            volume={Platform.OS === 'ios' ? 1.0 : 1.0}
-            playInBackground={false}
-            playWhenInactive={false}
-            ignoreSilentSwitch="ignore"
+            controls={false}
+            repeat={false} // Don't loop, move to the next video instead
+            paused={currentIndex !== index} // Auto-play when in view
             onEnd={handleVideoEnd}
-            onBuffer={info => {
-              console.log('Video Buffering:', info);
-            }}
-            onError={error => {
-              console.error('Video Playback Error:', {
-                error: error.error,
-                errorCode: error.errorCode,
-                errorString: error.errorString,
-              });
-            }}
+            muted={false}
+            volume={2.0}
+            // Play next video when the current one ends
           />
-        </View>
-      );
-    },
-    [currentIndex, soundEnabled],
+        )}
+      </View>
+    ),
+    [currentIndex],
   );
-
+  // Function to track user swipe and update current index
   const onViewableItemsChanged = useCallback(({viewableItems}) => {
     if (viewableItems.length > 0) {
-      const newIndex = viewableItems[0].index;
-
-      // Pause previous video, play current video
-      if (videoRefs.current[currentIndex]) {
-        videoRefs.current[currentIndex].pause();
-      }
-
-      if (videoRefs.current[newIndex]) {
-        videoRefs.current[newIndex].resume();
-      }
-
-      setCurrentIndex(newIndex);
+      setCurrentIndex(viewableItems[0].index);
     }
   }, []);
-
   return (
     <View style={{flex: 1, backgroundColor: 'black'}}>
       {loading ? (
