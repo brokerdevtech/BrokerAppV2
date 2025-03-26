@@ -3,6 +3,7 @@ import {View, Dimensions, ActivityIndicator, FlatList} from 'react-native';
 import Video from 'react-native-video';
 import {fetchInstagramVideos} from '../../../BrokerAppCore/services/new/podcastService';
 import {Padding} from '@/styles/GlobalStyles';
+import {useFocusEffect} from '@react-navigation/native';
 
 const {height: screenHeight, width} = Dimensions.get('window');
 
@@ -21,10 +22,12 @@ const InstagramReels = () => {
   const [nextPage, setNextPage] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const onVideoEndRef = useRef(false);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
   // const [videos, setVideos] = useState([]);
   // const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef(null);
+  const videoRefs = useRef({});
   // Fetch Instagram videos
   const fetchVideos = async (
     url = `${FACEBOOK_API_URL}/${ACCOUNT_ID}/tags?fields=id,media_type,media_url,permalink,timestamp&access_token=${ACCESS_TOKEN}&limit=5`,
@@ -88,6 +91,14 @@ const InstagramReels = () => {
       fetchVideos(nextPage);
     }
   };
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        // Pause video when screen is unfocused
+        setCurrentIndex(-1); // This will pause all videos
+      };
+    }, []),
+  );
   useEffect(() => {
     fetchVideos();
   }, []);
@@ -104,39 +115,76 @@ const InstagramReels = () => {
       onVideoEndRef.current = false; // Reset flag after transition
     }, 500); // Adjust delay if needed
   };
+  const toggleSound = () => {
+    setIsSoundEnabled(!isSoundEnabled);
+  };
+
   const renderItem = useCallback(
-    ({item, index}) => (
-      <View
-        style={{
-          height: VIDEO_HEIGHT,
-          width,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        {currentIndex == index && (
+    ({item, index}) => {
+      const isCurrentItem = currentIndex === index;
+
+      return (
+        <View
+          style={{
+            height: screenHeight,
+            width,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
           <Video
+            ref={ref => {
+              if (ref) {
+                videoRefs.current[index] = ref;
+              }
+            }}
             source={{uri: item.media_url}}
-            style={{width, height: VIDEO_HEIGHT}} // Responsive aspect ratio
+            style={{
+              width: '100%',
+              height: '100%',
+            }}
             resizeMode="cover"
-            controls={false}
-            repeat={false} // Don't loop, move to the next video instead
-            paused={currentIndex !== index} // Auto-play when in view
+            paused={!isCurrentItem}
+            muted={!isCurrentItem || !soundEnabled}
+            repeat={false}
+            volume={Platform.OS === 'ios' ? 1.0 : 1.0}
+            playInBackground={false}
+            playWhenInactive={false}
+            ignoreSilentSwitch="ignore"
             onEnd={handleVideoEnd}
-            muted={false}
-            volume={2.0}
-            // Play next video when the current one ends
+            onBuffer={info => {
+              console.log('Video Buffering:', info);
+            }}
+            onError={error => {
+              console.error('Video Playback Error:', {
+                error: error.error,
+                errorCode: error.errorCode,
+                errorString: error.errorString,
+              });
+            }}
           />
-        )}
-      </View>
-    ),
-    [currentIndex],
+        </View>
+      );
+    },
+    [currentIndex, soundEnabled],
   );
-  // Function to track user swipe and update current index
+
   const onViewableItemsChanged = useCallback(({viewableItems}) => {
     if (viewableItems.length > 0) {
-      setCurrentIndex(viewableItems[0].index);
+      const newIndex = viewableItems[0].index;
+
+      // Pause previous video, play current video
+      if (videoRefs.current[currentIndex]) {
+        videoRefs.current[currentIndex].pause();
+      }
+
+      if (videoRefs.current[newIndex]) {
+        videoRefs.current[newIndex].resume();
+      }
+
+      setCurrentIndex(newIndex);
     }
   }, []);
+
   return (
     <View style={{flex: 1, backgroundColor: 'black'}}>
       {loading ? (

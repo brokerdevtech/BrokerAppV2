@@ -64,6 +64,7 @@ import Home_tab_icon_fill from './home-tab-fill.svg';
 import Heart_tab_icon from './heart_tab_icon.svg';
 import Heart_tab_icon_fill from './heart_tab_icon_fill.svg';
 import Reel_tab_icon from './reel_tab.svg';
+import Reel_tab_icon_fill from './reel_tab_focus.svg';
 import Calender_tab_icon from './calender_tab.svg';
 import Plus_Icon from './plus_tab.svg';
 import Delete_Account_Icon from './deleteAccount.svg';
@@ -106,6 +107,7 @@ export {
   subscription,
   Buyer,
   Home_tab_icon_fill,
+  Reel_tab_icon_fill,
   filter,
   BuyerActive,
   MenuThreeDots,

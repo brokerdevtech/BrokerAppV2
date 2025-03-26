@@ -47,9 +47,10 @@ import PostActions from '../sharedComponents/PostActions';
 import UserStories from '../components/story/UserStories';
 import ReportScreen from '../sharedComponents/ReportScreen';
 
-import { FlashList } from '@shopify/flash-list';
+import {FlashList} from '@shopify/flash-list';
 
 import isEqual from 'lodash/isEqual';
+import {GetDashboardData} from '../../BrokerAppCore/services/authService';
 const HEADER_HEIGHT = 60;
 const TAB_BAR_HEIGHT = 48; // Approximate height of TabBar
 const screenWidth = Dimensions.get('window').width;
@@ -58,7 +59,14 @@ const RederListHeader = React.memo(({StoryData}) => {
   return <>{StoryData != null && <UserStories Data={StoryData} />}</>;
 });
 // TabNavigation component remains the same
-const ProductItem = ({ item, listTypeData, User, menuPress, navigation, OnGoBack }) => {
+const ProductItem = ({
+  item,
+  listTypeData,
+  User,
+  menuPress,
+  navigation,
+  OnGoBack,
+}) => {
   const [isrefresh, setIsRefresh] = useState(0);
   const MediaGalleryRef = useRef(null);
 
@@ -72,7 +80,9 @@ const ProductItem = ({ item, listTypeData, User, menuPress, navigation, OnGoBack
   };
 
   const openWhatsApp = useCallback((phoneNumber, message) => {
-    const url = `whatsapp://send?text=${encodeURIComponent(message)}&phone=${phoneNumber}`;
+    const url = `whatsapp://send?text=${encodeURIComponent(
+      message,
+    )}&phone=${phoneNumber}`;
 
     Linking.canOpenURL(url)
       .then(supported => {
@@ -98,20 +108,20 @@ const ProductItem = ({ item, listTypeData, User, menuPress, navigation, OnGoBack
 
     const checkPermissionAndOpen = async () => {
       const hasPermission = await PermissionsAndroid.check(
-        PermissionsAndroid.PERMISSIONS.CALL_PHONE
+        PermissionsAndroid.PERMISSIONS.CALL_PHONE,
       );
       if (hasPermission) {
         Linking.openURL(url);
       } else {
         const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CALL_PHONE
+          PermissionsAndroid.PERMISSIONS.CALL_PHONE,
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           Linking.openURL(url);
         } else {
           Alert.alert(
             'Permission Denied',
-            'You need to enable call permissions to use this feature'
+            'You need to enable call permissions to use this feature',
           );
         }
       }
@@ -127,7 +137,7 @@ const ProductItem = ({ item, listTypeData, User, menuPress, navigation, OnGoBack
           } else {
             Alert.alert(
               'Oops!',
-              'No contact info available for this post. Try reaching out through other channels!'
+              'No contact info available for this post. Try reaching out through other channels!',
             );
           }
         })
@@ -139,15 +149,21 @@ const ProductItem = ({ item, listTypeData, User, menuPress, navigation, OnGoBack
     <View style={styles.WrapcardContainer}>
       <View style={styles.cardContainer}>
         <ItemHeader item={item} />
-        <MediaGallery ref={MediaGalleryRef} mediaItems={item.postMedias} paused={false} />
+        <MediaGallery
+          ref={MediaGalleryRef}
+          mediaItems={item.postMedias}
+          paused={false}
+        />
 
         <View style={styles.iconContainer}>
-          <TouchableOpacity onPress={() => menuPress(item)} style={styles.checkIcon}>
+          <TouchableOpacity
+            onPress={() => menuPress(item)}
+            style={styles.checkIcon}>
             <MenuThreeDots height={20} width={20} />
           </TouchableOpacity>
         </View>
 
-        <View style={{ marginLeft: 20 }}>
+        <View style={{marginLeft: 20}}>
           <PostActions
             item={item}
             User={User}
@@ -167,13 +183,13 @@ const ProductItem = ({ item, listTypeData, User, menuPress, navigation, OnGoBack
           }>
           <VStack space="xs" style={styles.detailsContainer}>
             <HStack>
-              <Box style={{ marginLeft: 4 }}>
-                <ZText type="M16" style={{ color: colors.light.appred }}>
+              <Box style={{marginLeft: 4}}>
+                <ZText type="M16" style={{color: colors.light.appred}}>
                   {'\u20B9'}{' '}
                 </ZText>
               </Box>
               <Box>
-                <ZText type="M16" style={{ color: colors.light.appred }}>
+                <ZText type="M16" style={{color: colors.light.appred}}>
                   {formatNumberToIndianSystem(item.price)}
                 </ZText>
               </Box>
@@ -184,21 +200,23 @@ const ProductItem = ({ item, listTypeData, User, menuPress, navigation, OnGoBack
                 <Box>
                   <Icon as={Location_Icon} size="xl" />
                 </Box>
-                <Box style={{ width: '100%', flex: 1 }}>
+                <Box style={{width: '100%', flex: 1}}>
                   <ZText type="R16" numberOfLines={1} ellipsizeMode="tail">
-                    {' '}{item.location.placeName}
+                    {' '}
+                    {item.location.placeName}
                   </ZText>
                 </Box>
               </HStack>
             )}
 
-            <HStack style={{ width: '100%', flex: 1 }}>
+            <HStack style={{width: '100%', flex: 1}}>
               <Box>
                 <Icon as={description_icon} fill="black" size="xl" />
               </Box>
-              <Box style={{ width: '100%', flex: 1 }}>
+              <Box style={{width: '100%', flex: 1}}>
                 <ZText type="R16" numberOfLines={1} ellipsizeMode="tail">
-                  {' '}{item.title}
+                  {' '}
+                  {item.title}
                 </ZText>
               </Box>
             </HStack>
@@ -207,22 +225,40 @@ const ProductItem = ({ item, listTypeData, User, menuPress, navigation, OnGoBack
 
         <View style={styles.detailsContainerBottom}>
           <HStack>
-            <HStack style={{ alignItems: 'center', width: '50%', justifyContent: 'center' }}>
-              <TouchableOpacity style={styles.callbtn} onPress={() => makeCall(item.contactNo)}>
-                <View style={{ alignItems: 'center' }}>
-                  <Icon as={Telephone_Icon} color={colors.light.appred} size="xxl" />
+            <HStack
+              style={{
+                alignItems: 'center',
+                width: '50%',
+                justifyContent: 'center',
+              }}>
+              <TouchableOpacity
+                style={styles.callbtn}
+                onPress={() => makeCall(item.contactNo)}>
+                <View style={{alignItems: 'center'}}>
+                  <Icon
+                    as={Telephone_Icon}
+                    color={colors.light.appred}
+                    size="xxl"
+                  />
                 </View>
-                <View style={{ alignItems: 'center', paddingVertical: 10 }}>
+                <View style={{alignItems: 'center', paddingVertical: 10}}>
                   <ZText type="M14">Call</ZText>
                 </View>
               </TouchableOpacity>
             </HStack>
-            <HStack style={{ alignItems: 'center', width: '50%', justifyContent: 'center' }}>
-              <TouchableOpacity style={styles.Chatbtn} onPress={chatProfilePress}>
-                <View style={{ alignItems: 'center', marginRight: 10 }}>
+            <HStack
+              style={{
+                alignItems: 'center',
+                width: '50%',
+                justifyContent: 'center',
+              }}>
+              <TouchableOpacity
+                style={styles.Chatbtn}
+                onPress={chatProfilePress}>
+                <View style={{alignItems: 'center', marginRight: 10}}>
                   <Icon as={Chat_Icon} color="#0F5DC4" size="xxl" />
                 </View>
-                <View style={{ alignItems: 'center', paddingVertical: 10 }}>
+                <View style={{alignItems: 'center', paddingVertical: 10}}>
                   <ZText type="M14">Chat</ZText>
                 </View>
               </TouchableOpacity>
@@ -233,8 +269,6 @@ const ProductItem = ({ item, listTypeData, User, menuPress, navigation, OnGoBack
     </View>
   );
 };
-
-
 
 const ProductListScreen = ({
   category,
@@ -272,35 +306,27 @@ const ProductListScreen = ({
     [user, category, handlePresentModalPress, navigation],
   );
   const OnGoBack = updatedItem => {
- 
     listRef.current?.scrollToOffset({animated: true, offset: 0});
-  
   };
   return (
-
-<FlashList
-  ref={listRef}
-  data={data}
-  estimatedItemSize={560} // Adjust based on actual item height
-  keyExtractor={(item, index) => index.toString()}
-
-  renderItem={renderItem}
-  onScroll={onScroll}
-  scrollEventThrottle={16}
-  onEndReached={loadMorepage}
-  onEndReachedThreshold={0.5}
-  contentContainerStyle={{
-    paddingTop: HEADER_HEIGHT + TAB_BAR_HEIGHT,
-    paddingBottom: 50,
-  }}
-  ListFooterComponent={() =>
-    loading && <ActivityIndicator size="large" color={Color.primary} />
-  }
-/>
-
-
-   
-
+    <FlashList
+      ref={listRef}
+      data={data}
+      estimatedItemSize={560} // Adjust based on actual item height
+      keyExtractor={(item, index) => index.toString()}
+      renderItem={renderItem}
+      onScroll={onScroll}
+      scrollEventThrottle={16}
+      onEndReached={loadMorepage}
+      onEndReachedThreshold={0.5}
+      contentContainerStyle={{
+        paddingTop: HEADER_HEIGHT + TAB_BAR_HEIGHT,
+        paddingBottom: 50,
+      }}
+      ListFooterComponent={() =>
+        loading && <ActivityIndicator size="large" color={Color.primary} />
+      }
+    />
   );
 };
 
@@ -364,6 +390,7 @@ const StickyHeaderWithTabs1 = () => {
   useFocusEffect(
     useCallback(() => {
       callPodcastList();
+      GetDashboardData(user.userId);
     }, [index]),
   );
   // useEffect(() => {
@@ -496,26 +523,28 @@ const StickyHeaderWithTabs1 = () => {
     ({route}) => {
       return (
         <View style={styles.tabContent}>
-        {isTabSwitching&&
-           <View style={styles.emptyContainer}>
-        <ActivityIndicator size="large" color={Color.primary} />
-      </View> }
-      {!isTabSwitching &&
-          <ProductListScreen
-            category={route.title}
-            scrollY={scrollY}
-            data={data}
-            loadMorepage={loadMorepage}
-            onScroll={handleScroll1}
-            navigation={navigation}
-            listRef={listRefs.current[route.key]}
-            handlePresentModalPress={handlePresentModalPress}
-            StoryData={StoryData}
-            loading={isInfiniteLoading}
-            user={user}
-            headerVisible={headerVisible}
-            isTabSwitching={isTabSwitching}
-          />}
+          {isTabSwitching && (
+            <View style={styles.emptyContainer}>
+              <ActivityIndicator size="large" color={Color.primary} />
+            </View>
+          )}
+          {!isTabSwitching && (
+            <ProductListScreen
+              category={route.title}
+              scrollY={scrollY}
+              data={data}
+              loadMorepage={loadMorepage}
+              onScroll={handleScroll1}
+              navigation={navigation}
+              listRef={listRefs.current[route.key]}
+              handlePresentModalPress={handlePresentModalPress}
+              StoryData={StoryData}
+              loading={isInfiniteLoading}
+              user={user}
+              headerVisible={headerVisible}
+              isTabSwitching={isTabSwitching}
+            />
+          )}
         </View>
       );
     },
