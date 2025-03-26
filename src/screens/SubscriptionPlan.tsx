@@ -89,29 +89,19 @@ const SubscriptionPlan = ({route}) => {
     const additionalBenefits = item.additionalBenifits
       ? JSON.parse(item.additionalBenifits)
       : {};
+
     const AdsCategoryMap = {
       1: 'Marquee',
       2: 'Carousel',
     };
 
-    // Map for SpaceCategory
     const SpaceCategoryMap = {
       1: 'Newly Launched',
       2: 'Brand Associated',
       3: 'New in Property',
       4: 'New in Car',
     };
-    const hasLimits = Object.keys(limits).some(key =>
-      Array.isArray(limits[key])
-        ? limits[key].length > 0
-        : limits[key] !== undefined,
-    );
 
-    const hasAdditionalBenefits = Object.keys(additionalBenefits).some(key =>
-      Array.isArray(additionalBenefits[key])
-        ? additionalBenefits[key].length > 0
-        : additionalBenefits[key] !== undefined,
-    );
     return (
       <TouchableOpacity style={styles.card}>
         <View style={styles.row}>
@@ -126,123 +116,113 @@ const SubscriptionPlan = ({route}) => {
               {item.validityValue} {item.validityType === 1 ? 'Days' : 'Hours'}
             </ZText>
           </View>
+
+          {/* ✅ Updated Limits Mapping with Category Names */}
           <View>
             {Object.keys(limits).map(key => {
-              if (key === 'Ads' && Array.isArray(limits[key])) {
-                const firstAd = limits[key][0];
-                if (firstAd) {
+              const value = limits[key];
+
+              if (Array.isArray(value)) {
+                return value.map((limitItem, index) => {
+                  const categoryName =
+                    key === 'Ads'
+                      ? AdsCategoryMap[limitItem.Category]
+                      : SpaceCategoryMap[limitItem.Category];
+
                   return (
-                    <React.Fragment key={`${key}-container`}>
+                    <React.Fragment key={`${key}-${index}`}>
                       <Text style={styles.label}>{key}</Text>
-                      <Text style={styles.value}>{firstAd.AdCount}</Text>
+                      <Text style={styles.value}>
+                        {limitItem.AdCount} | {categoryName} | Validity:
+                        {limitItem.ValidityType} Days
+                      </Text>
                     </React.Fragment>
                   );
-                }
-              } else if (key === 'SpaceAd' && Array.isArray(limits[key])) {
-                const firstAd = limits[key][0];
-                if (firstAd) {
-                  return (
-                    <React.Fragment key={`${key}-container`}>
-                      <Text style={styles.label}>{key}</Text>
-                      <Text style={styles.value}>{firstAd.SpaceAdCount}</Text>
-                    </React.Fragment>
-                  );
-                }
-              } else {
-                return (
-                  <React.Fragment key={`${key}-container`}>
-                    <Text style={styles.label}>{key}</Text>
-                    <Text style={styles.value}>{limits[key]}</Text>
-                  </React.Fragment>
-                );
+                });
               }
+
+              return (
+                <React.Fragment key={`${key}-container`}>
+                  <Text style={styles.label}>{key}</Text>
+                  <Text style={styles.value}>{value}</Text>
+                </React.Fragment>
+              );
             })}
           </View>
         </View>
-        <View style={styles.divider} />
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-          }}>
-          <View type={'B26'} style={styles.details}>
-            {hasAdditionalBenefits ? (
-              <>
-                <ZText type={'R12'} style={[styles.detailText, {marginTop: 8}]}>
-                  Additional Benefits:
-                </ZText>
-                {Object.keys(additionalBenefits).map((key, index) => {
-                  const benefit = additionalBenefits[key];
-                  if (Array.isArray(benefit)) {
-                    return benefit.map((item, idx) => {
-                      const categoryName =
-                        key === 'Ads'
-                          ? AdsCategoryMap[item.Category]
-                          : SpaceCategoryMap[item.Category];
 
-                      return (
-                        <ZText
-                          key={`${key}-${idx}`}
-                          type={'R12'}
-                          style={styles.value}>
-                          {key}: {item.AdCount} | {categoryName} | Validity:
-                          {item.Validity} days
-                        </ZText>
-                      );
-                    });
-                  }
+        <View style={styles.divider} />
+
+        {/* ✅ Updated Additional Benefits Mapping with Category Names */}
+        <View style={styles.details}>
+          <ZText type={'R12'} style={[styles.detailText, {marginTop: 8}]}>
+            Additional Benefits:
+          </ZText>
+          {Object.keys(additionalBenefits).length > 0 ? (
+            Object.keys(additionalBenefits).map((key, index) => {
+              const benefit = additionalBenefits[key];
+
+              if (Array.isArray(benefit)) {
+                return benefit.map((benefitItem, idx) => {
+                  const categoryName =
+                    key === 'Ads'
+                      ? AdsCategoryMap[benefitItem?.Category]
+                      : SpaceCategoryMap[benefitItem?.Category];
+
                   return (
-                    <ZText key={index} type={'R12'} style={styles.value}>
-                      {key}: {additionalBenefits[key]}
+                    <ZText
+                      key={`${key}-${idx}`}
+                      type={'R12'}
+                      style={styles.value}>
+                      {key}: {benefitItem.AdCount} | {categoryName} | Validity:{' '}
+                      {benefitItem.Validity} days
                     </ZText>
                   );
-                })}
-              </>
-            ) : (
-              <>
-                <ZText type={'R12'} style={[styles.detailText, {marginTop: 8}]}>
-                  Additional Benefits:
+                });
+              }
+
+              return (
+                <ZText key={index} type={'R12'} style={styles.value}>
+                  {key}: {additionalBenefits[key]}
                 </ZText>
-                <ZText type={'R12'} style={styles.value}>
-                  N/A
-                </ZText>
-              </>
-            )}
+              );
+            })
+          ) : (
+            <ZText type={'R12'} style={styles.value}>
+              N/A
+            </ZText>
+          )}
+        </View>
+
+        {/* Buy Now & Read More Buttons */}
+        <View
+          style={{
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginTop: 10,
+          }}>
+          <View style={styles.buyNowButton}>
+            <ZText type={'S14'} color={'white'}>
+              Buy Now
+            </ZText>
           </View>
 
-          <View
-            style={{
-              flexDirection: 'coloum',
-              justifyContent: 'space-between',
-              alignItems: 'center', // Ensures buttons stay in position
-              marginTop: 10,
-              // Add spacing
-            }}>
-            {/* Buy Now Button */}
-            <View style={styles.buyNowButton}>
-              <ZText type={'S14'} color={'white'}>
-                Buy Now
-              </ZText>
-            </View>
-
-            {/* Read More Button */}
-            <TouchableOpacity
-              style={{paddingHorizontal: 10}}
-              onPress={() => handlePresentModalPress(item)}>
-              <ZText
-                type={'S12'}
-                color={Color.primary}
-                style={{textDecorationLine: 'underline'}}>
-                Read more
-              </ZText>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={{paddingHorizontal: 10}}
+            onPress={() => handlePresentModalPress(item)}>
+            <ZText
+              type={'S12'}
+              color={Color.primary}
+              style={{textDecorationLine: 'underline'}}>
+              Read more
+            </ZText>
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     );
   };
 
+  console.log(Plandata, 'plandat');
   return (
     <View style={{flex: 1}}>
       <View style={styles.tabContainer}>

@@ -42,7 +42,7 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
             setError(response.message || 'An error occurred');
             setStatus(response.status || 500);
           } else {
-            console.log(response.data.data, 'set');
+            // console.log(response.data.data, 'set');
             setData(response.data.data || null);
             settotalPages(response.data.totalPages || null);
             setrecordCount(response.data.recordCount || null);
