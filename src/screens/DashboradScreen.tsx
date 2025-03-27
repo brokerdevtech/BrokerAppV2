@@ -188,15 +188,13 @@ export default function DashboradScreen() {
     const updateDevice = await NewDeviceUpdate(userId, fcmToken.toString());
   };
 
-  const { fetchStories } = useStory();
+  const {fetchStories} = useStory();
 
   useFocusEffect(
     useCallback(() => {
       fetchStories(); // reloads stories when screen comes into focus
-    }, [])
+    }, []),
   );
-
-
 
   useFocusEffect(
     React.useCallback(() => {
@@ -410,24 +408,14 @@ export default function DashboradScreen() {
         </View>
       </Animated.View> */}
 
-      <Animated.ScrollView
-        style={{
-          flex: 1,
-          transform: [{translateY: contentTranslateY}],
-        }}
-        scrollEventThrottle={16}
-        // onScroll={handleScroll}
-        contentContainerStyle={{
-          paddingTop: isScrollingDown.current ? 0 : totalHeaderHeight + 20,
-        }}>
+      <ScrollView style={{flex: 1}}>
         <View>
           <View style={styles.subHeaderSection}>
-         
-              <View style={{flex: 1}}>
-                <StoriesFlatList />
-                {/* {<StoryViewer />} */}
-              </View>
-           
+            <View style={{flex: 1}}>
+              <StoriesFlatList />
+              {/* {<StoryViewer />} */}
+            </View>
+
             {/* 
             {StoryData != null && StoryData != undefined && (
               <UserStories Data={StoryData} />
@@ -621,7 +609,7 @@ export default function DashboradScreen() {
           />
           <Footer />
         </View>
-      </Animated.ScrollView>
+      </ScrollView>
     </SafeAreaView>
   );
 }

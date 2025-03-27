@@ -295,36 +295,65 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 1,
     borderColor: '#ddd',
+    overflow: 'hidden', // Ensures content stays within bounds
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    flexWrap: 'wrap', // Prevents content from overflowing
+  },
+  label: {
+    fontSize: 12,
+    color: '#777',
+    maxWidth: '90%', // Ensures text does not overflow
+  },
+  value: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000',
+    maxWidth: '90%', // Restrict long text
+  },
+  details: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignSelf: 'stretch', // Ensures it doesn't break the card
+  },
+  buyNowButton: {
+    backgroundColor: Color.primaryDisable,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginBottom: 5,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%', // Ensures button stays inside
   },
   price: {
     // fontSize: 24,
     // fontWeight: 'bold',
     color: Color.primary,
+    width: '20%',
   },
-  label: {
-    // fontSize: 12,
-    color: '#777',
-  },
-  value: {
-    // fontSize: 14,
-    fontWeight: '600',
-    color: '#000',
-  },
+  // label: {
+  //   // fontSize: 12,
+  //   color: '#777',
+  // },
+  // value: {
+  //   // fontSize: 14,
+  //   fontWeight: '600',
+  //   color: '#000',
+  // },
   divider: {
     height: 1,
     backgroundColor: '#ddd',
     marginVertical: 10,
   },
-  details: {
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    width: '65%',
-  },
+  // details: {
+  //   flexDirection: 'column',
+  //   justifyContent: 'space-between',
+  //   width: '65%',
+  // },
   detailText: {
     // fontSize: 12,
     color: '#555',
@@ -332,15 +361,15 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
     // flex: 1,
   },
-  buyNowButton: {
-    backgroundColor: Color.primaryDisable, // Change color as needed
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginBottom: 5,
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  // buyNowButton: {
+  //   backgroundColor: Color.primaryDisable, // Change color as needed
+  //   paddingVertical: 8,
+  //   paddingHorizontal: 16,
+  //   marginBottom: 5,
+  //   borderRadius: 6,
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  // },
 });
 
 export default AppBaseContainer(

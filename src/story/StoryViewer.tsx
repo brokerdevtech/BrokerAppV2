@@ -218,11 +218,10 @@ const StoryViewer = () => {
   const closeModal = () => {
     setCurrentUser(-1);
     // navigation.goBack();
-    if (navigation.canGoBack()) {
-      navigation.goBack();
-    } else {
-      navigation.navigate('Home'); // or whatever your main screen is
-    }
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'Home'}],
+    });
   };
   const onPressUser = () => {
     if (user.userId === currentUser.userId) {
