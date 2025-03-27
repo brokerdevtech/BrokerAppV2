@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Image,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
 import {
   GestureDetector,
@@ -249,79 +250,81 @@ const StoryViewer = () => {
     }
   });
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <GestureDetector
-        gesture={Gesture.Exclusive(
-          longPressGesture,
-          Gesture.Simultaneous(
-            swipeDownGesture,
-            horizontalSwipeGesture, // ✅ Add here
-            // tapGesture removed as it might interfere
-          ),
-        )}>
-        <View style={styles.container}>
-          <TouchableOpacity
-            style={styles.userInfoContainer}
-            onPress={onPressUser}>
-            <Image
-              source={{
-                uri: `${imagesBucketcloudfrontPath}${currentUser.profileImage}`,
-              }}
-              style={styles.profileImage}
-            />
-            <Text style={styles.username}>{currentUser.postedBy}</Text>
-          </TouchableOpacity>
-
-          {/* Close Button */}
-          <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-            <Text style={styles.closeText}>✕</Text>
-          </TouchableOpacity>
-
-          {/* Progress Bars */}
-          <View style={styles.progressBarContainer}>
-            {currentUserStories.map((item, index) => (
-              <ProgressBar
-                key={item.storyId?.toString() ?? index.toString()}
-                duration={
-                  currentStory?.mediaDuration > -1
-                    ? currentStory.mediaDuration
-                    : 10000
-                }
-                isActive={index === currentMediaIndex}
-                isPaused={isPaused || isLoadingMedia || !isStoryReady}
-                hasCompleted={index < currentMediaIndex} // Mark previous stories as completed
-                onComplete={handleNextStory}
+    <SafeAreaView style={{backgroundColor: '#000', flex: 1}}>
+      <GestureHandlerRootView style={{flex: 1, backgroundColor: '#000'}}>
+        <GestureDetector
+          gesture={Gesture.Exclusive(
+            longPressGesture,
+            Gesture.Simultaneous(
+              swipeDownGesture,
+              horizontalSwipeGesture, // ✅ Add here
+              // tapGesture removed as it might interfere
+            ),
+          )}>
+          <View style={styles.container}>
+            <TouchableOpacity
+              style={styles.userInfoContainer}
+              onPress={onPressUser}>
+              <Image
+                source={{
+                  uri: `${imagesBucketcloudfrontPath}${currentUser.profileImage}`,
+                }}
+                style={styles.profileImage}
               />
-            ))}
-          </View>
-          {isLoadingMedia && (
-            <ActivityIndicator
-              size="large"
-              color="white"
-              style={{position: 'absolute', alignSelf: 'center'}}
+              <Text style={styles.username}>{currentUser.postedBy}</Text>
+            </TouchableOpacity>
+
+            {/* Close Button */}
+            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+              <Text style={styles.closeText}>✕</Text>
+            </TouchableOpacity>
+
+            {/* Progress Bars */}
+            <View style={styles.progressBarContainer}>
+              {currentUserStories.map((item, index) => (
+                <ProgressBar
+                  key={item.storyId?.toString() ?? index.toString()}
+                  duration={
+                    currentStory?.mediaDuration > -1
+                      ? currentStory.mediaDuration
+                      : 10000
+                  }
+                  isActive={index === currentMediaIndex}
+                  isPaused={isPaused || isLoadingMedia || !isStoryReady}
+                  hasCompleted={index < currentMediaIndex} // Mark previous stories as completed
+                  onComplete={handleNextStory}
+                />
+              ))}
+            </View>
+            {isLoadingMedia && (
+              <ActivityIndicator
+                size="large"
+                color="white"
+                style={{position: 'absolute', alignSelf: 'center'}}
+              />
+            )}
+            {/* Story Content */}
+            <StoryItem
+              story={currentStory}
+              storyIndex={currentMediaIndex}
+              onLoad={() => {
+                setIsLoadingMedia(false);
+                setIsPaused(false); // resume only after loading completes
+                setIsStoryReady(true);
+              }}
+              // onLoad={() => runOnJS(setIsPaused)(false)}
+              onVideoEnd={handleNextStory}
+              togglePause={togglePause}
+              oncloseModal={closeModal}
+              setActionAreaActive={handleActionAreaActive}
+              handleNextStory={handleNextStory}
+              handlePreviousStory={handlePreviousStory}
+              isPaused={isPaused}
             />
-          )}
-          {/* Story Content */}
-          <StoryItem
-            story={currentStory}
-            storyIndex={currentMediaIndex}
-            onLoad={() => {
-              setIsLoadingMedia(false);
-              setIsPaused(false); // resume only after loading completes
-              setIsStoryReady(true);
-            }}
-            // onLoad={() => runOnJS(setIsPaused)(false)}
-            onVideoEnd={handleNextStory}
-            togglePause={togglePause}
-            oncloseModal={closeModal}
-            setActionAreaActive={handleActionAreaActive}
-            handleNextStory={handleNextStory}
-            handlePreviousStory={handlePreviousStory}
-            isPaused={isPaused}
-          />
-        </View>
-      </GestureDetector>
-    </GestureHandlerRootView>
+          </View>
+        </GestureDetector>
+      </GestureHandlerRootView>
+    </SafeAreaView>
   );
 };
 
