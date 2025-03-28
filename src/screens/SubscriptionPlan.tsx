@@ -113,7 +113,7 @@ const SubscriptionPlan = ({route}) => {
               Validity
             </ZText>
             <ZText type={'S16'} style={styles.value}>
-              {item.validityValue} {item.validityType === 1 ? 'Days' : 'Hours'}
+              {item.validityValue} {item.validityType === 1 ? 'Day' : 'Hours'}
             </ZText>
           </View>
 
@@ -134,7 +134,7 @@ const SubscriptionPlan = ({route}) => {
                       <Text style={styles.label}>{key}</Text>
                       <Text style={styles.value}>
                         {limitItem.AdCount} | {categoryName} | Validity:
-                        {limitItem.ValidityType} Days
+                        {limitItem.ValidityType} Day
                       </Text>
                     </React.Fragment>
                   );
@@ -168,14 +168,14 @@ const SubscriptionPlan = ({route}) => {
                     key === 'Ads'
                       ? AdsCategoryMap[benefitItem?.Category]
                       : SpaceCategoryMap[benefitItem?.Category];
-
+                  console.log(benefitItem, 'bene');
                   return (
                     <ZText
                       key={`${key}-${idx}`}
                       type={'R12'}
                       style={styles.value}>
                       {key}: {benefitItem.AdCount} | {categoryName} | Validity:{' '}
-                      {benefitItem.Validity} days
+                      {benefitItem.AdDuration} day
                     </ZText>
                   );
                 });
