@@ -155,7 +155,7 @@ const SuggestedUsers = React.memo(props => {
     getList();
   }, []);
   useEffect(() => {
-    if (brokersdata != null) {
+    if (brokersdata !== null) {
       setBrokerList(brokersdata.data);
     }
     console.log(brokersdata, 'daat');
@@ -179,7 +179,7 @@ const SuggestedUsers = React.memo(props => {
     <View style={localStyles.container}>
       <View style={localStyles.storiesHeaderWrapper}>
         <ZText type={'R18'} style={{marginVertical: 5, marginLeft: 10}}>
-          Suggestions for you
+          Suggested for you
         </ZText>
       </View>
       {/* <RecommendedBrokersSkeleton /> */}

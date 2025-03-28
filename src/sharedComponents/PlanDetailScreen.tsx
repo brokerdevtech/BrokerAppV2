@@ -77,8 +77,8 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
       limits.SpaceAds.forEach((spaceAd, index) => {
         limitsData.push({
           id: `space-ad-${index}`,
-          title: `${spaceCategoryMap[spaceAd.Category]} Space Ads`,
-          description: `${spaceAd.SpaceAdCount} space ads allowed`,
+          title: `${spaceCategoryMap[spaceAd.Category] || 'Unknown'} Space Ads`,
+          description: `${spaceAd.AdCount || 0} space ads allowed`,
         });
       });
     }
@@ -114,17 +114,18 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
           benefitsData.push({
             id: `benefit-ad-${index}`,
             title: `${adsCategoryMap[ad.Category]} Additional Ads`,
-            description: `${ad.AdCount} ads for ${ad.Validity} day`,
+            description: `${ad.AdCount} ads for ${ad.AdDuration} day`,
           });
         });
       }
 
       if (benefits.SpaceAd && Array.isArray(benefits.SpaceAd)) {
+        console.log(benefits.SpaceAd, 'jk');
         benefits.SpaceAd.forEach((spaceAd, index) => {
           benefitsData.push({
             id: `benefit-space-${index}`,
             title: `${spaceCategoryMap[spaceAd.Category]}  Space Ads`,
-            description: `${spaceAd.SpaceAdCount} space ads for ${spaceAd.Validity} day`,
+            description: `${spaceAd.AdCount} space ads for ${spaceAd.AdDuration} day`,
           });
         });
       }
@@ -183,7 +184,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
     }
     return postItem?.price;
   };
-  console.log(adLimits);
+  console.log(JSON.stringify(postItem));
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
