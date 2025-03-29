@@ -45,6 +45,7 @@ import RecommendedBrokersSkeleton from './Skeleton/RecomBrokerSkelton';
 import useUserJourneyTracker from '../hooks/Analytics/useUserJourneyTracker';
 import {useApiPagingWithDataRequest} from '../hooks/useApiPagingWithDataRequest';
 import {useApiPagingWithtotalRequest} from '../hooks/useApiPagingWithtotalRequest';
+import { P } from '@expo/html-elements';
 
 const RenderBrokerItem = React.memo(({item, setIsFollowing}) => {
   const navigation = useNavigation();
@@ -95,13 +96,14 @@ const RenderBrokerItem = React.memo(({item, setIsFollowing}) => {
           View Profile
         </ZText>
       </TouchableOpacity> */}
+       <View style={localStyles.locationContainer}>
       <FollowUnfollowComponent
         isFollowing={undefined}
         followedId={item.userId}
         onFollow={setIsFollowing(true)}
         onUnfollow={setIsFollowing(false)}
         screen={'item'}
-      />
+      /></View>
       {/* <FollowUnfollowComponent
         // isFollowing={ProfileData?.isFollowing}
         followedId={userId}
@@ -123,7 +125,7 @@ const SuggestedUsers = React.memo(props => {
   const user = useSelector(state => state.user.user, shallowEqual);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
-  const [brokerList, setBrokerList] = useState(null);
+  const [brokerList, setBrokerList] = useState<any>([]);
   const [isFollowing, setIsFollowing] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -156,10 +158,14 @@ const SuggestedUsers = React.memo(props => {
   }, []);
   useEffect(() => {
     if (brokersdata !== null) {
-      setBrokerList(brokersdata.data);
+      console.log("===========================================brokersdata",brokersdata)
+      setBrokerList(brokersdata);
+    }
+    else{
+      setBrokerList(null);
     }
     console.log(brokersdata, 'daat');
-  }, [props]);
+  }, [props,brokersdata]);
   // useEffect(() => {
   //   if (brokersdata?.data.length > 0) {
   //     setBrokerList(prev => [...(prev || []), ...brokersdata.data]);
@@ -174,41 +180,40 @@ const SuggestedUsers = React.memo(props => {
   const renderBrokerItem = useCallback(({item}) => (
     <RenderBrokerItem item={item} setIsFollowing={setIsFollowing} />
   ));
-
+if(brokerList?.length==0)
+{
   return (
+    <RecommendedBrokersSkeleton />
+  )
+}
+return (
+  brokerList != null && brokerList.length > 0 ? (
     <View style={localStyles.container}>
       <View style={localStyles.storiesHeaderWrapper}>
-        <ZText type={'R18'} style={{marginVertical: 5, marginLeft: 10}}>
+        <ZText type={'R18'} style={{ marginVertical: 5, marginLeft: 10 }}>
           Suggested for you
         </ZText>
       </View>
-      {/* <RecommendedBrokersSkeleton /> */}
-      {brokersdata?.length > 0 ? (
-        <FlatList
-          horizontal
-          data={brokersdata}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderBrokerItem}
-          contentContainerStyle={{paddingHorizontal: 20, paddingVertical: 5}}
-          ItemSeparatorComponent={() => <View style={{marginRight: 10}} />}
-          showsHorizontalScrollIndicator={false}
-          onEndReachedThreshold={0.5}
-          onEndReached={loadMore}
-          ListFooterComponent={
-            isInfiniteLoading ? (
-              <LoadingSpinner isVisible={isInfiniteLoading} />
-            ) : null
-          }
-        />
-      ) : brokerList == null ? (
-        <RecommendedBrokersSkeleton />
-      ) : (
-        <Text style={localStyles.noDataText}>
-          No Suggestions broker in your city.
-        </Text>
-      )}
+
+      <FlatList
+        horizontal
+        data={brokersdata}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={renderBrokerItem}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 5 }}
+        ItemSeparatorComponent={() => <View style={{ marginRight: 10 }} />}
+        showsHorizontalScrollIndicator={false}
+        onEndReachedThreshold={0.5}
+        onEndReached={loadMore}
+        ListFooterComponent={
+          isInfiniteLoading ? (
+            <LoadingSpinner isVisible={isInfiniteLoading} />
+          ) : null
+        }
+      />
     </View>
-  );
+  ) : null
+);
 });
 
 export default SuggestedUsers;

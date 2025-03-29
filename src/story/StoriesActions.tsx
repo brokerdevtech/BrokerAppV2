@@ -53,9 +53,7 @@ const StoriesAction = ({
   );
 
   useEffect(() => {
-    console.log('StoriesAction');
-    console.log(currentStoryIndex);
-    console.log(storyState);
+ 
     isStoryOwner = user.userId === stories[currentStoryIndex]?.userId;
 
     let storystateobj = {
@@ -65,7 +63,7 @@ const StoriesAction = ({
       userLiked: storyState?.userLiked || 0,
     };
     setActionStoryStates(storystateobj);
-    console.log(ActionStoryStates);
+
   }, [story, storyState, currentStoryIndex]);
 
   const [isOpen, setOpen] = useState(false);
@@ -126,7 +124,7 @@ const StoriesAction = ({
       });
       togglePause();
     } catch (error) {
-      console.log(error);
+
       console.error('Error liking/unliking story:', error);
       togglePause();
     }

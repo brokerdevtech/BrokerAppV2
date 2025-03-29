@@ -154,16 +154,16 @@ const chatClient = StreamChat.getInstance(chatApiKey);
       const initialUnreadCount = connectedUser?.me?.total_unread_count;
     setUnreadCount(initialUnreadCount);
       let fcmToken :any=    await  getfcmToken();
-      console.log('fcmToken chat',fcmToken);
+
       const devices= await chatClient.getDevices();
-     console.log("devices",devices);
+
       if (devices?.devices) {
         for (const device of devices.devices) {
           
            await chatClient.removeDevice(device.id, userState.user.userId.toString());
         }
       }
-      console.log("firebase",fcmToken);
+
       chatClient.addDevice(fcmToken, 'firebase', userState.user.userId.toString(), 'firebase'),
       setAppChatClient(chatClient);
       setIsConnecting(false);

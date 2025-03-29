@@ -52,7 +52,7 @@ const ReportScreen = forwardRef(({postItem, screenFrom, onClose}, ref) => {
   const [selectedReason, setSelectedReason] = useState(null);
   const snapPoints = useMemo(() => ['70%'], []);
   const [toastId, setToastId] = React.useState(0);
-  console.log(postItem, 'item');
+
   const toast = useToast();
   const [loading, setLoading] = React.useState(false);
   const handleSelectReason = reason => {
@@ -80,7 +80,7 @@ const ReportScreen = forwardRef(({postItem, screenFrom, onClose}, ref) => {
 
     setLoading(true);
     await execute(Urltype, apiRequest);
-    console.log(status, 'sat');
+
     bottomSheetModalRef.current?.close();
     onClose?.();
   };

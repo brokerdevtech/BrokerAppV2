@@ -73,7 +73,7 @@ const localStyles = StyleSheet.create({
   buttonContainer: {
     ...styles.ph15,
     height: getHeight(45),
-    minWidth: getHeight(120),
+    minWidth: '100%',
     borderRadius: moderateScale(10),
     borderWidth: moderateScale(1),
   },

@@ -72,6 +72,7 @@ import ZAvatarInitials from '../sharedComponents/ZAvatarInitials';
 import ItemHeader from './ItemHeader';
 import ReportScreen from '../sharedComponents/ReportScreen';
 import SuggestedUsers from '../sharedComponents/SuggestedUsers';
+import StoriesFlatList from '../story/StoriesFlatList';
 
 //const MediaGallery = React.lazy(() => import('../sharedComponents/MediaGallery'));
 //const UserStories = React.lazy(() => import('../components/story/UserStories'));
@@ -106,7 +107,11 @@ const RederListHeader = React.memo(
   }) => {
     return (
       <>
-        {StoryData != null && <UserStories Data={StoryData} />}
+        {/* {StoryData != null && <UserStories Data={StoryData} />} */}
+        <View style={{flex: 1}}>
+              <StoriesFlatList />
+              {/* {<StoryViewer />} */}
+            </View>
         <Recommend categoryId={categoryId} Data={RenderBrokerData} />
         <SuggestedUsers categoryId={categoryId} Data={SuggestionData} />
         <ProductSectionData

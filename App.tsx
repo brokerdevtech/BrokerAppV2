@@ -194,13 +194,13 @@ function App(): React.JSX.Element {
               {text: 'Open Settings', onPress: openSettings},
             ],
           );
-          console.log('User declined permissions');
+   
         }
       } catch (error) {
         console.error('Error requesting notification permissions:', error);
       }
     } else {
-      console.log('Notification permissions are not needed on Android.');
+  
     }
   };
   const getCurrentPositionAsync = () => {
@@ -499,7 +499,7 @@ function App(): React.JSX.Element {
     };
   }, []);
   const handlePlaceSelected = (place: any) => {
-    console.log(place, 'place');
+
     store.dispatch(setAppLocation(place));
   };
   return (

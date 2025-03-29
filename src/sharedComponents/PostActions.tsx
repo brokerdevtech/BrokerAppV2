@@ -172,7 +172,7 @@ const PostActions = ({
   };
 
   const handleLike = async () => {
-    console.log('click2');
+
     let endpoint = 'RealEstate';
     if (listTypeData === 'RealEstate') {
       endpoint = 'post';
@@ -194,7 +194,7 @@ const PostActions = ({
   };
 
   const handleUnLike = async () => {
-    console.log('click');
+
     let endpoint = 'RealEstate';
     if (listTypeData === 'RealEstate') {
       endpoint = 'post';
@@ -221,9 +221,7 @@ const PostActions = ({
 
   async function callCommentList() {
 
-    console.log('commentList',listTypeData);
-    console.log('commentList',listTypeData);
-    console.log('commentList',item.postId);
+
 
     pageSize_Set(15);
     currentPage_Set(0);

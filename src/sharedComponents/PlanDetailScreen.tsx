@@ -120,7 +120,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
       }
 
       if (benefits.SpaceAd && Array.isArray(benefits.SpaceAd)) {
-        console.log(benefits.SpaceAd, 'jk');
+  
         benefits.SpaceAd.forEach((spaceAd, index) => {
           benefitsData.push({
             id: `benefit-space-${index}`,
@@ -184,7 +184,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
     }
     return postItem?.price;
   };
-  console.log(JSON.stringify(postItem));
+
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}

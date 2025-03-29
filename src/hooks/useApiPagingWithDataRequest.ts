@@ -71,7 +71,7 @@ export const useApiPagingWithDataRequest = <T, P extends any[]>(
           setStatus(response.status || 500);
         } else {
           if (response?.data.length > 0) {
-            console.log(response.data, 'jkk');
+
             setData(prevData => [...prevData, ...(response.data || [])]);
 
             setStatus(response.status || 200);

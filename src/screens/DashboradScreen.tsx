@@ -430,7 +430,7 @@ export default function DashboradScreen() {
             onPressBottomSheet={() => bottomSheetRef.current?.expand()}
           />
 
-          <Grid className="gap-4 p-2" _extra={{className: 'grid-cols-9'}}>
+          <Grid className="gap-4 p-2" style={{marginBottom : 15}} _extra={{className: 'grid-cols-9'}}>
             {/* Property */}
             <GridItem
               style={styles.gridContainer}

@@ -114,7 +114,7 @@ const UserStories = (Data) =>  {
   useEffect(() => {
     const fetchData = async () => {
       await getList();
-       console.log('Fetch', Data.Data.data[0]);
+
     };
 
     fetchData();

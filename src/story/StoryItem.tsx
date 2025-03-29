@@ -44,7 +44,7 @@ const StoryItem: React.FC<StoryItemProps> = ({
   const [storyStates, setStoryStates] = useState({});
  // const [PauseStoryItem, settogglePauseStoryItem] = useState();
   useEffect(() => {
-    console.log("StoryItem",story);
+
     if (story?.mediaType.toLowerCase() === 'video') {
       videoRef.current?.seek(0);
     }
@@ -62,16 +62,16 @@ const StoryItem: React.FC<StoryItemProps> = ({
 
   }
   function onPressPrevious() {
-    console.log('onPressPrevious');
+
     handlePreviousStory();
   }
   function onPressNext() {
-    console.log('onPressNext');
+
     handleNextStory();
   }
   // Inside StoryItem.js
   useEffect(() => {
-    console.log('isPaused changed in StoryItem:', isPaused);
+  
     // Rest of your code
   }, [isPaused]);
   return (

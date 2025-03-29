@@ -88,9 +88,7 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
                 response?.data.data != null &&
                 response?.data.data.length > 0
               ) {
-                console.log('New Data:', response?.data.data);
-                console.log('Existing Data:', data.length);
-                console.log('New Data:', response?.data.data.length);
+              
 
                 setData(prevData => [
                   ...prevData,
@@ -135,7 +133,7 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
       isMounted.current = false; // Set mounted to false when the component unmounts
       if (setLoading) setLoading(false); // Reset loading state when unmounted
       setData(null);
-       console.log("===============Mounted==================")
+  
     };
   }, [setLoading]);
   const setData_Set = (newData: T | null) => {

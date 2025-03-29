@@ -68,12 +68,12 @@ const StoryViewer = () => {
   useFocusEffect(
     useCallback(() => {
       // Screen is focused (coming back)
-      console.log('StoryViewer focused - resume playback');
+
       setIsPaused(false);
 
       return () => {
         // Screen is unfocused (navigating away)
-        console.log('StoryViewer unfocused - pause playback');
+
         setIsPaused(true);
       };
     }, []),
@@ -120,20 +120,20 @@ const StoryViewer = () => {
   const currentUser = stories[currentStoryIndex] || {};
   //  const currentUserStories = stories[currentStoryIndex]?.storyDetails || [];
   const togglePause = () => {
-    console.log('Toggle pause called, current state:', isPaused);
+ 
     // if(isPaused== true){
     //   runOnJS(setIsPaused)(false);
     // }else{
     //   runOnJS(setIsPaused)(true);
     // }
     setIsPaused(prev => {
-      console.log('Setting isPaused to:', !prev);
+
       return !prev;
     });
   };
   // Handles transitioning between stories
   const handleNextStory = () => {
-    console.log('handleNextStory');
+
     if (isPaused === false) {
       if (!isTransitioning.current) {
         isTransitioning.current = true;
@@ -200,12 +200,12 @@ const StoryViewer = () => {
     .minDuration(400)
     .shouldCancelWhenOutside(false)
     .onStart(() => {
-      console.log('Long press started - pausing video');
+
 
       runOnJS(setIsPaused)(true);
     })
     .onEnd(() => {
-      console.log('Long press ended - resuming video');
+
 
       runOnJS(setIsPaused)(false);
     });
@@ -240,11 +240,11 @@ const StoryViewer = () => {
     if (Math.abs(event.translationX) > 50) {
       if (event.translationX < 0) {
         // Swipe left → next user
-        console.log('➡️ Swipe left: Next user');
+
         runOnJS(goToNextUser)();
       } else {
         // Swipe right → previous user
-        console.log('⬅️ Swipe right: Previous user');
+
         runOnJS(goToPreviousUser)();
       }
     }

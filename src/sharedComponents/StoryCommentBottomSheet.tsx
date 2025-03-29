@@ -153,7 +153,7 @@ const StoryCommentBottomSheet = forwardRef(
       //   console.log(postItem)
       //  callCommentList();
       if (isOpen) {
-        console.log("===========callCommentList===========")
+
         setInfiniteLoading(true);
         setNewComment('');
         setreplyCommentId(0);
@@ -165,7 +165,7 @@ const StoryCommentBottomSheet = forwardRef(
     }, [Reset, isOpen]);
 
     useEffect(() => {
-        console.log("===========StoryStateParam===========")
+
         setData_Set([])
       //   console.log(postItem)
       //  callCommentList();
@@ -185,11 +185,11 @@ const StoryCommentBottomSheet = forwardRef(
 
     useImperativeHandle(ref, () => ({
       open: () => {
-        console.log("useImperativeHandle")
+ 
         bottomSheetModalRef.current?.present();
       },
       dismiss: () => {
-        console.log("dismiss")
+
         setData_Set([]);
         bottomSheetModalRef.current?.dismiss();
       },

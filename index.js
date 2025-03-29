@@ -21,7 +21,7 @@ const tokenProvider: TokenOrProvider = async userId => {
 async function handleNotification(remoteMessage, isBackground = false) {
   // Ensure we have a notification payload
   if (!remoteMessage.notification) {
-    console.log('No notification payload');
+   
     return;
   }
 

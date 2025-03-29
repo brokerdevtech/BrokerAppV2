@@ -126,7 +126,7 @@ const GooglePlacesAutocompleteModal = ({
     setSearchIconStyle(BlurredIconStyle);
 
     onPlaceSelected(item);
-    console.log(item);
+
     setModalVisible(false);
   };
 
