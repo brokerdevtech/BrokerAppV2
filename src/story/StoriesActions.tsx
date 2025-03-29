@@ -21,7 +21,10 @@ import {
 import {useToast} from '../../components/ui/toast';
 import {useNavigation} from '@react-navigation/native';
 import StoryCommentBottomSheet from '../sharedComponents/StoryCommentBottomSheet';
-import {BottomSheetModalProvider, useBottomSheetModal} from '@gorhom/bottom-sheet';
+import {
+  BottomSheetModalProvider,
+  useBottomSheetModal,
+} from '@gorhom/bottom-sheet';
 import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import TouchableOpacityWithPermissionCheck from '../sharedComponents/TouchableOpacityWithPermissionCheck';
 import {PermissionKey} from '../config/constants';
@@ -40,7 +43,7 @@ const StoriesAction = ({
     useStory();
   const [ActionStoryStates, setActionStoryStates] = useState({});
   const user = useSelector((state: RootState) => state.user.user);
-  const { dismiss, dismissAll } = useBottomSheetModal();
+  const {dismiss, dismissAll} = useBottomSheetModal();
   const toast = useToast();
   let isStoryOwner = user.userId === stories[currentStoryIndex]?.userId;
   const navigation = useNavigation();
@@ -67,13 +70,13 @@ const StoriesAction = ({
 
   const [isOpen, setOpen] = useState(false);
 
-const closeModal = async (item: any) => {
+  const closeModal = async (item: any) => {
     // updateCurrentStory(item)
     setOpen(false);
 
     setActionStoryStates(item);
-  //  dismissAll();
-     commentSheetRef.current?.dismiss();
+    //  dismissAll();
+    commentSheetRef.current?.dismiss();
     //updateCurrentStory(item)
     // await new Promise(resolve => setTimeout(resolve, 200));
     // togglePause();
@@ -85,10 +88,7 @@ const closeModal = async (item: any) => {
     setTimeout(() => {
       togglePause(); // resume playback after close
     }, 300);
-      
-       
   };
-
 
   const handleActionPress = callback => {
     return event => {
@@ -150,7 +150,6 @@ const closeModal = async (item: any) => {
   };
 
   const handleComment = () => {
-
     setOpen(true);
     togglePause();
     commentSheetRef.current?.open();
@@ -159,7 +158,7 @@ const closeModal = async (item: any) => {
     if (!isOpen) {
       setOpen(true);
       togglePause();
-   //   commentSheetRef.current?.open();
+      //   commentSheetRef.current?.open();
     }
   };
   const handleDeleteStory = () => {
@@ -233,11 +232,7 @@ const closeModal = async (item: any) => {
             }
             permissionsArray={userPermissions}
             onPress={() => handleStoryLike()}>
-            <View
-              style={[
-                styles.iconContainer,
-                ActionStoryStates?.userLiked ? styles.likedIcon : {},
-              ]}>
+            <View style={[styles.iconContainer]}>
               {ActionStoryStates?.userLiked ? (
                 <LikeWhite accessible={true} accessibilityLabel="Like White" />
               ) : (
@@ -246,16 +241,15 @@ const closeModal = async (item: any) => {
                   accessibilityLabel="unlike white"
                 />
               )}
+              <TextWithPermissionCheck
+                permissionEnum={PermissionKey.AllowViewStoryLikes}
+                permissionsArray={userPermissions}
+                onPress={navigateToStoryLikeList}>
+                <Text style={styles.countText}>
+                  {ActionStoryStates.likeCount}
+                </Text>
+              </TextWithPermissionCheck>
             </View>
-
-            <TextWithPermissionCheck
-              permissionEnum={PermissionKey.AllowViewStoryLikes}
-              permissionsArray={userPermissions}
-              onPress={navigateToStoryLikeList}>
-              <Text style={styles.countText}>
-                {ActionStoryStates.likeCount}
-              </Text>
-            </TextWithPermissionCheck>
           </TouchableOpacityWithPermissionCheck>
 
           {/* Comment Button */}
@@ -271,10 +265,10 @@ const closeModal = async (item: any) => {
                 accessible={true}
                 accessibilityLabel="comment white"
               />
+              <Text style={styles.countText}>
+                {ActionStoryStates?.reactionCount}
+              </Text>
             </View>
-            <Text style={styles.countText}>
-              {ActionStoryStates?.reactionCount}
-            </Text>
           </TouchableOpacityWithPermissionCheck>
 
           {isStoryOwner && (
@@ -286,10 +280,10 @@ const closeModal = async (item: any) => {
               permissionEnum={PermissionKey.AllowViewStoryViewers}>
               <View style={styles.iconContainer}>
                 <OpenEye accessible={true} accessibilityLabel="open eye" />
+                <Text style={styles.countText}>
+                  {ActionStoryStates?.viewerCount}
+                </Text>
               </View>
-              <Text style={styles.countText}>
-                {ActionStoryStates?.viewerCount}
-              </Text>
             </TouchableOpacityWithPermissionCheck>
           )}
 
@@ -313,16 +307,17 @@ const closeModal = async (item: any) => {
       )}
 
       {/* Always render the bottom sheet */}
-     {isOpen &&
-      <StoryCommentBottomSheet
-        ref={commentSheetRef}
-        StoryStateParam={ActionStoryStates}
-        postItem={story}
-        User={user}
-        listTypeData={''}
-        userPermissions={userPermissions}
-        onClose={closeModal}
-      />}
+      {isOpen && (
+        <StoryCommentBottomSheet
+          ref={commentSheetRef}
+          StoryStateParam={ActionStoryStates}
+          postItem={story}
+          User={user}
+          listTypeData={''}
+          userPermissions={userPermissions}
+          onClose={closeModal}
+        />
+      )}
     </BottomSheetModalProvider>
   );
 };
@@ -342,8 +337,8 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   iconContainer: {
-    backgroundColor: 'rgba(0, 0, 0, 1.5)',
-    borderRadius: 25,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 5,
     height: 50,
     width: 50,
     justifyContent: 'center',
@@ -360,6 +355,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
     fontWeight: 'bold',
+    marginTop: 2,
   },
 });
 

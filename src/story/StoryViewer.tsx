@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
     right: 20,
     zIndex: 10,
     padding: 5,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    // backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 100,
     height: 35,
     width: 35,

@@ -175,9 +175,15 @@ const ProfileSetting: React.FC = ({
     setFieldValue(field, value);
   };
 
-  const handleSubmit = async (values, {setSubmitting}) => {
+  const handleSubmit = async (values, {setSubmitting, validateForm}) => {
     try {
-      setSubmitting(false);
+      setSubmitting(true); // Force setting submitting state
+
+      const errors = await validateForm(values);
+      if (Object.keys(errors).length > 0) {
+        setSubmitting(false); // Stop if there are validation errors
+        return;
+      }
 
       await UpdateUserPassExecute(
         values.oldpassword,
@@ -185,6 +191,7 @@ const ProfileSetting: React.FC = ({
         values.confirmPassword,
       );
 
+      setResetModal(false);
       if (UpdateUserPassStatus == 200) {
         setResetModal(false);
         if (!toast.isActive(toastId)) {
@@ -192,7 +199,7 @@ const ProfileSetting: React.FC = ({
           setToastId(newId);
           toast.show({
             id: newId,
-            placement: 'bottom',
+            placement: 'top',
             duration: 3000,
             render: ({id}) => {
               const uniqueToastId = 'toast-' + id;
@@ -207,8 +214,11 @@ const ProfileSetting: React.FC = ({
       }
     } catch (error) {
       console.error('Error submitting form:', error);
+    } finally {
+      setSubmitting(false);
     }
   };
+
   useFocusEffect(
     React.useCallback(() => {
       toggleSkeletonOn();
@@ -492,8 +502,9 @@ const ProfileSetting: React.FC = ({
 
                 <Button
                   style={[styles.button, isValid && styles.validButton]}
-                  onPress={handleSubmit}
-                  disabled={!isValid || isSubmitting}>
+                  onPress={() => handleSubmit()}
+                  disabled={isSubmitting} // Only depend on `isSubmitting`
+                >
                   <Text style={{color: '#ffffff'}} fontWeight="bold">
                     {isSubmitting ? 'Submitting...' : 'Submit'}
                   </Text>

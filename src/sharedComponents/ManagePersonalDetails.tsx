@@ -117,18 +117,18 @@ const PersonalDetailsForm = ({
   const minDate = new Date();
   const formikRef = useRef();
   // console.log(user, 'user');
-  const onFiltersLocalityChange = Localitys => { 
-   // console.log(Localitys);
+  const onFiltersLocalityChange = Localitys => {
+    // console.log(Localitys);
     formikRef.current.handleBlur('Location');
     formikRef.current.setFieldValue('Location', Localitys);
-    
+
     const locationData = [
       {
         place: {
           ...Localitys,
-         
         },
-      },]
+      },
+    ];
     setLocalities(locationData);
   };
   const onFiltersOfficeLocalityChange = Localitys => {
@@ -138,10 +138,10 @@ const PersonalDetailsForm = ({
       {
         place: {
           ...Localitys,
-         
         },
-      },]
- 
+      },
+    ];
+
     setOfficeLocalities(locationData);
   };
   const fetchCategoryData = async () => {
