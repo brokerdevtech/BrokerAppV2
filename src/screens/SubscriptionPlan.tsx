@@ -105,20 +105,25 @@ const SubscriptionPlan = ({route}) => {
     return (
       <TouchableOpacity style={styles.card}>
         <View style={styles.row}>
+          <View style={styles.rowcol}>
           <ZText type={'S22'} style={styles.price}>
             {formatPrice(item.price)}
-          </ZText>
-          <View>
+          </ZText></View>
+          <View style={styles.rowcol1}>
+            <View  style={styles.labelcol}>
             <ZText type={'R14'} style={styles.label}>
               Validity
-            </ZText>
+            </ZText></View>
+            <View  style={styles.labelcol}>
             <ZText type={'S16'} style={styles.value}>
               {item.validityValue} {item.validityType === 1 ? 'Day' : 'Hours'}
             </ZText>
+            </View>
           </View>
 
           {/* ✅ Updated Limits Mapping with Category Names */}
-          <View>
+          <View style={styles.rowcol2}>
+          <View style={styles.rowcol12}>
             {Object.keys(limits).map(key => {
               const value = limits[key];
 
@@ -148,6 +153,7 @@ const SubscriptionPlan = ({route}) => {
                 </React.Fragment>
               );
             })}
+          </View>
           </View>
         </View>
 
@@ -299,20 +305,61 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+     //justifyContent: 'space-between',
     alignItems: 'center',
-    flexWrap: 'wrap', // Prevents content from overflowing
+  //  flexWrap: 'wrap', // Prevents content from overflowing
   },
-  label: {
+  rowcol: {
+   display:'flex' ,
+  width:'30%',
+   flexDirection:'row',
+ 
+  //  flexBasis:1
+  },
+  rowcol1: {
+    display:'flex' ,
+    width:'20%',
+   // flexDirection:'column',
+    justifyContent:'center',
+    alignContent:'center',
+    backgroundColor: Color.primaryDisable,
+     //flexGrow:1
+   },
+   rowcol2: {
+    display:'flex' ,
+     width:'42%',
+    flexDirection:'row',
+    justifyContent:'center',
+    alignContent:'center',
+    //paddingLeft: 10, // Optional
+   flexGrow:2
+   },
+   rowcol12: {
+    display:'flex' ,
+   
+    flexDirection:'column',
+    justifyContent:'center',
+    alignContent:'center',
+  
+    // flexBasis:1
+   },
+   labelcol: {
+   width:'100%',
+   display:'flex',
+   justifyContent:'center',
+   alignContent:'center',
+   flexDirection:'row'
+  },
+   label: {
     fontSize: 12,
     color: '#777',
-    maxWidth: '90%', // Ensures text does not overflow
+   // maxWidth: '100%', // Ensures text does not overflow
   },
   value: {
     fontSize: 14,
     fontWeight: '600',
     color: '#000',
-    maxWidth: '90%', // Restrict long text
+   // maxWidth: '100%', // Restrict long text
   },
   details: {
     flexDirection: 'column',
@@ -333,7 +380,7 @@ const styles = StyleSheet.create({
     // fontSize: 24,
     // fontWeight: 'bold',
     color: Color.primary,
-    width: '20%',
+    width: '100%',
   },
   // label: {
   //   // fontSize: 12,

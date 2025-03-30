@@ -30,6 +30,7 @@ import ButtonWithPermissionCheck from './ButtonWithPermissionCheck';
 import {AddIcon, Icon, ThreeDotsIcon} from '../../components/ui/icon';
 import {Button, ButtonText} from '../../components/ui/button';
 import TouchableOpacityWithPermissionCheck from './TouchableOpacityWithPermissionCheck';
+ 
 
 function UserAvartarWithNameComponent({
   userName,

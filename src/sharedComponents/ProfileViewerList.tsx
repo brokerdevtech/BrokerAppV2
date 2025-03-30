@@ -130,7 +130,6 @@ const ProfileViewerList: React.FC = ({
   }, [status, data]);
 
   const loadMore = async () => {
-    console.log('loadMore');
     if (!isInfiniteLoading) {
   //    console.log('loadMore');
       await executeloadMore(user.userId);

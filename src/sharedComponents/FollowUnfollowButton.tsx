@@ -38,14 +38,16 @@ export default function FollowUnfollowComponent({
 
       if (result) {
         setIsFollow(true);
-        onFollow();
+        if(onFollow)
+       { onFollow();}
       }
     } else {
       const result = await setFollowUnfollow(user.userId, followedId, false);
 
       if (result) {
         setIsFollow(false);
-        onUnfollow();
+        if(onUnfollow)
+        {onUnfollow();}
       }
     }
   };
@@ -73,7 +75,7 @@ const localStyles = StyleSheet.create({
   buttonContainer: {
     ...styles.ph15,
     height: getHeight(45),
-    minWidth: '100%',
+    minWidth: getHeight(45),
     borderRadius: moderateScale(10),
     borderWidth: moderateScale(1),
   },

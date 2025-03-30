@@ -3,7 +3,7 @@
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import CustomHeader from '../sharedComponents/CustomHeader';
 import {Color} from '../styles/GlobalStyles';
-import React, {useState, useRef, useCallback, useEffect} from 'react';
+import React, {useState, useRef, useCallback, useEffect, useMemo} from 'react';
 import {
   View,
   Text,
@@ -53,6 +53,7 @@ import isEqual from 'lodash/isEqual';
 import { GetDashboardData } from '../../BrokerAppCore/services/authService';
 import store from '../../BrokerAppCore/redux/store';
 import { setDashboard } from '../../BrokerAppCore/redux/store/Dashboard/dashboardSlice';
+import { debounce } from 'lodash';
 const HEADER_HEIGHT = 60;
 const TAB_BAR_HEIGHT = 48; // Approximate height of TabBar
 const screenWidth = Dimensions.get('window').width;
@@ -146,14 +147,14 @@ const ProductItem = ({
         .catch(err => console.error('Error opening dialer', err));
     }
   }, []);
-
+  const memoizedMediaItems = useMemo(() => item.postMedias, [item.postMedias]);
   return (
     <View style={styles.WrapcardContainer}>
       <View style={styles.cardContainer}>
         <ItemHeader item={item} />
         <MediaGallery
           ref={MediaGalleryRef}
-          mediaItems={item.postMedias}
+          mediaItems={memoizedMediaItems}
           paused={false}
         />
 
@@ -287,7 +288,7 @@ const ProductListScreen = ({
   headerVisible,
   isTabSwitching, // <- new prop
 }) => {
-  console.log('ProductListScreen', category);
+   console.log('ProductListScreen', category);
   const animatedPaddingTop = headerVisible.interpolate({
     inputRange: [0, 1],
 
@@ -313,11 +314,14 @@ const ProductListScreen = ({
   return (
     <FlashList
       ref={listRef}
-      data={data}
+      data={data ?? []}
       estimatedItemSize={560} // Adjust based on actual item height
       keyExtractor={(item, index) => index.toString()}
       renderItem={renderItem}
       onScroll={onScroll}
+      initialNumToRender={2}
+      maxToRenderPerBatch={4}
+      windowSize={7}
       scrollEventThrottle={16}
       onEndReached={loadMorepage}
       onEndReachedThreshold={0.5}
@@ -366,7 +370,7 @@ const StickyHeaderWithTabs1 = () => {
     setData_Set,
   } = useApiPagingWithtotalRequest(DashboardItemList, setInfiniteLoading, 5);
   const handlePresentModalPress = useCallback(item => {
-    console.log(item, 'modela');
+   
     setSelectedItem(item);
     reportSheetRef.current?.open();
   }, []);
@@ -374,69 +378,55 @@ const StickyHeaderWithTabs1 = () => {
     setSelectedItem(null);
   }, []);
   async function callPodcastList() {
-    setData_Set([]);
+    //setData_Set([]);
     // setStoryData(null);
     const apiEndpoint =
       index === 0 ? '/Post/DashboardPost' : '/Car/Post/DashboardPost';
     const results = await Promise.allSettled([
       execute(user.userId, apiEndpoint),
-      getDashboardStory(user.userId, 1, 5),
+   
     ]);
 
-    const [ListData, DashboardStory] = results.map(result =>
+    const [ListData] = results.map(result =>
       result.status === 'fulfilled' ? result.value : null,
     );
 
-    setStoryData(DashboardStory.data);
+  
   }
 
   
   useFocusEffect(
     useCallback(() => {
-      const fetchData = async () => {
-        try {
-          const request = {pageNo: 1, pageSize: 10, cityName: AppLocation.City};
-
-          const results = await Promise.allSettled([
-            GetDashboardData(user.userId),
-          
-          ]);
-
-          const [
-            dashboardData,
-           
-          ] = results.map(result =>
-            result.status === 'fulfilled' ? result.value : null,
-          );
-          //           console.log("DashboardStory?.data");
-          // console.log(JSON.stringify(DashboardStory?.data));
-         
-
-          if (dashboardData?.data) {
-            store.dispatch(setDashboard(dashboardData.data));
-          }
-        } catch (error) {
-          console.error('Error fetching dashboard data:', error);
-        }
-      };
+      let isActive = true;
       callPodcastList();
-      fetchData();
+      return () => {
+        isActive = false;
+      };
     }, [index]),
   );
   // useEffect(() => {
   //   console.log('activeTab');
   //   callPodcastList();
   // }, [index]);
-
-  const loadMorepage = async () => {
-    // if (isInfiniteLoading || !hasMore) return;
-    // if (isInfiniteLoading || !hasMore) return;
-    const apiEndpoint =
-      index === 0 ? '/Post/DashboardPost' : '/Car/Post/DashboardPost';
-    // if (!isInfiniteLoading) {
-    await loadMore(user.userId, apiEndpoint);
-    // }
-  };
+  const loadMorepage = useCallback(
+    debounce(async () => {
+      if (!isInfiniteLoading) {
+        const apiEndpoint = index === 0 ? '/Post/DashboardPost' : '/Car/Post/DashboardPost';
+        await loadMore(user.userId, apiEndpoint);
+      }
+    }, 200), // 300ms debounce
+    [isInfiniteLoading, index, user, loadMore]
+  );
+  // const loadMorepage = async () => {
+  //   // if (isInfiniteLoading || !hasMore) return;
+  //   // if (isInfiniteLoading || !hasMore) return;
+  //   if (!isInfiniteLoading) {
+  //   const apiEndpoint =
+  //     index === 0 ? '/Post/DashboardPost' : '/Car/Post/DashboardPost';
+  //   // if (!isInfiniteLoading) {
+  //   await loadMore(user.userId, apiEndpoint);}
+  //   // }
+  // };
   // Create refs for each tab's FlatList
   const listRefs = useRef({});
   routes.forEach(route => {
@@ -602,6 +592,12 @@ const StickyHeaderWithTabs1 = () => {
           swipeEnabled={false}
           onIndexChange={handleIndexChange}
           initialLayout={{width: screenWidth}}
+          lazy // <- Add this
+          renderLazyPlaceholder={() => (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <ActivityIndicator size="large" color={Color.primary} />
+            </View>
+          )}
           renderTabBar={props => (
             <Animated.View
               style={[

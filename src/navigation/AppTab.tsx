@@ -77,7 +77,7 @@ const PlaceholderScreen = () => (
     <ZText type={'S20'} style={{marginBottom: 20}}>
       Coming Soon
     </ZText>
-    <ZText type={'R14'}>Are you Ready to get something new from us ?</ZText>
+    <ZText type={'R14'}>Are you ready to get something new from us?</ZText>
   </View>
 );
 const AppTab: React.FC = () => {

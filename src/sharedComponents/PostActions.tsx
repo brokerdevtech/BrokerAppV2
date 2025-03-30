@@ -70,7 +70,7 @@ const PostActions = ({
   PageName = 'ItemList',
   isrefresh = 0,
 }) => {
-  console.log(item);
+ 
 
 
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
