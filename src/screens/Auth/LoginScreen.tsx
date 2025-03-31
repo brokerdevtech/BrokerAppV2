@@ -83,7 +83,7 @@ GoogleSignin.configure({
 // Validation schema using Yup
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
-    .required('UserName is required')
+    .required('Email is required')
     .matches(
       /^(?:\d{10}|[\w._%+-]+@[\w.-]+\.[a-zA-Z]{2,4})$/,
       'Please enter a valid email',

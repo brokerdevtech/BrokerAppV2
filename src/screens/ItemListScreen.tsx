@@ -731,7 +731,7 @@ const ItemListScreen: React.FC<any> = ({
       result.status === 'fulfilled' ? result.value : null,
     );
     console.log('DashboardStory');
-    console.log(DashboardStory);
+    console.log(RecentSearch);
     setStoryData(DashboardStory.data);
     setNewIncategoryData(NewIncategory.data);
     setRecentSearchData(RecentSearch.data);

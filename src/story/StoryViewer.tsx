@@ -217,12 +217,20 @@ const StoryViewer = () => {
       }
     });
   const closeModal = () => {
-    setCurrentUser(-1);
-    // navigation.goBack();
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'Home'}],
-    });
+    // console.log("closeModal");
+    // runOnJS(setCurrentUser)(-1); 
+    console.log("Closing modal...");
+    runOnJS(setCurrentUser)(-1);
+    console.log("Modal close triggered");
+  //   navigation.goBack();
+  //   if (navigation.canGoBack()) {
+  //    navigation.goBack();}
+  //   else{
+  //   // navigation.reset({
+  //   //   index: 0,
+  //   //   routes: [{name: 'Home'}],
+  //   // });
+  // }
   };
   const onPressUser = () => {
     if (user.userId === currentUser.userId) {

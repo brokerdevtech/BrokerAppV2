@@ -51,7 +51,7 @@ const SubscriptionPlan = ({route}) => {
       ? 1
       : activeTab === 'Ads'
       ? 2
-      : activeTab === 'Space ads'
+      : activeTab === 'SpaceAds'
       ? 3
       : 0;
   const {
@@ -121,8 +121,12 @@ const SubscriptionPlan = ({route}) => {
             </View>
           </View>
 
-          {/* ✅ Updated Limits Mapping with Category Names */}
-          <View style={styles.rowcol2}>
+       
+        </View>
+
+        <View style={styles.divider} />
+<View style={styles.rowCategory}>
+<View style={styles.rowcol2}>
           <View style={styles.rowcol12}>
             {Object.keys(limits).map(key => {
               const value = limits[key];
@@ -155,10 +159,7 @@ const SubscriptionPlan = ({route}) => {
             })}
           </View>
           </View>
-        </View>
-
-        <View style={styles.divider} />
-
+</View>
         {/* ✅ Updated Additional Benefits Mapping with Category Names */}
         <View style={styles.details}>
           <ZText type={'R12'} style={[styles.detailText, {marginTop: 8}]}>
@@ -204,7 +205,7 @@ const SubscriptionPlan = ({route}) => {
         <View
           style={{
             flexDirection: 'column',
-            alignItems: 'center',
+            alignItems: 'flex-end',
             marginTop: 10,
           }}>
           <View style={styles.buyNowButton}>
@@ -232,7 +233,7 @@ const SubscriptionPlan = ({route}) => {
   return (
     <View style={{flex: 1}}>
       <View style={styles.tabContainer}>
-        {['General', 'Ads', 'Space ads'].map(tab => (
+        {['General', 'Ads', 'SpaceAds'].map(tab => (
           <TouchableOpacity
             key={tab}
             style={[styles.tabButton, activeTab === tab && styles.activeTab]}
@@ -311,43 +312,50 @@ const styles = StyleSheet.create({
   },
   rowcol: {
    display:'flex' ,
-  width:'30%',
+  width:'75%',
    flexDirection:'row',
  
   //  flexBasis:1
   },
   rowcol1: {
     display:'flex' ,
-    width:'20%',
+    width:'25%',
    // flexDirection:'column',
-    justifyContent:'center',
-    alignContent:'center',
-    backgroundColor: Color.primaryDisable,
+    justifyContent:'flex-end',
+    alignContent:'flex-end',
+//    backgroundColor: Color.primaryDisable,
      //flexGrow:1
+   },
+   rowCategory:{
+    display:'flex' ,
+    
+    flexDirection:'column',
+    justifyContent:'flex-start',
+    alignContent:'flex-start',
+ 
    },
    rowcol2: {
     display:'flex' ,
-     width:'42%',
+    
     flexDirection:'row',
-    justifyContent:'center',
-    alignContent:'center',
-    //paddingLeft: 10, // Optional
-   flexGrow:2
+    justifyContent:'flex-start',
+    alignContent:'flex-start',
+ 
    },
    rowcol12: {
     display:'flex' ,
    
     flexDirection:'column',
-    justifyContent:'center',
-    alignContent:'center',
+    justifyContent:'flex-start',
+    alignContent:'flex-start',
   
     // flexBasis:1
    },
    labelcol: {
    width:'100%',
    display:'flex',
-   justifyContent:'center',
-   alignContent:'center',
+   justifyContent:'flex-end',
+   alignContent:'flex-end',
    flexDirection:'row'
   },
    label: {

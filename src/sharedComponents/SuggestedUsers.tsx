@@ -100,10 +100,11 @@ const RenderBrokerItem = React.memo(({item, setIsFollowing}) => {
       <FollowUnfollowComponent
         isFollowing={undefined}
         followedId={item.userId}
-        onFollow={setIsFollowing(true)}
-        onUnfollow={setIsFollowing(false)}
+        onFollow={() => setIsFollowing(true)}
+  onUnfollow={() => setIsFollowing(false)}
         screen={'item'}
-      /></View>
+      />
+      </View>
       {/* <FollowUnfollowComponent
         // isFollowing={ProfileData?.isFollowing}
         followedId={userId}
@@ -158,7 +159,7 @@ const SuggestedUsers = React.memo(props => {
   }, []);
   useEffect(() => {
     if (brokersdata !== null) {
-      console.log("===========================================brokersdata",brokersdata)
+   //   console.log("===========================================brokersdata",brokersdata)
       setBrokerList(brokersdata);
     }
     else{

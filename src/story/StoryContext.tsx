@@ -80,12 +80,12 @@ export const StoryProvider = ({ userId, children }: { userId?: any; children: Re
   const fetchStories = async () => {
     try {
       // Mocking API fetch
-      console.log("====================================fetchStories===============================");
+    //  console.log("====================================fetchStories===============================");
       setCurrentPage(1);
       setCurrentPageSize(5);
       const response = await getDashboardStory(userId,1,currentPageSize);
             
-console.log(JSON.stringify( response.data?.data));
+//console.log(JSON.stringify( response.data?.data));
       setTotalPages(response.data?.totalPages);
       setRecordCount(response.data?.recordCount);
 setLoading(false);
