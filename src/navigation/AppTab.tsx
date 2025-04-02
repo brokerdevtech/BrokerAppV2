@@ -52,6 +52,7 @@ import StickyHeaderWithTabs from '../screens/StickyHeaderWithTabs';
 import InstagramReels from '../screens/Podcast/VideoReelsInsta';
 
 import StickyHeaderWithTabs1 from '../screens/StickyHeader1';
+import PlaceholderScreen from '../sharedComponents/PlaceholderScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -68,18 +69,8 @@ const HomePageStack = () => {
     </Stack.Navigator>
   );
 };
-const PlaceholderScreen = () => (
-  <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-    <Image
-      source={require('../assets/images/ComingSoon.png')}
-      style={{height: 150, width: 150, marginBottom: 20}}
-    />
-    <ZText type={'S20'} style={{marginBottom: 20}}>
-      Coming Soon
-    </ZText>
-    <ZText type={'R14'}>Are you ready to get something new from us?</ZText>
-  </View>
-);
+
+ 
 const AppTab: React.FC = () => {
   const navigation = useNavigation();
   const userP = useSelector((state: RootState) => state.user.user);

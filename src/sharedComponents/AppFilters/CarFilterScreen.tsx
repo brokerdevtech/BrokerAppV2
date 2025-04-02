@@ -126,7 +126,7 @@ const CarFilterScreen: React.FC = ({
           );
 
           const years = [];
-          for (let year = 2024; year >= 2000; year--) {
+          for (let year = 2025; year >= 2000; year--) {
             years.push({key: year.toString(), value: year});
           }
 
@@ -198,8 +198,8 @@ const CarFilterScreen: React.FC = ({
             ...filteredItems,
           ];
 
-          // console.log("PopUPFilter");
-          // console.log(PopUPFilter);
+          console.log("PopUPFilter");
+          console.log(PopUPFilter);
 //console.log(filtersWithoutPostedSince);
           if (PopUPFilter) {
             // Fetch filters based on Developer and localities.City
@@ -210,7 +210,32 @@ const CarFilterScreen: React.FC = ({
             //   // Set the first available filter as the selected item
 
             setSelectedItem(filtersWithoutPostedSince[0]);
+            if (
+              PopUPFilter &&
+              PopUPFilter.Brand &&
+              Array.isArray(PopUPFilter.Brand) &&
+              PopUPFilter.Brand.length > 0 &&
+              PopUPFilter.Brand[0].key
+            )
+{
+            const result = await getCarPostCascadedFilters(
+              user.userId,
+              'Post',
+              "Model",
+              PopUPFilter.Brand[0].key,
+            );
+console.log(result);
 
+if (result.data.data.filters.length > 0) {
+  console.log(filtersWithoutPostedSince);
+  const updatedFilters = await updateRecordsByName(
+    filtersWithoutPostedSince,
+   "Model",
+    result.data.data.filters[0].records,
+  );
+  setfiltersState(updatedFilters);
+}
+}
             const updatedSelectedFilters = {
               ...selectedFilters,
               ...PopUPFilter,
@@ -250,6 +275,7 @@ const CarFilterScreen: React.FC = ({
   };
 
   const handleApplyFilters = () => {
+    console.log('handleApplyFilters',selectedFilters);
     onApply(selectedFilters);
     // Check for mandatory filters
     //   const missingMandatoryFilters = CarfiltersState
@@ -353,14 +379,22 @@ const CarFilterScreen: React.FC = ({
     return filtersArray;
   };
   const SelectItem = async item => {
-    // Create a copy of the selected filters object
-    let updatedSelectedFilters = {...selectedFilters};
-    updatedSelectedFilters[selectedItem.name] = [item];
-    setSelectedFilters(updatedSelectedFilters);
 
+
+
+let updatedSelectedFilters = {...selectedFilters};
+if(item!=null){
+updatedSelectedFilters[selectedItem.name] = [item];}
+else{
+delete updatedSelectedFilters[selectedItem.name]
+delete updatedSelectedFilters[selectedItem.dependsOn]
+
+}
+setSelectedFilters(updatedSelectedFilters);
     if (selectedItem.dependsOn) {
       try {
-        // Fetch the cascaded filters for the dependent item
+        if(item!=null)
+      {  // Fetch the cascaded filters for the dependent item
         const result = await getCarPostCascadedFilters(
           user.userId,
           'Post',
@@ -384,6 +418,15 @@ const CarFilterScreen: React.FC = ({
           if (dependentFilter) {
             setSelectedItem(dependentFilter);
           }
+        }}
+        else{
+
+          const updatedFilters = await updateRecordsByName(
+            filtersState,
+            selectedItem.dependsOn,
+            [],
+          );
+          setfiltersState(updatedFilters);
         }
       } catch (error) {
         console.error('Error fetching cascaded filters:', error);

@@ -239,6 +239,7 @@ const StoriesAction = ({
                   accessibilityLabel="unlike white"
                 />
               )}
+              {ActionStoryStates?.likeCount>0 &&
               <TextWithPermissionCheck
                 permissionEnum={PermissionKey.AllowViewStoryLikes}
                 permissionsArray={userPermissions}
@@ -246,7 +247,7 @@ const StoriesAction = ({
                 <Text style={styles.countText}>
                   {ActionStoryStates.likeCount}
                 </Text>
-              </TextWithPermissionCheck>
+              </TextWithPermissionCheck>}
             </View>
           </TouchableOpacityWithPermissionCheck>
 

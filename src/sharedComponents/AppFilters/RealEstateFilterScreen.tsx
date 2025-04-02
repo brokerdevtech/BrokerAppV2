@@ -373,13 +373,17 @@ const RealEstateFilterScreen: React.FC = ({
     if(item!=null){
     updatedSelectedFilters[selectedItem.name] = [item];}
     else{
-    delete updatedSelectedFilters[selectedItem.name]}
+    delete updatedSelectedFilters[selectedItem.name]
+    delete updatedSelectedFilters[selectedItem.dependsOn]
+  }
 
     setSelectedFilters(updatedSelectedFilters);
   
 
-    if (selectedItem.dependsOn && item!=null) {
+    if (selectedItem.dependsOn) {
       try {
+        if(item!=null)
+          {
         // Fetch the cascaded filters for the dependent item
         const result = await getCascadedFilters(
           user.userId,
@@ -404,6 +408,15 @@ const RealEstateFilterScreen: React.FC = ({
           if (dependentFilter) {
             setSelectedItem(dependentFilter);
           }
+        }}
+        else{
+
+          const updatedFilters = await updateRecordsByName(
+            filtersState,
+            selectedItem.dependsOn,
+            [],
+          );
+          setfiltersState(updatedFilters);
         }
       } catch (error) {
         console.error('Error fetching cascaded filters:', error);
@@ -540,7 +553,7 @@ const RealEstateFilterScreen: React.FC = ({
             numColumn="2"
             onSelectItem={SelectItem}
             preselectedItem={items}
-            emptyessage="Please select a Location"
+            emptyessage="Please select a Location for which a Developer exists."
           />
         );
       }
@@ -555,7 +568,7 @@ const RealEstateFilterScreen: React.FC = ({
             numColumn="2"
             onSelectItem={SelectItem}
             preselectedItem={items}
-            emptyessage="Please select a Project"
+            emptyessage="Please choose a Developer associated with a Project."
           />
         );
       }

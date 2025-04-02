@@ -393,12 +393,31 @@ const StickyHeaderWithTabs1 = () => {
 
   
   }
-
+  async function callDashboardData() {
+    //setData_Set([]);
+    // setStoryData(null);
+     const results = await Promise.allSettled([
+               GetDashboardData(user.userId)]);
+  // console.log("results===",results);
+               const [
+                dashboardData,
+              
+              ] = results.map(result =>
+                result.status === 'fulfilled' ? result.value : null,
+              );
+              if (dashboardData?.data) {
+              //  console.log("results===",dashboardData?.data);
+                store.dispatch(setDashboard(dashboardData.data));
+              }
+   
+  
+  }
   
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
       callPodcastList();
+      callDashboardData();
       return () => {
         isActive = false;
       };

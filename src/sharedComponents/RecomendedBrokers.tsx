@@ -106,6 +106,7 @@ const Recommend = React.memo(props => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector(state => state.user.user, shallowEqual);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
+  const [isInfiniteLoading1st, setisInfiniteLoading1st] = useState(true);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);
   const [brokerList, setBrokerList] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -131,6 +132,7 @@ const Recommend = React.memo(props => {
     try {
       brokerscurrentPage_Set(1);
       brokershasMore_Set(true);
+      setisInfiniteLoading1st(false);
       //   brokersexecute(user.userId, categoryId, AppLocation.City);
     } catch (error) {}
   };
@@ -177,7 +179,7 @@ const Recommend = React.memo(props => {
         </ZText>
       </View>
       {/* <RecommendedBrokersSkeleton /> */}
-      {isInfiniteLoading ? (
+      {isInfiniteLoading1st ? (
         <RecommendedBrokersSkeleton />
       ) : brokerList?.length > 0 ? (
         <FlatList
@@ -192,7 +194,11 @@ const Recommend = React.memo(props => {
           onEndReached={loadMore}
           ListFooterComponent={
             isInfiniteLoading ? (
-              <LoadingSpinner isVisible={isInfiniteLoading} />
+                <ActivityIndicator
+                                                 size="large"
+                                                 color="#0000ff"
+                                               style={localStyles.loader}
+                                               />
             ) : null
           }
         />
@@ -208,6 +214,9 @@ const Recommend = React.memo(props => {
 export default Recommend;
 
 const localStyles = StyleSheet.create({
+  loader: {
+    marginVertical: 20,
+  },
   initialsBackground: {
     justifyContent: 'center',
     alignItems: 'center',

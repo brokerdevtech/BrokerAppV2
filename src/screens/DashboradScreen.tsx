@@ -11,6 +11,7 @@ import {
   Dimensions,
   Animated,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -68,8 +69,10 @@ import {StoryProvider, useStory} from '../story/StoryContext';
 import StoriesFlatList from '../story/StoriesFlatList';
 import StoriesCarousel from '../story/StoriesCarousel';
 import StoryViewer from '../story/StoryViewer';
+import { useApiPagingWithtotalRequest } from '../hooks/useApiPagingWithtotalRequest';
 
 export default function DashboradScreen() {
+    const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
   const user = useSelector((state: RootState) => state.user.user);
   const [searchText, setSearchText] = useState('');
@@ -96,7 +99,19 @@ export default function DashboradScreen() {
 
   const toast = useToast();
   const {width} = useWindowDimensions();
-  const {data, status, error, execute} = useApiRequest(fetchPodcastList);
+  const {
+    data,
+    status,
+    error,
+    execute,
+    loadMore,
+    pageSize_Set,
+    currentPage_Set,
+    hasMore_Set,
+    totalPages,
+    recordCount,
+    setData_Set,
+  } = useApiPagingWithtotalRequest(fetchPodcastList,setInfiniteLoading, 5);
   const cityToShow = AppLocation.City;
   const navigation = useNavigation();
   const [StoryData, setStoryData]: any[] = useState(null);
@@ -107,7 +122,7 @@ export default function DashboradScreen() {
   const [BrandSectionData, setBrandSectionData]: any[] = useState(null);
 
   const callPodcastList = async () => {
-    execute(user.userId, 1, 4);
+    execute(user.userId);
   };
 
   const headerTranslateY = headerVisible.interpolate({
@@ -204,7 +219,7 @@ export default function DashboradScreen() {
 
           const results = await Promise.allSettled([
             GetDashboardData(user.userId),
-            execute(user.userId, 1, 4),
+            execute(user.userId),
             getDashboardStory(user.userId, 1, 5),
             fetchDashboardData('NewlyLaunch', request),
             fetchDashboardData('Newin', {
@@ -366,6 +381,11 @@ export default function DashboradScreen() {
   });
   //  const { isStoryViewerVisible } = useStory();
 
+  const loadMorePodcast = async () => {
+    if (!isInfiniteLoading) {
+      await loadMore(user.userId);
+    }
+  };
   return (
     <SafeAreaView style={{flex: 1}}>
       {/* Header */}
@@ -590,9 +610,21 @@ export default function DashboradScreen() {
                 renderItem={({item, index}) => (
                   <RenderPodcastItems item={item} index={index} />
                 )}
-                initialNumToRender={3}
+                initialNumToRender={2}
+                maxToRenderPerBatch={4}
+                onEndReachedThreshold={0.6}
+                onEndReached={loadMorePodcast}
                 showsHorizontalScrollIndicator={false}
                 horizontal
+                ListFooterComponent={
+                                isInfiniteLoading ? (
+                                  <ActivityIndicator
+                                    size="large"
+                                    color="#0000ff"
+                                  style={styles.loader}
+                                  />
+                                ) : null
+                              }
               />
             </HStack>
           </View>
@@ -615,6 +647,9 @@ export default function DashboradScreen() {
 }
 
 const styles = StyleSheet.create({
+  loader: {
+    marginVertical: 20,
+  },
   badge: {
     position: 'absolute',
     top: 5,

@@ -403,9 +403,12 @@ const ItemFilterListScreen: React.FC<any> = ({
   );
 
   const getTags = (name, Item) => {
+    console.log("getTagsgetTagsgetTagsgetTagsgetTagsgetTags");
+    console.log(Item);
+    console.log(name);
     return {
       name: name,
-      values: Item.map(item => {
+      values: Item.filter(item => item?.key != null) .map(item => {
         return {
           key: String(item.key),
           value: item.value,
