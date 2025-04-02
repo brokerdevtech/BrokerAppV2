@@ -24,7 +24,6 @@ PODS:
     - FBSDKCoreKit (= 17.4.0)
   - FBSDKShareKit (17.4.0):
     - FBSDKCoreKit (= 17.4.0)
-  - ffmpeg-kit-ios-min (6.0)
   - Firebase/Analytics (11.7.0):
     - Firebase/Core
   - Firebase/Auth (11.7.0):
@@ -1638,9 +1637,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-video-trim (2.2.11):
+  - react-native-video-trim (3.0.5):
     - DoubleConversion
-    - ffmpeg-kit-ios-min (~> 6.0)
     - glog
     - hermes-engine
     - RCT-Folly (= 2024.01.01.00)
@@ -2336,7 +2334,6 @@ SPEC REPOS:
     - FBSDKGamingServicesKit
     - FBSDKLoginKit
     - FBSDKShareKit
-    - ffmpeg-kit-ios-min
     - Firebase
     - FirebaseAnalytics
     - FirebaseAppCheckInterop
@@ -2599,7 +2596,6 @@ SPEC CHECKSUMS:
   FBSDKGamingServicesKit: 55a13febe0cd117bf5f8f61f315d75aab9b7876e
   FBSDKLoginKit: 5c1cd53c91a2282b3a4fe6e6d3dcf2b8b0d33d55
   FBSDKShareKit: 00546a02dce72f37a4209cd68aaf5fb749185c3b
-  ffmpeg-kit-ios-min: 4e9a088f4ee9629435960b9d68e54848975f1931
   Firebase: a64bf6a8546e6eab54f1c715cd6151f39d2329f4
   FirebaseAnalytics: bc9e565af9044ba8d6c6e4157e4edca8e5fdf7ec
   FirebaseAppCheckInterop: 2376d3ec5cb4267facad4fe754ab4f301a5a519b
@@ -2674,7 +2670,7 @@ SPEC CHECKSUMS:
   react-native-safe-area-context: 851c62c48dce80ccaa5637b6aa5991a1bc36eca9
   react-native-slider: 552edab18aa6e2a52e220a066cc6bf28b6181ac9
   react-native-video: 5ea06ea0e26fbe924734af76de16db586914e309
-  react-native-video-trim: ddefcb4527072acb997ccfe47fed5ed84491c821
+  react-native-video-trim: 615ba200ef0e37fc8efc37bd20d942271bee8d0f
   React-nativeconfig: 5fc2b05a590eb704128f5a4fc8ea6fa7b847e6e8
   React-NativeModulesApple: 88313414ddffd1758f76042733e8f0297acfd502
   React-perflogger: 8a360ccf603de6ddbe9ff8f54383146d26e6c936
