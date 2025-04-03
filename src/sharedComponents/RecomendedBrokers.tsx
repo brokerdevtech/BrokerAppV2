@@ -174,7 +174,7 @@ const Recommend = React.memo(props => {
   return (
     <View style={localStyles.container}>
       <View style={localStyles.storiesHeaderWrapper}>
-        <ZText type={'R18'} style={{marginVertical: 5, marginLeft: 10}}>
+        <ZText type={'R18'} style={{  marginLeft: 10}}>
           Recommended Brokers
         </ZText>
       </View>
@@ -238,6 +238,7 @@ const localStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
+    paddingBottom:20
     // marginLeft: 10,
   },
   otherStories: {

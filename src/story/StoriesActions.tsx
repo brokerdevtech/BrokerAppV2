@@ -14,6 +14,7 @@ import {
 
 import {useSelector} from 'react-redux';
 import {
+  AddStoryViewer,
   DeleteStory,
   StoryLike,
   StoryUnLIke,
@@ -55,7 +56,10 @@ const StoriesAction = ({
   useEffect(() => {
  
     isStoryOwner = user.userId === stories[currentStoryIndex]?.userId;
-
+    console.log("============================stories[currentStoryIndex]?.storyId");
+    console.log(stories[currentStoryIndex].storyDetails);
+    console.log(story);
+   AddStoryViewer(user.userId, story?.storyId);
     let storystateobj = {
       likeCount: storyState?.likeCount || 0,
       reactionCount: storyState?.reactionCount || 0,

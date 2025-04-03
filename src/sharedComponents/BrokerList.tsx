@@ -143,6 +143,7 @@ const BrokerList: React.FC = ({
         />
         <View style={{flex: 1}}>
           <FlatList
+          keyboardShouldPersistTaps="handled"
             data={userLists}
             extraData={data}
             showsVerticalScrollIndicator={false}

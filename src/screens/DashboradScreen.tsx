@@ -111,7 +111,7 @@ export default function DashboradScreen() {
     totalPages,
     recordCount,
     setData_Set,
-  } = useApiPagingWithtotalRequest(fetchPodcastList,setInfiniteLoading, 5);
+  } = useApiPagingWithtotalRequest(fetchPodcastList,setInfiniteLoading, 8);
   const cityToShow = AppLocation.City;
   const navigation = useNavigation();
   const [StoryData, setStoryData]: any[] = useState(null);
@@ -610,9 +610,9 @@ export default function DashboradScreen() {
                 renderItem={({item, index}) => (
                   <RenderPodcastItems item={item} index={index} />
                 )}
-                initialNumToRender={2}
-                maxToRenderPerBatch={4}
-                onEndReachedThreshold={0.6}
+                // initialNumToRender={4}
+                // maxToRenderPerBatch={5}
+                // onEndReachedThreshold={0.5}
                 onEndReached={loadMorePodcast}
                 showsHorizontalScrollIndicator={false}
                 horizontal

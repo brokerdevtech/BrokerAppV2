@@ -33,7 +33,7 @@ const MediaGallery = forwardRef((props, ref) => {
 
   const onScroll = event => {
     const slideIndex = Math.ceil(
-      event.nativeEvent.contentOffset.x / screenWidth,
+      event.nativeEvent.contentOffset.x / parentWidth,
     );
 
     setActiveIndex(slideIndex);
@@ -117,7 +117,7 @@ const MediaGallery = forwardRef((props, ref) => {
       {/* Pagination */}
       <View style={styles.paginationContainer}>
         <Text style={styles.paginationText}>
-          {activeIndex + 1} / {mediaItems.length}
+          {activeIndex+1} / {mediaItems.length}
         </Text>
       </View>
     </View>

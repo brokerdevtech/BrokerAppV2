@@ -191,7 +191,7 @@ return (
   brokerList != null && brokerList.length > 0 ? (
     <View style={localStyles.container}>
       <View style={localStyles.storiesHeaderWrapper}>
-        <ZText type={'R18'} style={{ marginVertical: 5, marginLeft: 10 }}>
+        <ZText type={'R18'} style={{  }}>
           Suggested for you
         </ZText>
       </View>
@@ -235,12 +235,13 @@ const localStyles = StyleSheet.create({
     width: '100%',
     // marginTop: 10,
     backgroundColor: '#FFF',
-    paddingVertical: 20,
+     paddingVertical: 20,
   },
   storiesHeaderWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
     // marginLeft: 10,
   },
   otherStories: {
