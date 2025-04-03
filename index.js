@@ -20,13 +20,15 @@ const tokenProvider: TokenOrProvider = async userId => {
 
 async function handleNotification(remoteMessage, isBackground = false) {
   // Ensure we have a notification payload
-  if (remoteMessage?.data?.id) {
-    console.log("handleChatNotification");
-    await handleChatNotification(remoteMessage);
+  console.log(remoteMessage);
+  if (Platform.OS !== 'ios') {
+    if (remoteMessage?.data?.id) {
+      console.log('handleChatNotification');
+      await handleChatNotification(remoteMessage);
+    }
   }
 
   if (!remoteMessage.notification) {
-   
     return;
   }
 
@@ -65,7 +67,6 @@ async function handleNotification(remoteMessage, isBackground = false) {
     await notifee.displayNotification(notificationOptions);
 
     // Optional: Handle specific message data if needed
-   
   } catch (error) {
     console.error('Notification display error:', error);
   }
@@ -86,9 +87,9 @@ async function handleChatNotification(remoteMessage) {
       // importance: notifee.Importance.HIGH,
     });
     const message = await chatClient.getMessage(remoteMessage.data.id);
-console.log(message);
+    console.log(message);
     if (message.message.user?.name && message.message.text) {
-      console.log("2");
+      console.log('2');
       const notificationOptions = {
         id: Date.now().toString(), // Unique ID to prevent notification overwriting
         title: `New message from ${message.message.user.name}`,
@@ -110,7 +111,6 @@ console.log(message);
         },
         data: remoteMessage.data || {},
       };
-
 
       await notifee.displayNotification(notificationOptions);
     }
