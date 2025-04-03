@@ -20,6 +20,11 @@ const tokenProvider: TokenOrProvider = async userId => {
 
 async function handleNotification(remoteMessage, isBackground = false) {
   // Ensure we have a notification payload
+  if (remoteMessage?.data?.id) {
+    console.log("handleChatNotification");
+    await handleChatNotification(remoteMessage);
+  }
+
   if (!remoteMessage.notification) {
    
     return;
@@ -60,9 +65,7 @@ async function handleNotification(remoteMessage, isBackground = false) {
     await notifee.displayNotification(notificationOptions);
 
     // Optional: Handle specific message data if needed
-    if (remoteMessage.data?.id) {
-      await handleChatNotification(remoteMessage);
-    }
+   
   } catch (error) {
     console.error('Notification display error:', error);
   }
@@ -77,25 +80,39 @@ async function handleChatNotification(remoteMessage) {
 
     let token = await tokenProvider(remoteMessage.data?.receiver_id);
     await chatClient._setToken(user, token);
-
+    const channelId = await notifee.createChannel({
+      id: 'app-messages-chat',
+      name: 'App Messages chat',
+      // importance: notifee.Importance.HIGH,
+    });
     const message = await chatClient.getMessage(remoteMessage.data.id);
-
+console.log(message);
     if (message.message.user?.name && message.message.text) {
-      await notifee.displayNotification({
+      console.log("2");
+      const notificationOptions = {
+        id: Date.now().toString(), // Unique ID to prevent notification overwriting
         title: `New message from ${message.message.user.name}`,
         body: message.message.text,
         android: {
-          channelId: 'chat-messages',
-          pressAction: {id: 'default'},
+          channelId,
+          pressAction: {
+            id: 'default',
+          },
         },
         ios: {
           foregroundPresentationOptions: {
             badge: true,
             sound: true,
             banner: true,
+            list: true,
           },
+          critical: true, // Ensure high priority on iOS
         },
-      });
+        data: remoteMessage.data || {},
+      };
+
+
+      await notifee.displayNotification(notificationOptions);
     }
   } catch (error) {
     console.error('Chat notification handling error:', error);
