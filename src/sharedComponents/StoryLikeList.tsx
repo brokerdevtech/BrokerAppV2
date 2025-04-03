@@ -1,5 +1,11 @@
 import React, {useState, useEffect, useMemo} from 'react';
-import {ActivityIndicator, FlatList, ScrollView, StyleSheet, View} from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 
 import {useSelector} from 'react-redux';
 import {styles} from '../themes';
@@ -69,7 +75,7 @@ const StoryLikeList: React.FC = ({
     pageSize_Set,
     currentPage_Set,
     hasMore_Set,
-  } = useApiPagingWithtotalRequest(getStoryLikeList, setInfiniteLoading,10);
+  } = useApiPagingWithtotalRequest(getStoryLikeList, setInfiniteLoading, 10);
 
   const BlurredStyle = {
     backgroundColor: colors.inputBg,
@@ -134,7 +140,7 @@ const StoryLikeList: React.FC = ({
             showsHorizontalScrollIndicator={false}
             initialNumToRender={5}
             maxToRenderPerBatch={5} // Default is 10
-           // removeClippedSubviews={true}
+            // removeClippedSubviews={true}
             renderItem={({item, index}) => (
               <View
                 style={{
@@ -145,6 +151,7 @@ const StoryLikeList: React.FC = ({
                 <UserAvartarWithName
                   userName={item?.userName}
                   userImage={item?.profileImage}
+                  userId={item.userId}
                   key={index}
                 />
               </View>
@@ -161,19 +168,17 @@ const StoryLikeList: React.FC = ({
                 <LoadingSpinner isVisible={isInfiniteLoading} />
               ) : null
             }
-             ListEmptyComponent={() =>
-              isInfiniteLoading ? null : (
-                data == null ? (
-                  <ActivityIndicator
-                    size="large"
-                    color="#0000ff"
-                    style={localStyles.loader}
-                  />
-                ) : (
-                  <NoDataFoundScreen />
-                )
+            ListEmptyComponent={() =>
+              isInfiniteLoading ? null : data == null ? (
+                <ActivityIndicator
+                  size="large"
+                  color="#0000ff"
+                  style={localStyles.loader}
+                />
+              ) : (
+                <NoDataFoundScreen />
               )
-                          }
+            }
           />
           {/* {userLists !== null && userLists.length < 1 && <NoDataFound />} */}
         </View>
