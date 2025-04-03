@@ -83,7 +83,7 @@ const InstagramReels = () => {
     // }
   };
   const loadMoreVideos = () => {
-    console.log('Loading more videos');
+    // console.log('Loading more videos');
     if (nextPage && !loadingMore) {
       setLoadingMore(true);
       fetchVideos(nextPage);
@@ -101,7 +101,7 @@ const InstagramReels = () => {
     fetchVideos();
   }, []);
   const handleVideoEnd = () => {
-    console.log('Video Ended');
+    // console.log('Video Ended');
     if (currentIndex < videos.length - 1) {
       onVideoEndRef.current = true; // Prevents onMomentumScrollEnd from interfering
       const nextIndex = currentIndex + 1;

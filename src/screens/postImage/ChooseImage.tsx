@@ -560,7 +560,7 @@ const ChooseImage = ({user, s3, toast, navigation}: any) => {
       userId: user.userId,
       storyMedia: uploadedImageUrls,
     };
-    console.log(AddStoryobj);
+    // console.log(AddStoryobj);
     // toast("'Post created successfully'")   ;
     let storyResult = await Storyexecute(AddStoryobj);
     setLoadingOverlay(false);

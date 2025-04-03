@@ -175,7 +175,7 @@ const SubscriptionPlan = ({route}) => {
                     key === 'Ads'
                       ? AdsCategoryMap[benefitItem?.Category]
                       : SpaceCategoryMap[benefitItem?.Category];
-                  console.log(benefitItem, 'bene');
+                  // console.log(benefitItem, 'bene');
                   return (
                     <ZText
                       key={`${key}-${idx}`}
@@ -229,7 +229,7 @@ const SubscriptionPlan = ({route}) => {
     );
   };
 
-  console.log(Plandata, 'plandat');
+  // console.log(Plandata, 'plandat');
   return (
     <View style={{flex: 1}}>
       <View style={styles.tabContainer}>

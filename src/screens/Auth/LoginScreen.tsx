@@ -143,7 +143,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
       const userInfo = await GoogleSignin.signIn();
 
       const fcmToken = await getfcmToken();
-      console.log(fcmToken);
+      // console.log(fcmToken);
       // if (!userInfo.data?.user ) {
       //   throw new Error('Failed to get user email from Google Sign In');
       // }

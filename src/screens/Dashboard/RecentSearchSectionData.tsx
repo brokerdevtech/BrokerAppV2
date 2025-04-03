@@ -44,11 +44,11 @@ const RecentSearchSectionData = (props: BrandSectionProps) => {
   const navigation = useNavigation();
   const {logButtonClick} = useUserJourneyTracker(`Recent Search`);
   const callBrandList = async () => {
-    console.log("callBrandList without data");
+    // console.log("callBrandList without data");
     if(props.Data!=null)
       {
-       console.log("callBrandList data")
-       console.log(props.Data)
+      //  console.log("callBrandList data")
+      //  console.log(props.Data)
         setData(props.Data)
       }
     //  execute(props.endpoint, props.request);
