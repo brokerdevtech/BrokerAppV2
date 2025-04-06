@@ -53,6 +53,7 @@ import InstagramReels from '../screens/Podcast/VideoReelsInsta';
 
 import StickyHeaderWithTabs1 from '../screens/StickyHeader1';
 import PlaceholderScreen from '../sharedComponents/PlaceholderScreen';
+import ItemListScreen from '../screens/ItemListScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -66,6 +67,11 @@ const HomePageStack = () => {
         options={{headerShown: false}}
         component={DashboradScreen}
       />
+      <Stack.Screen
+                  name="ItemListScreen"
+                  component={ItemListScreen}
+                  options={{headerShown: false}}
+                />
     </Stack.Navigator>
   );
 };
@@ -193,7 +199,7 @@ const AppTab: React.FC = () => {
             ),
           }}
           component={StickyHeaderWithTabs1}
-          // component={MyNetworkScreen}
+           //component={MyNetworkScreen}
         />
 
         <Tab.Screen

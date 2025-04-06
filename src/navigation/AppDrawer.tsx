@@ -15,6 +15,14 @@ import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import CustomHeader2 from '../sharedComponents/CustomHeader2';
 const Drawer = createDrawerNavigator();
 
+const getActiveRouteName = (route) => {
+  if (!route || !route.state) return route?.name;
+
+  const nestedRoute = route.state.routes[route.state.index];
+
+  // Recursive call
+  return getActiveRouteName(nestedRoute);
+};
 const AppDrawer: React.FC = () => {
   return (
     <NavigationProvider>
@@ -34,14 +42,19 @@ const AppDrawer: React.FC = () => {
             // Determine the active tab; default to "AppTabHome" if not set.
             const routeName =
               getFocusedRouteNameFromRoute(route) ?? 'AppTabHome';
-
+console.log("==============routeName");
+console.log(routeName);
+console.log(getActiveRouteName(route));
             // When "Favourite" tab is active, hide the header.
             if (routeName === 'Favourite') {
               return {headerShown: false};
             }
+            if (routeName === 'ItemListScreen') {
+              return {headerShown: false};
+            }
             // Otherwise, show the custom header.
             return {
-              headerShown: true,
+              headerShown: false,
               header: () => <CustomHeader />,
               headerStyle: {
                 height: Platform.OS === 'android' ? 65 : 120,

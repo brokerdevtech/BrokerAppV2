@@ -1,5 +1,5 @@
 import {RootState} from '@/BrokerAppCore/redux/store/reducers';
-import {NavigationContainer, NavigationContainerRef, useNavigation} from '@react-navigation/native';
+import {createNavigationContainerRef, NavigationContainer, NavigationContainerRef, useNavigation} from '@react-navigation/native';
 import {
  
   Text
@@ -13,11 +13,15 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import notifee, {EventType} from '@notifee/react-native';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
+import { useDispatch } from 'react-redux';
+import { setPreviousRoute, setPreviousRouteName } from '../../BrokerAppCore/redux/store/navigation/navigationSlice';
+
 interface MainNavigationProps {
   loggedIn: boolean;
   setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const navigationContainerRef = React.createRef<NavigationContainerRef>();
+//const navigationContainerRef = React.createRef<NavigationContainerRef>();
+export const navigationContainerRef = createNavigationContainerRef();
 notifee.onBackgroundEvent(async ({detail, type}) => {
   if (type === EventType.PRESS) {
     if (Object.keys(detail.notification.data).length === 0) {
@@ -81,7 +85,7 @@ const MainNavigation: React.FC<MainNavigationProps> = ({
   setLoggedIn,
 }) => {
   const appuser = useSelector((state: RootState) => state.user);
-
+  const dispatch = useDispatch();
 const [isLoggedIn, setisLoggedIn] = useState(false);
 
 
@@ -99,6 +103,14 @@ const [isLoggedIn, setisLoggedIn] = useState(false);
       <NavigationContainer
        linking={linking}
        ref={navigationContainerRef}
+       onStateChange={() => {
+        const currentRoute = navigationContainerRef.getCurrentRoute();
+        console.log('Current route:', currentRoute?.name);
+        if (currentRoute?.name) {
+          dispatch(setPreviousRoute({ name: currentRoute.name, params: currentRoute.params }));
+          // dispatch(setPreviousRouteName(currentRoute.name));
+        }
+      }}
       >
 
         {isLoggedIn ? (
