@@ -388,6 +388,7 @@ export default function DashboradScreen() {
   };
   return (
     <SafeAreaView style={{flex: 1}}>
+      <CustomHeader />
       {/* Header */}
       {/* <Animated.View
         style={[

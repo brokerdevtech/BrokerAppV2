@@ -5,12 +5,25 @@ import { GetDashboardData } from '../../BrokerAppCore/services/authService';
 import { RootState } from '../../BrokerAppCore/redux/store/reducers';
 import store from '../../BrokerAppCore/redux/store';
 import { setDashboard } from '../../BrokerAppCore/redux/store/Dashboard/dashboardSlice';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigationState } from '@react-navigation/native';
 import ZText from './ZText';
 
 
 const PlaceholderScreen = () => {
     const user = useSelector((state: RootState) => state.user.user);
+    const previousRouteName = useSelector(
+      (state: RootState) => state.navigation.previousRouteName,
+    );
+    const previousRouteParams = useSelector(
+      (state: RootState) => state.navigation.previousRouteParams,
+    );
+    
+    useEffect(() => {
+      console.log('Previous screen:', previousRouteName);
+      console.log('Previous params:', previousRouteParams);
+    }, []);
+
+
     const callDashboardData = async () => {
         const results = await Promise.allSettled([
           GetDashboardData(user.userId),

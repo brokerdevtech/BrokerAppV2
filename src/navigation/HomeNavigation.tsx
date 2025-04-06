@@ -248,11 +248,7 @@ const HomeNavigation: React.FC = () => {
             component={NotificationScreen}
             options={{headerShown: false}}
           />
-          <Stack.Screen
-            name="ItemListScreen"
-            component={ItemListScreen}
-            options={{headerShown: false}}
-          />
+          
 
           <Stack.Screen
             name="ItemFilterListScreen"
