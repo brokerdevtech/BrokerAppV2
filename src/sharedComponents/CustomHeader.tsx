@@ -53,7 +53,7 @@ import {checkPermission} from '../utils/helpers';
 
 const CustomHeader = () => {
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
-  const user = useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state?.user?.user);
 //  console.log(user);
   let cityToShow = AppLocation.City;
   const navigation = useNavigation();
@@ -74,7 +74,7 @@ const CustomHeader = () => {
     store.dispatch(setAppLocation(place));
   };
   const userPermissions = useSelector(
-    (state: RootState) => state.user.user.userPermissions,
+    (state: RootState) => state?.user?.user?.userPermissions,
   );
   const ChangeCity = async () => {
     setModalVisible(true);
@@ -106,9 +106,9 @@ const CustomHeader = () => {
             <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
               <ZAvatarInitials
                 onPress={onPressUser}
-                sourceUrl={user.profileImage}
+                sourceUrl={user?.profileImage}
                 iconSize="md"
-                name={`${user.firstName} ${user.lastName}`}
+                name={`${user?.firstName} ${user?.lastName}`}
               />
             </TouchableOpacity>
             <View style={styles.appName}>
