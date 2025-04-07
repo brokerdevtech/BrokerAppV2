@@ -17,6 +17,7 @@ export default function FollowUnfollowComponent({
   followedId,
   onFollow,
   onUnfollow,
+  screen = '',
 }) {
   const user = useSelector((state: RootState) => state.user.user);
   const userPermissions = useSelector(
@@ -37,14 +38,16 @@ export default function FollowUnfollowComponent({
 
       if (result) {
         setIsFollow(true);
-        onFollow();
+        if(onFollow)
+       { onFollow();}
       }
     } else {
       const result = await setFollowUnfollow(user.userId, followedId, false);
 
       if (result) {
         setIsFollow(false);
-        onUnfollow();
+        if(onUnfollow)
+        {onUnfollow();}
       }
     }
   };
@@ -57,7 +60,7 @@ export default function FollowUnfollowComponent({
       textType="r16"
       containerStyle={[
         localStyles.buttonContainer,
-        {borderColor: colors.primary},
+        {borderColor: colors.primary, height: screen == 'item' ? 30 : 40},
       ]}
       bgColor={isFollow ? colors.primary : colors.tranparent}
       onPress={onPressFollow}
@@ -72,7 +75,7 @@ const localStyles = StyleSheet.create({
   buttonContainer: {
     ...styles.ph15,
     height: getHeight(45),
-    minWidth: getHeight(120),
+    minWidth: getHeight(45),
     borderRadius: moderateScale(10),
     borderWidth: moderateScale(1),
   },

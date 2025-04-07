@@ -77,8 +77,8 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
       limits.SpaceAds.forEach((spaceAd, index) => {
         limitsData.push({
           id: `space-ad-${index}`,
-          title: `${spaceCategoryMap[spaceAd.Category]} Space Ads`,
-          description: `${spaceAd.SpaceAdCount} space ads allowed`,
+          title: `${spaceCategoryMap[spaceAd.Category] || 'Unknown'} Space Ads`,
+          description: `${spaceAd.AdCount || 0} space ads allowed`,
         });
       });
     }
@@ -86,8 +86,8 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
     if (limits.Posts !== undefined && limits.Posts !== null) {
       limitsData.push({
         id: 'posts',
-        title: 'Posts Limit',
-        description: `${limits.Posts} posts allowed`,
+        title: 'Post Limit',
+        description: `${limits.Posts} post allowed`,
       });
     }
 
@@ -114,17 +114,18 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
           benefitsData.push({
             id: `benefit-ad-${index}`,
             title: `${adsCategoryMap[ad.Category]} Additional Ads`,
-            description: `${ad.AdCount} ads for ${ad.Validity} days`,
+            description: `${ad.AdCount} ads for ${ad.AdDuration} day`,
           });
         });
       }
 
       if (benefits.SpaceAd && Array.isArray(benefits.SpaceAd)) {
+  
         benefits.SpaceAd.forEach((spaceAd, index) => {
           benefitsData.push({
             id: `benefit-space-${index}`,
             title: `${spaceCategoryMap[spaceAd.Category]}  Space Ads`,
-            description: `${spaceAd.SpaceAdCount} space ads for ${spaceAd.Validity} days`,
+            description: `${spaceAd.AdCount} space ads for ${spaceAd.AdDuration} day`,
           });
         });
       }
@@ -132,8 +133,8 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
       if (benefits.Posts) {
         benefitsData.push({
           id: 'benefit-posts',
-          title: 'Additional Posts',
-          description: `${benefits.Posts} extra posts`,
+          title: 'Additional Post',
+          description: `${benefits.Posts} extra post`,
         });
       }
 
@@ -183,7 +184,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
     }
     return postItem?.price;
   };
-  console.log(adLimits);
+
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
@@ -217,7 +218,7 @@ const PlanDetailsScreen = forwardRef(({postItem, onClose}, ref) => {
             </Text>
             <Text style={styles.planValidity}>
               Validity: {postItem?.validityValue}{' '}
-              {postItem?.validityType === 1 ? 'Days' : 'Hours'}
+              {postItem?.validityType === 1 ? 'Day' : 'Hours'}
             </Text>
           </View>
 

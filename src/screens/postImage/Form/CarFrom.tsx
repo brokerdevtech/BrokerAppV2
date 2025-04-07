@@ -110,7 +110,9 @@ const CarForm = ({formikRef}) => {
     }
   };
   const years = [];
-  for (let year = 2024; year >= 2000; year--) {
+  const currentYear = new Date().getFullYear();
+
+  for (let year = currentYear; year >= 2000; year--) {
     years.push({label: year.toString(), value: year});
   }
 
@@ -146,6 +148,7 @@ const CarForm = ({formikRef}) => {
               <HStack style={localStyles.inputContainer}>
                 {/* <RenderLabel1 labelText={`Title`} /> */}
                 <AnimatedTextInput
+                  key={'title'}
                   placeholder="Title"
                   value={values.title}
                   onChangeText={handleChange('title')}

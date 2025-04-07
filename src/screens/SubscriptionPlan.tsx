@@ -51,7 +51,7 @@ const SubscriptionPlan = ({route}) => {
       ? 1
       : activeTab === 'Ads'
       ? 2
-      : activeTab === 'Space ads'
+      : activeTab === 'SpaceAds'
       ? 3
       : 0;
   const {
@@ -89,164 +89,151 @@ const SubscriptionPlan = ({route}) => {
     const additionalBenefits = item.additionalBenifits
       ? JSON.parse(item.additionalBenifits)
       : {};
+
     const AdsCategoryMap = {
       1: 'Marquee',
       2: 'Carousel',
     };
 
-    // Map for SpaceCategory
     const SpaceCategoryMap = {
       1: 'Newly Launched',
       2: 'Brand Associated',
       3: 'New in Property',
       4: 'New in Car',
     };
-    const hasLimits = Object.keys(limits).some(key =>
-      Array.isArray(limits[key])
-        ? limits[key].length > 0
-        : limits[key] !== undefined,
-    );
 
-    const hasAdditionalBenefits = Object.keys(additionalBenefits).some(key =>
-      Array.isArray(additionalBenefits[key])
-        ? additionalBenefits[key].length > 0
-        : additionalBenefits[key] !== undefined,
-    );
     return (
       <TouchableOpacity style={styles.card}>
         <View style={styles.row}>
+          <View style={styles.rowcol}>
           <ZText type={'S22'} style={styles.price}>
             {formatPrice(item.price)}
-          </ZText>
-          <View>
+          </ZText></View>
+          <View style={styles.rowcol1}>
+            <View  style={styles.labelcol}>
             <ZText type={'R14'} style={styles.label}>
               Validity
-            </ZText>
+            </ZText></View>
+            <View  style={styles.labelcol}>
             <ZText type={'S16'} style={styles.value}>
-              {item.validityValue} {item.validityType === 1 ? 'Days' : 'Hours'}
+              {item.validityValue} {item.validityType === 1 ? 'Day' : 'Hours'}
             </ZText>
+            </View>
           </View>
-          <View>
+
+       
+        </View>
+
+        <View style={styles.divider} />
+<View style={styles.rowCategory}>
+<View style={styles.rowcol2}>
+          <View style={styles.rowcol12}>
             {Object.keys(limits).map(key => {
-              if (key === 'Ads' && Array.isArray(limits[key])) {
-                const firstAd = limits[key][0];
-                if (firstAd) {
+              const value = limits[key];
+
+              if (Array.isArray(value)) {
+                return value.map((limitItem, index) => {
+                  const categoryName =
+                    key === 'Ads'
+                      ? AdsCategoryMap[limitItem.Category]
+                      : SpaceCategoryMap[limitItem.Category];
+
                   return (
-                    <React.Fragment key={`${key}-container`}>
+                    <React.Fragment key={`${key}-${index}`}>
                       <Text style={styles.label}>{key}</Text>
-                      <Text style={styles.value}>{firstAd.AdCount}</Text>
+                      <Text style={styles.value}>
+                        {limitItem.AdCount} | {categoryName} | Validity:
+                        {limitItem.ValidityType} Day
+                      </Text>
                     </React.Fragment>
                   );
-                }
-              } else if (key === 'SpaceAd' && Array.isArray(limits[key])) {
-                const firstAd = limits[key][0];
-                if (firstAd) {
-                  return (
-                    <React.Fragment key={`${key}-container`}>
-                      <Text style={styles.label}>{key}</Text>
-                      <Text style={styles.value}>{firstAd.SpaceAdCount}</Text>
-                    </React.Fragment>
-                  );
-                }
-              } else {
-                return (
-                  <React.Fragment key={`${key}-container`}>
-                    <Text style={styles.label}>{key}</Text>
-                    <Text style={styles.value}>{limits[key]}</Text>
-                  </React.Fragment>
-                );
+                });
               }
+
+              return (
+                <React.Fragment key={`${key}-container`}>
+                  <Text style={styles.label}>{key}</Text>
+                  <Text style={styles.value}>{value}</Text>
+                </React.Fragment>
+              );
             })}
           </View>
-        </View>
-        <View style={styles.divider} />
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-          }}>
-          <View type={'B26'} style={styles.details}>
-            {hasAdditionalBenefits ? (
-              <>
-                <ZText type={'R12'} style={[styles.detailText, {marginTop: 8}]}>
-                  Additional Benefits:
-                </ZText>
-                {Object.keys(additionalBenefits).map((key, index) => {
-                  const benefit = additionalBenefits[key];
-                  if (Array.isArray(benefit)) {
-                    return benefit.map((item, idx) => {
-                      const categoryName =
-                        key === 'Ads'
-                          ? AdsCategoryMap[item.Category]
-                          : SpaceCategoryMap[item.Category];
+          </View>
+</View>
+        {/* ✅ Updated Additional Benefits Mapping with Category Names */}
+        <View style={styles.details}>
+          <ZText type={'R12'} style={[styles.detailText, {marginTop: 8}]}>
+            Additional Benefits:
+          </ZText>
+          {Object.keys(additionalBenefits).length > 0 ? (
+            Object.keys(additionalBenefits).map((key, index) => {
+              const benefit = additionalBenefits[key];
 
-                      return (
-                        <ZText
-                          key={`${key}-${idx}`}
-                          type={'R12'}
-                          style={styles.value}>
-                          {key}: {item.AdCount} | {categoryName} | Validity:
-                          {item.Validity} days
-                        </ZText>
-                      );
-                    });
-                  }
+              if (Array.isArray(benefit)) {
+                return benefit.map((benefitItem, idx) => {
+                  const categoryName =
+                    key === 'Ads'
+                      ? AdsCategoryMap[benefitItem?.Category]
+                      : SpaceCategoryMap[benefitItem?.Category];
+                  // console.log(benefitItem, 'bene');
                   return (
-                    <ZText key={index} type={'R12'} style={styles.value}>
-                      {key}: {additionalBenefits[key]}
+                    <ZText
+                      key={`${key}-${idx}`}
+                      type={'R12'}
+                      style={styles.value}>
+                      {key}: {benefitItem.AdCount} | {categoryName} | Validity:{' '}
+                      {benefitItem.AdDuration} day
                     </ZText>
                   );
-                })}
-              </>
-            ) : (
-              <>
-                <ZText type={'R12'} style={[styles.detailText, {marginTop: 8}]}>
-                  Additional Benefits:
+                });
+              }
+
+              return (
+                <ZText key={index} type={'R12'} style={styles.value}>
+                  {key}: {additionalBenefits[key]}
                 </ZText>
-                <ZText type={'R12'} style={styles.value}>
-                  N/A
-                </ZText>
-              </>
-            )}
+              );
+            })
+          ) : (
+            <ZText type={'R12'} style={styles.value}>
+              N/A
+            </ZText>
+          )}
+        </View>
+
+        {/* Buy Now & Read More Buttons */}
+        <View
+          style={{
+            flexDirection: 'column',
+            alignItems: 'flex-end',
+            marginTop: 10,
+          }}>
+          <View style={styles.buyNowButton}>
+            <ZText type={'S14'} color={'white'}>
+              Buy Now
+            </ZText>
           </View>
 
-          <View
-            style={{
-              flexDirection: 'coloum',
-              justifyContent: 'space-between',
-              alignItems: 'center', // Ensures buttons stay in position
-              marginTop: 10,
-              // Add spacing
-            }}>
-            {/* Buy Now Button */}
-            <View style={styles.buyNowButton}>
-              <ZText type={'S14'} color={'white'}>
-                Buy Now
-              </ZText>
-            </View>
-
-            {/* Read More Button */}
-            <TouchableOpacity
-              style={{paddingHorizontal: 10}}
-              onPress={() => handlePresentModalPress(item)}>
-              <ZText
-                type={'S12'}
-                color={Color.primary}
-                style={{textDecorationLine: 'underline'}}>
-                Read more
-              </ZText>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={{paddingHorizontal: 10}}
+            onPress={() => handlePresentModalPress(item)}>
+            <ZText
+              type={'S12'}
+              color={Color.primary}
+              style={{textDecorationLine: 'underline'}}>
+              Read more
+            </ZText>
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     );
   };
 
+  // console.log(Plandata, 'plandat');
   return (
     <View style={{flex: 1}}>
       <View style={styles.tabContainer}>
-        {['General', 'Ads', 'Space ads'].map(tab => (
+        {['General', 'Ads', 'SpaceAds'].map(tab => (
           <TouchableOpacity
             key={tab}
             style={[styles.tabButton, activeTab === tab && styles.activeTab]}
@@ -315,36 +302,113 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 1,
     borderColor: '#ddd',
+    overflow: 'hidden', // Ensures content stays within bounds
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+     //justifyContent: 'space-between',
     alignItems: 'center',
+  //  flexWrap: 'wrap', // Prevents content from overflowing
+  },
+  rowcol: {
+   display:'flex' ,
+  width:'75%',
+   flexDirection:'row',
+ 
+  //  flexBasis:1
+  },
+  rowcol1: {
+    display:'flex' ,
+    width:'25%',
+   // flexDirection:'column',
+    justifyContent:'flex-end',
+    alignContent:'flex-end',
+//    backgroundColor: Color.primaryDisable,
+     //flexGrow:1
+   },
+   rowCategory:{
+    display:'flex' ,
+    
+    flexDirection:'column',
+    justifyContent:'flex-start',
+    alignContent:'flex-start',
+ 
+   },
+   rowcol2: {
+    display:'flex' ,
+    
+    flexDirection:'row',
+    justifyContent:'flex-start',
+    alignContent:'flex-start',
+ 
+   },
+   rowcol12: {
+    display:'flex' ,
+   
+    flexDirection:'column',
+    justifyContent:'flex-start',
+    alignContent:'flex-start',
+  
+    // flexBasis:1
+   },
+   labelcol: {
+   width:'100%',
+   display:'flex',
+   justifyContent:'flex-end',
+   alignContent:'flex-end',
+   flexDirection:'row'
+  },
+   label: {
+    fontSize: 12,
+    color: '#777',
+   // maxWidth: '100%', // Ensures text does not overflow
+  },
+  value: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000',
+   // maxWidth: '100%', // Restrict long text
+  },
+  details: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignSelf: 'stretch', // Ensures it doesn't break the card
+  },
+  buyNowButton: {
+    backgroundColor: Color.primaryDisable,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginBottom: 5,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%', // Ensures button stays inside
   },
   price: {
     // fontSize: 24,
     // fontWeight: 'bold',
     color: Color.primary,
+    width: '100%',
   },
-  label: {
-    // fontSize: 12,
-    color: '#777',
-  },
-  value: {
-    // fontSize: 14,
-    fontWeight: '600',
-    color: '#000',
-  },
+  // label: {
+  //   // fontSize: 12,
+  //   color: '#777',
+  // },
+  // value: {
+  //   // fontSize: 14,
+  //   fontWeight: '600',
+  //   color: '#000',
+  // },
   divider: {
     height: 1,
     backgroundColor: '#ddd',
     marginVertical: 10,
   },
-  details: {
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    width: '65%',
-  },
+  // details: {
+  //   flexDirection: 'column',
+  //   justifyContent: 'space-between',
+  //   width: '65%',
+  // },
   detailText: {
     // fontSize: 12,
     color: '#555',
@@ -352,15 +416,15 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
     // flex: 1,
   },
-  buyNowButton: {
-    backgroundColor: Color.primaryDisable, // Change color as needed
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginBottom: 5,
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  // buyNowButton: {
+  //   backgroundColor: Color.primaryDisable, // Change color as needed
+  //   paddingVertical: 8,
+  //   paddingHorizontal: 16,
+  //   marginBottom: 5,
+  //   borderRadius: 6,
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  // },
 });
 
 export default AppBaseContainer(

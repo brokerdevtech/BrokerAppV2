@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useMemo} from 'react';
-import {FlatList, ScrollView, StyleSheet, View} from 'react-native';
+import {FlatList, ScrollView, StyleSheet, View,Text} from 'react-native';
 
 import {useSelector} from 'react-redux';
 import {styles} from '../themes';
@@ -34,6 +34,7 @@ const staticData = [
     userId: 8,
   },
 ];
+ 
 
 const BrokerList: React.FC = ({
   isPageSkeleton,
@@ -142,6 +143,7 @@ const BrokerList: React.FC = ({
         />
         <View style={{flex: 1}}>
           <FlatList
+          keyboardShouldPersistTaps="handled"
             data={userLists}
             extraData={data}
             showsVerticalScrollIndicator={false}
@@ -158,6 +160,7 @@ const BrokerList: React.FC = ({
                     borderBottomWidth: 1,
                     borderColor: Color.borderColor,
                   }}>
+                 
                   <UserAvartarWithNameComponent
                     userName={item.fullName}
                     userImage={item?.profileImg}

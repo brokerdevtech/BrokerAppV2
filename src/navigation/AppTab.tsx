@@ -34,6 +34,9 @@ import {
   Calender_tab_icon,
   Plus_Icon,
   ComingSoon,
+  Home_tab_icon_fill,
+  Heart_tab_icon_fill,
+  Reel_tab_icon_fill,
 } from '../assets/svg';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import TouchableOpacityWithPermissionCheck from '../sharedComponents/TouchableOpacityWithPermissionCheck';
@@ -44,6 +47,13 @@ import ChooseImage from '../screens/postImage/ChooseImage';
 import {Color} from '../styles/GlobalStyles';
 import AllSkeletonComponent from '../sharedComponents/Skeleton/AllSkeletonComponent';
 import {Toast, ToastDescription, useToast} from '../../components/ui/toast';
+
+import StickyHeaderWithTabs from '../screens/StickyHeaderWithTabs';
+import InstagramReels from '../screens/Podcast/VideoReelsInsta';
+
+import StickyHeaderWithTabs1 from '../screens/StickyHeader1';
+import PlaceholderScreen from '../sharedComponents/PlaceholderScreen';
+import ItemListScreen from '../screens/ItemListScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -57,26 +67,21 @@ const HomePageStack = () => {
         options={{headerShown: false}}
         component={DashboradScreen}
       />
+      <Stack.Screen
+                  name="ItemListScreen"
+                  component={ItemListScreen}
+                  options={{headerShown: false}}
+                />
     </Stack.Navigator>
   );
 };
-const PlaceholderScreen = () => (
-  <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-    <Image
-      source={require('../assets/images/ComingSoon.png')}
-      style={{height: 150, width: 150, marginBottom: 20}}
-    />
-    <ZText type={'S20'} style={{marginBottom: 20}}>
-      Coming Soon
-    </ZText>
-    <ZText type={'R14'}>Are you Ready to get something new from us ?</ZText>
-  </View>
-);
+
+ 
 const AppTab: React.FC = () => {
   const navigation = useNavigation();
   const userP = useSelector((state: RootState) => state.user.user);
   const toast = useToast();
-//  console.log(require('../assets/images/ComingSoon.png'));
+  //  console.log(require('../assets/images/ComingSoon.png'));
   const [toastId, setToastId] = React.useState(0);
   const userPermissions = useSelector(
     (state: RootState) => state.user.user?.userPermissions,
@@ -133,13 +138,13 @@ const AppTab: React.FC = () => {
         backgroundColor: 'white',
         height: 50,
       }}>
-      <Tab.Navigator 
+      <Tab.Navigator
         initialRouteName="AppTabHome"
         screenOptions={({route}) => ({
-           unmountOnBlur: true,
-           lazy:true,
-          headerShown: false,
-          headerTitle: '',
+          unmountOnBlur: true,
+          lazy: true,
+          headerShown: route.name === 'Favourite',
+          // headerTitle: '',
           tabBarStyle: [
             localStyles.tabBarStyle,
 
@@ -167,31 +172,34 @@ const AppTab: React.FC = () => {
               <TabText
                 text={''}
                 focused={focused}
-                icon={focused ? <Home_tab_icon /> : <Home_tab_icon />}
+                icon={focused ? <Home_tab_icon_fill /> : <Home_tab_icon />}
               />
             ),
-            // headerShown: false,
+            headerShown: false,
           }}
         />
         <Tab.Screen
           name="Favourite"
+          // listeners={{
+          //   focus: () => setCurrentScreen('Favourite'),
+          // }}
           options={{
             // tabBarBadge:dashboard.connectionRequestCount,
             // tabBarBadgeStyle: {
             //   backgroundColor: colors.primary, // Set your desired background color here
             //   color: 'white', // Set your desired text color here
             // },
-            // headerShown: false,
+            headerShown: false,
             tabBarIcon: ({focused}) => (
               <TabText
                 text={''}
                 focused={focused}
-                icon={focused ? <Heart_tab_icon /> : <Heart_tab_icon />}
+                icon={focused ? <Heart_tab_icon_fill /> : <Heart_tab_icon />}
               />
             ),
           }}
-          component={PlaceholderScreen}
-          // component={MyNetworkScreen}
+          component={StickyHeaderWithTabs1}
+           //component={MyNetworkScreen}
         />
 
         <Tab.Screen
@@ -250,12 +258,12 @@ const AppTab: React.FC = () => {
               <TabText
                 text={''}
                 focused={focused}
-                icon={focused ? <Reel_tab_icon /> : <Reel_tab_icon />}
+                icon={focused ? <Reel_tab_icon_fill /> : <Reel_tab_icon />}
               />
             ),
           }}
-          component={PlaceholderScreen}
-          // component={MyNetworkScreen}
+         // component={InstagramReels}
+           component={PlaceholderScreen}
         />
         <Tab.Screen
           name="appointment"

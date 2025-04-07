@@ -15,6 +15,8 @@
 		09AE3A4C2CE79ED2003E86A0 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 09AE3A4B2CE79ED2003E86A0 /* assets */; };
 		09DD98252D070D080099C482 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09DD98242D070D080099C482 /* Assets.xcassets */; };
 		09DD98262D070D080099C482 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09DD98242D070D080099C482 /* Assets.xcassets */; };
+		09E986E22D9D4533008976E1 /* Stickers.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 09E986E12D9D4533008976E1 /* Stickers.bundle */; };
+		09E986E42D9D4546008976E1 /* LUTs.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 09E986E32D9D4546008976E1 /* LUTs.bundle */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -64,6 +66,8 @@
 		09AE397B2CE71C17003E86A0 /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		09AE3A4B2CE79ED2003E86A0 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
 		09DD98242D070D080099C482 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		09E986E12D9D4533008976E1 /* Stickers.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Stickers.bundle; sourceTree = "<group>"; };
+		09E986E32D9D4546008976E1 /* LUTs.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = LUTs.bundle; sourceTree = "<group>"; };
 		0A0FE20E8EA9F09F74412CED /* Pods-BrokerApp-BrokerAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BrokerApp-BrokerAppTests.debug.xcconfig"; path = "Target Support Files/Pods-BrokerApp-BrokerAppTests/Pods-BrokerApp-BrokerAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		0A1315034E5546BD99E22C53 /* Gilroy ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy ExtraBoldItalic.ttf"; path = "../assets/font/Gilroy ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		0E707A858D706A6E096E4509 /* Pods-BrokerApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BrokerApp.debug.xcconfig"; path = "Target Support Files/Pods-BrokerApp/Pods-BrokerApp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -173,6 +177,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				09E986E32D9D4546008976E1 /* LUTs.bundle */,
+				09E986E12D9D4533008976E1 /* Stickers.bundle */,
 				09AE3A4B2CE79ED2003E86A0 /* assets */,
 				091C00362CA28E1500230001 /* GoogleService-Info.plist */,
 				09DD98242D070D080099C482 /* Assets.xcassets */,
@@ -333,6 +339,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				09E986E42D9D4546008976E1 /* LUTs.bundle in Resources */,
+				09E986E22D9D4533008976E1 /* Stickers.bundle in Resources */,
 				09AE3A4C2CE79ED2003E86A0 /* assets in Resources */,
 				091C00372CA28E1500230001 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
@@ -632,7 +640,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.18.3;
+				MARKETING_VERSION = 5.18.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -660,7 +668,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.18.3;
+				MARKETING_VERSION = 5.18.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

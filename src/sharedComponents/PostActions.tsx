@@ -47,7 +47,15 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../BrokerAppCore/redux/store/reducers';
 import {moderateScale, PermissionKey} from '../config/constants';
 import TouchableOpacityWithPermissionCheck from './TouchableOpacityWithPermissionCheck';
-import {Like, UnLike, Send, CloseIcon, BuyerActive, Buyer,filter} from '../assets/svg';
+import {
+  Like,
+  UnLike,
+  Send,
+  CloseIcon,
+  BuyerActive,
+  Buyer,
+  filter,
+} from '../assets/svg';
 import CommentBottomSheet from './CommentBottomSheet';
 import {useNavigation} from '@react-navigation/native';
 import {
@@ -60,9 +68,11 @@ const PostActions = ({
   listTypeData,
   onUpdateLikeCount,
   PageName = 'ItemList',
-  isrefresh=0,
+  isrefresh = 0,
 }) => {
- //console.log(item);
+ 
+
+
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const {
     data,
@@ -93,26 +103,28 @@ const PostActions = ({
   );
 
   useEffect(() => {
+
     const fetchData = async () => {
       if (isrefresh > 0) {
-      //  console.log('isrefresh', item);
-        let k = await GetPostInsights(listTypeData,item.postId);
-     //   console.log(k)
-        setisraisedPostBuyerHand(k.data?.raisedPostBuyerHand === 0 ? false : true)
-        SetPostLike(k.data?.userLiked === 1)
+        //  console.log('isrefresh', item);
+        let k = await GetPostInsights(listTypeData, item.postId);
+        //   console.log(k)
+        setisraisedPostBuyerHand(
+          k.data?.raisedPostBuyerHand === 0 ? false : true,
+        );
+        SetPostLike(k.data?.userLiked === 1);
         SetPostlikesCount(k.data?.likes);
         setCardComment(k.data?.comments);
         // You can use the value of k here, e.g., set state with it
       }
     };
-  
+
     fetchData();
   }, [isrefresh]);
 
   useEffect(() => {
-  
-    setisraisedPostBuyerHand(item?.raisedPostBuyerHand === 0 ? false : true)
-    SetPostLike(item.userLiked === 1)
+    setisraisedPostBuyerHand(item?.raisedPostBuyerHand === 0 ? false : true);
+    SetPostLike(item.userLiked === 1);
     SetPostlikesCount(item.likes);
     setCardComment(item.comments);
   }, [item]);
@@ -160,6 +172,7 @@ const PostActions = ({
   };
 
   const handleLike = async () => {
+
     let endpoint = 'RealEstate';
     if (listTypeData === 'RealEstate') {
       endpoint = 'post';
@@ -181,6 +194,7 @@ const PostActions = ({
   };
 
   const handleUnLike = async () => {
+
     let endpoint = 'RealEstate';
     if (listTypeData === 'RealEstate') {
       endpoint = 'post';
@@ -202,9 +216,13 @@ const PostActions = ({
   };
   const handlePresentModalPress = useCallback(() => {
     commentSheetRef.current?.open();
+    callCommentList();
   }, []);
 
   async function callCommentList() {
+
+
+
     pageSize_Set(15);
     currentPage_Set(0);
     hasMore_Set(true);
@@ -223,9 +241,9 @@ const PostActions = ({
   const closeModal = useCallback(item => {
     setCardComment(item);
   }, []);
-  useEffect(() => {
-    callCommentList();
-  }, []);
+  // useEffect(() => {
+  //   callCommentList();
+  // }, []);
   const HaveBuyerList = async () => {
     //
     //
@@ -238,13 +256,12 @@ const PostActions = ({
     //
     //
     navigation.navigate('PostLeads', {
-      listTypeData:listTypeData,
-      postId:item.postId,
+      listTypeData: listTypeData,
+      postId: item.postId,
       userId: User.userId,
     });
   };
   const postHaveBuyer = async () => {
-
     if (item?.raisedPostBuyerHand && item?.raisedPostBuyerHand == 1) {
       // console.log()
 
@@ -257,12 +274,9 @@ const PostActions = ({
         setisraisedPostBuyerHand(false);
       }
     } else {
-
-
       const result = await addHaveABuyer(User.userId, item.postId);
-   
+
       if (result.success) {
- 
         item.buyers = item.buyers + 1;
         item.raisedPostBuyerHand = 1;
         setisraisedPostBuyerHand(true);
@@ -346,7 +360,6 @@ const PostActions = ({
           </VStack>
         )}
 
-
         {/* {listTypeData === 'RealEstate' &&
           PageName !== 'MyItemList' &&
           User.userId === item.userId && (
@@ -367,9 +380,8 @@ const PostActions = ({
           )} */}
 
         {listTypeData === 'RealEstate' &&
-    item.buyers>0 &&
-          User.userId == item.userId &&
-        (
+          item.buyers > 0 &&
+          User.userId == item.userId && (
             <VStack style={{marginRight: 10}}>
               <HStack style={{justifyContent: 'center', alignItems: 'center'}}>
                 <TouchableOpacity onPress={HaveBuyerList}>
@@ -385,11 +397,8 @@ const PostActions = ({
             </VStack>
           )}
 
-
-{(PageName == 'itemDetail' || PageName == 'MyItemList') &&
-   
-          User.userId == item.userId &&
-        (
+        {(PageName == 'itemDetail' || PageName == 'MyItemList') &&
+          User.userId == item.userId && (
             <VStack style={{marginRight: 10}}>
               <HStack style={{justifyContent: 'center', alignItems: 'center'}}>
                 <TouchableOpacity onPress={HaveLeadsList}>
@@ -397,16 +406,12 @@ const PostActions = ({
                     as={filter}
                     size="xxxl"
                     style={{marginRight: 5}}
-               
                     color={'red'}
                   />
                 </TouchableOpacity>
-              
               </HStack>
             </VStack>
           )}
-
-
 
         {/* <VStack style={{ marginLeft: 'auto' }}>
         <Icon as={bookmark_icon} />

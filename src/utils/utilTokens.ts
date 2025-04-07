@@ -168,7 +168,7 @@ export const getfcmToken2 = async () => {
 export const getfcmToken = async () => {
   
   let fcmToken = await AsyncStorage.getItem('fcmToken');
-console.log('fcmToken',fcmToken);
+
   if (!fcmToken) {
     await firebase.messaging().deleteToken();
     fcmToken = await firebase.messaging().getToken();
@@ -176,7 +176,7 @@ console.log('fcmToken',fcmToken);
       // user has a device token
       await AsyncStorage.setItem('fcmToken', fcmToken);
     }
-    console.log('fcmToken',fcmToken);
+
     return fcmToken;
   }
   else  {return fcmToken;}

@@ -29,7 +29,7 @@ const LocalityTag: React.FC<LocalityTagProps> = ({
   useEffect(() => {
     setLocalities([]);
     setLocalities(selectedLocation);
-  }, [resetSignal,selectedLocation]);
+  }, [resetSignal, selectedLocation]);
   const handleModalOpen = () => {
     setModalVisible(true);
   };
@@ -58,14 +58,13 @@ const LocalityTag: React.FC<LocalityTagProps> = ({
   return (
     <TouchableOpacity onPress={handleModalOpen}>
       <HStack
-        style={
-          (styles.flexRow,
+        style={[
+          styles.flexRow,
           styles.contentCenter,
           screenType == 'default'
             ? localStyles.input
-            : localStyles.inputPersonalDetail)
-        }>
-        {/* <MapPin onPress={handleModalOpen} /> */}
+            : localStyles.inputPersonalDetail,
+        ]}>
         <ZText type={'R16'} style={[typography.fontSizes.f16]}>
           {selectedLocalityName}
         </ZText>
@@ -77,17 +76,27 @@ const LocalityTag: React.FC<LocalityTagProps> = ({
           onPress={handleModalOpen}
         />
       </HStack>
-      <View style={localStyles.tagContainer}>
-        {Array.isArray(localities) && localities?.map(option => (
-          <TouchableOpacity
-            key={option.place.placeID}
-            style={[localStyles.tagsWrap, localStyles.selectedTag]}>
-            <ZText type={'r16'} style={localStyles.selectedTagText}>
-              {option.place.placeName}
-            </ZText>
-          </TouchableOpacity>
-        ))}
-      </View>
+
+      {/* Conditional rendering of tags */}
+      {Array.isArray(localities) && localities.length > 0 && (
+        <View style={localStyles.tagContainer}>
+          {localities
+            .filter(
+              option =>
+                option.place.placeName && option.place.placeName.trim() !== '',
+            )
+            .map(option => (
+              <TouchableOpacity
+                key={option.place.placeID}
+                style={[localStyles.tagsWrap, localStyles.selectedTag]}>
+                <ZText type={'r16'} style={localStyles.selectedTagText}>
+                  {option.place.placeName}
+                </ZText>
+              </TouchableOpacity>
+            ))}
+        </View>
+      )}
+
       <GooglePlacesAutocompleteModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}

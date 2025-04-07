@@ -5,12 +5,14 @@
 #import <AuthenticationServices/AuthenticationServices.h>
 #import <SafariServices/SafariServices.h>
 #import <FBSDKCoreKit/FBSDKCoreKit-Swift.h>
+#import <AVFoundation/AVFoundation.h>
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 [[FBSDKApplicationDelegate sharedInstance] application:application
                        didFinishLaunchingWithOptions:launchOptions];
+                           [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
   self.moduleName = @"BrokerApp";
      [FIRApp configure];
   // You can add your custom initial props in the dictionary below.

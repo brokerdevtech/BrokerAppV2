@@ -315,7 +315,7 @@ const MyItemListScreen: React.FC<any> = ({
   const {logButtonClick} = useUserJourneyTracker(
     `My ${route.params.listType} Page`,
   );
-  console.log(route.params.listType);
+  // console.log(route.params.listType);
   const [FilterChipsData, setFilterChipsData] = useState([]);
   const [listTypeData, setlistTypeData] = useState(route.params.listType);
   const [categoryId, setCategoryId] = useState(route.params.categoryId);

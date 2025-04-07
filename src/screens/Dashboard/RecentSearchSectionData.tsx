@@ -44,10 +44,11 @@ const RecentSearchSectionData = (props: BrandSectionProps) => {
   const navigation = useNavigation();
   const {logButtonClick} = useUserJourneyTracker(`Recent Search`);
   const callBrandList = async () => {
-  
+    // console.log("callBrandList without data");
     if(props.Data!=null)
       {
-       
+      //  console.log("callBrandList data")
+      //  console.log(props.Data)
         setData(props.Data)
       }
     //  execute(props.endpoint, props.request);
@@ -64,7 +65,7 @@ const RecentSearchSectionData = (props: BrandSectionProps) => {
       return () => {
         // Cleanup code here, if necessary
       };
-    }, []), // Add dependencies here
+    }, [props]), // Add dependencies here
   );
   const renderProductItems = ({item, index}) => {
     if (!item || !item.requestJson || !item.frontendFilters) {
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 20,
     width: '100%',
-
+paddingLeft:15,
     display: 'flex',
   },
   emptyText: {

@@ -35,7 +35,7 @@ const MarqueeTextCollection = ({duration = 5000}) => {
   }, [cityToShow]);
 
   useEffect(() => {
-    console.log(Addata);
+
   }, [Addata]);
 
   const [currentIndex, setCurrentIndex] = React.useState(0);
@@ -67,7 +67,7 @@ const MarqueeTextCollection = ({duration = 5000}) => {
     }
   };
 
-  console.log(Addata);
+
   return (
     <>
       {Addata != null && Addata.length > 0 && (

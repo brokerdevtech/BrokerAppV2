@@ -42,6 +42,7 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
             setError(response.message || 'An error occurred');
             setStatus(response.status || 500);
           } else {
+            // console.log(response.data.data, 'set');
             setData(response.data.data || null);
             settotalPages(response.data.totalPages || null);
             setrecordCount(response.data.recordCount || null);
@@ -71,7 +72,7 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
 
         try {
           // Use stored params along with current page and page size
-       
+
           const response = await apiFunction(
             ...params,
             currentPage + 1,
@@ -83,11 +84,12 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
               setError(response.message || 'An error occurred');
               setStatus(response.status || 500);
             } else {
-           
               if (
                 response?.data.data != null &&
                 response?.data.data.length > 0
               ) {
+              
+
                 setData(prevData => [
                   ...prevData,
                   ...(response.data.data || []),
@@ -130,6 +132,8 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
     return () => {
       isMounted.current = false; // Set mounted to false when the component unmounts
       if (setLoading) setLoading(false); // Reset loading state when unmounted
+      setData(null);
+  
     };
   }, [setLoading]);
   const setData_Set = (newData: T | null) => {

@@ -1,5 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
-/* eslint-disable react/no-unstable-nested-components */
 import React, {useEffect, useState} from 'react';
 import {
   View,
@@ -8,225 +6,346 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
-  Text,
   Dimensions,
 } from 'react-native';
 import {Back} from '../../assets/svg';
-
-import ImagePicker from 'react-native-image-crop-picker';
-
-import ZHeader from '../../sharedComponents/ZHeader';
-import ZText from '../../sharedComponents/ZText';
-
 import RNFS from 'react-native-fs';
-
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import PhotoEditor from '@baronha/react-native-photo-editor';
 
+import ZHeader from '../../sharedComponents/ZHeader';
+import ZText from '../../sharedComponents/ZText';
 import {Button} from '../../../components/ui/button';
 
 import AppBaseContainer from '../../hoc/AppBaseContainer_old';
 import {Color} from '../../styles/GlobalStyles';
+
 const {width, height} = Dimensions.get('window');
-const EditImagesScreen = ({route, navigation}: any) => {
-  const [selectedThumbnails, setselectedThumbnails] = useState(
+
+const EditImagesScreen = ({route, navigation}) => {
+  const [selectedThumbnails, setSelectedThumbnails] = useState(
     route.params.selectedThumbnails,
   );
-  const [destinationThumbnails, setdestinationThumbnails] = useState([]);
-  const [refresh, setrefresh] = useState(false);
-
-  // State to control the visibility of the image editing modal
-  const [isModalVisible, setModalVisible] = useState(false);
-  // State to store the currently selected image for editing
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedindex, setSelectedindex] = useState(0);
-  // Function to open the image editing modal
+  const [destinationThumbnails, setDestinationThumbnails] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   useEffect(() => {
     const fetchPhotos = async () => {
-      let obj: any = [];
-      selectedThumbnails.forEach(async (item, index) => {
-        let fetchPhoto = await EditfetchPhotos(item);
+      const processedPhotos = await Promise.all(
+        selectedThumbnails.map(async item => {
+          let fetchPhoto = await EditfetchPhotos(item);
+          return fetchPhoto;
+        }),
+      );
 
-        obj.push({...fetchPhoto});
-      });
-      setdestinationThumbnails(obj);
+      setDestinationThumbnails(processedPhotos);
     };
 
     fetchPhotos();
-  }, []);
+  }, [selectedThumbnails]);
 
-  const openImageEditor = async (image, index) => {
+  const openImageEditor = async index => {
+    const image = destinationThumbnails[index];
+
     if (Platform.OS === 'ios') {
       const fileData = await CameraRoll.iosGetImageDataById(
         image.destinationPath,
       );
-
       _onEditStory(fileData.node.image.filepath, index);
     } else {
       _onEditStory(image.destinationPath, index);
     }
   };
 
-  const handleNextStepClick = async () => {
+  const handleNextStepClick = () => {
     navigation.navigate('PostWizard', {imageData: destinationThumbnails});
   };
 
-  onsave = item => {
-    let Thumbnails = selectedThumbnails;
-
-    Thumbnails[selectedindex] = item;
-    setselectedThumbnails(Thumbnails);
-    setModalVisible(false);
-  };
-  // const fetchPhotosbyuri = async uri => {
-  //   //console.log(thumbnail);
-  //   const fileName = uri.split('/').pop();
-  //   const destinationPath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
-  //   await RNFS.copyFile(uri, destinationPath);
-
-  //   return destinationPath;
-  // };
   const EditfetchPhotos = async thumbnail => {
     const destinationPath = thumbnail.uri.replace('file://', '');
 
-    let destinationPathobj = {
+    return {
       ...thumbnail,
       destinationPath: destinationPath,
       Edit: false,
       destinationPathuri: `file://${destinationPath}`,
     };
-
-    return destinationPathobj;
   };
 
-  const _onEditStory = async (destinationPath: any, index) => {
-    let path = await PhotoEditor.open({
-      path: destinationPath,
-    });
+  const _onEditStory = async (destinationPath, index) => {
+    try {
+      let path = await PhotoEditor.open({
+        path: destinationPath,
+      });
 
-    let newdestinationThumbnails: any = destinationThumbnails;
-    newdestinationThumbnails[index].destinationPath = path.replace(
-      'file://',
-      '',
-    );
-    newdestinationThumbnails[index].destinationPathuri = path;
-    newdestinationThumbnails[index].Edit = true;
-    setdestinationThumbnails(newdestinationThumbnails);
-    setrefresh(!refresh);
+      const updatedThumbnails = [...destinationThumbnails];
+      updatedThumbnails[index] = {
+        ...updatedThumbnails[index],
+        destinationPath: path.replace('file://', ''),
+        destinationPathuri: path,
+        Edit: true,
+      };
+
+      setDestinationThumbnails(updatedThumbnails);
+      setRefresh(!refresh);
+    } catch (error) {
+      console.error('Error editing photo:', error);
+    }
   };
 
-  const renderItem = ({item, index}) => (
-    <View style={locaStyles.card}>
-      <Button
-        variant="solid"
-        style={locaStyles.editTextContainer}
-        onPress={() => openImageEditor(item, index)}>
-        <ZText numberOfLines={1} color={'#000'} type={'R16'}>
-          Edit
-        </ZText>
-      </Button>
+  const handleThumbnailPress = index => {
+    setActiveImageIndex(index);
+  };
 
-      {Platform.OS == 'ios' ? (
-        <Image
-          source={{uri: item.destinationPath}}
-          style={locaStyles.imagecard}
-        />
-      ) : (
-        <Image
-          source={{
-            uri: item.Edit ? item.destinationPathuri : item.destinationPath,
-          }}
-          style={locaStyles.imagecard}
-        />
-      )}
-    </View>
-  );
+  const renderMainImage = () => {
+    if (
+      !destinationThumbnails.length ||
+      activeImageIndex >= destinationThumbnails.length
+    ) {
+      return (
+        <View style={styles.imageContentContainer}>
+          <View style={styles.mainImagePlaceholder} />
+          <TouchableOpacity
+            style={styles.externalEditButton}
+            onPress={() => {}}
+            disabled={true}>
+            <ZText numberOfLines={1} color={'#999'} type={'R16'}>
+              Edit
+            </ZText>
+          </TouchableOpacity>
+        </View>
+      );
+    }
 
-  const LeftIcon = () => {
+    const item = destinationThumbnails[activeImageIndex];
+    const imageSource =
+      Platform.OS === 'ios'
+        ? {uri: item.destinationPath}
+        : {uri: item.Edit ? item.destinationPathuri : item.destinationPath};
+
     return (
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <View
-          style={{
-            // ...styles.appTitleMain,
-            // color: '#007acc',
-            padding: 8,
-            borderWidth: 1,
-            borderColor: '#E5E5E5',
-            borderRadius: 40,
-          }}>
-          <Back accessible={true} accessibilityLabel="Back" />
+      <View style={styles.imageContentContainer}>
+        <TouchableOpacity
+          style={styles.externalEditButton}
+          onPress={() => openImageEditor(activeImageIndex)}>
+          <ZText numberOfLines={1} color={Color.primary} type={'R16'}>
+            Edit
+          </ZText>
+        </TouchableOpacity>
+        <View style={styles.mainImageContainer}>
+          <Image source={imageSource} style={styles.mainImage} />
+        </View>
+      </View>
+    );
+  };
+
+  const renderThumbnail = ({item, index}) => {
+    const imageSource =
+      Platform.OS === 'ios'
+        ? {uri: item.destinationPath}
+        : {uri: item.Edit ? item.destinationPathuri : item.destinationPath};
+
+    const isActive = index === activeImageIndex;
+
+    return (
+      <TouchableOpacity
+        onPress={() => handleThumbnailPress(index)}
+        activeOpacity={0.8}
+        style={styles.thumbnailOuterContainer}>
+        <View style={styles.thumbnailContainer}>
+          {isActive && (
+            <View style={styles.selectedIndicator}>
+              <View style={styles.triangleUp} />
+            </View>
+          )}
+          <View
+            style={[
+              styles.thumbnailFrame,
+              isActive ? styles.activeThumbnailFrame : null,
+            ]}>
+            <Image source={imageSource} style={styles.thumbnail} />
+          </View>
         </View>
       </TouchableOpacity>
     );
   };
-  const RightIcon = () => {
-    return (
-      <TouchableOpacity style={{marginRight: 15}} onPress={handleNextStepClick}>
-        <ZText numberOfLines={1} color={Color.primary} type={'R16'}>
-          {'Next'}
-        </ZText>
-      </TouchableOpacity>
-    );
-  };
+
+  const LeftIcon = () => (
+    <TouchableOpacity onPress={() => navigation.goBack()}>
+      <View style={styles.backButton}>
+        <Back accessible={true} accessibilityLabel="Back" />
+      </View>
+    </TouchableOpacity>
+  );
+
+  const RightIcon = () => (
+    <TouchableOpacity style={{marginRight: 15}} onPress={handleNextStepClick}>
+      <ZText numberOfLines={1} color={Color.primary} type={'R16'}>
+        {'Next'}
+      </ZText>
+    </TouchableOpacity>
+  );
 
   return (
-    <>
+    <View style={styles.container}>
       <ZHeader
-        title={'Selected Image'}
+        title={'Edit Images'}
         rightIcon={<RightIcon />}
         isHideBack={true}
         isLeftIcon={<LeftIcon />}
       />
-      <FlatList
-        data={destinationThumbnails}
-        horizontal={true}
-        contentContainerStyle={locaStyles.listContainer}
-        renderItem={renderItem}
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={item => item.id}
-        extraData={refresh}
-      />
-    </>
+
+      {renderMainImage()}
+
+      <View style={styles.thumbnailsWrapper}>
+        <FlatList
+          data={destinationThumbnails}
+          horizontal={true}
+          renderItem={renderThumbnail}
+          keyExtractor={(item, index) => `thumbnail-${index}`}
+          contentContainerStyle={[
+            styles.thumbnailList,
+            destinationThumbnails.length === 1 && styles.singleThumbnailList,
+          ]}
+          showsHorizontalScrollIndicator={false}
+          extraData={refresh || activeImageIndex}
+        />
+      </View>
+    </View>
   );
 };
-const locaStyles = StyleSheet.create({
-  editTextContainer: {
-    position: 'absolute',
-    top: 20,
-    right: 25,
-    zIndex: 10,
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
     backgroundColor: '#fff',
-    // padding: 20,
-    borderRadius: 20,
-    // color: '#000',
   },
-
-  editText: {
-    color: '#000',
+  imageContentContainer: {
+    width: width * 0.9,
+    alignSelf: 'center',
+    marginVertical: 10,
+    padding: 10,
+    // backgroundColor: '#000',
+    // shadowColor: '#000',
+    // elevation: 2,
+    // shadowOffset: {width: 0, height: 0},
+    // shadowOpacity: 0.1,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
   },
-
-  listContainer: {
-    alignItems: 'center',
+  mainImageContainer: {
+    width: '100%',
+    height: height * 0.65, // Slightly reduced to make room for edit button
+    borderRadius: 30,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
   },
-  card: {
-    width: width * 0.9, // 90% of screen width
-    height: height * 0.8,
-    margin: 15,
-
-    borderRadius: 40,
-
-    alignItems: 'center',
-    justifyContent: 'center',
+  mainImagePlaceholder: {
+    width: '100%',
+    height: height * 0.65,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 30,
   },
-  imagecard: {
+  mainImage: {
     width: '100%',
     height: '100%',
-
-    padding: 10,
     borderRadius: 30,
-
-    zIndex: -1,
+  },
+  // External edit button
+  externalEditButton: {
+    // alignSelf: 'flex-end',
+    // marginTop: 12,
+    // marginRight: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    // backgroundColor: '#fff',
+    borderRadius: 20,
+    // borderWidth: 1,
+    // borderColor: Color.primary,
+    // elevation: 3,
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: 2},
+    // shadowOpacity: 0.2,
+    // shadowRadius: 2,
+  },
+  thumbnailsWrapper: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    height: height * 0.15,
+  },
+  thumbnailList: {
+    paddingHorizontal: 10,
+    alignItems: 'center',
+  },
+  singleThumbnailList: {
+    justifyContent: 'center',
+    flex: 1,
+  },
+  thumbnailOuterContainer: {
+    marginHorizontal: 8,
+    position: 'relative',
+  },
+  thumbnailContainer: {
+    position: 'relative',
+    width: width * 0.22,
+    height: width * 0.22,
+  },
+  selectedIndicator: {
+    position: 'absolute',
+    top: -16,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    zIndex: 5,
+  },
+  triangleUp: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 10,
+    borderRightWidth: 10,
+    borderBottomWidth: 14,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: Color.primary,
+  },
+  thumbnailFrame: {
+    width: '100%',
+    height: '100%',
+    padding: 8,
+    borderRadius: 20,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  activeThumbnailFrame: {
+    borderWidth: 3,
+    borderColor: Color.primary,
+  },
+  thumbnail: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
+  },
+  backButton: {
+    padding: 8,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    borderRadius: 40,
   },
 });
+
 export default AppBaseContainer(EditImagesScreen, '', false);

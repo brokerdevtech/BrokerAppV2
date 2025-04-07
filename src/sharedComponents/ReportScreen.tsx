@@ -67,6 +67,7 @@ const ReportScreen = forwardRef(({postItem, screenFrom, onClose}, ref) => {
     categoryId: postItem?.categoryId,
     reportReason: selectedReason,
   };
+  console.log(postRequest);
   const userRequest = {
     reportedUserId: postItem,
     reportReason: selectedReason,

@@ -72,7 +72,16 @@ import ReplyCommentList from './ReplyCommentList';
 
 const StoryCommentBottomSheet = forwardRef(
   (
-    {postItem, User, listTypeData, StoryStateParam, userPermissions, onClose},
+    {
+      postItem,
+      User,
+      listTypeData,
+      StoryStateParam,
+      userPermissions,
+      onClose,
+      onTouchStart,
+      onTouchEnd,
+    },
     ref,
   ) => {
     const navigation = useNavigation();
@@ -100,6 +109,7 @@ const StoryCommentBottomSheet = forwardRef(
       hasMore_Set,
       totalPages,
       recordCount,
+      setData_Set
     } = useApiPagingWithtotalRequest(
       GetStoryCommentList,
       setInfiniteLoading,
@@ -143,6 +153,7 @@ const StoryCommentBottomSheet = forwardRef(
       //   console.log(postItem)
       //  callCommentList();
       if (isOpen) {
+
         setInfiniteLoading(true);
         setNewComment('');
         setreplyCommentId(0);
@@ -150,10 +161,12 @@ const StoryCommentBottomSheet = forwardRef(
         setToastId(0);
         callCommentList();
       }
+     
     }, [Reset, isOpen]);
 
     useEffect(() => {
-      //   console.log("===========callCommentList===========")
+
+        setData_Set([])
       //   console.log(postItem)
       //  callCommentList();
       setStoryState(StoryStateParam);
@@ -172,12 +185,19 @@ const StoryCommentBottomSheet = forwardRef(
 
     useImperativeHandle(ref, () => ({
       open: () => {
+ 
         bottomSheetModalRef.current?.present();
+      },
+      dismiss: () => {
+
+        setData_Set([]);
+        bottomSheetModalRef.current?.dismiss();
       },
     }));
 
     const handleSheetChanges = useCallback(
       index => {
+        console.log('handleSheetChanges', index);
         setIsOpen(index >= 0);
         if (index == -1) {
           onClose(StoryState);
@@ -400,7 +420,7 @@ module="Post"
       handleAddComment();
     };
     const renderFooter = () => (
-      <KeyboardAvoidingView>
+      
         <View style={styles.footerContainer}>
           <HStack
             style={{
@@ -449,7 +469,7 @@ module="Post"
             </Box>
           </HStack>
         </View>
-      </KeyboardAvoidingView>
+      
     );
 
     const handleAddComment = async () => {
@@ -602,6 +622,7 @@ const styles = StyleSheet.create({
   sheetContent: {
     flex: 1,
     width: '100%',
+   
   },
   contentContainer: {
     // paddingBottom: 20,
