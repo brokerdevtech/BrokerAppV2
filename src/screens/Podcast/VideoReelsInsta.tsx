@@ -137,9 +137,9 @@ const InstagramReels = () => {
   const onVideoEndRef = useRef(false);
   let categoryId;
 
-  if (previousRouteName === 'itemListScreen') {
+  if (previousRouteName === 'ItemListScreen') {
     // Extract categoryId from previous route params
-    categoryId = previousRouteParams?.category?.id;
+    categoryId = previousRouteParams?.categoryId;
   } else {
     // Default value if coming from any other route
     categoryId = 7;
