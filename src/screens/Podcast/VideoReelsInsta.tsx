@@ -203,7 +203,7 @@ const InstagramReels = () => {
 
   const renderItem = useCallback(
     ({item, index}) => {
-      const isLiked = likedReels[item.id] || false;
+      const isLiked = item.userLiked === 1 ? true : false;
       const images = [
         'https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg?cs=srgb&dl=pexels-anjana-c-169994-674010.jpg&fm=jpg',
         'https://thumbs.dreamstime.com/b/planet-earth-space-night-some-elements-image-furnished-nasa-52734504.jpg',
@@ -243,7 +243,8 @@ const InstagramReels = () => {
 
             <ReelActions
               likes={item.likeCount || 0}
-              shares={item.shares || 0}
+              shares={item.permalink || 0}
+              postId={item.postId || 0}
               onLike={() => handleLikeReel(item.id)}
               isLiked={isLiked}
             />
