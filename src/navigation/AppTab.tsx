@@ -76,7 +76,6 @@ const HomePageStack = () => {
   );
 };
 
- 
 const AppTab: React.FC = () => {
   const navigation = useNavigation();
   const userP = useSelector((state: RootState) => state.user.user);
@@ -262,8 +261,8 @@ const AppTab: React.FC = () => {
               />
             ),
           }}
-         // component={InstagramReels}
-           component={PlaceholderScreen}
+          component={InstagramReels}
+          //  component={PlaceholderScreen}
         />
         <Tab.Screen
           name="appointment"

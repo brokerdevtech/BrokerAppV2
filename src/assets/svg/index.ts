@@ -102,8 +102,10 @@ import filter from './filter.svg';
 import ImagePlaceholder from './icons/ImagePlaceholder.svg';
 import subscription from './subscription.svg';
 import MenuThreeDots from './menu-dots-vertical.svg';
+import ReelShare from './ReelShare.svg';
 export {
   ImagePlaceholder,
+  ReelShare,
   subscription,
   Buyer,
   Home_tab_icon_fill,

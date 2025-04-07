@@ -70,9 +70,6 @@ const PostActions = ({
   PageName = 'ItemList',
   isrefresh = 0,
 }) => {
- 
-
-
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const {
     data,
@@ -103,7 +100,6 @@ const PostActions = ({
   );
 
   useEffect(() => {
-
     const fetchData = async () => {
       if (isrefresh > 0) {
         //  console.log('isrefresh', item);
@@ -172,7 +168,6 @@ const PostActions = ({
   };
 
   const handleLike = async () => {
-
     let endpoint = 'RealEstate';
     if (listTypeData === 'RealEstate') {
       endpoint = 'post';
@@ -194,7 +189,6 @@ const PostActions = ({
   };
 
   const handleUnLike = async () => {
-
     let endpoint = 'RealEstate';
     if (listTypeData === 'RealEstate') {
       endpoint = 'post';
@@ -220,9 +214,6 @@ const PostActions = ({
   }, []);
 
   async function callCommentList() {
-
-
-
     pageSize_Set(15);
     currentPage_Set(0);
     hasMore_Set(true);

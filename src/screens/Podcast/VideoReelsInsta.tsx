@@ -1,9 +1,36 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {View, Dimensions, ActivityIndicator, FlatList} from 'react-native';
+import {
+  View,
+  Dimensions,
+  ActivityIndicator,
+  FlatList,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+} from 'react-native';
 import Video from 'react-native-video';
 import {fetchInstagramVideos} from '../../../BrokerAppCore/services/new/podcastService';
-import {Padding} from '@/styles/GlobalStyles';
+import {Color, Padding} from '../../styles/GlobalStyles';
 import {useFocusEffect} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {useApiPagingWithtotalRequest} from '../../hooks/useApiPagingWithtotalRequest';
+import {getThreadsList} from '../../../BrokerAppCore/services/new/threads';
+import {
+  formatDate,
+  imagesBucketcloudfrontPath,
+  imagesBucketPath,
+} from '../../constants/constants';
+import FastImage from '@d11/react-native-fast-image';
+import ImageCarousel from './ImageCarousel';
+import {Like, share_PIcon, UnLike, UnLikeWhite} from '../../assets/svg';
+import {
+  FavouriteIcon,
+  Icon,
+  MessageCircleIcon,
+} from '../../../components/ui/icon';
+import {ReelActions} from './ReelActions';
 
 const {height: screenHeight, width} = Dimensions.get('window');
 
@@ -14,94 +41,147 @@ const ACCESS_TOKEN =
 // Define approximate header and tab heights
 const HEADER_HEIGHT = 60; // Adjust as per your UI
 const TAB_BAR_HEIGHT = 60; // Adjust based on your bottom tab bar
-const VIDEO_HEIGHT = screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT; // Available height for video
+const VIDEO_HEIGHT =
+  Platform.OS === 'ios'
+    ? screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 40
+    : screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 60; // Available height for video
+const formatPostDate = dateString => {
+  if (!dateString) return '';
+
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffTime = Math.abs(now - date);
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) {
+    return 'Today';
+  } else if (diffDays === 1) {
+    return 'Yesterday';
+  } else if (diffDays < 7) {
+    return `${diffDays} days ago`;
+  } else if (diffDays < 30) {
+    return `${Math.floor(diffDays / 7)} week${
+      Math.floor(diffDays / 7) > 1 ? 's' : ''
+    } ago`;
+  } else {
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }
+};
+const ReelProfile = ({username, profileImage, postDate}) => {
+  const formattedDate = formatPostDate(postDate);
+  console.log(profileImage);
+  return (
+    <View style={styles.profileContainer}>
+      <FastImage
+        source={require('../../assets/images/userDark.png')}
+        style={styles.profileImage}
+        resizeMode={FastImage.resizeMode.cover}
+      />
+      <View style={styles.userInfoContainer}>
+        <Text style={styles.username}>{username}</Text>
+        <Text style={styles.postDate}>Posted {formattedDate}</Text>
+      </View>
+    </View>
+  );
+};
+
+// Caption component with see more/less functionality
+const ReelCaption = ({caption}) => {
+  const [expanded, setExpanded] = useState(false);
+  const MAX_CAPTION_LENGTH = 100;
+
+  if (!caption) return null;
+
+  const shouldTruncate = caption.length > MAX_CAPTION_LENGTH;
+  const displayText =
+    !expanded && shouldTruncate
+      ? caption.substring(0, MAX_CAPTION_LENGTH) + '...'
+      : caption;
+
+  return (
+    <View style={styles.captionContainer}>
+      <Text style={styles.captionText}>{displayText}</Text>
+      {shouldTruncate && (
+        <TouchableOpacity onPress={() => setExpanded(!expanded)}>
+          <Text style={styles.seeMoreLess}>
+            {expanded ? 'See less' : 'See more'}
+          </Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+};
+
+// Reel actions component (like, comment, share, etc.)
 
 const InstagramReels = () => {
   const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const user = useSelector(state => state.user.user);
+  const [loading, setLoading] = useState(false);
+  const [isInfiniteLoading, setInfiniteLoading] = useState(false);
   const [nextPage, setNextPage] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
-  const onVideoEndRef = useRef(false);
-  // const [videos, setVideos] = useState([]);
-  // const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [likedReels, setLikedReels] = useState({});
+  const previousRouteName = useSelector(
+    (state: RootState) => state.navigation.previousRouteName,
+  );
+  const previousRouteParams = useSelector(
+    (state: RootState) => state.navigation.previousRouteParams,
+  );
   const flatListRef = useRef(null);
-  // Fetch Instagram videos
-  const fetchVideos = async (
-    url = `${FACEBOOK_API_URL}/${ACCOUNT_ID}/tags?fields=id,media_type,media_url,permalink,timestamp&access_token=${ACCESS_TOKEN}&limit=5`,
-  ) => {
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
+  const onVideoEndRef = useRef(false);
+  let categoryId;
 
-      if (data.error) {
-        console.error('Error fetching data: ', data.error);
-        return;
-      }
+  if (previousRouteName === 'ItemListScreen') {
+    // Extract categoryId from previous route params
+    categoryId = previousRouteParams?.categoryId;
+  } else {
+    // Default value if coming from any other route
+    categoryId = 7;
+  }
+  let {
+    data,
+    status,
+    error,
+    execute,
+    loadMore,
+    pageSize_Set,
+    currentPage_Set,
+    hasMore_Set,
+    totalPages,
+    recordCount,
+    setData_Set,
+  } = useApiPagingWithtotalRequest(getThreadsList, setInfiniteLoading, 5);
 
-      // Filter only VIDEO items
-      const filteredVideos = data.data.filter(
-        item => item.media_type === 'VIDEO',
-      );
+  let obj = {
+    userId: user.userId,
+    categoryId: categoryId,
+  };
 
-      setVideos(prevVideos => [...prevVideos, ...filteredVideos]);
-      setNextPage(data.paging?.next || null);
-      setLoading(false);
-      setLoadingMore(false);
-    } catch (error) {
-      console.error('Fetch error: ', error);
-      setLoading(false);
-      setLoadingMore(false);
+  const loadMorepage = async () => {
+    if (!isInfiniteLoading) {
+      await loadMore(obj);
     }
   };
 
-  const fetchInstagram = async () => {
-    await fetchInstagramVideos(
-      'EAAYJ6U4AIAQBO4UCcbd5jZBPioEGZBdZBPrAKEfkiggHmMA5UZBAAX5QA3mdo7oGmy05TUxz9vnFWzqf4GPbNPNWKcvWrgOU48LyGKJ2aEGCUPmIGvCSkP4NvWSxMpWKp2d8VyOX2gZAet2K1dZA9XOb5uWhdU92zUab6LJDXA96ssqM7zdSXFmgZDZD',
-      '17841458791630720',
-      (newVideos, isFirstBatch) => {
-        setVideos(prevVideos =>
-          isFirstBatch ? newVideos : [...prevVideos, ...newVideos],
-        );
-        setLoading(false);
-      },
-    );
-    // await fetchInstagramVideos(
-    //   "EAAYJ6U4AIAQBO6GxSVXZB9ZBS6x4Y10WsCzGVkBIYRjybfzfKFwSlZC1VijrxqWxnBthy8PmZArvhYAedo3l933GnOwy8YgAeZCg5eGIBJB7lzKASB6VvWfvAL3YafR7A2zSgauGcmIUh97uBfRu9czLGJjlYxKptarxk1n8GRwZAybqT0YO8MhgZDZD",
-    //   "17841458791630720",
-    //   (newVideos, isFirstBatch) => {
-    //     setVideos((prevVideos) => isFirstBatch ? newVideos : [...prevVideos, ...newVideos]);
-    //     setLoading(false);
-    //   }
-    // );
-    // const result:any = await fetchInstagramVideos("EAAYJ6U4AIAQBO6GxSVXZB9ZBS6x4Y10WsCzGVkBIYRjybfzfKFwSlZC1VijrxqWxnBthy8PmZArvhYAedo3l933GnOwy8YgAeZCg5eGIBJB7lzKASB6VvWfvAL3YafR7A2zSgauGcmIUh97uBfRu9czLGJjlYxKptarxk1n8GRwZAybqT0YO8MhgZDZD","17841458791630720");
-    // if (result.length > 0) {
-    //   console.log(result);
-    //   setVideos(result);
-    //   setLoading(false);
-    //   return result;
-    // }
-  };
-  const loadMoreVideos = () => {
-    // console.log('Loading more videos');
-    if (nextPage && !loadingMore) {
-      setLoadingMore(true);
-      fetchVideos(nextPage);
-    }
-  };
   useFocusEffect(
     useCallback(() => {
+      execute(obj);
+      console.log('Previous screen:', previousRouteName);
+      console.log('Previous params:', previousRouteParams);
       return () => {
         // Pause video when screen is unfocused
         setCurrentIndex(-1); // This will pause all videos
       };
     }, []),
   );
-  useEffect(() => {
-    fetchVideos();
-  }, []);
+
   const handleVideoEnd = () => {
-    // console.log('Video Ended');
     if (currentIndex < videos.length - 1) {
       onVideoEndRef.current = true; // Prevents onMomentumScrollEnd from interfering
       const nextIndex = currentIndex + 1;
@@ -111,61 +191,92 @@ const InstagramReels = () => {
     }
     setTimeout(() => {
       onVideoEndRef.current = false; // Reset flag after transition
-    }, 500); // Adjust delay if needed
+    }, 500);
   };
+
+  const handleLikeReel = id => {
+    setLikedReels(prev => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   const renderItem = useCallback(
-    ({item, index}) => (
-      <View
-        style={{
-          height: VIDEO_HEIGHT,
-          width,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        {currentIndex == index && (
-          <Video
-            source={{uri: item.media_url}}
-            style={{width, height: VIDEO_HEIGHT}} // Responsive aspect ratio
-            resizeMode="cover"
-            controls={false}
-            repeat={false} // Don't loop, move to the next video instead
-            paused={currentIndex !== index} // Auto-play when in view
-            onEnd={handleVideoEnd}
-            muted={false}
-            volume={2.0}
-            // Play next video when the current one ends
-          />
-        )}
-      </View>
-    ),
-    [currentIndex],
+    ({item, index}) => {
+      const isLiked = item.userLiked === 1 ? true : false;
+      const images = [
+        'https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg?cs=srgb&dl=pexels-anjana-c-169994-674010.jpg&fm=jpg',
+        'https://thumbs.dreamstime.com/b/planet-earth-space-night-some-elements-image-furnished-nasa-52734504.jpg',
+        'https://images.pexels.com/photos/1054655/pexels-photo-1054655.jpeg?cs=srgb&dl=pexels-hsapir-1054655.jpg&fm=jpg',
+        'https://cdn.pixabay.com/photo/2017/10/20/10/58/elephant-2870777_640.jpg',
+      ];
+      return (
+        <View style={styles.reelContainer}>
+          {/* Video or Image content */}
+          <View style={styles.mediaContainer}>
+            {item.mediaType === 'VIDEO' ? (
+              <Video
+                source={{uri: item.mediaUrls[0]}}
+                style={styles.media}
+                resizeMode="cover"
+                controls={false}
+                repeat={false}
+                paused={currentIndex !== index}
+                onEnd={handleVideoEnd}
+                muted={false}
+                volume={2.0}
+              />
+            ) : (
+              <ImageCarousel images={item.mediaUrls} autoPlay={false} />
+            )}
+          </View>
+
+          {/* User info and caption overlay */}
+          <View style={styles.overlay}>
+            <ReelProfile
+              username={item.username || 'User'}
+              profileImage={item.profileImage}
+              postDate={item.postedOn}
+            />
+
+            <ReelCaption caption={item.caption} />
+
+            <ReelActions
+              likes={item.likeCount || 0}
+              shares={item.permalink || 0}
+              postId={item.postId || 0}
+              onLike={() => handleLikeReel(item.id)}
+              isLiked={isLiked}
+            />
+          </View>
+        </View>
+      );
+    },
+    [currentIndex, likedReels],
   );
+
   // Function to track user swipe and update current index
   const onViewableItemsChanged = useCallback(({viewableItems}) => {
     if (viewableItems.length > 0) {
       setCurrentIndex(viewableItems[0].index);
     }
   }, []);
+
   return (
-    <View style={{flex: 1, backgroundColor: 'black'}}>
-      {loading ? (
-        <ActivityIndicator
-          size="large"
-          color="#fff"
-          style={{flex: 1, justifyContent: 'center'}}
-        />
-      ) : (
+    <View style={styles.container}>
+      {isInfiniteLoading ? (
+        <ActivityIndicator size="large" color="#fff" style={styles.loader} />
+      ) : data && data.length > 0 ? (
         <FlatList
           ref={flatListRef}
-          data={videos}
+          data={data || []}
           renderItem={renderItem}
           keyExtractor={(item, index) => `${item.id}_${index}`}
           pagingEnabled
           showsVerticalScrollIndicator={false}
-          snapToInterval={VIDEO_HEIGHT} // Ensure snapping
+          snapToInterval={VIDEO_HEIGHT}
           snapToAlignment="start"
           decelerationRate="fast"
-          //  contentContainerStyle={{ display:"flex",gap:10,flexDirection:"column" }}
           getItemLayout={(data, index) => ({
             length: VIDEO_HEIGHT,
             offset: VIDEO_HEIGHT * index,
@@ -180,27 +291,103 @@ const InstagramReels = () => {
               });
             }, 500);
           }}
-          // onMomentumScrollEnd={(e) => {
-          //   const index = Math.round(e.nativeEvent.contentOffset.y / VIDEO_HEIGHT);
-          //   if (index !== currentIndex) {
-          //     setCurrentIndex(index);
-          //   }
-          // }}
           initialNumToRender={1}
           maxToRenderPerBatch={2}
           windowSize={7}
-          onEndReached={loadMoreVideos}
+          onEndReached={loadMorepage}
           onEndReachedThreshold={0.5}
           ListFooterComponent={() =>
-            loadingMore ? <ActivityIndicator size="small" color="blue" /> : null
+            loadingMore ? <ActivityIndicator size="small" color="#fff" /> : null
           }
           onViewableItemsChanged={onViewableItemsChanged}
           viewabilityConfig={{itemVisiblePercentThreshold: 80}}
           removeClippedSubviews={false}
         />
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No videos available</Text>
+        </View>
       )}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'black',
+  },
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: 'white',
+  },
+  reelContainer: {
+    height: VIDEO_HEIGHT,
+    width,
+    position: 'relative',
+  },
+  mediaContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  media: {
+    width,
+    height: VIDEO_HEIGHT,
+  },
+  overlay: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    padding: 16,
+    paddingBottom: 10, // Extra padding for bottom navigation
+  },
+  profileContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  userInfoContainer: {
+    flexDirection: 'column',
+  },
+  username: {
+    color: '#eee',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  postDate: {
+    color: '#ccc',
+    fontSize: 12,
+    marginTop: 2,
+  },
+  captionContainer: {
+    marginBottom: 15,
+  },
+  captionText: {
+    color: '#eee',
+    fontSize: 14,
+  },
+  seeMoreLess: {
+    color: '#bbb',
+    fontWeight: 'bold',
+    marginTop: 3,
+  },
+});
 
 export default InstagramReels;
