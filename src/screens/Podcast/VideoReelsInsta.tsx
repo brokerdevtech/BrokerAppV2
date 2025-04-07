@@ -44,7 +44,7 @@ const TAB_BAR_HEIGHT = 60; // Adjust based on your bottom tab bar
 const VIDEO_HEIGHT =
   Platform.OS === 'ios'
     ? screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 40
-    : screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT; // Available height for video
+    : screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 60; // Available height for video
 const formatPostDate = dateString => {
   if (!dateString) return '';
 
