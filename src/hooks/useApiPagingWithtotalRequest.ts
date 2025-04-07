@@ -30,6 +30,7 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
       setError(null);
       setCurrentPage(1); // Reset to first page for initial load
       setHasMore(true); // Reset hasMore for fresh load
+
       try {
         const response = await apiFunction(...params, 1, pageSize);
         if (isMounted.current) {
@@ -88,8 +89,6 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
                 response?.data.data != null &&
                 response?.data.data.length > 0
               ) {
-              
-
                 setData(prevData => [
                   ...prevData,
                   ...(response.data.data || []),
@@ -133,7 +132,6 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
       isMounted.current = false; // Set mounted to false when the component unmounts
       if (setLoading) setLoading(false); // Reset loading state when unmounted
       setData(null);
-  
     };
   }, [setLoading]);
   const setData_Set = (newData: T | null) => {
