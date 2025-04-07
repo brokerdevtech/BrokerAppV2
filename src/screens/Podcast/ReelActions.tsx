@@ -34,8 +34,8 @@ export const ReelActions = ({likes, shares, onLike, isLiked, postId}) => {
 
       // Use the Share API to open native share dialog
       const result = await Share.share({
-        message: 'Check out this post!',
-        url: shareUrl,
+        message: shareUrl,
+
         title: 'Share this content',
       });
 
