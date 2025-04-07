@@ -73,7 +73,7 @@ export const useApiPagingWithtotalRequest = <T, P extends any[]>(
 
         try {
           // Use stored params along with current page and page size
-
+          console.log('loadmore');
           const response = await apiFunction(
             ...params,
             currentPage + 1,

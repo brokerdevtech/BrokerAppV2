@@ -31,6 +31,7 @@ import {
   MessageCircleIcon,
 } from '../../../components/ui/icon';
 import {ReelActions} from './ReelActions';
+import {debounce} from 'lodash';
 
 const {height: screenHeight, width} = Dimensions.get('window');
 
@@ -73,7 +74,7 @@ const formatPostDate = dateString => {
 };
 const ReelProfile = ({username, profileImage, postDate}) => {
   const formattedDate = formatPostDate(postDate);
-  console.log(profileImage);
+  // console.log(profileImage);
   return (
     <View style={styles.profileContainer}>
       <FastImage
@@ -135,6 +136,9 @@ const InstagramReels = () => {
   );
   const flatListRef = useRef(null);
   const onVideoEndRef = useRef(false);
+  // Track loaded post IDs to prevent duplicates
+  const loadedPostIds = useRef(new Set());
+
   let categoryId;
 
   if (previousRouteName === 'ItemListScreen') {
@@ -144,6 +148,7 @@ const InstagramReels = () => {
     // Default value if coming from any other route
     categoryId = 7;
   }
+
   let {
     data,
     status,
@@ -163,26 +168,57 @@ const InstagramReels = () => {
     categoryId: categoryId,
   };
 
-  const loadMorepage = async () => {
-    if (!isInfiniteLoading) {
-      await loadMore(obj);
-    }
-  };
+  // Modified loadMore function with proper parameters and duplicate checking
+  const loadMorepage = useCallback(
+    debounce(async () => {
+      if (!isInfiniteLoading) {
+        setLoadingMore(true);
+        try {
+          // Make sure we're passing the correct parameter format
+          await loadMore(user.userId, categoryId);
+
+          // After loading, deduplicate based on postId
+          if (data && data.length > 0) {
+            const uniqueData = data.filter(item => {
+              if (loadedPostIds.current.has(item.postId)) {
+                return false;
+              }
+              loadedPostIds.current.add(item.postId);
+              return true;
+            });
+
+            // If we've filtered out duplicates, update the data in the hook
+            if (uniqueData.length !== data.length) {
+              setData_Set(uniqueData);
+            }
+          }
+        } catch (err) {
+          console.error('Error loading more reels:', err);
+        } finally {
+          setLoadingMore(false);
+        }
+      }
+    }, 200),
+    [isInfiniteLoading, obj, loadMore, data, setData_Set],
+  );
 
   useFocusEffect(
     useCallback(() => {
-      execute(obj);
+      // Reset loaded post IDs when first loading the screen
+      loadedPostIds.current = new Set();
+      execute(user.userId, categoryId);
       console.log('Previous screen:', previousRouteName);
       console.log('Previous params:', previousRouteParams);
+
       return () => {
         // Pause video when screen is unfocused
         setCurrentIndex(-1); // This will pause all videos
       };
-    }, []),
+    }, [user.userId, categoryId]),
   );
 
   const handleVideoEnd = () => {
-    if (currentIndex < videos.length - 1) {
+    if (currentIndex < (data?.length || 0) - 1) {
       onVideoEndRef.current = true; // Prevents onMomentumScrollEnd from interfering
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
@@ -204,12 +240,7 @@ const InstagramReels = () => {
   const renderItem = useCallback(
     ({item, index}) => {
       const isLiked = item.userLiked === 1 ? true : false;
-      const images = [
-        'https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg?cs=srgb&dl=pexels-anjana-c-169994-674010.jpg&fm=jpg',
-        'https://thumbs.dreamstime.com/b/planet-earth-space-night-some-elements-image-furnished-nasa-52734504.jpg',
-        'https://images.pexels.com/photos/1054655/pexels-photo-1054655.jpeg?cs=srgb&dl=pexels-hsapir-1054655.jpg&fm=jpg',
-        'https://cdn.pixabay.com/photo/2017/10/20/10/58/elephant-2870777_640.jpg',
-      ];
+
       return (
         <View style={styles.reelContainer}>
           {/* Video or Image content */}
@@ -252,7 +283,7 @@ const InstagramReels = () => {
         </View>
       );
     },
-    [currentIndex, likedReels],
+    [currentIndex],
   );
 
   // Function to track user swipe and update current index
@@ -264,14 +295,14 @@ const InstagramReels = () => {
 
   return (
     <View style={styles.container}>
-      {isInfiniteLoading ? (
+      {isInfiniteLoading && !data?.length ? (
         <ActivityIndicator size="large" color="#fff" style={styles.loader} />
       ) : data && data.length > 0 ? (
         <FlatList
           ref={flatListRef}
-          data={data || []}
+          data={data}
           renderItem={renderItem}
-          keyExtractor={(item, index) => `${item.id}_${index}`}
+          keyExtractor={item => `${item.postId}`}
           pagingEnabled
           showsVerticalScrollIndicator={false}
           snapToInterval={VIDEO_HEIGHT}
