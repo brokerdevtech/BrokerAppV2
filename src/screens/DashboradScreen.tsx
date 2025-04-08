@@ -70,6 +70,7 @@ import StoriesFlatList from '../story/StoriesFlatList';
 import StoriesCarousel from '../story/StoriesCarousel';
 import StoryViewer from '../story/StoryViewer';
 import { useApiPagingWithtotalRequest } from '../hooks/useApiPagingWithtotalRequest';
+import SearchScreen from './Search';
 
 export default function DashboradScreen() {
     const [isInfiniteLoading, setInfiniteLoading] = useState(false);
@@ -432,6 +433,7 @@ export default function DashboradScreen() {
         <View>
           <View style={styles.subHeaderSection}>
             <View style={{flex: 1}}>
+              <SearchScreen />
               <StoriesFlatList />
               {/* {<StoryViewer />} */}
             </View>

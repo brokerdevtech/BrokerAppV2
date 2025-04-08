@@ -1,10 +1,10 @@
 /* eslint-disable react/react-in-jsx-scope */
-import {lazy, Suspense, useState} from 'react';
+import { lazy, Suspense, useState } from 'react';
 import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-import {createDrawerNavigator} from '@react-navigation/drawer';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import DashboradScreen from '../screens/DashboradScreen';
 import AppDrawer from './AppDrawer';
@@ -14,9 +14,9 @@ import StoryView from '../components/story/StoryView';
 import PostWizardScreen from '../screens/postImage/PostWizardScreen';
 const ChatPageStack = lazy(() => import('./ChatNavigation'));
 //import ChatPageStack from './ChatNavigation';
-import {OverlayProvider} from 'stream-chat-react-native';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useStreamChatTheme} from '../hooks/useStreamChatTheme';
+import { OverlayProvider } from 'stream-chat-react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useStreamChatTheme } from '../hooks/useStreamChatTheme';
 import VideoCarousel from '../screens/Podcast/VideoCarousel';
 
 import EditImagesScreen from '../screens/postImage/EditImageScreen';
@@ -38,7 +38,7 @@ import CarPostPreview from '../screens/postImage/previewScreens/CarPostPreview';
 import PostLikeList from '../sharedComponents/PostLikeList';
 import PostCommentLikeList from '../sharedComponents/PostCommentLikeList';
 import PostCommentReplyLikeList from '../sharedComponents/PostCommentReplyLikeList';
-import {ActivityIndicator, Platform, Text} from 'react-native';
+import { ActivityIndicator, Platform, Text } from 'react-native';
 // import MyItemListScreen from '../screens/MyItemListScreen';
 // import PodcastLikeList from '../sharedComponents/PodcastLikeList';
 // import PodcastViewList from '../sharedComponents/PodcastViewList';
@@ -56,9 +56,11 @@ import StoryDetails from '../components/story/StoryDetails';
 import SubscriptionPlan from '../screens/SubscriptionPlan';
 import StickyHeaderWithTabs1 from '../screens/StickyHeader1';
 import StoryViewer from '../story/StoryViewer';
-import {StoryProvider} from '../story/StoryContext';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../BrokerAppCore/redux/store/reducers';
+import { StoryProvider } from '../story/StoryContext';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../BrokerAppCore/redux/store/reducers';
+import SearchScreen from '../screens/Search';
+import SearchListPage from '../screens/Search/SearchListPage';
 // import StickyHeaderWithTabs from '../screens/StickyHeaderWithTabs';
 // Lazy-loaded components
 const MyItemListScreen = React.lazy(
@@ -103,7 +105,7 @@ const globalScreenOptions = {
 
 const HomeNavigation: React.FC = () => {
   const [initialRoute, setInitialRoute] = useState('Home');
-  const {bottom} = useSafeAreaInsets();
+  const { bottom } = useSafeAreaInsets();
   const user = useSelector((state: RootState) => state.user.user);
 
   // const navigation = useNavigation();
@@ -116,30 +118,30 @@ const HomeNavigation: React.FC = () => {
   // console.log(streamChatTheme);
   return (
     <StoryProvider userId={user?.userId || undefined}>
-      <OverlayProvider bottomInset={bottom} value={{style: streamChatTheme}}>
+      <OverlayProvider bottomInset={bottom} value={{ style: streamChatTheme }}>
         {/* <Stack.Navigator screenOptions={globalScreenOptions}> */}
         <Stack.Navigator
           detachInactiveScreens={true}
-          screenLayout={({children}) => (
+          screenLayout={({ children }) => (
             <Suspense fallback={<FallbackLoader />}>{children}</Suspense>
           )}>
-          <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
+          <Stack.Group screenOptions={{ headerShown: false, headerTitle: '' }}>
             <Stack.Screen name="Home" component={AppDrawer} />
           </Stack.Group>
           <Stack.Screen
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
             name="AppChat"
             component={ChatPageStackLazy}
           />
           <Stack.Screen
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
             name="VideoReels"
             component={VideoCarousel}
           />
           <Stack.Screen
             name="StoryViewer"
             component={StoryViewer}
-            options={{headerShown: false}} // modal-style animation
+            options={{ headerShown: false }} // modal-style animation
           />
           {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
         {/* <Stack.Group screenOptions={{headerShown: false, headerTitle: ''}}>
@@ -148,189 +150,199 @@ const HomeNavigation: React.FC = () => {
           <Stack.Screen
             name="ChooseImage"
             component={ChooseImage}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
 
           <Stack.Screen
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
             name="ProfileDetail"
             component={OtherProfileScreen}
           />
           <Stack.Screen
             name="FollowerList"
             component={FollowerList}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="ProfileSettings"
             component={ProfileSetting}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="ConnectionScreen"
             component={MyConnectionScreen}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="ProfileScreen"
             component={ProfileScreen}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="ManagePersonalDetails"
             component={ManagePersonalDetails}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="ProfileKyc"
             component={ProfileKyc}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="StickyHeaderWithTabs"
             component={StickyHeaderWithTabs1}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="Carfilters"
             component={CarFilterScreen}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
             name="StoryView"
             component={StoryView}
           />
 
           <Stack.Screen
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
             name="PostWizard"
             component={PostWizardScreen}
           />
           <Stack.Screen
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
             name="BrokerList"
             component={BrokerList}
           />
 
           <Stack.Screen
             name="FilterTags"
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
             component={FilterTagsScreen}
           />
           <Stack.Screen
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
             name="EditImagesScreen"
             component={EditImagesScreen}
           />
           <Stack.Screen
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
             name="EnquiryForm"
             component={EnquiryForm}
           />
           <Stack.Screen
             name="PropertyPostPreview"
             component={PropertyPostPreview}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="CarPostPreview"
             component={CarPostPreview}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="GenericPostPreview"
             component={GenericPostPreview}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="Notification"
             component={NotificationScreen}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="ItemListScreen"
             component={ItemListScreen}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
 
           <Stack.Screen
             name="ItemFilterListScreen"
             component={ItemFilterListScreen}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="MyItemListScreen"
             component={MyItemListScreen}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="ItemDetailScreen"
             component={ItemDetailScreen}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="PostLikeList"
             component={PostLikeList}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="PodcastLikeList"
             component={PodcastLikeList}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="BuyerList"
             component={BuyerList}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
 
           <Stack.Screen
             name="PodcastViewList"
             component={PodcastViewList}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="ProfileViewerList"
             component={ProfileViewerList}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="PostLeads"
             component={PostLeads}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
 
           <Stack.Screen
             name="PostCommentLikeList"
             component={PostCommentLikeList}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="StoryDetails"
             component={StoryDetails}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="PostCommentReplyLikeList"
             component={PostCommentReplyLikeList}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="StoryLikeList"
             component={StoryLikeList}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
 
           <Stack.Screen
             name="StoryViewList"
             component={StoryViewList}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="SubscriptionScreen"
             component={SubscriptionPlan}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Search"
+            component={SearchScreen}
+            options={{ title: 'Search' }}
+          />
+          <Stack.Screen
+            name="SearchListPage"
+            component={SearchListPage}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </OverlayProvider>

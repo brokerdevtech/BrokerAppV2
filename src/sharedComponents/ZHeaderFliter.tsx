@@ -34,11 +34,12 @@ function ZHeaderFliter(props) {
     handleSearch,
     type,
     AppFliter,
+    openSearchBox=false,
   } = props;
   const navigation = useNavigation();
   const toast = useToast();
   const colors = useSelector((state: RootState) => state.theme.theme);
-  const [showSearchBox, setShowSearchBox] = useState(false);
+  const [showSearchBox, setShowSearchBox] = useState(openSearchBox);
   const [searchText, setSearchText] = useState('');
   const userPermissions = useSelector(
     (state: RootState) => state.user.user.userPermissions,
@@ -72,16 +73,16 @@ function ZHeaderFliter(props) {
   const searchInput = (e: any, mode: string) => {
     if (e.nativeEvent.key == 'ENTER') {
       handleSearch(searchText);
-      setShowSearchBox(false);
+      setShowSearchBox(false || openSearchBox);
     }
     if (mode === 'ICON') {
       handleSearch(searchText);
-      setShowSearchBox(false);
+      setShowSearchBox(false || openSearchBox);
     }
   };
   const searchSubmit = (e: any, mode: string) => {
     handleSearch(searchText);
-    setShowSearchBox(false);
+    setShowSearchBox(false || openSearchBox);
   };
   const goBack = () => {
     if (navigation.canGoBack()) {

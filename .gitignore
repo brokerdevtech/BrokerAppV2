@@ -1,6 +1,7 @@
 # OSX
 #
 .DS_Store
+.tool-versions
 
 # Xcode
 #
@@ -21,6 +22,12 @@ DerivedData
 *.ipa
 *.xcuserstate
 **/.xcode.env.local
+# Ignore Xcode environment file
+ios/.xcode.env
+# Ignore Xcode project file
+ios/BrokerApp.xcodeproj/project.pbxproj
+# Ignore Podfile
+ios/Podfile
 
 # Android/IntelliJ
 #
