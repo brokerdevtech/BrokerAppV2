@@ -4,14 +4,15 @@ import ZHeaderFliter from '../../sharedComponents/ZHeaderFliter';
 import { useApiPagingWithtotalRequest } from '../../hooks/useApiPagingWithtotalRequest';
 import { globalSearch } from '../../../BrokerAppCore/services/new/searchService';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { Color } from '../../styles/GlobalStyles';
 import UserAvartarWithNameComponent from '../../sharedComponents/UserAvartarWithNameComponent';
 import ZText from '../../sharedComponents/ZText';
 import { useSelector } from 'react-redux';
+import PostCard from '../../sharedComponents/PostCard';
 import { styles } from '../../themes';
 
 const SearchListPage: React.FC = ({
-    user
+    user,
+    navigation
 }: any) => {
     const colors = useSelector(state => state.theme.theme);
     const [searchQuery, setSearchQuery] = useState('');
@@ -40,39 +41,67 @@ const SearchListPage: React.FC = ({
         } catch (error) { }
     };
 
-    const handleSearch = (query: string) => {
+    const handleSearch = async (query: string) => {
         setSearchQuery(query);
         if (query.trim() === '') {
             setResults([]);
         } else {
-            getList(query); // Call the API with the search query
+            await getList(query); // Call the API with the search query
         }
     };
 
     useEffect(() => {
-        if (data?.users?.records) {
-            console.log(data.users.records, 'Users Data');
-            setResults(data.users.records); // Set the users' records
+        if (data) {
+            const users = data?.users?.records?.map(item => ({
+                ...item,
+                type: 'user',
+            })) || [];
+            const cars = data?.cars?.records?.map(item => ({
+                ...item,
+                type: 'car',
+            })) || [];
+            const realEstate = data?.realEstate?.records?.map(item => ({
+                ...item,
+                type: 'realEstate',
+            })) || [];
+            setResults([...users, ...cars, ...realEstate]); // Combine users and cars
         } else {
             setResults([]); // Clear results if no data
         }
     }, [data]);
 
-    const renderUserItem = ({ item, index }: any) => (
-        console.log(item, 'item in search'),
-        <View style={localStyles.brokerList}>
-            <UserAvartarWithNameComponent
-                userName={item.fullName}
-                userImage={item?.profileImg}
-                userDescription={item?.city}
-                isFollowed={item?.following}
-                userId={item.userId}
-                loggedInUserId={user.userId}
-                type="search"
-                key={index}
-            />
-        </View>
-    );
+    const renderItem = ({ item, index }: any) => {
+        const isLastItem = index === results.length - 1;
+        const nextItemType = !isLastItem ? results[index + 1]?.type : null;
+        if (item.type === 'user') {
+            return (
+                <View style={{ marginBottom: nextItemType === 'car' ? 10 : 0 }}>
+                    <UserAvartarWithNameComponent
+                        userName={item.fullName}
+                        userImage={item?.profileImg}
+                        userDescription={item?.city}
+                        isFollowed={item?.following}
+                        userId={item.userId}
+                        loggedInUserId={user.userId}
+                        type="search"
+                    />
+                </View>
+            );
+        } else {
+            return (
+                <View style={{ marginBottom: 10 }}>
+                    <PostCard
+                        item={item}
+                        listTypeData={item.type === 'car' ? "car" : "realEstate" }
+                        User={user}
+                        navigation={navigation}
+                    />
+                </View>
+            );
+        }
+    };
+
+
 
     return (
         <View style={localStyles.rootContainer}>
@@ -84,8 +113,8 @@ const SearchListPage: React.FC = ({
             />
             <FlatList
                 data={results}
-                keyExtractor={(item) => item.userId.toString()}
-                renderItem={renderUserItem}
+                keyExtractor={(item, index) => `${item.type}-${item.userId || item.postId}-${index}`}
+                renderItem={renderItem}
                 contentContainerStyle={{ padding: 10 }}
                 ListEmptyComponent={
                     <ZText type="R16" style={{ textAlign: 'center', marginTop: 20 }}>
