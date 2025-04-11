@@ -1,5 +1,11 @@
 /* eslint-disable react/react-in-jsx-scope */
-import {Like, ReelShare, UnLikeWhite} from '../../assets/svg';
+import {
+  Like,
+  ReelShare,
+  UnLikeWhite,
+  Volume,
+  VolumeMute,
+} from '../../assets/svg';
 
 import {View, TouchableOpacity, Text, StyleSheet, Share} from 'react-native';
 import {Icon, MessageCircleIcon} from '../../../components/ui/icon';
@@ -8,7 +14,16 @@ import {User} from 'stream-chat-react-native';
 import {SetPostLikeUnLike} from '../../../BrokerAppCore/services/new/dashboardService';
 import {ThreadLikeUnLike} from '../../../BrokerAppCore/services/new/threads';
 
-export const ReelActions = ({likes, shares, onLike, isLiked, postId}) => {
+export const ReelActions = ({
+  likes,
+  shares,
+  onLike,
+  isLiked,
+  postId,
+  isMuted,
+  onToggleMute,
+  mediaType,
+}) => {
   const [postLikesCount, setPostLikesCount] = useState(likes);
   const [liked, setLiked] = useState(isLiked);
 
@@ -58,18 +73,35 @@ export const ReelActions = ({likes, shares, onLike, isLiked, postId}) => {
 
   return (
     <View style={styles.actionsContainer}>
+      {/* Like Button */}
       <TouchableOpacity style={styles.actionButton} onPress={handleLikeToggle}>
-        {liked ? (
-          <Like height={35} width={35} />
-        ) : (
-          <UnLikeWhite height={35} width={35} />
-        )}
-        <Text style={styles.actionCount}>{postLikesCount}</Text>
+        <View style={styles.shadowIcon}>
+          {liked ? (
+            <Like height={35} width={35} />
+          ) : (
+            <UnLikeWhite height={35} width={35} />
+          )}
+          <Text style={styles.actionCount}>{postLikesCount}</Text>
+        </View>
       </TouchableOpacity>
+
+      {/* Share Button */}
       <TouchableOpacity style={styles.actionButton} onPress={handleSharePress}>
-        <Icon as={ReelShare} style={{marginTop: 10}} size="xxl" color="#eee" />
+        <View style={styles.shadowIcon}>
+          <Icon as={ReelShare} size="xxl" color="#eee" />
+        </View>
         {shares > 0 && <Text style={styles.actionCount}>{shares}</Text>}
       </TouchableOpacity>
+
+      {/* Mute/Unmute Button */}
+      {mediaType === 'VIDEO' && (
+        <TouchableOpacity style={styles.actionButton} onPress={onToggleMute}>
+          <View style={styles.shadowIcon}>
+            <Icon as={isMuted ? VolumeMute : Volume} size="xxl" color="#eee" />
+          </View>
+          {/* <Text style={styles.actionCount}>{isMuted ? 'Muted' : 'Unmuted'}</Text> */}
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -85,14 +117,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
     justifyContent: 'center',
-  },
-  actionIcon: {
-    width: 28,
-    height: 28,
+    // backgroundColor: '#000',
+    // opacity: 0.9,
   },
   actionCount: {
     color: 'white',
-    fontSize: 12,
+    fontSize: 14,
     marginTop: 3,
+  },
+  shadowIcon: {
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', // dark semi-transparent background
+    padding: 10,
+    borderRadius: 10, // fully rounded for circle
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+
+    // Shadow for iOS
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+
+    // Shadow for Android
+    elevation: 5,
   },
 });

@@ -243,6 +243,9 @@ import {
 } from 'react-native';
 import FastImage from '@d11/react-native-fast-image';
 import {CloseCircleIcon, CloseIcon, Icon} from '../../components/ui/icon';
+import ImageCarousel from '../screens/Podcast/ImageCarousel';
+import {imagesBucketcloudfrontPath} from '../config/constants';
+import PreviewImageCarousel from './PreviewImageCarousel';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -354,12 +357,15 @@ const screenWidth = Dimensions.get('window').width;
 
 // export default AppFastImage;
 
-const AppFastImage = ({uri}) => {
+const AppFastImage = ({uri, previewUrls}) => {
   const [isFullscreen, setIsFullscreen] = React.useState(false);
 
   // Define Instagram-like dimensions (4:5 portrait aspect ratio)
   const maxWidth = screenWidth - 30; // Allow for padding
   const maxHeight = (maxWidth * 5) / 4 / 2; // Height for a 4:5 ratio
+
+  console.log(previewUrls, 'prebis');
+  const images = previewUrls.mediaType !== 'video' ? previewUrls : null;
 
   return (
     <View style={styles.container}>
@@ -378,22 +384,17 @@ const AppFastImage = ({uri}) => {
         visible={isFullscreen}
         onRequestClose={() => setIsFullscreen(false)}>
         <View style={styles.fullscreenContainer}>
+          {/* Close Button */}
           <TouchableOpacity
-            onPress={() => {
-              //console.log("kp");
-              setIsFullscreen(false);
-            }}
+            onPress={() => setIsFullscreen(false)}
             style={styles.closeButton}>
-            <View>
-              {/* <Ionicons name="close-outline" size={28} color="white" /> */}
-              <Icon as={CloseCircleIcon} color="white" size={'xxxl'} />
-            </View>
+            {/* <Ionicons name="close-outline" size={28} color="white" /> */}
+            {/* Remove the Icon component if you don't need both icons */}
+            <Icon as={CloseCircleIcon} color="white" size={'xxxl'} />
           </TouchableOpacity>
-          <FastImage
-            source={{uri}}
-            style={styles.fullscreenImage}
-            resizeMode={FastImage.resizeMode.contain} // Ensures full view in fullscreen
-          />
+
+          {/* Image Carousel */}
+          <PreviewImageCarousel images={images} autoPlay={false} />
         </View>
       </Modal>
     </View>
@@ -404,7 +405,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    //padding: 10,
     borderRadius: 12,
   },
   image: {
@@ -413,9 +413,10 @@ const styles = StyleSheet.create({
   },
   fullscreenContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    backgroundColor: 'black', // Fully black background for better image viewing
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative', // Important for absolute positioning of the close button
   },
   fullscreenImage: {
     width: '100%',
@@ -423,20 +424,20 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    // marginTop: Platform.OS === 'ios' ? 200 : 50,
     right: 20,
-    top: Platform.OS === 'ios' ? 70 : 50,
-    color: 'white',
-    // flex: 1,
-    // backgroundColor: 'red',
-    // marginLeft: 'auto',
-    // padding: 10,
+    top: Platform.OS === 'ios' ? 50 : 30,
+    zIndex: 1000, // Ensure it's above other elements
+    width: 40,
+    height: 40,
     borderRadius: 20,
-    zIndex: 1000,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   closeButtonText: {
-    color: 'black',
+    color: 'white',
     fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 

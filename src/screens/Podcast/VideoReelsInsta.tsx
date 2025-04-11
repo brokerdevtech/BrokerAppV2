@@ -36,45 +36,45 @@ import {debounce} from 'lodash';
 const {height: screenHeight, width} = Dimensions.get('window');
 
 const FACEBOOK_API_URL = 'https://graph.facebook.com/v22.0';
-const ACCOUNT_ID = '17841458791630720'; // Replace with your account ID
+const ACCOUNT_ID = '17841458791630720';
 const ACCESS_TOKEN =
   'EAAYJ6U4AIAQBO4UCcbd5jZBPioEGZBdZBPrAKEfkiggHmMA5UZBAAX5QA3mdo7oGmy05TUxz9vnFWzqf4GPbNPNWKcvWrgOU48LyGKJ2aEGCUPmIGvCSkP4NvWSxMpWKp2d8VyOX2gZAet2K1dZA9XOb5uWhdU92zUab6LJDXA96ssqM7zdSXFmgZDZD'; // Replace with your token
-// Define approximate header and tab heights
-const HEADER_HEIGHT = 60; // Adjust as per your UI
-const TAB_BAR_HEIGHT = 60; // Adjust based on your bottom tab bar
+
+const HEADER_HEIGHT = 60;
+const TAB_BAR_HEIGHT = 60;
 const VIDEO_HEIGHT =
   Platform.OS === 'ios'
     ? screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 40
-    : screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 60; // Available height for video
+    : screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 60;
+
 const formatPostDate = dateString => {
   if (!dateString) return '';
 
   const date = new Date(dateString);
   const now = new Date();
-  const diffTime = Math.abs(now - date);
+  const diffTime = now - date;
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) {
+  if (diffDays < 1) {
     return 'Today';
   } else if (diffDays === 1) {
     return 'Yesterday';
   } else if (diffDays < 7) {
     return `${diffDays} days ago`;
   } else if (diffDays < 30) {
-    return `${Math.floor(diffDays / 7)} week${
-      Math.floor(diffDays / 7) > 1 ? 's' : ''
-    } ago`;
+    const weeks = Math.floor(diffDays / 7);
+    return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+  } else if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30);
+    return `${months} month${months > 1 ? 's' : ''} ago`;
   } else {
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    const years = Math.floor(diffDays / 365);
+    return `${years} year${years > 1 ? 's' : ''} ago`;
   }
 };
+
 const ReelProfile = ({username, profileImage, postDate}) => {
   const formattedDate = formatPostDate(postDate);
-  // console.log(profileImage);
   return (
     <View style={styles.profileContainer}>
       <FastImage
@@ -89,8 +89,6 @@ const ReelProfile = ({username, profileImage, postDate}) => {
     </View>
   );
 };
-
-// Caption component with see more/less functionality
 const ReelCaption = ({caption}) => {
   const [expanded, setExpanded] = useState(false);
   const MAX_CAPTION_LENGTH = 100;
@@ -117,10 +115,9 @@ const ReelCaption = ({caption}) => {
   );
 };
 
-// Reel actions component (like, comment, share, etc.)
-
 const InstagramReels = () => {
   const [videos, setVideos] = useState([]);
+  const [isMuted, setIsMuted] = useState(true);
   const user = useSelector(state => state.user.user);
   const [loading, setLoading] = useState(false);
   const [isInfiniteLoading, setInfiniteLoading] = useState(false);
@@ -136,16 +133,17 @@ const InstagramReels = () => {
   );
   const flatListRef = useRef(null);
   const onVideoEndRef = useRef(false);
-  // Track loaded post IDs to prevent duplicates
+
   const loadedPostIds = useRef(new Set());
+
+  const userScrollingRef = useRef(false);
+  const lastManualScrollTimestamp = useRef(0);
 
   let categoryId;
 
   if (previousRouteName === 'ItemListScreen') {
-    // Extract categoryId from previous route params
     categoryId = previousRouteParams?.categoryId;
   } else {
-    // Default value if coming from any other route
     categoryId = 7;
   }
 
@@ -161,23 +159,15 @@ const InstagramReels = () => {
     totalPages,
     recordCount,
     setData_Set,
-  } = useApiPagingWithtotalRequest(getThreadsList, setInfiniteLoading, 5);
+  } = useApiPagingWithtotalRequest(getThreadsList, setInfiniteLoading, 20);
 
-  let obj = {
-    userId: user.userId,
-    categoryId: categoryId,
-  };
-
-  // Modified loadMore function with proper parameters and duplicate checking
   const loadMorepage = useCallback(
     debounce(async () => {
       if (!isInfiniteLoading) {
         setLoadingMore(true);
         try {
-          // Make sure we're passing the correct parameter format
           await loadMore(user.userId, categoryId);
 
-          // After loading, deduplicate based on postId
           if (data && data.length > 0) {
             const uniqueData = data.filter(item => {
               if (loadedPostIds.current.has(item.postId)) {
@@ -187,7 +177,6 @@ const InstagramReels = () => {
               return true;
             });
 
-            // If we've filtered out duplicates, update the data in the hook
             if (uniqueData.length !== data.length) {
               setData_Set(uniqueData);
             }
@@ -199,35 +188,45 @@ const InstagramReels = () => {
         }
       }
     }, 200),
-    [isInfiniteLoading, obj, loadMore, data, setData_Set],
+    [isInfiniteLoading, loadMore, data, setData_Set, user.userId, categoryId],
   );
 
   useFocusEffect(
     useCallback(() => {
-      // Reset loaded post IDs when first loading the screen
       loadedPostIds.current = new Set();
       execute(user.userId, categoryId);
       console.log('Previous screen:', previousRouteName);
       console.log('Previous params:', previousRouteParams);
 
       return () => {
-        // Pause video when screen is unfocused
-        setCurrentIndex(-1); // This will pause all videos
+        setCurrentIndex(-1);
       };
-    }, [user.userId, categoryId]),
+    }, [
+      user.userId,
+      categoryId,
+      execute,
+      previousRouteName,
+      previousRouteParams,
+    ]),
   );
 
   const handleVideoEnd = () => {
-    if (currentIndex < (data?.length || 0) - 1) {
-      onVideoEndRef.current = true; // Prevents onMomentumScrollEnd from interfering
-      const nextIndex = currentIndex + 1;
-      setCurrentIndex(nextIndex);
+    const currentTime = new Date().getTime();
+    const timeSinceLastScroll = currentTime - lastManualScrollTimestamp.current;
 
-      flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
+    if (timeSinceLastScroll > 500 && !userScrollingRef.current) {
+      if (currentIndex < (data?.length || 0) - 1) {
+        onVideoEndRef.current = true;
+        const nextIndex = currentIndex + 1;
+        setCurrentIndex(nextIndex);
+
+        flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
+
+        setTimeout(() => {
+          onVideoEndRef.current = false;
+        }, 500);
+      }
     }
-    setTimeout(() => {
-      onVideoEndRef.current = false; // Reset flag after transition
-    }, 500);
   };
 
   const handleLikeReel = id => {
@@ -237,13 +236,25 @@ const InstagramReels = () => {
     }));
   };
 
+  const toggleMute = useCallback(() => {
+    setIsMuted(prev => !prev);
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    userScrollingRef.current = true;
+    lastManualScrollTimestamp.current = new Date().getTime();
+
+    setTimeout(() => {
+      userScrollingRef.current = false;
+    }, 500);
+  }, []);
+
   const renderItem = useCallback(
     ({item, index}) => {
       const isLiked = item.userLiked === 1 ? true : false;
 
       return (
         <View style={styles.reelContainer}>
-          {/* Video or Image content */}
           <View style={styles.mediaContainer}>
             {item.mediaType === 'VIDEO' ? (
               <Video
@@ -251,10 +262,10 @@ const InstagramReels = () => {
                 style={styles.media}
                 resizeMode="cover"
                 controls={false}
-                repeat={false}
+                repeat={true}
                 paused={currentIndex !== index}
                 onEnd={handleVideoEnd}
-                muted={false}
+                muted={isMuted}
                 volume={2.0}
               />
             ) : (
@@ -262,7 +273,6 @@ const InstagramReels = () => {
             )}
           </View>
 
-          {/* User info and caption overlay */}
           <View style={styles.overlay}>
             <ReelProfile
               username={item.username || 'User'}
@@ -278,17 +288,20 @@ const InstagramReels = () => {
               postId={item.postId || 0}
               onLike={() => handleLikeReel(item.id)}
               isLiked={isLiked}
+              isMuted={isMuted}
+              onToggleMute={toggleMute}
+              mediaType={item.mediaType}
             />
           </View>
         </View>
       );
     },
-    [currentIndex],
+    [currentIndex, isMuted, toggleMute, data?.length],
   );
 
-  // Function to track user swipe and update current index
   const onViewableItemsChanged = useCallback(({viewableItems}) => {
-    if (viewableItems.length > 0) {
+    if (viewableItems.length > 0 && !onVideoEndRef.current) {
+      lastManualScrollTimestamp.current = new Date().getTime();
       setCurrentIndex(viewableItems[0].index);
     }
   }, []);
@@ -322,11 +335,19 @@ const InstagramReels = () => {
               });
             }, 500);
           }}
-          initialNumToRender={1}
-          maxToRenderPerBatch={2}
+          initialNumToRender={3}
+          maxToRenderPerBatch={3}
           windowSize={7}
           onEndReached={loadMorepage}
           onEndReachedThreshold={0.5}
+          onScroll={handleScroll}
+          onMomentumScrollBegin={() => {
+            userScrollingRef.current = true;
+            lastManualScrollTimestamp.current = new Date().getTime();
+          }}
+          onMomentumScrollEnd={() => {
+            userScrollingRef.current = false;
+          }}
           ListFooterComponent={() =>
             loadingMore ? <ActivityIndicator size="small" color="#fff" /> : null
           }
@@ -379,7 +400,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     padding: 16,
-    paddingBottom: 10, // Extra padding for bottom navigation
+    paddingBottom: 10,
   },
   profileContainer: {
     flexDirection: 'row',
@@ -401,11 +422,17 @@ const styles = StyleSheet.create({
     color: '#eee',
     fontWeight: 'bold',
     fontSize: 16,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 3,
   },
   postDate: {
     color: '#ccc',
     fontSize: 12,
     marginTop: 2,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: 0.5, height: 0.5},
+    textShadowRadius: 2,
   },
   captionContainer: {
     marginBottom: 15,
@@ -413,11 +440,54 @@ const styles = StyleSheet.create({
   captionText: {
     color: '#eee',
     fontSize: 14,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: 0.5, height: 0.5},
+    textShadowRadius: 3,
   },
   seeMoreLess: {
     color: '#bbb',
     fontWeight: 'bold',
     marginTop: 3,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: 0.5, height: 0.5},
+    textShadowRadius: 2,
+  },
+  muteOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+
+    backgroundColor: 'transparent',
+
+    height: '60%',
+  },
+  navigationContainer: {
+    position: 'absolute',
+    right: 16,
+    top: '40%',
+    zIndex: 10,
+  },
+  navButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  navButtonNext: {
+    marginTop: 8,
+  },
+  navButtonText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 3,
   },
 });
 
