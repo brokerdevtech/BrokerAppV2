@@ -6,6 +6,7 @@ import React, {
   useImperativeHandle,
   memo,
   useCallback,
+  useMemo,
 } from 'react';
 import {View, StyleSheet, Dimensions, Text, FlatList} from 'react-native';
 
@@ -31,6 +32,14 @@ const MediaGallery = forwardRef((props, ref) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef(null);
 
+  // Create an array of source URIs from mediaItems
+  const sourceUris = useMemo(() => {
+    return mediaItems.map(
+      item =>
+        `${imagesBucketcloudfrontPath}${item?.mediaBlob || item?.mediaBlobId}`,
+    );
+  }, [mediaItems]);
+
   const onScroll = event => {
     const slideIndex = Math.ceil(
       event.nativeEvent.contentOffset.x / parentWidth,
@@ -45,20 +54,18 @@ const MediaGallery = forwardRef((props, ref) => {
   }, []);
 
   const renderCarouselItem = useCallback(
-    ({item}) => {
+    ({item, index}) => {
       const extension = getExtension(item?.mediaBlob || item?.mediaBlobId);
-      const sourceUri = `${imagesBucketcloudfrontPath}${
-        item?.mediaBlob || item?.mediaBlobId
-      }`;
+      const sourceUri = sourceUris[index];
 
       if (extension !== 'mp4') {
         return (
           <View style={[styles.card, {width: parentWidth}]}>
             <AppFastImage
               uri={sourceUri}
-              // hieght={item.mediaHeight}
+              // height={item.mediaHeight}
               // width={item.mediaWidth}
-              previewUrls={mediaItems}
+              previewUrls={sourceUris} // Pass the full array of URIs
             />
           </View>
         );
@@ -74,7 +81,7 @@ const MediaGallery = forwardRef((props, ref) => {
         </View>
       );
     },
-    [getExtension, parentWidth],
+    [getExtension, parentWidth, sourceUris],
   );
 
   return (

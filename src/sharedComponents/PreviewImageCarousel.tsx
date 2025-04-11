@@ -60,15 +60,15 @@ const PreviewImageCarousel = ({
   };
 
   const renderItem = ({item}) => {
-    const imageUri = item.mediaBlob
-      ? `${imagesBucketcloudfrontPath}${item.mediaBlob}`
-      : `${imagesBucketcloudfrontPath}${item.mediaBlobId}`;
+    // const imageUri = item.mediaBlob
+    //   ? `${imagesBucketcloudfrontPath}${item.mediaBlob}`
+    //   : `${imagesBucketcloudfrontPath}${item.mediaBlobId}`;
     // Render each image item
     return (
       <View style={[styles.slide, {width, height}]}>
         <Image
           source={{
-            uri: imageUri,
+            uri: item,
           }}
           style={styles.image}
           resizeMode="contain"

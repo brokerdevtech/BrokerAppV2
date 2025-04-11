@@ -235,6 +235,7 @@ const ProductItem = React.memo(
           .catch(err => console.error('Error opening dialer', err));
       }
     }, []);
+    console.log(item?.postMedias, 'itemlist');
     return (
       <View style={styles.WrapcardContainer}>
         <View style={styles.cardContainer}>
