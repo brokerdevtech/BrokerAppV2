@@ -1,13 +1,13 @@
-import React, {useCallback, useMemo} from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import React, { useCallback, useMemo } from 'react';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import ZAvatarInitials from '../sharedComponents/ZAvatarInitials'; // Adjust import based on your project structure
 import ZText from '../sharedComponents/ZText'; // Adjust import based on your project structure
-import {useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../BrokerAppCore/redux/store/reducers';
-import {formatDate} from '../constants/constants';
+import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../BrokerAppCore/redux/store/reducers';
+import { formatDate } from '../constants/constants';
 import moment from 'moment';
-import {Card_check_icon} from '../assets/svg';
+import { Card_check_icon } from '../assets/svg';
 const useGetTimeDifference = createdAt => {
   const getTimeDifference = useCallback(() => {
     // Ensure createdAt is treated as a UTC time
@@ -41,8 +41,7 @@ const useGetTimeDifference = createdAt => {
   return useMemo(() => getTimeDifference(), [getTimeDifference]);
 };
 
-const ItemHeader = ({item}) => {
-  // console.log('item', item);
+const ItemHeader = ({ item, isAvatarClickDiabled=false, onAvatarClickCallBack }) => {
   const navigation = useNavigation();
   const user = useSelector((state: RootState) => state.user.user);
   const onPressUser = (userId, userName, userImage) => {
@@ -59,27 +58,38 @@ const ItemHeader = ({item}) => {
     }
   };
   const timeDifference = useGetTimeDifference(item.postedOn);
+
   return (
     <TouchableOpacity
       style={styles.cardAvatar}
-      onPress={() =>
-        onPressUser(item.userId, item.postedBy, item.profileImage)
-      }>
+      onPress={() => {
+        if (onAvatarClickCallBack) {
+          onAvatarClickCallBack();
+        } else {
+          onPressUser(item.userId, item.postedBy, item.profileImage);
+        }
+      }}
+      disabled={isAvatarClickDiabled}>
       {/* Profile Image */}
       <View style={styles.cardAvatarImg}>
         <ZAvatarInitials
-          onPress={() =>
-            onPressUser(item.userId, item.postedBy, item.profileImage)
-          }
+          onPress={() => {
+            if (onAvatarClickCallBack) {
+              onPressUserCallBack();
+            } else {
+              onPressUser(item.userId, item.postedBy, item.profileImage);
+            }
+          }}
           sourceUrl={item.profileImage}
           iconSize="md"
           name={item.postedBy}
+          isDisable={isAvatarClickDiabled}
         />
       </View>
 
       {/* Username and Time */}
       <View style={styles.cardAvatarText}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <ZText type={'B16'}>{item.postedBy}</ZText>
           {item.isBrokerAppVerified && (
             <View style={styles.checkIconContainer}>

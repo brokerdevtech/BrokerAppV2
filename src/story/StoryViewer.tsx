@@ -219,9 +219,9 @@ const StoryViewer = () => {
   const closeModal = () => {
     // console.log("closeModal");
     // runOnJS(setCurrentUser)(-1); 
-    console.log("Closing modal...");
+    // console.log("Closing modal...");
     runOnJS(setCurrentUser)(-1);
-    console.log("Modal close triggered");
+    // console.log("Modal close triggered");
   //   navigation.goBack();
   //   if (navigation.canGoBack()) {
   //    navigation.goBack();}

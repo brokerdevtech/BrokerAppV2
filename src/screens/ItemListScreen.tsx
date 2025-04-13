@@ -730,8 +730,8 @@ const ItemListScreen: React.FC<any> = ({
     ] = results.map(result =>
       result.status === 'fulfilled' ? result.value : null,
     );
-    console.log('DashboardStory');
-    console.log(RecentSearch);
+    // console.log('DashboardStory');
+    // console.log(RecentSearch);
     setStoryData(DashboardStory.data);
     setNewIncategoryData(NewIncategory.data);
     setRecentSearchData(RecentSearch.data);

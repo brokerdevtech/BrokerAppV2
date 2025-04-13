@@ -20,10 +20,10 @@ const tokenProvider: TokenOrProvider = async userId => {
 
 async function handleNotification(remoteMessage, isBackground = false) {
   // Ensure we have a notification payload
-  console.log(remoteMessage);
+  // console.log(remoteMessage);
   if (Platform.OS !== 'ios') {
     if (remoteMessage?.data?.id) {
-      console.log('handleChatNotification');
+      // console.log('handleChatNotification');
       await handleChatNotification(remoteMessage);
     }
   }
@@ -87,9 +87,9 @@ async function handleChatNotification(remoteMessage) {
       // importance: notifee.Importance.HIGH,
     });
     const message = await chatClient.getMessage(remoteMessage.data.id);
-    console.log(message);
+    // console.log(message);
     if (message.message.user?.name && message.message.text) {
-      console.log('2');
+      // console.log('2');
       const notificationOptions = {
         id: Date.now().toString(), // Unique ID to prevent notification overwriting
         title: `New message from ${message.message.user.name}`,
@@ -121,13 +121,13 @@ async function handleChatNotification(remoteMessage) {
 
 // Foreground message handler
 messaging().onMessage(async remoteMessage => {
-  console.log('Foreground message:', remoteMessage);
+  // console.log('Foreground message:', remoteMessage);
   await handleNotification(remoteMessage, false);
 });
 
 // Background message handler
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log('Background message:', remoteMessage);
+  // console.log('Background message:', remoteMessage);
   await handleNotification(remoteMessage, true);
 });
 
@@ -145,7 +145,7 @@ async function requestNotificationPermissions() {
     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    console.log('Authorization status:', authStatus);
+    // console.log('Authorization status:', authStatus);
   }
 }
 

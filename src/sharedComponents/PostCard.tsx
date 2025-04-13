@@ -15,11 +15,44 @@ import ReportScreen from "./ReportScreen";
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import SearchListPage from "../screens/Search/SearchListPage";
 
-const PostCard = React.memo(({ item, listTypeData, User, navigation }) => {
-    return <PostCardComponent item={item} listTypeData={listTypeData} User={User} navigation={navigation} />;
+const PostCard = React.memo(({
+    item,
+    listTypeData,
+    User,
+    navigation,
+    enableMenu,
+    enableAction,
+    enableCall,
+    enableChat,
+    onGoBack,
+    isAvatarClickDiabled
+}) => {
+    return <PostCardComponent
+        item={item}
+        listTypeData={listTypeData}
+        User={User}
+        navigation={navigation}
+        enableMenu={enableMenu}
+        enableAction={enableAction}
+        enableCall={enableCall}
+        enableChat={enableChat}
+        onGoBack={onGoBack}
+        isAvatarClickDiabled={isAvatarClickDiabled}
+    />;
 });
 
-const PostCardComponent: React.FC<any> = ({ item, listTypeData, User, navigation }) => {
+const PostCardComponent: React.FC<any> = ({
+    item,
+    listTypeData,
+    User,
+    navigation,
+    enableMenu,
+    enableAction,
+    enableCall,
+    enableChat,
+    onGoBack,
+    isAvatarClickDiabled
+}) => {
     const [isrefresh, setisrefresh] = useState(0);
     const [selectedItem, setSelectedItem] = useState(null);
     const [isrest, setisrest] = useState(false);
@@ -27,9 +60,12 @@ const PostCardComponent: React.FC<any> = ({ item, listTypeData, User, navigation
     const MediaGalleryRef = useRef(null);
     const reportSheetRef = useRef(null);
 
-    const ProductItemOnGoBack = () => {
-        console.log(JSON.stringify(navigation));
-        navigation.navigate('Search');
+    const ProductItemDetailPress = () => {
+        navigation.navigate('ItemDetailScreen', {
+            onGoBack: () => onGoBack(item),
+            postId: item.postId,
+            postType: listTypeData == 'car' ? 'Car/Post' : 'Post',
+        })
     };
 
     const handlePresentModalPress = useCallback(item => {
@@ -90,33 +126,25 @@ const PostCardComponent: React.FC<any> = ({ item, listTypeData, User, navigation
     }, []);
 
     return (
-        <View style={styles.WrapcardContainer}>
-            <View style={styles.cardContainer}>
-                <ItemHeader item={item} />
-                <MediaGallery ref={MediaGalleryRef} mediaItems={item?.postMedias} paused={false} />
-                <View style={styles.iconContainer}>
-                    <TouchableOpacity onPress={handlePresentModalPress} style={styles.checkIcon}>
-                        <MenuThreeDots height={20} width={20} />
-                    </TouchableOpacity>
-                </View>
-                <View style={{ marginLeft: 20 }}>
-                    <PostActions
-                        item={item}
-                        User={User}
-                        listTypeData={listTypeData}
-                        isrefresh={isrefresh}
-                        onUpdateLikeCount={(newCount) => { }}
-                    />
-                </View>
-                <TouchableOpacity
-                    onPress={() =>
-                        navigation.navigate("ItemDetailScreen", {
-                            onGoBack: ProductItemOnGoBack,
-                            postId: item.postId,
-                            postType: item.hasOwnProperty("fuelType") ? "Car/Post" : "Post",
-                        })
-                    }
-                >
+        <TouchableOpacity onPress={ProductItemDetailPress} activeOpacity={0.8}>
+            <View style={styles.WrapcardContainer}>
+                <View style={styles.cardContainer}>
+                    <ItemHeader item={item} isAvatarClickDiabled={isAvatarClickDiabled} onAvatarClickCallBack={ProductItemDetailPress} />
+                    <MediaGallery ref={MediaGalleryRef} mediaItems={item?.postMedias} disableInteraction={true} />
+                    {enableMenu && (<View style={styles.iconContainer}>
+                        <TouchableOpacity onPress={handlePresentModalPress} style={styles.checkIcon}>
+                            <MenuThreeDots height={20} width={20} />
+                        </TouchableOpacity>
+                    </View>)}
+                    {enableAction && (<View style={{ marginLeft: 20 }}>
+                        <PostActions
+                            item={item}
+                            User={User}
+                            listTypeData={listTypeData}
+                            isrefresh={isrefresh}
+                            onUpdateLikeCount={(newCount) => { }}
+                        />
+                    </View>)}
                     <VStack space="xs" style={styles.detailsContainer}>
                         <HStack>
                             <Box style={{ marginLeft: 4 }}>
@@ -155,60 +183,45 @@ const PostCardComponent: React.FC<any> = ({ item, listTypeData, User, navigation
                             </Box>
                         </HStack>
                     </VStack>
-                </TouchableOpacity>
-                <View style={styles.detailsContainerBottom}>
-                    <HStack>
-                        <HStack style={{ alignItems: "center", width: "50%", justifyContent: "center" }}>
-                            <TouchableOpacity style={styles.callbtn} onPress={() => makeCall(item.contactNo)}>
-                                <View style={{ alignItems: "center" }}>
-                                    <Icon as={Telephone_Icon} color={colors.light.appred} size={"xxl"} />
-                                </View>
-                                <View style={{ alignItems: "center", paddingVertical: 10 }}>
-                                    <ZText type={"M14"}>Call</ZText>
-                                </View>
-                            </TouchableOpacity>
+                    {enableCall || enableChat && (<View style={styles.detailsContainerBottom}>
+                        <HStack>
+                            {enableCall && (<HStack style={{ alignItems: "center", width: "50%", justifyContent: "center" }}>
+                                <TouchableOpacity style={styles.callbtn} onPress={() => makeCall(item.contactNo)}>
+                                    <View style={{ alignItems: "center" }}>
+                                        <Icon as={Telephone_Icon} color={colors.light.appred} size={"xxl"} />
+                                    </View>
+                                    <View style={{ alignItems: "center", paddingVertical: 10 }}>
+                                        <ZText type={"M14"}>Call</ZText>
+                                    </View>
+                                </TouchableOpacity>
+                            </HStack>)}
+                            {enableChat && (<HStack style={{ alignItems: "center", width: "50%", justifyContent: "center" }}>
+                                <TouchableOpacity style={styles.Chatbtn} onPress={() => chatProfilePress()}>
+                                    <View style={{ alignItems: "center", marginRight: 10 }}>
+                                        <Icon as={Chat_Icon} color={"#0F5DC4"} size={"xxl"} />
+                                    </View>
+                                    <View style={{ alignItems: "center", paddingVertical: 10 }}>
+                                        <ZText type={"M14"}>Chat</ZText>
+                                    </View>
+                                </TouchableOpacity>
+                            </HStack>)}
                         </HStack>
-                        <HStack style={{ alignItems: "center", width: "50%", justifyContent: "center" }}>
-                            <TouchableOpacity style={styles.Chatbtn} onPress={() => chatProfilePress()}>
-                                <View style={{ alignItems: "center", marginRight: 10 }}>
-                                    <Icon as={Chat_Icon} color={"#0F5DC4"} size={"xxl"} />
-                                </View>
-                                <View style={{ alignItems: "center", paddingVertical: 10 }}>
-                                    <ZText type={"M14"}>Chat</ZText>
-                                </View>
-                            </TouchableOpacity>
-                        </HStack>
-                    </HStack>
+                    </View>)}
                 </View>
+                {enableAction && (<BottomSheetModalProvider>
+                    <ReportScreen
+                        ref={reportSheetRef}
+                        postItem={selectedItem}
+                        screenFrom={'List'}
+                        onClose={closeModalReport}
+                    />
+                </BottomSheetModalProvider>)}
             </View>
-            <BottomSheetModalProvider>
-                <ReportScreen
-                    ref={reportSheetRef}
-                    postItem={selectedItem}
-                    screenFrom={'List'}
-                    onClose={closeModalReport}
-                />
-            </BottomSheetModalProvider>
-        </View>
+        </TouchableOpacity>
     );
 };
 
 const styles = StyleSheet.create({
-    cardAvatar: {
-        display: 'flex',
-        flexDirection: 'row',
-        padding: 10,
-    },
-    cardAvatarImg: {
-        display: 'flex',
-        flexDirection: 'row',
-    },
-    cardAvatarText: {
-        display: 'flex',
-        flexDirection: 'row',
-        marginLeft: 10,
-        alignItems: 'center',
-    },
     callbtn: {
         display: 'flex',
         flexDirection: 'row',
@@ -236,101 +249,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
         justifyContent: 'center',
     },
-
-    emptyContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingVertical: 20,
-    },
-    emptyText: {
-        fontSize: 16,
-        color: '#555', // Use a subtle color to match your design
-        textAlign: 'center',
-    },
-    loader: {
-        marginVertical: 20,
-    },
-    headerContainer: {
-        backgroundColor: '#FFF',
-        paddingVertical: 10,
-    },
-    header: {
-        justifyContent: 'space-between',
-
-        flexDirection: 'row',
-        paddingHorizontal: 20,
-        paddingVertical: 20,
-    },
-    listContainer: {
-        backgroundColor: '#F7F8FA',
-        flex: 1,
-    },
-
-    footer: {
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-        height: 80,
-        backgroundColor: '#FFFFFF',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-    },
-    IconButton: {
-        flexDirection: 'row',
-        gap: 12,
-    },
-    footerContainer: {
-        backgroundColor: '#FFF',
-    },
-    heading: {
-        flexDirection: 'row',
-        flex: 1,
-        justifyContent: 'space-between',
-        marginBottom: 10,
-        paddingHorizontal: 20,
-    },
-    headingTitle: {
-        color: '#263238',
-        fontFamily: 'Gilroy',
-        fontSize: 18,
-        fontStyle: 'normal',
-        fontWeight: 400,
-        lineHeight: 24,
-    },
-    link: {
-        color: '#C20707',
-    },
-
-    itemContainer: {
-        width: 375,
-        height: 478,
-        borderRadius: 12,
-        backgroundColor: '#FFF', // Equivalent to background: var(--white, #FFF)
-        shadowColor: 'rgba(0, 0, 0, 0.8)', // shadow color
-        shadowOffset: { width: 0, height: 4 }, // shadow offset
-        shadowOpacity: 1, // shadow opacity
-        shadowRadius: 64, // blur radius (64px)
-        elevation: 8,
-        marginHorizontal: 8,
-    },
-    itemFooterContainer: {
-        backgroundColor: '#FFF',
-        paddingVertical: 10,
-        paddingLeft: 5,
-        borderBottomLeftRadius: 8,
-        borderBottomRightRadius: 8,
-    },
-    separator: {
-        width: 10, // Space between cards
-    },
-    tagImage: {
-        width: 375,
-        height: 278,
-        borderTopLeftRadius: 8,
-        borderTopRightRadius: 8,
-    },
     WrapcardContainer: {
-        // paddingHorizontal: 20,
         marginBottom: 20,
     },
     cardContainer: {
@@ -338,29 +257,19 @@ const styles = StyleSheet.create({
         display: 'flex',
         borderRadius: 12,
         backgroundColor: '#FFF',
-        //  margin:20,
         shadowColor: 'rgba(0, 0, 0, 0.8)',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.5,
-        // shadowRadius: 20,
         elevation: 4,
-    },
-    carImage: {
-        width: 375,
-        height: 278,
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12,
     },
     iconContainer: {
         position: 'absolute',
         top: 8,
-
         right: 15,
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
     checkIcon: {
-        // backgroundColor: '#377DFF',
         borderRadius: 20,
         padding: 3,
     },
@@ -381,34 +290,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         paddingTop: 5,
         paddingBottom: 10,
-        width: '100%',
-        //  paddingRight: 20,
-        //  borderColor:colors.light.appred,
-        //  borderBottomWidth:1,
-        //  borderBottomLeftRadius: 12,
-        //  borderBottomRightRadius: 12,
-        //  borderLeftWidth:1,
-        //  borderRightWidth:1,
+        width: '100%'
     },
     price: {
         fontSize: 16,
         fontWeight: '600',
-    },
-    locationContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 4,
-    },
-    locationText: {
-        fontSize: 12,
-        color: '#7A7A7A',
-        marginLeft: 4,
-    },
-    carBrand: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: '#000',
-        marginTop: 4,
     }
 });
 

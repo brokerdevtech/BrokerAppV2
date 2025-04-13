@@ -215,7 +215,7 @@ const AutoscrollAdsText: React.FC = ({onPressBottomSheet}) => {
   //   ,[parentWidth,index],
   // );
   const renderCarouselItem = ({item, index}) => {
-    console.log('Rendering item at index:', index);
+    // console.log('Rendering item at index:', index);
   
     return (
       <TouchableOpacity

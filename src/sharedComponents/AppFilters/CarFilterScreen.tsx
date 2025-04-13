@@ -198,9 +198,9 @@ const CarFilterScreen: React.FC = ({
             ...filteredItems,
           ];
 
-          console.log("PopUPFilter");
-          console.log(PopUPFilter);
-//console.log(filtersWithoutPostedSince);
+          // console.log("PopUPFilter");
+          // console.log(PopUPFilter);
+          // console.log(filtersWithoutPostedSince);
           if (PopUPFilter) {
             // Fetch filters based on Developer and localities.City
             setfilterlocalities(PopUPFilter.Location);
@@ -224,10 +224,10 @@ const CarFilterScreen: React.FC = ({
               "Model",
               PopUPFilter.Brand[0].key,
             );
-console.log(result);
+// console.log(result);
 
 if (result.data.data.filters.length > 0) {
-  console.log(filtersWithoutPostedSince);
+  // console.log(filtersWithoutPostedSince);
   const updatedFilters = await updateRecordsByName(
     filtersWithoutPostedSince,
    "Model",
@@ -275,7 +275,7 @@ if (result.data.data.filters.length > 0) {
   };
 
   const handleApplyFilters = () => {
-    console.log('handleApplyFilters',selectedFilters);
+    // console.log('handleApplyFilters',selectedFilters);
     onApply(selectedFilters);
     // Check for mandatory filters
     //   const missingMandatoryFilters = CarfiltersState

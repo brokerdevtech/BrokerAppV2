@@ -21,7 +21,7 @@ import { FlashList } from '@shopify/flash-list';
 const {width: screenWidths} = Dimensions.get('window');
 
 const MediaGallery = forwardRef((props, ref) => {
-  const {mediaItems} = props;
+  const {mediaItems, disableInteraction=false } = props;
   const screenWidth = 375;
 
   const playerRef = useRef(null);
@@ -82,7 +82,8 @@ const MediaGallery = forwardRef((props, ref) => {
       onLayout={event => {
         const {width} = event.nativeEvent.layout;
         setParentWidth(width); // Capture the parent component's width
-      }}>
+      }}
+      pointerEvents={disableInteraction ? 'none' : 'auto'}>
       <FlatList
         data={mediaItems}
         horizontal

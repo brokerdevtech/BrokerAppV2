@@ -56,9 +56,9 @@ const StoriesAction = ({
   useEffect(() => {
  
     isStoryOwner = user.userId === stories[currentStoryIndex]?.userId;
-    console.log("============================stories[currentStoryIndex]?.storyId");
-    console.log(stories[currentStoryIndex].storyDetails);
-    console.log(story);
+    // console.log("============================stories[currentStoryIndex]?.storyId");
+    // console.log(stories[currentStoryIndex].storyDetails);
+    // console.log(story);
    AddStoryViewer(user.userId, story?.storyId);
     let storystateobj = {
       likeCount: storyState?.likeCount || 0,
