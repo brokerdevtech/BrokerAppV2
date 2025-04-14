@@ -82,6 +82,7 @@ import File_tray_icon from './file_tray.svg';
 import Document_text from './documenttext.svg';
 import Upload_Icon from './upload.svg';
 import share_PIcon from './share-svgrepo.svg';
+import share_PIconW from './share-svgrepoW.svg';
 import unchecked from './unchecked.svg';
 import filter_icon from './filters.svg';
 import bookmark_icon from './bookmark.svg';
@@ -203,6 +204,6 @@ export {
   Whatsapp_Icon,
   Share_Icon,
   unchecked,
-  share_PIcon,
+  share_PIcon,share_PIconW,
   bookmark_icon,
 };

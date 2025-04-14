@@ -44,8 +44,8 @@ const HEADER_HEIGHT = 60;
 const TAB_BAR_HEIGHT = 60;
 const VIDEO_HEIGHT =
   Platform.OS === 'ios'
-    ? screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 40
-    : screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 60;
+    ? screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 40-20
+    : screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 60-20;
 
 const formatPostDate = dateString => {
   if (!dateString) return '';
@@ -390,6 +390,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+ //backgroundColor:'white'
   },
   media: {
     width,

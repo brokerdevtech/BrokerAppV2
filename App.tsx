@@ -59,6 +59,7 @@ import useSessionTracker from './src/hooks/Analytics/useSessionTracker';
 import useUserAnalytics from './src/hooks/Analytics/useUserAnalytics';
 import analytics from '@react-native-firebase/analytics';
 import ManuallyselectedLocation from './src/sharedComponents/ManuallyselectedLocation';
+import { checkAppUpdate } from './src/utils/updateChecker';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -446,6 +447,7 @@ function App(): React.JSX.Element {
         //  crashlytics().crash();
         allPermission();
         await checkUser();
+        await checkAppUpdate();
         // console.log("checkUser");
       } catch (error) {
         console.error('Error in permission or user check:', error);

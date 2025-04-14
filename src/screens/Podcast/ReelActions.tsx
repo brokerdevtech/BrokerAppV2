@@ -4,7 +4,7 @@ import {
   ReelShare,
   UnLikeWhite,
   Volume,
-  VolumeMute,
+  VolumeMute,share_PIconW
 } from '../../assets/svg';
 
 import {View, TouchableOpacity, Text, StyleSheet, Share} from 'react-native';
@@ -77,9 +77,9 @@ export const ReelActions = ({
       <TouchableOpacity style={styles.actionButton} onPress={handleLikeToggle}>
         <View style={styles.shadowIcon}>
           {liked ? (
-            <Like height={35} width={35} />
+            <Like  />
           ) : (
-            <UnLikeWhite height={35} width={35} />
+            <UnLikeWhite  />
           )}
           <Text style={styles.actionCount}>{postLikesCount}</Text>
         </View>
@@ -88,7 +88,9 @@ export const ReelActions = ({
       {/* Share Button */}
       <TouchableOpacity style={styles.actionButton} onPress={handleSharePress}>
         <View style={styles.shadowIcon}>
-          <Icon as={ReelShare} size="xxl" color="#eee" />
+        {/* ReelShare share_PIcon */}
+          {/* <Icon as={ReelShare} size="xxl" color="#f5f5f5" /> */}
+          <Icon as={share_PIconW} size="xxl" />
         </View>
         {shares > 0 && <Text style={styles.actionCount}>{shares}</Text>}
       </TouchableOpacity>
@@ -117,6 +119,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
     justifyContent: 'center',
+    height: 50,
+    width: 50,
     // backgroundColor: '#000',
     // opacity: 0.9,
   },
@@ -126,6 +130,7 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   shadowIcon: {
+    // backgroundColor: 'white',
     backgroundColor: 'rgba(0, 0, 0, 0.6)', // dark semi-transparent background
     padding: 10,
     borderRadius: 10, // fully rounded for circle
