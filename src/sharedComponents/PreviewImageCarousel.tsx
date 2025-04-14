@@ -1,5 +1,6 @@
+/* eslint-disable react/no-unstable-nested-components */
 import {imagesBucketcloudfrontPath} from '../config/constants';
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Image,
@@ -9,16 +10,27 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronsLeftIcon,
+  ChevronsRightIcon,
+  Icon,
+} from '../../components/ui/icon';
 
 const {width, height} = Dimensions.get('window');
 const PreviewImageCarousel = ({
   images,
+  initialIndex = 0, // New prop to specify which image to show first
   autoPlay = true,
   autoPlayInterval = 3000,
 }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
   const flatListRef = useRef(null);
   const autoPlayRef = useRef(null);
+  const initialScrollDone = useRef(false);
 
   // Get screen dimensions for responsive sizing
   const {width, height} = Dimensions.get('window');
@@ -35,8 +47,27 @@ const PreviewImageCarousel = ({
     setActiveIndex(nextIndex);
   };
 
+  // Initialize with the initial index provided from parent
+  useEffect(() => {
+    if (
+      flatListRef.current &&
+      initialIndex > 0 &&
+      !initialScrollDone.current &&
+      images.length > initialIndex
+    ) {
+      // Use a small timeout to ensure the FlatList has rendered
+      setTimeout(() => {
+        flatListRef.current?.scrollToIndex({
+          animated: false, // Don't animate initial positioning
+          index: initialIndex,
+        });
+        initialScrollDone.current = true;
+      }, 100);
+    }
+  }, [initialIndex, images.length]);
+
   // Handle auto play
-  React.useEffect(() => {
+  useEffect(() => {
     if (autoPlay && images.length > 1) {
       autoPlayRef.current = setInterval(scrollToNextImage, autoPlayInterval);
 
@@ -49,7 +80,7 @@ const PreviewImageCarousel = ({
   }, [activeIndex, autoPlay, autoPlayInterval, images.length]);
 
   // Handler for when scroll ends
-  const handleViewableItemsChanged = React.useRef(({viewableItems}) => {
+  const handleViewableItemsChanged = useRef(({viewableItems}) => {
     if (viewableItems.length > 0) {
       setActiveIndex(viewableItems[0].index);
     }
@@ -59,10 +90,25 @@ const PreviewImageCarousel = ({
     itemVisiblePercentThreshold: 50,
   };
 
+  // Define getItemLayout to help FlatList calculate positions
+  const getItemLayout = (data, index) => ({
+    length: width,
+    offset: width * index,
+    index,
+  });
+
+  // Handle scroll failure
+  const handleScrollToIndexFailed = info => {
+    const wait = new Promise(resolve => setTimeout(resolve, 500));
+    wait.then(() => {
+      flatListRef.current?.scrollToIndex({
+        index: info.index,
+        animated: true,
+      });
+    });
+  };
+
   const renderItem = ({item}) => {
-    // const imageUri = item.mediaBlob
-    //   ? `${imagesBucketcloudfrontPath}${item.mediaBlob}`
-    //   : `${imagesBucketcloudfrontPath}${item.mediaBlobId}`;
     // Render each image item
     return (
       <View style={[styles.slide, {width, height}]}>
@@ -89,7 +135,8 @@ const PreviewImageCarousel = ({
           index: prevIndex,
         });
       }}>
-      <Text style={styles.arrowText}>{'<'}</Text>
+      {/* <Text style={styles.arrowText}>{'<'}</Text> */}
+      <Icon as={ChevronLeftIcon} color="white" size="xxl" />
     </TouchableOpacity>
   );
 
@@ -97,7 +144,7 @@ const PreviewImageCarousel = ({
     <TouchableOpacity
       style={[styles.arrow, styles.rightArrow]}
       onPress={scrollToNextImage}>
-      <Text style={styles.arrowText}>{'>'}</Text>
+      <Icon as={ChevronRightIcon} color="white" size="xxl" />
     </TouchableOpacity>
   );
 
@@ -136,9 +183,11 @@ const PreviewImageCarousel = ({
         showsHorizontalScrollIndicator={false}
         onViewableItemsChanged={handleViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
-        initialNumToRender={1}
+        initialNumToRender={Math.min(images.length, initialIndex + 1)}
         maxToRenderPerBatch={1}
         windowSize={3}
+        getItemLayout={getItemLayout}
+        onScrollToIndexFailed={handleScrollToIndexFailed}
       />
 
       {images.length > 1 && <LeftArrow />}
@@ -168,7 +217,7 @@ const styles = StyleSheet.create({
   paginationContainer: {
     flexDirection: 'row',
     position: 'absolute',
-    bottom: 40,
+    bottom: 60,
     alignSelf: 'center',
   },
   paginationDot: {
@@ -184,20 +233,20 @@ const styles = StyleSheet.create({
   arrow: {
     position: 'absolute',
     top: '50%',
-    width: 40,
-    height: 40,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    borderRadius: 20,
+    width: 60,
+    height: 60,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,
     transform: [{translateY: -20}],
   },
   leftArrow: {
-    left: 10,
+    left: 5,
   },
   rightArrow: {
-    right: 10,
+    right: 5,
   },
   arrowText: {
     color: 'white',
