@@ -77,11 +77,11 @@ const ReelProfile = ({username, profileImage, postDate}) => {
   const formattedDate = formatPostDate(postDate);
   return (
     <View style={styles.profileContainer}>
-      <FastImage
+      {/* <FastImage
         source={require('../../assets/images/userDark.png')}
         style={styles.profileImage}
         resizeMode={FastImage.resizeMode.cover}
-      />
+      /> */}
       <View style={styles.userInfoContainer}>
         <Text style={styles.username}>{username}</Text>
         <Text style={styles.postDate}>Posted {formattedDate}</Text>
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     position: 'absolute',
-    bottom: 0,
+    bottom: Platform.OS == 'ios' ? 0 : 10,
     width: '100%',
     padding: 16,
     paddingBottom: 10,
