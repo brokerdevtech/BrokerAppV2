@@ -66,6 +66,8 @@ const MediaGallery = forwardRef((props, ref) => {
               // height={item.mediaHeight}
               // width={item.mediaWidth}
               previewUrls={sourceUris} // Pass the full array of URIs
+              initialIndex={activeIndex} // Pass the currently active index
+              currentIndex={index} // Pass this item's index
             />
           </View>
         );
@@ -81,7 +83,7 @@ const MediaGallery = forwardRef((props, ref) => {
         </View>
       );
     },
-    [getExtension, parentWidth, sourceUris],
+    [getExtension, parentWidth, sourceUris, activeIndex], // Added activeIndex to dependencies
   );
 
   return (

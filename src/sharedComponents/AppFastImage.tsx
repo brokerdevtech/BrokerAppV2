@@ -357,7 +357,15 @@ const screenWidth = Dimensions.get('window').width;
 
 // export default AppFastImage;
 
-const AppFastImage = ({uri, previewUrls}) => {
+const AppFastImage = ({
+  uri,
+  height,
+  width,
+  previewUrls = [],
+  initialIndex = 0,
+  currentIndex = 0,
+  style,
+}) => {
   const [isFullscreen, setIsFullscreen] = React.useState(false);
 
   // Define Instagram-like dimensions (4:5 portrait aspect ratio)
@@ -394,7 +402,11 @@ const AppFastImage = ({uri, previewUrls}) => {
           </TouchableOpacity>
 
           {/* Image Carousel */}
-          <PreviewImageCarousel images={images} autoPlay={false} />
+          <PreviewImageCarousel
+            images={images}
+            autoPlay={false}
+            initialIndex={currentIndex}
+          />
         </View>
       </Modal>
     </View>
@@ -424,8 +436,8 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    right: 20,
-    top: Platform.OS === 'ios' ? 50 : 30,
+    right: 25,
+    top: Platform.OS === 'ios' ? 70 : 30,
     zIndex: 1000, // Ensure it's above other elements
     width: 40,
     height: 40,
