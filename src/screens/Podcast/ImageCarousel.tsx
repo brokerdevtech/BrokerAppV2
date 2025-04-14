@@ -1,3 +1,5 @@
+import FastImage from '@d11/react-native-fast-image';
+import AppFastImage from '../../sharedComponents/AppFastImage';
 import React, {useState, useRef} from 'react';
 import {
   View,
@@ -10,12 +12,14 @@ import {
 } from 'react-native';
 
 const {width} = Dimensions.get('window');
-
+const screenWidth = Dimensions.get('window').width;
 const ImageCarousel = ({images, autoPlay = true, autoPlayInterval = 3000}) => {
+  console.log("share_PIconW",images)
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef(null);
   const autoPlayRef = useRef(null);
-
+  const maxWidth = screenWidth - 30; // Allow for padding
+  const maxHeight = (maxWidth * 5) / 4 / 2; // Height for a 4:5 ratio
   // Function to scroll to next image
   const scrollToNextImage = () => {
     if (images.length <= 1) return;
@@ -56,7 +60,13 @@ const ImageCarousel = ({images, autoPlay = true, autoPlayInterval = 3000}) => {
   const renderItem = ({item}) => {
     return (
       <View style={styles.slide}>
-        <Image source={{uri: item}} style={styles.image} resizeMode="contain" />
+        
+                     <FastImage
+          source={{uri:item}}
+          style={[styles.image, {width: maxWidth, height: maxHeight}]}
+          resizeMode={FastImage.resizeMode.cover} // Crops taller images like Instagram
+        />
+        {/* <Image source={{uri: item}} style={styles.image} resizeMode="contain" /> */}
       </View>
     );
   };
@@ -138,7 +148,7 @@ const styles = StyleSheet.create({
   },
   slide: {
     width,
-    height: 700, // Aspect ratio of 5:3
+   // height: maxHeight, // Aspect ratio of 5:3
     justifyContent: 'center',
     alignItems: 'center',
   },
