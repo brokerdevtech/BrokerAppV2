@@ -109,9 +109,9 @@ const RederListHeader = React.memo(
       <>
         {/* {StoryData != null && <UserStories Data={StoryData} />} */}
         <View style={{flex: 1}}>
-              <StoriesFlatList />
-              {/* {<StoryViewer />} */}
-            </View>
+          <StoriesFlatList />
+          {/* {<StoryViewer />} */}
+        </View>
         <Recommend categoryId={categoryId} Data={RenderBrokerData} />
         <SuggestedUsers categoryId={categoryId} Data={SuggestionData} />
         <ProductSectionData
@@ -235,13 +235,14 @@ const ProductItem = React.memo(
           .catch(err => console.error('Error opening dialer', err));
       }
     }, []);
+    console.log(item?.postMedias, 'itemlist');
     return (
       <View style={styles.WrapcardContainer}>
         <View style={styles.cardContainer}>
           <ItemHeader item={item}></ItemHeader>
           <MediaGallery
             ref={MediaGalleryRef}
-            mediaItems={item.postMedias}
+            mediaItems={item?.postMedias}
             paused={false}
           />
 

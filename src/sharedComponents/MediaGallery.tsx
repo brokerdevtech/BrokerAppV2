@@ -6,6 +6,7 @@ import React, {
   useImperativeHandle,
   memo,
   useCallback,
+  useMemo,
 } from 'react';
 import {View, StyleSheet, Dimensions, Text, FlatList} from 'react-native';
 
@@ -16,7 +17,7 @@ import {
   imagesBucketPath,
   imagesBucketcloudfrontPath,
 } from '../config/constants';
-import { FlashList } from '@shopify/flash-list';
+import {FlashList} from '@shopify/flash-list';
 
 const {width: screenWidths} = Dimensions.get('window');
 
@@ -30,6 +31,14 @@ const MediaGallery = forwardRef((props, ref) => {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef(null);
+
+  // Create an array of source URIs from mediaItems
+  const sourceUris = useMemo(() => {
+    return mediaItems.map(
+      item =>
+        `${imagesBucketcloudfrontPath}${item?.mediaBlob || item?.mediaBlobId}`,
+    );
+  }, [mediaItems]);
 
   const onScroll = event => {
     const slideIndex = Math.ceil(
@@ -45,19 +54,18 @@ const MediaGallery = forwardRef((props, ref) => {
   }, []);
 
   const renderCarouselItem = useCallback(
-    ({item}) => {
+    ({item, index}) => {
       const extension = getExtension(item?.mediaBlob || item?.mediaBlobId);
-      const sourceUri = `${imagesBucketcloudfrontPath}${
-        item?.mediaBlob || item?.mediaBlobId
-      }`;
-   
+      const sourceUri = sourceUris[index];
+
       if (extension !== 'mp4') {
         return (
           <View style={[styles.card, {width: parentWidth}]}>
             <AppFastImage
               uri={sourceUri}
-              hieght={item.mediaHeight}
-              width={item.mediaWidth}
+              // height={item.mediaHeight}
+              // width={item.mediaWidth}
+              previewUrls={sourceUris} // Pass the full array of URIs
             />
           </View>
         );
@@ -73,7 +81,7 @@ const MediaGallery = forwardRef((props, ref) => {
         </View>
       );
     },
-    [getExtension, parentWidth],
+    [getExtension, parentWidth, sourceUris],
   );
 
   return (
@@ -98,8 +106,7 @@ const MediaGallery = forwardRef((props, ref) => {
         }}
         showsHorizontalScrollIndicator={false}
         bounces={false}
-
-        contentContainerStyle={{ display: 'flex',paddingTop:0}}
+        contentContainerStyle={{display: 'flex', paddingTop: 0}}
         scrollEventThrottle={16}
         snapToInterval={parentWidth}
         snapToAlignment="center"
@@ -109,7 +116,7 @@ const MediaGallery = forwardRef((props, ref) => {
           offset: parentWidth * index,
           index,
         })}
-        windowSize={1}// Improve performance by limiting render window
+        windowSize={1} // Improve performance by limiting render window
         maxToRenderPerBatch={1}
         initialNumToRender={1} // Optimize initial load
         removeClippedSubviews={true} // Optimize memory usage
@@ -117,7 +124,7 @@ const MediaGallery = forwardRef((props, ref) => {
       {/* Pagination */}
       <View style={styles.paginationContainer}>
         <Text style={styles.paginationText}>
-          {activeIndex+1} / {mediaItems.length}
+          {activeIndex + 1} / {mediaItems.length}
         </Text>
       </View>
     </View>
@@ -157,7 +164,7 @@ const styles = StyleSheet.create({
   card: {
     display: 'flex',
 
-     //  backgroundColor: '#764ABC',
+    //  backgroundColor: '#764ABC',
     borderRadius: 12,
 
     // padding: 10,
@@ -171,7 +178,7 @@ const styles = StyleSheet.create({
   cardV: {
     display: 'flex',
 
-      // backgroundColor: '#764ABC',
+    // backgroundColor: '#764ABC',
     // borderRadius: 16,
     // borderColor: '#764ABC',
     // borderWidth:1,
@@ -179,8 +186,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: screenWidths,
-     //marginHorizontal: 20 ,
-     height: screenWidths/1.9,
+    //marginHorizontal: 20 ,
+    height: screenWidths / 1.9,
   },
   container: {
     width: '100%',
@@ -201,12 +208,12 @@ const styles = StyleSheet.create({
   videoStyle: {
     width: '95%',
     height: '100%',
-   
+
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     //padding: 10,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
 });
 
