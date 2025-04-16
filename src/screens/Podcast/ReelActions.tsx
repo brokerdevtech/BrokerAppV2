@@ -4,7 +4,8 @@ import {
   ReelShare,
   UnLikeWhite,
   Volume,
-  VolumeMute,share_PIconW
+  VolumeMute,
+  share_PIconW,
 } from '../../assets/svg';
 
 import {View, TouchableOpacity, Text, StyleSheet, Share} from 'react-native';
@@ -57,17 +58,17 @@ export const ReelActions = ({
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
           // Shared with activity type of result.activityType
-          console.log(`Shared via ${result.activityType}`);
+          // console.log(`Shared via ${result.activityType}`);
         } else {
           // Shared
           console.log('Shared successfully');
         }
       } else if (result.action === Share.dismissedAction) {
         // Dismissed
-        console.log('Share dismissed');
+        // console.log('Share dismissed');
       }
     } catch (error) {
-      console.error('Error sharing:', error);
+      // console.error('Error sharing:', error);
     }
   };
 
@@ -76,11 +77,7 @@ export const ReelActions = ({
       {/* Like Button */}
       <TouchableOpacity style={styles.actionButton} onPress={handleLikeToggle}>
         <View style={styles.shadowIcon}>
-          {liked ? (
-            <Like  />
-          ) : (
-            <UnLikeWhite  />
-          )}
+          {liked ? <Like /> : <UnLikeWhite />}
           <Text style={styles.actionCount}>{postLikesCount}</Text>
         </View>
       </TouchableOpacity>
@@ -88,11 +85,11 @@ export const ReelActions = ({
       {/* Share Button */}
       <TouchableOpacity style={styles.actionButton} onPress={handleSharePress}>
         <View style={styles.shadowIcon}>
-        {/* ReelShare share_PIcon */}
+          {/* ReelShare share_PIcon */}
           {/* <Icon as={ReelShare} size="xxl" color="#f5f5f5" /> */}
           <Icon as={share_PIconW} size="xxl" />
         </View>
-        {shares > 0 && <Text style={styles.actionCount}>{shares}</Text>}
+        {/* {shares > 0 && <Text style={styles.actionCount}>{shares}</Text>} */}
       </TouchableOpacity>
 
       {/* Mute/Unmute Button */}
@@ -148,6 +145,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
 
     // Shadow for Android
-    elevation: 5,
+    // elevation: 5,
   },
 });

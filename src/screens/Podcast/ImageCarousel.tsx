@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import FastImage from '@d11/react-native-fast-image';
 import AppFastImage from '../../sharedComponents/AppFastImage';
 import React, {useState, useRef} from 'react';
@@ -14,12 +15,12 @@ import {
 const {width} = Dimensions.get('window');
 const screenWidth = Dimensions.get('window').width;
 const ImageCarousel = ({images, autoPlay = true, autoPlayInterval = 3000}) => {
-  console.log("share_PIconW",images)
+  console.log('share_PIconW', images);
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef(null);
   const autoPlayRef = useRef(null);
   const maxWidth = screenWidth - 30; // Allow for padding
-  const maxHeight = (maxWidth * 5) / 4 / 2; // Height for a 4:5 ratio
+  const maxHeight = (maxWidth * 5) / 4; // Height for a 4:5 ratio
   // Function to scroll to next image
   const scrollToNextImage = () => {
     if (images.length <= 1) return;
@@ -31,6 +32,34 @@ const ImageCarousel = ({images, autoPlay = true, autoPlayInterval = 3000}) => {
     });
     setActiveIndex(nextIndex);
   };
+  const [imageSizes, setImageSizes] = useState([]);
+
+  React.useEffect(() => {
+    const fetchSizes = async () => {
+      const sizes = await Promise.all(
+        images.map(
+          uri =>
+            new Promise(
+              resolve =>
+                Image.getSize(
+                  uri,
+                  (width, height) => {
+                    const scaleFactor = screenWidth / width;
+                    resolve({
+                      width: screenWidth,
+                      height: height * scaleFactor,
+                    });
+                  },
+                  () => resolve({width: screenWidth, height: 300}),
+                ), // fallback
+            ),
+        ),
+      );
+      setImageSizes(sizes);
+    };
+
+    fetchSizes();
+  }, [images]);
 
   // Handle auto play
   React.useEffect(() => {
@@ -56,46 +85,20 @@ const ImageCarousel = ({images, autoPlay = true, autoPlayInterval = 3000}) => {
     itemVisiblePercentThreshold: 50,
   };
 
-  // Render each image item
-  const renderItem = ({item}) => {
+  const renderItem = ({item, index}) => {
+    const size = imageSizes[index] || {width: screenWidth, height: 300};
+
     return (
       <View style={styles.slide}>
-        
-                     <FastImage
-          source={{uri:item}}
-          style={[styles.image, {width: maxWidth, height: maxHeight}]}
-          resizeMode={FastImage.resizeMode.cover} // Crops taller images like Instagram
+        <FastImage
+          source={{uri: item}}
+          style={{width: size.width, height: size.height}}
+          resizeMode={FastImage.resizeMode.contain}
         />
-        {/* <Image source={{uri: item}} style={styles.image} resizeMode="contain" /> */}
       </View>
     );
   };
 
-  // Arrow button components
-  const LeftArrow = () => (
-    <TouchableOpacity
-      style={[styles.arrow, styles.leftArrow]}
-      onPress={() => {
-        const prevIndex =
-          activeIndex === 0 ? images.length - 1 : activeIndex - 1;
-        flatListRef.current?.scrollToIndex({
-          animated: true,
-          index: prevIndex,
-        });
-      }}>
-      <Text style={styles.arrowText}>{'<'}</Text>
-    </TouchableOpacity>
-  );
-
-  const RightArrow = () => (
-    <TouchableOpacity
-      style={[styles.arrow, styles.rightArrow]}
-      onPress={scrollToNextImage}>
-      <Text style={styles.arrowText}>{'>'}</Text>
-    </TouchableOpacity>
-  );
-
-  // Dots indicator
   const Pagination = () => {
     return (
       <View style={styles.paginationContainer}>
@@ -148,7 +151,7 @@ const styles = StyleSheet.create({
   },
   slide: {
     width,
-   // height: maxHeight, // Aspect ratio of 5:3
+    // height: maxHeight, // Aspect ratio of 5:3
     justifyContent: 'center',
     alignItems: 'center',
   },
