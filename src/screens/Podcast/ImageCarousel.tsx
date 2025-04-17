@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import FastImage from '@d11/react-native-fast-image';
 import AppFastImage from '../../sharedComponents/AppFastImage';
 import React, {useState, useRef} from 'react';
@@ -32,6 +33,34 @@ const ImageCarousel = ({images, autoPlay = true, autoPlayInterval = 3000}) => {
     });
     setActiveIndex(nextIndex);
   };
+  const [imageSizes, setImageSizes] = useState([]);
+
+  React.useEffect(() => {
+    const fetchSizes = async () => {
+      const sizes = await Promise.all(
+        images.map(
+          uri =>
+            new Promise(
+              resolve =>
+                Image.getSize(
+                  uri,
+                  (width, height) => {
+                    const scaleFactor = screenWidth / width;
+                    resolve({
+                      width: screenWidth,
+                      height: height * scaleFactor,
+                    });
+                  },
+                  () => resolve({width: screenWidth, height: 300}),
+                ), // fallback
+            ),
+        ),
+      );
+      setImageSizes(sizes);
+    };
+
+    fetchSizes();
+  }, [images]);
 
   // Handle auto play
   React.useEffect(() => {
@@ -57,8 +86,9 @@ const ImageCarousel = ({images, autoPlay = true, autoPlayInterval = 3000}) => {
     itemVisiblePercentThreshold: 50,
   };
 
-  // Render each image item
-  const renderItem = ({item}) => {
+  const renderItem = ({item, index}) => {
+    const size = imageSizes[index] || {width: screenWidth, height: 300};
+
     return (
       <View style={styles.slide}>
         
@@ -67,36 +97,10 @@ const ImageCarousel = ({images, autoPlay = true, autoPlayInterval = 3000}) => {
           style={[styles.image, {width: maxWidth, height: maxHeight}]}
           resizeMode={FastImage.resizeMode.contain} // Crops taller images like Instagram
         />
-        {/* <Image source={{uri: item}} style={styles.image} resizeMode="contain" /> */}
       </View>
     );
   };
 
-  // Arrow button components
-  const LeftArrow = () => (
-    <TouchableOpacity
-      style={[styles.arrow, styles.leftArrow]}
-      onPress={() => {
-        const prevIndex =
-          activeIndex === 0 ? images.length - 1 : activeIndex - 1;
-        flatListRef.current?.scrollToIndex({
-          animated: true,
-          index: prevIndex,
-        });
-      }}>
-      <Text style={styles.arrowText}>{'<'}</Text>
-    </TouchableOpacity>
-  );
-
-  const RightArrow = () => (
-    <TouchableOpacity
-      style={[styles.arrow, styles.rightArrow]}
-      onPress={scrollToNextImage}>
-      <Text style={styles.arrowText}>{'>'}</Text>
-    </TouchableOpacity>
-  );
-
-  // Dots indicator
   const Pagination = () => {
     return (
       <View style={styles.paginationContainer}>
