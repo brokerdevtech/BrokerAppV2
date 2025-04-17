@@ -585,7 +585,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
           <Text style={styles.signInText}>Continue As Guest</Text>
         </TouchableOpacity>
         {/* Social Media Sign In Options */}
-        <View
+        {/* <View
           style={{
             flexDirection: 'row',
             justifyContent: 'center',
@@ -594,9 +594,9 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
           <View style={styles.frameChild} />
           <Text style={styles.textTypo}>Or sign in with</Text>
           <View style={styles.frameChild} />
-        </View>
+        </View> */}
 
-        <View style={styles.socialContainer}>
+        {/* <View style={styles.socialContainer}>
           {Platform.OS === 'ios' && (
             <TouchableOpacity
               onPress={handleAppleLogin}
@@ -619,7 +619,7 @@ const LoginScreen: React.FC<LoginProps> = ({setLoggedIn}) => {
           {/* <TouchableOpacity style={styles.socialButton}>
           <Icon as={FBIcon} />
         </Toucha bleOpacity> */}
-        </View>
+        {/* </View> */} 
 
         {/* Sign Up Option */}
         <Text style={styles.footerText}>

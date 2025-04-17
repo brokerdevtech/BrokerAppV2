@@ -59,7 +59,7 @@ const ImageCarousel = ({images, autoPlay = true, autoPlayInterval = 3000}) => {
       setImageSizes(sizes);
     };
 
-    fetchSizes();
+   // fetchSizes();
   }, [images]);
 
   // Handle auto play
@@ -87,8 +87,8 @@ const ImageCarousel = ({images, autoPlay = true, autoPlayInterval = 3000}) => {
   };
 
   const renderItem = ({item, index}) => {
-    const size = imageSizes[index] || {width: screenWidth, height: 300};
-
+    //const size = imageSizes[index] || {width: screenWidth, height: 300};
+// console.log("renderItem",item);
     return (
       <View style={styles.slide}>
         

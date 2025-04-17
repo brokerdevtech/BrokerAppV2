@@ -281,6 +281,21 @@ const InstagramReels = () => {
 
   const renderItem = useCallback(
     ({item, index}) => {
+
+      if (!item.mediaUrls || item.mediaUrls.length === 0) {
+        // Optionally skip to next index if media is empty and this is the current item
+        if (index === currentIndex && index < data.length - 1) {
+          setTimeout(() => {
+            flatListRef.current?.scrollToIndex({
+              index: index + 1,
+              animated: false,
+            });
+          }, 10);
+        }
+  
+        return <View style={{height: VIDEO_HEIGHT, width}} />;
+      }
+
       const isLiked = item.userLiked === 1 ? true : false;
 
       return (
@@ -431,7 +446,7 @@ const styles = StyleSheet.create({
     bottom: Platform.OS == 'ios' ? 0 : 10,
     width: '100%',
     padding: 16,
-    paddingBottom: 10,
+    paddingBottom: 30,
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
     flex: 1,
     zIndex: 1000,

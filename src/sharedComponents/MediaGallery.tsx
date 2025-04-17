@@ -31,7 +31,12 @@ const MediaGallery = forwardRef((props, ref) => {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef(null);
-
+  useEffect(() => {
+    if (flatListRef.current && mediaItems?.length > 0) {
+      flatListRef.current.scrollToOffset({offset: 0, animated: false});
+      setActiveIndex(0);
+    }
+  }, [mediaItems]);
   // Create an array of source URIs from mediaItems
   const sourceUris = useMemo(() => {
     return mediaItems.map(
@@ -41,6 +46,7 @@ const MediaGallery = forwardRef((props, ref) => {
   }, [mediaItems]);
 
   const onScroll = event => {
+    if (parentWidth === 0) return;
     const slideIndex = Math.ceil(
       event.nativeEvent.contentOffset.x / parentWidth,
     );
@@ -98,7 +104,7 @@ const MediaGallery = forwardRef((props, ref) => {
         horizontal
         pagingEnabled
         ref={flatListRef}
-        onScroll={onScroll}
+        onMomentumScrollEnd={onScroll}
         renderItem={renderCarouselItem}
         keyExtractor={(item, index) => {
           if (item?.mediaBlobId === undefined) {
@@ -118,6 +124,7 @@ const MediaGallery = forwardRef((props, ref) => {
           offset: parentWidth * index,
           index,
         })}
+        extraData={parentWidth} 
         windowSize={1} // Improve performance by limiting render window
         maxToRenderPerBatch={1}
         initialNumToRender={1} // Optimize initial load
