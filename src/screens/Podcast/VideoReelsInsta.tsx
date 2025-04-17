@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
   Dimensions,
@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
+  ScrollView,
 } from 'react-native';
 import Video from 'react-native-video';
 import {fetchInstagramVideos} from '../../../BrokerAppCore/services/new/podcastService';
@@ -44,8 +45,8 @@ const HEADER_HEIGHT = 60;
 const TAB_BAR_HEIGHT = 60;
 const VIDEO_HEIGHT =
   Platform.OS === 'ios'
-    ? screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 40-20
-    : screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 60-20;
+    ? screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 40 - 10
+    : screenHeight - HEADER_HEIGHT - TAB_BAR_HEIGHT + 60 - 10;
 
 const formatPostDate = dateString => {
   if (!dateString) return '';
@@ -92,18 +93,34 @@ const ReelProfile = ({username, profileImage, postDate}) => {
 const ReelCaption = ({caption}) => {
   const [expanded, setExpanded] = useState(false);
   const MAX_CAPTION_LENGTH = 100;
+  const MAX_WORDS_BEFORE_SCROLL = 50;
 
   if (!caption) return null;
 
+  const wordCount = caption.trim().split(/\s+/).length;
   const shouldTruncate = caption.length > MAX_CAPTION_LENGTH;
   const displayText =
     !expanded && shouldTruncate
       ? caption.substring(0, MAX_CAPTION_LENGTH) + '...'
       : caption;
 
+  const isScrollable = wordCount > MAX_WORDS_BEFORE_SCROLL;
+
+  const CaptionContent = <Text style={styles.captionText}>{displayText}</Text>;
+
   return (
     <View style={styles.captionContainer}>
-      <Text style={styles.captionText}>{displayText}</Text>
+      {isScrollable ? (
+        <ScrollView
+          style={{maxHeight: 280}}
+          contentContainerStyle={{flexGrow: 1}}
+          showsVerticalScrollIndicator={false}>
+          <Text style={styles.captionText}>{displayText}</Text>
+        </ScrollView>
+      ) : (
+        CaptionContent
+      )}
+
       {shouldTruncate && (
         <TouchableOpacity onPress={() => setExpanded(!expanded)}>
           <Text style={styles.seeMoreLess}>
@@ -124,6 +141,7 @@ const InstagramReels = () => {
   const [nextPage, setNextPage] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  // const [categoryId, setCategoryId] = useState(7);
   const [likedReels, setLikedReels] = useState({});
   const previousRouteName = useSelector(
     (state: RootState) => state.navigation.previousRouteName,
@@ -139,13 +157,12 @@ const InstagramReels = () => {
   const userScrollingRef = useRef(false);
   const lastManualScrollTimestamp = useRef(0);
 
-  let categoryId;
-
-  if (previousRouteName === 'ItemListScreen') {
-    categoryId = previousRouteParams?.categoryId;
-  } else {
-    categoryId = 7;
-  }
+  const [categoryId] = useState(() => {
+    if (previousRouteName === 'ItemListScreen') {
+      return previousRouteParams?.categoryId ?? 7;
+    }
+    return 7;
+  });
 
   let {
     data,
@@ -182,7 +199,7 @@ const InstagramReels = () => {
             }
           }
         } catch (err) {
-          console.error('Error loading more reels:', err);
+          // console.error('Error loading more reels:', err);
         } finally {
           setLoadingMore(false);
         }
@@ -190,26 +207,21 @@ const InstagramReels = () => {
     }, 200),
     [isInfiniteLoading, loadMore, data, setData_Set, user.userId, categoryId],
   );
+  useEffect(() => {
+    loadedPostIds.current = new Set();
+    console.log('Category2222:', categoryId);
+    execute(user.userId, categoryId);
+    console.log('Previous screen:', previousRouteName);
+    console.log('Previous params:', previousRouteParams);
 
-  useFocusEffect(
-    useCallback(() => {
-      loadedPostIds.current = new Set();
-      execute(user.userId, categoryId);
-      console.log('Previous screen:', previousRouteName);
-      console.log('Previous params:', previousRouteParams);
+    return () => {
+      setCurrentIndex(-1);
+    };
+  }, [user.userId, categoryId, execute]);
 
-      return () => {
-        setCurrentIndex(-1);
-      };
-    }, [
-      user.userId,
-      categoryId,
-      execute,
-      previousRouteName,
-      previousRouteParams,
-    ]),
-  );
+  // useEffect(() => {
 
+  // }, [previousRouteName, previousRouteParams]);
   const handleVideoEnd = () => {
     const currentTime = new Date().getTime();
     const timeSinceLastScroll = currentTime - lastManualScrollTimestamp.current;
@@ -327,7 +339,7 @@ const InstagramReels = () => {
             index,
           })}
           onScrollToIndexFailed={info => {
-            console.warn('ScrollToIndex Failed: ', info);
+            // console.warn('ScrollToIndex Failed: ', info);
             setTimeout(() => {
               flatListRef.current?.scrollToIndex({
                 index: info.index,
@@ -390,7 +402,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
- //backgroundColor:'white'
+    //backgroundColor:'white'
   },
   media: {
     width,
@@ -402,6 +414,9 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 16,
     paddingBottom: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    flex: 1,
+    zIndex: 1000,
   },
   profileContainer: {
     flexDirection: 'row',
