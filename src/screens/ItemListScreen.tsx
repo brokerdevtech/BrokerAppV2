@@ -12,7 +12,7 @@ import {
   Platform,
   PermissionsAndroid,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '@reduxjs/toolkit/query';
 import CustomHeader from '../sharedComponents/CustomHeader';
 import ZText from '../sharedComponents/ZText';
@@ -73,6 +73,7 @@ import ItemHeader from './ItemHeader';
 import ReportScreen from '../sharedComponents/ReportScreen';
 import SuggestedUsers from '../sharedComponents/SuggestedUsers';
 import StoriesFlatList from '../story/StoriesFlatList';
+import { resetPreviousRoute, setPreviousRoute } from '../../BrokerAppCore/redux/store/navigation/navigationSlice';
 
 //const MediaGallery = React.lazy(() => import('../sharedComponents/MediaGallery'));
 //const UserStories = React.lazy(() => import('../components/story/UserStories'));
@@ -420,6 +421,7 @@ const ItemListScreen: React.FC<any> = ({
   const [RecentSearchData, setRecentSearchData]: any[] = useState(null);
   const [RenderBrokerData, setRenderBrokerData]: any[] = useState(null);
   const [suggestionData, setSuggestionData]: any[] = useState(null);
+  const dispatch = useDispatch();
   const brandName =
     route.params.brandName !== undefined ? route.params.brandName : '';
   const AppLocation = useSelector((state: RootState) => state.AppLocation);
@@ -757,13 +759,16 @@ const ItemListScreen: React.FC<any> = ({
 
   useEffect(() => {
     setLoading(true);
+    let categoryId=7
     if (listTypeData == 'RealEstate') {
       pageTitle('Properties');
       setApppageTitle('Properties');
+      categoryId=1
     }
     if (listTypeData == 'Car') {
       pageTitle('Cars');
       setApppageTitle('Cars');
+      categoryId=2
     }
     setItemslocalities(AppLocation);
 
@@ -818,9 +823,19 @@ const ItemListScreen: React.FC<any> = ({
       }
       setPopUPFilter(updatedPopUPFilter);
     }
-
-    //set_FilterChipsData(obj);
     callPodcastList(obj);
+ dispatch(setPreviousRoute({
+            name:"ItemListScreen",
+            params: {categoryId:categoryId }
+          }));
+
+          return () => {
+            console.log("ItemListScreen=============resetPreviousRoute")
+            // Cleanup logic (not needed for initializeSDK)
+         //  dispatch(resetPreviousRoute()); 
+          };
+    //set_FilterChipsData(obj);
+   // callPodcastList(obj);
   }, [isrest]);
   const [itemHeight, setItemHeight] = useState(560);
 

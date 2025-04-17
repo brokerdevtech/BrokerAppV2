@@ -42,9 +42,9 @@ const AppDrawer: React.FC = () => {
             // Determine the active tab; default to "AppTabHome" if not set.
             const routeName =
               getFocusedRouteNameFromRoute(route) ?? 'AppTabHome';
-console.log("==============routeName");
-console.log(routeName);
-console.log(getActiveRouteName(route));
+// console.log("==============routeName");
+// console.log(routeName);
+// console.log(getActiveRouteName(route));
             // When "Favourite" tab is active, hide the header.
             if (routeName === 'Favourite') {
               return {headerShown: false};

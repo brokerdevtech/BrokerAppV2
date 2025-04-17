@@ -14,12 +14,13 @@ import {
 const {width} = Dimensions.get('window');
 const screenWidth = Dimensions.get('window').width;
 const ImageCarousel = ({images, autoPlay = true, autoPlayInterval = 3000}) => {
-  console.log("share_PIconW",images)
+ 
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef(null);
   const autoPlayRef = useRef(null);
-  const maxWidth = screenWidth - 30; // Allow for padding
-  const maxHeight = (maxWidth * 5) / 4 / 2; // Height for a 4:5 ratio
+  const maxWidth = screenWidth // Allow for padding
+  //const maxHeight = (maxWidth * 5) / 4 / 2; // Height for a 4:5 ratio
+  const maxHeight = (maxWidth * 16) / 9; 
   // Function to scroll to next image
   const scrollToNextImage = () => {
     if (images.length <= 1) return;
@@ -64,7 +65,7 @@ const ImageCarousel = ({images, autoPlay = true, autoPlayInterval = 3000}) => {
                      <FastImage
           source={{uri:item}}
           style={[styles.image, {width: maxWidth, height: maxHeight}]}
-          resizeMode={FastImage.resizeMode.cover} // Crops taller images like Instagram
+          resizeMode={FastImage.resizeMode.contain} // Crops taller images like Instagram
         />
         {/* <Image source={{uri: item}} style={styles.image} resizeMode="contain" /> */}
       </View>
@@ -144,17 +145,23 @@ const ImageCarousel = ({images, autoPlay = true, autoPlayInterval = 3000}) => {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative',
+   display:'flex',
+    height:'100%',
+  //  backgroundColor:'green',
+    justifyContent:'flex-start',
   },
   slide: {
-    width,
-   // height: maxHeight, // Aspect ratio of 5:3
-    justifyContent: 'center',
-    alignItems: 'center',
+    display:'flex',
+    // flexDirection:'column',
+  //   width,
+  //  // height: maxHeight, // Aspect ratio of 5:3
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    //backgroundColor:'red'
   },
   image: {
     width: width,
-    height: 700,
+    //height: 700,
   },
   paginationContainer: {
     flexDirection: 'row',

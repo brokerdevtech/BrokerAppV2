@@ -165,7 +165,7 @@ const AppTab: React.FC = () => {
           name="AppTabHome"
           component={HomePageStack}
           options={{
-            unmountOnBlur: true,
+           // unmountOnBlur: true,
 
             tabBarIcon: ({focused}) => (
               <TabText

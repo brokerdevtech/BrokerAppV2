@@ -14,7 +14,7 @@ import Video from 'react-native-video';
 import {fetchInstagramVideos} from '../../../BrokerAppCore/services/new/podcastService';
 import {Color, Padding} from '../../styles/GlobalStyles';
 import {useFocusEffect} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {useApiPagingWithtotalRequest} from '../../hooks/useApiPagingWithtotalRequest';
 import {getThreadsList} from '../../../BrokerAppCore/services/new/threads';
 import {
@@ -32,6 +32,8 @@ import {
 } from '../../../components/ui/icon';
 import {ReelActions} from './ReelActions';
 import {debounce} from 'lodash';
+import { RootState } from '../../../BrokerAppCore/redux/store/reducers';
+import { resetPreviousRoute } from '../../../BrokerAppCore/redux/store/navigation/navigationSlice';
 
 const {height: screenHeight, width} = Dimensions.get('window');
 
@@ -125,12 +127,7 @@ const InstagramReels = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [likedReels, setLikedReels] = useState({});
-  const previousRouteName = useSelector(
-    (state: RootState) => state.navigation.previousRouteName,
-  );
-  const previousRouteParams = useSelector(
-    (state: RootState) => state.navigation.previousRouteParams,
-  );
+  const previousRoute = useSelector((state: RootState) => state.navigation.previousRoute);
   const flatListRef = useRef(null);
   const onVideoEndRef = useRef(false);
 
@@ -138,11 +135,11 @@ const InstagramReels = () => {
 
   const userScrollingRef = useRef(false);
   const lastManualScrollTimestamp = useRef(0);
-
+  const dispatch = useDispatch();
   let categoryId;
 
-  if (previousRouteName === 'ItemListScreen') {
-    categoryId = previousRouteParams?.categoryId;
+  if (previousRoute?.name === 'ItemListScreen') {
+    categoryId = previousRoute.params?.categoryId;
   } else {
     categoryId = 7;
   }
@@ -166,6 +163,11 @@ const InstagramReels = () => {
       if (!isInfiniteLoading) {
         setLoadingMore(true);
         try {
+          if (previousRoute?.name === 'ItemListScreen') {
+            categoryId = previousRoute.params?.categoryId;
+          } else {
+            categoryId = 7;
+          }
           await loadMore(user.userId, categoryId);
 
           if (data && data.length > 0) {
@@ -194,19 +196,28 @@ const InstagramReels = () => {
   useFocusEffect(
     useCallback(() => {
       loadedPostIds.current = new Set();
+
+      if (previousRoute?.name === 'ItemListScreen') {
+        categoryId = previousRoute.params?.categoryId;
+      } else {
+        categoryId = 7;
+      }
+      console.log('Previous screen:InstagramReels', previousRoute);
       execute(user.userId, categoryId);
-      console.log('Previous screen:', previousRouteName);
-      console.log('Previous params:', previousRouteParams);
+    
+     
 
       return () => {
         setCurrentIndex(-1);
+        console.log("resetPreviousRoute=============resetPreviousRoute")
+        dispatch(resetPreviousRoute()); 
       };
-    }, [
-      user.userId,
-      categoryId,
-      execute,
-      previousRouteName,
-      previousRouteParams,
+    }, [previousRoute
+      // user.userId,
+      // categoryId,
+      // execute,
+      // previousRouteName,
+      // previousRouteParams,
     ]),
   );
 
@@ -388,9 +399,9 @@ const styles = StyleSheet.create({
   },
   mediaContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
- //backgroundColor:'white'
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+// backgroundColor:'white'
   },
   media: {
     width,

@@ -60,7 +60,7 @@ import useUserAnalytics from './src/hooks/Analytics/useUserAnalytics';
 import analytics from '@react-native-firebase/analytics';
 import ManuallyselectedLocation from './src/sharedComponents/ManuallyselectedLocation';
 import { checkAppUpdate } from './src/utils/updateChecker';
-
+import { AppEventsLogger, Settings } from 'react-native-fbsdk-next';
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -427,6 +427,7 @@ function App(): React.JSX.Element {
   // }, []);
 
   useEffect(() => {
+    
     const subscription = AppState.addEventListener(
       'change',
       handleAppStateChange,
@@ -476,7 +477,8 @@ function App(): React.JSX.Element {
     // }).start();
     // Execute async functions
     runAsyncFunctions();
-
+    Settings.initializeSDK(); // Initialize Facebook SDK (modern usage)
+    AppEventsLogger.logEvent('fb_mobile_activate_app'); // Manual event tracking if needed
     const subscription = AppState.addEventListener(
       'change',
       handleAppStateChange,

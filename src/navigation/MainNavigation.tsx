@@ -14,7 +14,7 @@ import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import notifee, {EventType} from '@notifee/react-native';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { useDispatch } from 'react-redux';
-import { setPreviousRoute, setPreviousRouteName } from '../../BrokerAppCore/redux/store/navigation/navigationSlice';
+import { resetPreviousRoute, setPreviousRoute, setPreviousRouteName } from '../../BrokerAppCore/redux/store/navigation/navigationSlice';
 
 interface MainNavigationProps {
   loggedIn: boolean;
@@ -87,7 +87,7 @@ const MainNavigation: React.FC<MainNavigationProps> = ({
   const appuser = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
 const [isLoggedIn, setisLoggedIn] = useState(false);
-
+const previousRouteRef = React.useRef<{ name: string; params?: any } | null>(null);
 
   useEffect(() => {
     if(appuser.user == null)
@@ -98,19 +98,41 @@ const [isLoggedIn, setisLoggedIn] = useState(false);
 
   }, [appuser]);
 
+
+
+  
   return (
     <SafeAreaProvider>
       <NavigationContainer
        linking={linking}
        ref={navigationContainerRef}
-       onStateChange={() => {
-        const currentRoute = navigationContainerRef.getCurrentRoute();
-        console.log('Current route:', currentRoute?.name);
-        if (currentRoute?.name) {
-          dispatch(setPreviousRoute({ name: currentRoute.name, params: currentRoute.params }));
-          // dispatch(setPreviousRouteName(currentRoute.name));
-        }
-      }}
+      //  onReady={() => {
+      //   const current = navigationContainerRef.getCurrentRoute();
+      //   console.log("onReady",current)
+      //   previousRouteRef.current = current
+      //     ? { name: current.name, params: { ...current.params } }
+      //     : null;
+      // }}
+      // onStateChange={() => {
+      //   const currentRoute = navigationContainerRef.getCurrentRoute();
+      //   const previousRoute = previousRouteRef.current;
+      //   console.log("onStateChange",currentRoute)
+      //   console.log("previousRoute",previousRoute)
+      //   // ✅ Only store if you're coming *from* ItemListScreen
+      //   if (previousRoute?.name === 'ItemListScreen') {
+      //     dispatch(setPreviousRoute({
+      //       name: previousRoute.name,
+      //       params: { ...previousRoute.params }
+      //     }));
+      //   } else {
+      //     dispatch(resetPreviousRoute()); // clear if not coming from ItemList
+      //   }
+      
+      //   // 🔁 Now update ref for next time
+      //   previousRouteRef.current = currentRoute
+      //     ? { name: currentRoute.name, params: { ...currentRoute.params } }
+      //     : null;
+      // }}
       >
 
         {isLoggedIn ? (
